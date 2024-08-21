@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 // Components
 import Stairs from "./Stairs";
-import WaterRise from "./WaterRise";
 
 const StairTransition = () => {
   const pathname = usePathname();
