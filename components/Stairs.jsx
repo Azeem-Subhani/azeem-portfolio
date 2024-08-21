@@ -33,7 +33,6 @@ const Stairs = () => {
 
       {[...Array(6)].map((_, index) => {
         return (
-          <>
             <motion.div
               key={index}
               variants={stairAnimation}
@@ -47,7 +46,6 @@ const Stairs = () => {
               }}
               className="h-full w-full bg-[#35353f] relative"
             />
-          </>
         );
       })}
     </>
