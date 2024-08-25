@@ -290,8 +290,33 @@ const skills = {
   ],
 };
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@radix-ui/react-tooltip";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion } from "framer-motion";
+
 const Resume = () => {
-  return <div>Resume Page</div>;
+  return (
+    <motion.div initial={{ opacity: 0 }}
+    animate={{
+      opacity: 1,
+      transition: { delay: 2.4, duration: 0.4, ease: "easeIn" }
+    }}
+    className="min-h-[80vh] flex items-center justify-center py-12 xl:py-8"
+    >
+      <div className="container mx-auto">
+        <Tabs>
+          <TabsList>
+            <TabsTrigger>Experience</TabsTrigger>
+            <TabsTrigger>Education</TabsTrigger>
+            <TabsTrigger>Skills</TabsTrigger>
+            <TabsTrigger>About Me</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+    </motion.div>
+  );
 };
 
 export default Resume;
