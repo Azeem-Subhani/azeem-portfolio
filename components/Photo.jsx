@@ -16,6 +16,7 @@ function Photo() {
         className="w-[298px] h-[298px] xl:w-[498px] xl:h-[498px] mix-blend-lighten"
       >
         <Image
+          
           src="/assets/developer.svg"
           priority
           quality={100}
@@ -27,6 +28,11 @@ function Photo() {
       </motion.div>
       {/* circle */}
       <motion.svg
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: 1,
+        transition: { delay: 1.7, duration: 0.4, ease: "easeIn" },
+      }}
         className="absolute top-0 left-0 w-[300px] xl:w-[506px] h-[300px] xl:h-[506px]"
         fill="transparent"
         viewBox="0 0 506 506"
