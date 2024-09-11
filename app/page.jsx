@@ -18,8 +18,7 @@ export default function Home() {
               <span className="text-accent">Azeem Subhani</span>
             </h1>
             <p className="max-w-[500px] mb-9 text-white/80">
-              I excel at crafting elegant digital experiences and i am
-              proficient in various programming languages and technologies.
+            I specialize in crafting elegant and efficient digital solutions, leveraging my expertise across a wide range of programming languages and cutting-edge technologies. My passion lies in creating seamless user experiences backed by robust, scalable architectures.
             </p>
             {/* Buttons and social */}
             <div className="flex flex-col xl:flex-row items-center gap-8">

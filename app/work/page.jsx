@@ -18,37 +18,142 @@ import Link from "next/link";
 import Image from "next/image";
 import WorkSliderButtons from "@/components/ui/WorkSlideButtons";
 
+// const projects = [
+//   {
+//     num: "01",
+//     category: "frontend",
+//     title: "project 1",
+//     description:
+//       "Lprem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate magnam modi.",
+//     stack: [{ name: "Html 5" }, { name: "Css 3" }, { name: "Javascript" }],
+//     image: "/assets/work/thumb1.png",
+//     live: "",
+//     github: "",
+//   },
+//   {
+//     num: "02",
+//     category: "fullstack",
+//     title: "project 2",
+//     description:
+//       "Lprem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate magnam modi.",
+//     stack: [{ name: "Next.js" }, { name: "Tailwind" }, { name: "Node.js" }],
+//     image: "/assets/work/thumb2.png",
+//     live: "",
+//     github: "",
+//   },
+//   {
+//     num: "03",
+//     category: "fullstack",
+//     title: "project 2",
+//     description:
+//       "Lprem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate magnam modi.",
+//     stack: [{ name: "Angular" }, { name: "Tailwind" }, { name: "Node.js" }],
+//     image: "/assets/work/thumb3.png",
+//     live: "",
+//     github: "",
+//   },
+// ];
+
 const projects = [
   {
     num: "01",
-    category: "frontend",
-    title: "project 1",
+    category: "fullstack",
+    title: "Gaming Global",
     description:
-      "Lprem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate magnam modi.",
-    stack: [{ name: "Html 5" }, { name: "Css 3" }, { name: "Javascript" }],
-    image: "/assets/work/thumb1.png",
+      "A MERN stack-based web gaming application with sensitivity conversion, gamer statistics, social media features, and real-time chat using SOCKET.IO. Includes an admin panel for user management.",
+    stack: [
+      { name: "React" },
+      { name: "Node.js" },
+      { name: "Express" },
+      { name: "MongoDB" },
+      { name: "Socket.IO" },
+    ],
+    image: "/assets/work/gaming-global.png",
     live: "",
     github: "",
   },
   {
     num: "02",
-    category: "fullstack",
-    title: "project 2",
+    category: "frontend",
+    title: "Woody Shop",
     description:
-      "Lprem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate magnam modi.",
-    stack: [{ name: "Next.js" }, { name: "Tailwind" }, { name: "Node.js" }],
-    image: "/assets/work/thumb2.png",
+      "An e-commerce application built with React, Redux, Firebase, and Stripe API. Features include cart functionality and state management with Redux, including local storage persistence.",
+    stack: [
+      { name: "React" },
+      { name: "Redux" },
+      { name: "Firebase" },
+      { name: "Stripe API" },
+    ],
+    image: "/assets/work/woody-shop.png",
     live: "",
     github: "",
   },
   {
     num: "03",
     category: "fullstack",
-    title: "project 2",
+    title: "Real-time Chat Application",
     description:
-      "Lprem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate magnam modi.",
-    stack: [{ name: "Angular" }, { name: "Tailwind" }, { name: "Node.js" }],
-    image: "/assets/work/thumb3.png",
+      "A real-time chat module developed using Node.js with WebSockets, Vanilla JavaScript, Handlebars, and Moment.js.",
+    stack: [
+      { name: "Node.js" },
+      { name: "WebSockets" },
+      { name: "JavaScript" },
+      { name: "Handlebars" },
+      { name: "Moment.js" },
+    ],
+    image: "/assets/work/chat-application.png",
+    live: "",
+    github: "",
+  },
+  {
+    num: "04",
+    category: "backend",
+    title: "Task Manager",
+    description:
+      "A backend application for user authentication, task management, and email verification using SendGrid services. Built with Node.js, MongoDB, JWT, and Express.js.",
+    stack: [
+      { name: "Node.js" },
+      { name: "MongoDB" },
+      { name: "JWT" },
+      { name: "Express.js" },
+      { name: "SendGrid" },
+    ],
+    image: "/assets/work/gaming-global.png",
+    live: "",
+    github: "",
+  },
+  {
+    num: "05",
+    category: "fullstack",
+    title: "Memorial Planning Payment Portal",
+    description:
+      "A custom payment gateway application using Next.js and AWS services, integrated with Trust Commerce for secure online payment processing (autopayment). Features Lambda functions for automated notifications via AWS SES.",
+    stack: [
+      { name: "Next.js" },
+      { name: "DynamoDB" },
+      { name: "AppSync" },
+      { name: "AWS Lambda" },
+      { name: "AWS SES" },
+      { name: "Trust Commerce" },
+    ],
+    image: "/assets/work/payment-portal.png",
+    live: "",
+    github: "",
+  },
+  {
+    num: "06",
+    category: "fullstack",
+    title: "Smart Living Dashboard",
+    description:
+      "An Angular-based portal using SAM architecture and Firebase for push notifications. Features include an admin panel, emergency alerts, group creation, event scheduling, and audio/video calls.",
+    stack: [
+      { name: "Angular" },
+      { name: "PostgreSQL" },
+      { name: "Firebase" },
+      { name: "Stripe" },
+      { name: "AWS SAM" },
+    ],
+    image: "/assets/work/smart-living-portal.png",
     live: "",
     github: "",
   },
@@ -82,7 +187,10 @@ const Work = () => {
                 {project.num}
               </div>
               {/*  projects category */}
-              <h2 className="text-[42px] font-bold leading-none text-white group-hover:text-accent transition-all duration-500 capitalize">
+              <h2 className="text-[42px] font-bold leading-none text-white hover:text-accent transition-all duration-500 capitalize">
+                {project.title}
+              </h2>
+              <h2 className="text-[28px] font-bold leading-none text-white hover:text-accent transition-all duration-500 capitalize">
                 {project.category} project
               </h2>
               {/* project description */}
@@ -91,7 +199,7 @@ const Work = () => {
               <ul className="flex gap-4">
                 {project.stack.map((item, index) => {
                   return (
-                    <li key={index} className="text-xl text-accent">
+                    <li key={index} className="text-sm text-accent">
                       {item.name}
                       {index !== project.stack.length - 1 && ","}
                     </li>
@@ -103,7 +211,7 @@ const Work = () => {
               {/* buttons */}
               <div className="flex items-center gap-4">
                 {/* live project button */}
-                <Link href={project.live}>
+                {/* <Link href={project.live}>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger className="w-[70px] h-[70px] rounded-full bg-white/5 flex justify-center items-center group">
@@ -114,9 +222,9 @@ const Work = () => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </Link>
+                </Link> */}
                 {/* github project button */}
-                <Link href={project.live}>
+                {/* <Link href={project.live}>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger className="w-[70px] h-[70px] rounded-full bg-white/5 flex justify-center items-center group">
@@ -127,7 +235,7 @@ const Work = () => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>
@@ -142,9 +250,9 @@ const Work = () => {
               {projects.map((project, index) => {
                 return (
                   <SwiperSlide key={index} className="w-full">
-                    <div className="h-[460px] relative group flex justify-center items-center bg-pink-50/20">
+                    <div className="h-[460px] relative group flex justify-center items-center ">
                       {/* overlay */}
-                      <div className="absolute top-0 botton-0 w-full h-full bg-black/10 z-10"></div>
+                      <div className="absolute top-0 botton-0 w-full h-full z-10"></div>
                       {/* Image */}
                       <div className="relative w-full h-full">
                         <Image

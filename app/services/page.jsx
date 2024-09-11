@@ -10,28 +10,28 @@ const services = [
     title: "Frontend Development",
     href: "/",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente expedita aliquid, quam neque velit libero, aperiam dolore esse sequi error et dolor. Minima quibusdam similique ducimus enim suscipit officiis facilis.",
+      "I specialize in building responsive and interactive web applications using React, Next.js, and Angular. My expertise includes state management with React Query and MobX, styling with Tailwind CSS and Material UI, and creating seamless user experiences.",
   },
   {
     num: "02",
-    title: "UI/UX Design",
+    title: "Fullstack Javascript Development",
     href: "/",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente expedita aliquid, quam neque velit libero, aperiam dolore esse sequi error et dolor. Minima quibusdam similique ducimus enim suscipit officiis facilis.",
+      "As a full stack developer, I bridge frontend and backend technologies. I leverage my skills in Node.js, Express, and NestJS to create comprehensive web solutions. My experience includes working with both SQL and NoSQL databases, ensuring robust and scalable applications.",
   },
   {
     num: "03",
     title: "Backend Development",
     href: "/",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente expedita aliquid, quam neque velit libero, aperiam dolore esse sequi error et dolor. Minima quibusdam similique ducimus enim suscipit officiis facilis.",
+      "I design and implement robust server-side applications using Node.js, Express, and NestJS. My expertise includes RESTful API development, GraphQL integration, and working with databases like MongoDB and PostgreSQL. I focus on creating efficient, secure, and scalable backend systems.",
   },
   {
     num: "04",
-    title: "Mobile App Development",
+    title: "Cloud & DevOps",
     href: "/",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente expedita aliquid, quam neque velit libero, aperiam dolore esse sequi error et dolor. Minima quibusdam similique ducimus enim suscipit officiis facilis.",
+      "I have extensive experience with AWS services, including Cognito, Lambda, DynamoDB, and S3. I implement CI/CD pipelines, manage cloud infrastructures, and ensure optimal application performance and security in cloud environments. My skills extend to serverless architecture and microservices.",
   },
 ];
 

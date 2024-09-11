@@ -38,7 +38,7 @@ import {
 const about = {
   title: "About Me",
   description:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus commodi ipsa quas architecto in, doloremque quam, quos voluptate voluptatem, molestias ea.",
+    "I'm a versatile Full Stack JavaScript Developer with 3 years of experience in building robust web applications. I excel at crafting elegant digital experiences using a wide range of programming languages and cutting-edge technologies.",
   info: [
     {
       fieldName: "Name",
@@ -54,7 +54,7 @@ const about = {
     },
     {
       fieldName: "Experience",
-      fieldValue: "5+ Years",
+      fieldValue: "3 Years",
     },
     {
       fieldName: "Freelance",
@@ -71,37 +71,22 @@ const experience = {
   icon: "/assets/resume/badge.svg",
   title: "My Experience",
   description:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus commodi ipsa quas architecto in, doloremque quam, quos voluptate voluptatem, molestias ea.",
+    "I have a diverse background in full-stack development, with experience in various technologies and frameworks.",
   items: [
     {
-      company: "Tech 1",
-      position: "Full stack developer",
-      duration: "2022 - Present",
+      company: "Cinnova Technologies",
+      position: "Software Engineer",
+      duration: "June 2023 - Present",
     },
     {
-      company: "Tech 1",
-      position: "Full stack developer",
-      duration: "2022 - Present",
+      company: "Techverx",
+      position: "Associate Software Engineer",
+      duration: "July 2022 - June 2023",
     },
     {
-      company: "Tech 1",
-      position: "Full stack developer",
-      duration: "2022 - Present",
-    },
-    {
-      company: "Tech 1",
-      position: "Full stack developer",
-      duration: "2022 - Present",
-    },
-    {
-      company: "E-commerce Startup",
-      position: "Freelance Web Developer",
-      duration: "2022 - Present",
-    },
-    {
-      company: "Digital Agency",
-      position: "Frontend Developer",
-      duration: "2022 - Present",
+      company: "Nestosh",
+      position: "Associate Backend Engineer",
+      duration: "January 2022 - June 2022",
     },
   ],
 };
@@ -110,31 +95,56 @@ const education = {
   icon: "/assets/resume/cap.svg",
   title: "My Education",
   description:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus commodi ipsa quas architecto in, doloremque quam, quos voluptate voluptatem, molestias ea.",
+    "I have a strong educational background in computer science, complemented by continuous learning and certifications.",
   items: [
     {
-      institution: "Comsats University",
+      institution: "COMSATS University Islamabad, Lahore Campus",
       degree: "Bachelor of Science in Computer Science",
-      duration: "2022 - Present",
+      duration: "Graduated: January 2022",
     },
     {
       institution: "Test Dome",
       degree: "Javascript & Node Developer",
-      duration: "2022 - Present",
+      duration: "2022",
     },
     {
       institution: "Online Course",
-      degree: "Web Developer Bootcamp 2022",
-      duration: "2022",
+      degree: "Web Developer Bootcamp 2021",
+      duration: "2021",
     },
+    // You can add any relevant certifications or courses here
   ],
 };
+
+// const education = {
+//   icon: "/assets/resume/cap.svg",
+//   title: "My Education",
+//   description:
+//     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus commodi ipsa quas architecto in, doloremque quam, quos voluptate voluptatem, molestias ea.",
+//   items: [
+//     {
+//       institution: "Comsats University",
+//       degree: "Bachelor of Science in Computer Science",
+//       duration: "2022 - Present",
+//     },
+//     {
+//       institution: "Test Dome",
+//       degree: "Javascript & Node Developer",
+//       duration: "2022 - Present",
+//     },
+//     {
+//       institution: "Online Course",
+//       degree: "Web Developer Bootcamp 2022",
+//       duration: "2022",
+//     },
+//   ],
+// };
 
 const skills = {
   icon: "",
   title: "My Skills",
   description:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus commodi ipsa quas architecto in, doloremque quam, quos voluptate voluptatem, molestias ea.",
+    "I have expertise in a wide range of technologies, focusing on full-stack JavaScript development and cloud services.",
   items: [
     {
       icon: <FaHtml5 />,
