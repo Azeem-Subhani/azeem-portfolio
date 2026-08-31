@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f7f8fb;
+  --surface: #ffffff;
+  --surface-elevated: #eef2f8;
+  --foreground: #121826;
+  --muted-foreground: #5c667a;
+  --border: #d9dfea;
+  --accent: #315cff;
+  --accent-strong: #2347d9;
+  --accent-secondary: #7657ff;
+  --signal: #007f96;
+  --ring: #315cff;
+  --success: #147d4f;
+  --error: #c9363e;
+  --glass: rgb(255 255 255 / 76%);
+  --shadow-color: 33 47 78;
+  --shape-radius-sm: 0.5rem;
+  --shape-radius-md: 0.875rem;
+  --shape-radius-lg: 1.25rem;
+  --shape-radius-pill: 999px;
+}
+
+.dark {
+  --background: #0b0f17;
+  --surface: #111827;
+  --surface-elevated: #172033;
+  --foreground: #f8fafc;
+  --muted-foreground: #9ca7b8;
+  --border: #25304a;
+  --accent: #6e8bff;
+  --accent-strong: #91a6ff;
+  --accent-secondary: #9a7bff;
+  --signal: #35d0e2;
+  --ring: #91a6ff;
+  --success: #45c88a;
+  --error: #ff747c;
+  --glass: rgb(11 15 23 / 76%);
+  --shadow-color: 0 0 0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-signal: var(--signal);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-glass: var(--glass);
+  --font-display: var(--font-syne);
+  --font-sans: var(--font-inter-tight);
+  --font-mono: var(--font-dm-mono);
+  --radius-sm: var(--shape-radius-sm);
+  --radius-md: var(--shape-radius-md);
+  --radius-lg: var(--shape-radius-lg);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      linear-gradient(to right, color-mix(in srgb, var(--border) 35%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--border) 35%, transparent) 1px, transparent 1px),
+      var(--background);
+    background-size: 64px 64px;
+    color: var(--foreground);
+    font-family: var(--font-inter-tight), sans-serif;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  /*
+   * Force every token back to its light-mode value so printed pages are
+   * always dark text on white, regardless of which theme was active on
+   * screen. Overriding the variables here, instead of individual utility
+   * classes, means every color utility resolves correctly for free.
+   */
+  :root,
+  .dark {
+    --background: #ffffff;
+    --surface: #ffffff;
+    --surface-elevated: #f1f5f9;
+    --foreground: #121826;
+    --muted-foreground: #475569;
+    --border: #cbd5e1;
+    --accent: #2347d9;
+    --accent-strong: #1d3ab8;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+}
