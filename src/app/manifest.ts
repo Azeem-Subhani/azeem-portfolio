@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Senior full-stack engineer building SaaS, payments, booking, real-time, and AI-enabled applications.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0b0f17",
-    theme_color: "#0b0f17",
+    background_color: "#FDF6E3",
+    theme_color: "#002B36",
     icons: [
       {
         src: "/favicon.ico",

@@ -33,7 +33,7 @@ export function Header() {
         <Link
           href="/"
           aria-label="Azeem Subhani, home"
-          className="font-display text-lg font-semibold tracking-tight"
+          className="font-display text-lg font-normal tracking-tight"
         >
           Azeem Subhani
         </Link>

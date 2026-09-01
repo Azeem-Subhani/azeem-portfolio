@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { DM_Mono, Inter_Tight, Syne } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Instrument_Serif, Inter } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -8,29 +8,29 @@ import { profile } from "@/content/profile";
 
 import "./globals.css";
 
-// Only the display font (used in the above-the-fold hero h1) is preloaded.
-// Body and mono fonts still load, just without competing for bandwidth
-// during the initial paint.
-const syne = Syne({
+// Only the display face (hero h1) is preloaded. Inter still loads, just
+// without competing for bandwidth during the initial paint.
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-syne",
+  weight: "400",
+  variable: "--font-instrument-serif",
   display: "swap",
 });
 
-const interTight = Inter_Tight({
-  subsets: ["latin"],
-  variable: "--font-inter-tight",
-  display: "swap",
-  preload: false,
-});
-
-const dmMono = DM_Mono({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-dm-mono",
+  variable: "--font-inter",
   display: "swap",
   preload: false,
 });
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FDF6E3" },
+    { media: "(prefers-color-scheme: dark)", color: "#002B36" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(profile.siteUrl),
@@ -64,10 +64,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${syne.variable} ${interTight.variable} ${dmMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${instrumentSerif.variable} ${inter.variable}`}
+    >
+      <body className="antialiased">
         <ThemeProvider>
           <a
             href="#main-content"

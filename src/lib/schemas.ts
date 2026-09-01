@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-export const contactServices = [
-  "Full-Stack SaaS Development",
-  "Payments and Stripe Integrations",
-  "AI/LLM Integrations",
-  "Real-Time Systems",
-  "Technical Consultation",
-] as const;
+// Accepts digits, spaces, and common separators (+, (), -, .), and requires
+// a plausible number of digits so "abc" or "1" don't slip through while
+// still allowing international formats like "+92 320 4406148".
+const PHONE_FORMAT = /^[+]?[\d\s().-]+$/;
+
+function digitCount(value: string) {
+  return value.replace(/\D/g, "").length;
+}
 
 export const contactFormSchema = z.object({
   name: z
@@ -19,11 +20,14 @@ export const contactFormSchema = z.object({
     .string()
     .trim()
     .max(40, "Phone number is too long.")
+    .refine(
+      (value) =>
+        value === "" ||
+        (PHONE_FORMAT.test(value) && digitCount(value) >= 7 && digitCount(value) <= 15),
+      { message: "Enter a valid phone number." },
+    )
     .optional()
     .or(z.literal("")),
-  service: z.enum(contactServices, {
-    error: "Select a service.",
-  }),
   message: z
     .string()
     .trim()

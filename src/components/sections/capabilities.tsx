@@ -16,21 +16,25 @@ export function Capabilities() {
         </h2>
       </Reveal>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2">
+      <div className="mt-12 border-y border-border">
         {skillGroups.map((group) => (
           <Reveal
             key={group.label}
             as="section"
-            className="rounded-lg border border-border bg-surface p-6 sm:p-8"
+            className="grid grid-cols-1 gap-3 border-b border-border py-6 last:border-b-0 sm:grid-cols-[minmax(11rem,16rem)_1fr] sm:items-baseline sm:gap-6 sm:py-7"
           >
-            <h3 className="font-display text-lg font-semibold">{group.label}</h3>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {group.skills.map((skill) => (
-                <li
-                  key={skill}
-                  className="rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground"
-                >
-                  {skill}
+            <h3 className="text-lg font-medium text-foreground">{group.label}</h3>
+            <ul className="flex flex-wrap items-baseline">
+              {group.skills.map((skill, index) => (
+                <li key={skill} className="flex items-baseline">
+                  <span className="text-sm text-muted-foreground transition-colors duration-200 hover:text-accent">
+                    {skill}
+                  </span>
+                  {index < group.skills.length - 1 ? (
+                    <span aria-hidden="true" className="mx-2 text-sm text-muted-foreground/35">
+                      ·
+                    </span>
+                  ) : null}
                 </li>
               ))}
             </ul>

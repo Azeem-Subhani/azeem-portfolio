@@ -4,7 +4,6 @@ export type ContactSubmission = {
   name: string;
   email: string;
   phone?: string;
-  service: string;
   message: string;
 };
 
@@ -25,12 +24,11 @@ export async function sendContactEmail(submission: ContactSubmission) {
     to,
     from,
     replyTo: submission.email,
-    subject: `Portfolio inquiry: ${submission.service}`,
+    subject: `Portfolio inquiry from ${submission.name}`,
     text: [
       `Name: ${submission.name}`,
       `Email: ${submission.email}`,
       submission.phone ? `Phone: ${submission.phone}` : undefined,
-      `Service: ${submission.service}`,
       "",
       submission.message,
     ]

@@ -15,7 +15,6 @@ test.describe("contact form", () => {
 
     await expect(page.getByText("Enter your name.")).toBeVisible();
     await expect(page.getByText("Enter your email.")).toBeVisible();
-    await expect(page.getByText("Select a service.")).toBeVisible();
     await expect(
       page.getByText("Message should be at least 10 characters."),
     ).toBeVisible();
@@ -39,9 +38,6 @@ test.describe("contact form", () => {
     await form.getByLabel("Message", { exact: true }).fill(
       "Hi, I would like to talk about a project.",
     );
-
-    await form.getByLabel("Service", { exact: true }).click();
-    await page.getByRole("option", { name: "Technical Consultation" }).click();
 
     await page.getByRole("button", { name: "Send message" }).click();
 

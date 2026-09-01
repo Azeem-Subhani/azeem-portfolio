@@ -35,7 +35,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
         <ProjectFilters active={activeFilter} onChange={handleFilterChange} />
         <p className="text-sm text-muted-foreground" aria-hidden="true">
           {filtered.length} project{filtered.length === 1 ? "" : "s"}

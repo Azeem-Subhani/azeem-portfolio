@@ -16,8 +16,8 @@ export default async function Image() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "#0b0f17",
-          color: "#f8fafc",
+          background: "#002B36",
+          color: "#EEE8D5",
           fontFamily: "sans-serif",
         }}
       >
@@ -26,7 +26,7 @@ export default async function Image() {
             fontSize: 28,
             letterSpacing: 4,
             textTransform: "uppercase",
-            color: "#6e8bff",
+            color: "#2AA198",
           }}
         >
           {profile.location}
@@ -46,7 +46,7 @@ export default async function Image() {
           style={{
             marginTop: 32,
             fontSize: 30,
-            color: "#9ca7b8",
+            color: "#93A1A1",
           }}
         >
           {profile.name}

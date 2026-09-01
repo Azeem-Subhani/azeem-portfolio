@@ -2,22 +2,15 @@
 
 import { useId, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { CheckCircle2, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { profile } from "@/content/profile";
-import { contactFormSchema, contactServices, type ContactFormValues } from "@/lib/schemas";
+import { contactFormSchema, type ContactFormValues } from "@/lib/schemas";
 
 type SubmitState = "idle" | "success" | "error";
 
@@ -28,7 +21,6 @@ export function ContactForm() {
 
   const {
     register,
-    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -149,39 +141,6 @@ export function ContactForm() {
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor={`${formId}-service`}>Service</Label>
-        <Controller
-          control={control}
-          name="service"
-          render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger
-                id={`${formId}-service`}
-                aria-invalid={Boolean(errors.service)}
-                aria-describedby={
-                  errors.service ? `${formId}-service-error` : undefined
-                }
-              >
-                <SelectValue placeholder="Select a service" />
-              </SelectTrigger>
-              <SelectContent>
-                {contactServices.map((service) => (
-                  <SelectItem key={service} value={service}>
-                    {service}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {errors.service ? (
-          <p id={`${formId}-service-error`} className="text-sm text-error">
-            {errors.service.message}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="grid gap-2">
         <Label htmlFor={`${formId}-message`}>Message</Label>
         <Textarea
           id={`${formId}-message`}
@@ -210,7 +169,7 @@ export function ContactForm() {
 
         <p role="status" aria-live="polite" className="text-sm">
           {submitState === "success" ? (
-            <span className="flex items-center gap-2 text-success">
+            <span className="flex items-center gap-2 text-accent">
               <CheckCircle2 aria-hidden="true" className="size-4" />
               Message sent. I&apos;ll get back to you soon.
             </span>

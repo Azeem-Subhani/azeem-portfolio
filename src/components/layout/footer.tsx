@@ -24,7 +24,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-border px-4 py-12 sm:px-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-display text-lg font-semibold tracking-tight">
+          <p className="font-display text-lg font-normal tracking-tight">
             {profile.name}
           </p>
           <p className="mt-2 max-w-xs text-sm text-muted-foreground">

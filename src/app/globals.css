@@ -1,45 +1,58 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --background: #f7f8fb;
-  --surface: #ffffff;
-  --surface-elevated: #eef2f8;
-  --foreground: #121826;
-  --muted-foreground: #5c667a;
-  --border: #d9dfea;
-  --accent: #315cff;
-  --accent-strong: #2347d9;
-  --accent-secondary: #7657ff;
-  --signal: #007f96;
-  --ring: #315cff;
-  --success: #147d4f;
-  --error: #c9363e;
-  --glass: rgb(255 255 255 / 76%);
-  --shadow-color: 33 47 78;
+  --bg: #fdf6e3;
+  --fg: #073642;
+  --muted: #657b83;
+  --accent: #2aa198;
+  --border: #eee8d5;
+  --font-h1: var(--font-instrument-serif);
+  --font-h2: var(--font-inter);
+
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --muted-foreground: var(--muted);
+  --surface: #f5efd8;
+  --surface-elevated: #f0e9d3;
+  --accent-strong: #21867e;
+  --accent-secondary: #268bd2;
+  --accent-foreground: #002b36;
+  --signal: #268bd2;
+  --ring: #2aa198;
+  --success: #859900;
+  --error: #dc322f;
+  --glass: rgb(253 246 227 / 82%);
+  --shadow-color: 7 54 66;
   --shape-radius-sm: 0.5rem;
   --shape-radius-md: 0.875rem;
   --shape-radius-lg: 1.25rem;
   --shape-radius-pill: 999px;
 }
 
-.dark {
-  --background: #0b0f17;
-  --surface: #111827;
-  --surface-elevated: #172033;
-  --foreground: #f8fafc;
-  --muted-foreground: #9ca7b8;
-  --border: #25304a;
-  --accent: #6e8bff;
-  --accent-strong: #91a6ff;
-  --accent-secondary: #9a7bff;
-  --signal: #35d0e2;
-  --ring: #91a6ff;
-  --success: #45c88a;
-  --error: #ff747c;
-  --glass: rgb(11 15 23 / 76%);
+.dark,
+[data-theme="dark"] {
+  --bg: #002b36;
+  --fg: #eee8d5;
+  --muted: #93a1a1;
+  --accent: #2aa198;
+  --border: #073642;
+
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --muted-foreground: var(--muted);
+  --surface: #04313d;
+  --surface-elevated: #0a4552;
+  --accent-strong: #32b5ab;
+  --accent-secondary: #268bd2;
+  --accent-foreground: #002b36;
+  --signal: #268bd2;
+  --ring: #2aa198;
+  --success: #859900;
+  --error: #dc322f;
+  --glass: rgb(0 43 54 / 82%);
   --shadow-color: 0 0 0;
 }
 
@@ -53,14 +66,15 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-secondary: var(--accent-secondary);
+  --color-accent-foreground: var(--accent-foreground);
   --color-signal: var(--signal);
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-error: var(--error);
   --color-glass: var(--glass);
-  --font-display: var(--font-syne);
-  --font-sans: var(--font-inter-tight);
-  --font-mono: var(--font-dm-mono);
+  --font-display: var(--font-h1);
+  --font-sans: var(--font-h2);
+  --font-mono: var(--font-h2);
   --radius-sm: var(--shape-radius-sm);
   --radius-md: var(--shape-radius-md);
   --radius-lg: var(--shape-radius-lg);
@@ -75,25 +89,181 @@
     scroll-behavior: smooth;
   }
 
-  body {
-    min-height: 100vh;
-    background:
-      linear-gradient(to right, color-mix(in srgb, var(--border) 35%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--border) 35%, transparent) 1px, transparent 1px),
-      var(--background);
-    background-size: 64px 64px;
-    color: var(--foreground);
-    font-family: var(--font-inter-tight), sans-serif;
-  }
-
   ::selection {
     background: var(--accent);
-    color: #ffffff;
+    color: var(--accent-foreground);
   }
 
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 3px;
+  }
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-h2), sans-serif;
+}
+
+h1 {
+  font-family: var(--font-h1), serif;
+  font-weight: 400;
+}
+
+h2,
+h3,
+nav,
+button,
+.btn {
+  font-family: var(--font-h2), sans-serif;
+  font-weight: 500;
+}
+
+.graph-paper {
+  pointer-events: none;
+  --glow-x: 50%;
+  --glow-y: 45%;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--muted) 22%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--muted) 22%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--muted) 34%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--muted) 34%, transparent) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      ellipse 70% 75% at var(--glow-x) var(--glow-y),
+      color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 7%, transparent) 45%,
+      transparent 75%
+    );
+  background-size:
+    16px 16px,
+    16px 16px,
+    64px 64px,
+    64px 64px,
+    100% 100%;
+  background-repeat: repeat, repeat, repeat, repeat, no-repeat;
+}
+
+.graph-field {
+  --glow-x: 84%;
+  --glow-y: 42%;
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 62% 80% at 84% 42%,
+      #000 12%,
+      color-mix(in srgb, #000 50%, transparent) 42%,
+      transparent 70%
+    ),
+    linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(
+      ellipse 62% 80% at 84% 42%,
+      #000 12%,
+      color-mix(in srgb, #000 50%, transparent) 42%,
+      transparent 70%
+    ),
+    linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.graph-field::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    color-mix(in srgb, var(--bg) 70%, transparent) 72%,
+    var(--bg) 100%
+  );
+}
+
+.graph-field-map {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: min(36rem, 160vw);
+  height: min(36rem, 140vw);
+  transform: translate(-50%, -46%);
+  --glow-x: 50%;
+  --glow-y: 42%;
+  -webkit-mask-image: radial-gradient(
+    ellipse 58% 55% at 50% 42%,
+    #000 18%,
+    color-mix(in srgb, #000 40%, transparent) 48%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(
+    ellipse 58% 55% at 50% 42%,
+    #000 18%,
+    color-mix(in srgb, #000 40%, transparent) 48%,
+    transparent 72%
+  );
+}
+
+.graph-field-map::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 50% at 50% 42%,
+    transparent 28%,
+    color-mix(in srgb, var(--bg) 55%, transparent) 58%,
+    var(--bg) 78%
+  );
+}
+
+.systems-map {
+  position: relative;
+  background-color: var(--bg);
+}
+
+.systems-map-track {
+  top: var(--systems-track-top);
+  height: var(--systems-track-height);
+}
+
+.systems-map-fill {
+  height: var(--systems-fill);
+  transition: height 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.systems-map-ping::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  animation: systems-map-ping 1.8s ease-out infinite;
+}
+
+@keyframes systems-map-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.35);
+    opacity: 0;
   }
 }
 
@@ -110,29 +280,41 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  .systems-map-fill {
+    transition: none;
+  }
+
+  .systems-map-ping::after {
+    animation: none;
+    display: none;
+  }
 }
 
 @media print {
-  /*
-   * Force every token back to its light-mode value so printed pages are
-   * always dark text on white, regardless of which theme was active on
-   * screen. Overriding the variables here, instead of individual utility
-   * classes, means every color utility resolves correctly for free.
-   */
   :root,
-  .dark {
-    --background: #ffffff;
-    --surface: #ffffff;
-    --surface-elevated: #f1f5f9;
-    --foreground: #121826;
-    --muted-foreground: #475569;
-    --border: #cbd5e1;
-    --accent: #2347d9;
-    --accent-strong: #1d3ab8;
+  .dark,
+  [data-theme="dark"] {
+    --bg: #fdf6e3;
+    --fg: #073642;
+    --muted: #657b83;
+    --accent: #2aa198;
+    --border: #eee8d5;
+    --background: #fdf6e3;
+    --surface: #f5efd8;
+    --surface-elevated: #f0e9d3;
+    --foreground: #073642;
+    --muted-foreground: #657b83;
+    --accent-strong: #21867e;
   }
 
   body {
-    background: #ffffff !important;
+    background: #fdf6e3 !important;
+  }
+
+  .graph-field,
+  .graph-field-map {
+    display: none;
   }
 
   header,
