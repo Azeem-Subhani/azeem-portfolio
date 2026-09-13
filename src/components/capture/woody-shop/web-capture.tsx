@@ -1,5 +1,7 @@
 /** 1600×900 Woody Shop product page — walnut coffee table. */
 
+import Image from "next/image";
+
 const NAV = ["Chairs", "Tables", "Storage", "About"] as const;
 
 export function WoodyShopWebCapture() {
@@ -38,10 +40,14 @@ export function WoodyShopWebCapture() {
         <div className="stage">
           <section className="product-images">
             <div className="main-image">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/images/capture/woody-shop/main.jpg"
                 alt="Walnut Coffee Table"
+                width={1600}
+                height={1504}
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="h-full w-full object-cover"
+                unoptimized={false}
               />
             </div>
             <div className="thumbnails">

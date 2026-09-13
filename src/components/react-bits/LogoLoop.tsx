@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 
 export type LogoItem =
   | {
@@ -351,10 +352,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
             {item.node}
           </span>
         ) : (
-          // These URLs can be arbitrary project-provided assets, so Next Image
-          // cannot guarantee an allowed remote host for this generic component.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             className={cx(
               'h-[var(--logoloop-logoHeight)] w-auto block object-contain',
               '[-webkit-user-drag:none] pointer-events-none',
@@ -364,14 +362,13 @@ export const LogoLoop = React.memo<LogoLoopProps>(
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
             )}
             src={item.src}
-            srcSet={item.srcSet}
             sizes={item.sizes}
-            width={item.width}
-            height={item.height}
+            width={item.width ?? logoHeight}
+            height={item.height ?? logoHeight}
             alt={item.alt ?? ''}
             title={item.title}
             loading="lazy"
-            decoding="async"
+            unoptimized
             draggable={false}
           />
         );
@@ -413,7 +410,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
           </li>
         );
       },
-      [isVertical, scaleOnHover, renderItem]
+      [isVertical, scaleOnHover, renderItem, logoHeight]
     );
 
     const logoLists = useMemo(

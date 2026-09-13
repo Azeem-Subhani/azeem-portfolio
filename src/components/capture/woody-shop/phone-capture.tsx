@@ -1,5 +1,7 @@
 /** 900×1600 Woody Shop Discover — mobile app. */
 
+import Image from "next/image";
+
 const PRODUCTS = [
   {
     title: "Walnut Coffee Table",
@@ -78,8 +80,14 @@ export function WoodyShopPhoneCapture() {
               {PRODUCTS.map((product) => (
                 <article className="product-card" key={product.title}>
                   <div className="card-image">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={product.src} alt="" />
+                    <Image
+                      src={product.src}
+                      alt=""
+                      width={1400}
+                      height={763}
+                      sizes="280px"
+                      loading="lazy"
+                    />
                   </div>
                   <div className="card-info">
                     <div className="card-title">{product.title}</div>

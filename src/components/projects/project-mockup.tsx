@@ -192,13 +192,14 @@ export function ProjectMockup({
   const isCatalog = density === "catalog";
   const catalogComposition =
     CATALOG_COMPOSITIONS[project.slug] ?? CATALOG_COMPOSITIONS["track-hero"];
-  const catalogStageRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [catalogSize, setCatalogSize] = useState({ width: 0, height: 0 });
+  const [liveReady, setLiveReady] = useState(false);
 
   useEffect(() => {
     if (!isCatalog) return;
 
-    const stage = catalogStageRef.current;
+    const stage = stageRef.current;
     if (!stage) return;
 
     const measure = () => {
@@ -210,6 +211,28 @@ export function ProjectMockup({
 
     return () => observer.disconnect();
   }, [isCatalog]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    let frame: number | null = null;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+
+        frame = window.requestAnimationFrame(() => setLiveReady(true));
+        observer.disconnect();
+      },
+      { rootMargin: "240px" },
+    );
+
+    observer.observe(stage);
+    return () => {
+      observer.disconnect();
+      if (frame !== null) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const catalogScale =
     isCatalog && catalogSize.width > 0 && catalogSize.height > 0
@@ -251,9 +274,11 @@ export function ProjectMockup({
   const imageSizes = scaledSizes(sizes, browserScale);
   const webAlt = descriptiveAlt ? screens.web.alt : "";
   const phoneAlt = descriptiveAlt && screens.phone ? screens.phone.alt : "";
-  const useLiveWeb = Boolean(screens.liveWeb && getLiveWebMockup(project.slug));
+  const useLiveWeb = Boolean(
+    liveReady && screens.liveWeb && getLiveWebMockup(project.slug),
+  );
   const useLivePhone = Boolean(
-    screens.livePhone && getLivePhoneMockup(project.slug),
+    liveReady && screens.livePhone && getLivePhoneMockup(project.slug),
   );
 
   const phoneStyle = isCatalog
@@ -295,7 +320,7 @@ export function ProjectMockup({
         isCatalog ? "overflow-visible" : "overflow-hidden",
         className,
       )}
-      ref={isCatalog ? catalogStageRef : undefined}
+      ref={stageRef}
       style={
         isCatalog || density === "case-study"
           ? undefined
