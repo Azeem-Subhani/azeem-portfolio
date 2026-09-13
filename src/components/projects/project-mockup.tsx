@@ -159,6 +159,7 @@ function ScreenImage({
       height={screen.height}
       sizes={sizes}
       priority={priority}
+      loading={priority ? "eager" : "lazy"}
       unoptimized={process.env.NODE_ENV === "development"}
       className={cn("block h-full w-full object-cover object-top", className)}
     />
@@ -217,6 +218,14 @@ export function ProjectMockup({
     if (!stage) return;
 
     let frame: number | null = null;
+
+    if (!("IntersectionObserver" in window)) {
+      frame = window.requestAnimationFrame(() => setLiveReady(true));
+      return () => {
+        if (frame !== null) window.cancelAnimationFrame(frame);
+      };
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
