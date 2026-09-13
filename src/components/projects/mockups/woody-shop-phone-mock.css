@@ -1,0 +1,33 @@
+/* Stretch the 9:16 export layout to the iPhone 15 Pro screen the frame uses. */
+.ws-phone-mock-host .ws-capture-root {
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.ws-phone-mock-host .capture--phone {
+  width: 100%;
+  height: 100%;
+}
+
+/* Inner canvas is 400px wide at scale(2.25). Height fills the 900×~1950 mock. */
+.ws-phone-mock-host .ph-inner {
+  width: 400px;
+  height: calc(100% / 2.25);
+}
+
+/* Safe area from iPhone 15 Pro (59pt top, 34pt home indicator)
+   mapped to the 400px inner canvas (900px capture / 2.25). */
+.ws-phone-mock-host .ph-header {
+  padding-top: 60px;
+}
+
+.ws-phone-mock-host .ph-tabbar {
+  height: auto;
+  padding-bottom: 35px;
+}
+
+.ws-phone-mock-host .ph-scroll {
+  padding-bottom: 105px;
+}

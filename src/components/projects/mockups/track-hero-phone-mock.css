@@ -1,0 +1,23 @@
+/* Stretch the 9:16 export layout to the iPhone 15 Pro screen the frame uses. */
+.th-phone-mock-host .th-capture-root {
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.th-phone-mock-host .capture--phone {
+  width: 100%;
+  height: 100%;
+}
+
+.th-phone-mock-host .p-topbar {
+  height: auto;
+  padding-top: 135px;
+  padding-bottom: 28px;
+}
+
+.th-phone-mock-host .p-cta {
+  height: auto;
+  padding-bottom: 78px;
+}

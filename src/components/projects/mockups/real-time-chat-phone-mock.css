@@ -1,0 +1,22 @@
+/* Stretch the 9:16 export layout to the iPhone 15 Pro screen the frame uses. */
+.rtc-phone-mock-host .rtc-capture-root {
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.rtc-phone-mock-host .capture--phone {
+  width: 100%;
+  height: 100%;
+}
+
+.rtc-phone-mock-host .p-head {
+  height: auto;
+  padding-top: 135px;
+  padding-bottom: 28px;
+}
+
+.rtc-phone-mock-host .p-composer {
+  padding-bottom: 78px;
+}

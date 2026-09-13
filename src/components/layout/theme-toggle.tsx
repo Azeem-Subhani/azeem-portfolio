@@ -1,0 +1,42 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+
+import { Button } from "@/components/ui/button";
+
+export function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    // next-themes only knows the resolved theme after the client mounts, so
+    // this flips once to reveal the real icon and avoid a hydration
+    // mismatch. There's no external system to synchronize with here, which
+    // is what the lint rule normally guards against.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
+  const label = isDark ? "Use light theme" : "Use dark theme";
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label={label}
+      title={label}
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="border border-border bg-glass backdrop-blur-md"
+    >
+      {mounted && isDark ? (
+        <Sun aria-hidden="true" className="size-4" />
+      ) : (
+        <Moon aria-hidden="true" className="size-4" />
+      )}
+    </Button>
+  );
+}

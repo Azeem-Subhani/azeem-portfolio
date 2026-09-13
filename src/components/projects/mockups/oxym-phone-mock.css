@@ -1,0 +1,24 @@
+/* Stretch the 9:16 export layout to the iPhone 15 Pro screen the frame uses. */
+.oxym-phone-mock-host .oxym-capture-root {
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.oxym-phone-mock-host .capture--phone {
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Safe area from iPhone 15 Pro (59pt top, 34pt home indicator)
+ * mapped to the 900px capture canvas.
+ */
+.oxym-phone-mock-host .p-head {
+  padding-top: 135px;
+}
+
+.oxym-phone-mock-host .composer {
+  padding-bottom: 78px;
+}
