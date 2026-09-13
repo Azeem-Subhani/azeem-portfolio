@@ -42,7 +42,7 @@ async function run() {
       position: image.fit === "cover" ? "top" : undefined,
     });
 
-    await pipeline.webp({ quality: 82 }).toFile(outputPath);
+    await pipeline.webp({ quality: 76, effort: 6 }).toFile(outputPath);
     console.log(`Wrote ${path.relative(ROOT, outputPath)}`);
   }
 }
