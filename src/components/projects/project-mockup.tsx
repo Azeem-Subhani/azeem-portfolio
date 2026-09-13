@@ -23,7 +23,7 @@ type ProjectMockupProps = {
   hoverable?: boolean;
   /** Soft teal wash over the still. Off for catalog photography. */
   glow?: boolean;
-  /** Descriptive alt on web/phone images. Off inside card and catalog links. */
+  /** Use the project-provided descriptive alt text for still images. */
   descriptiveAlt?: boolean;
   className?: string;
 };
@@ -154,7 +154,7 @@ function ScreenImage({
   return (
     <Image
       src={screen.src}
-      alt={alt}
+      alt={alt || screen.alt}
       width={screen.width}
       height={screen.height}
       sizes={sizes}
@@ -219,7 +219,10 @@ export function ProjectMockup({
 
     let frame: number | null = null;
 
-    if (!("IntersectionObserver" in window)) {
+    const hasIntersectionObserver =
+      typeof window.IntersectionObserver === "function";
+
+    if (!hasIntersectionObserver) {
       frame = window.requestAnimationFrame(() => setLiveReady(true));
       return () => {
         if (frame !== null) window.cancelAnimationFrame(frame);

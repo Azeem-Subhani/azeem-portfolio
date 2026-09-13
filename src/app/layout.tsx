@@ -3,9 +3,11 @@ import { Instrument_Serif, Inter } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { MobileCta } from "@/components/layout/mobile-cta";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { SiteIntro } from "@/components/motion/site-intro";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
+import { PrivacyConsent } from "@/components/privacy/privacy-consent";
 import { profile } from "@/content/profile";
 
 import "lenis/dist/lenis.css";
@@ -54,12 +56,21 @@ export const metadata: Metadata = {
     description:
       "SaaS, payments, booking, real-time, and AI application engineering.",
     url: "/",
+    images: [{ url: "/opengraph-image" }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${profile.name} | Full-Stack & AI Application Engineer`,
     description:
       "SaaS, payments, booking, real-time, and AI application engineering.",
+    images: ["/opengraph-image"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-icon",
   },
 };
 
@@ -93,8 +104,10 @@ export default function RootLayout({
             </a>
             <Header />
             <main id="main-content">{children}</main>
+            <MobileCta />
             <Footer />
           </SmoothScroll>
+          <PrivacyConsent />
         </ThemeProvider>
       </body>
     </html>

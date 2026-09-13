@@ -82,7 +82,7 @@ export function WoodyShopPhoneCapture() {
                   <div className="card-image">
                     <Image
                       src={product.src}
-                      alt=""
+                      alt={`${product.title} product image`}
                       width={1400}
                       height={763}
                       sizes="280px"

@@ -85,7 +85,15 @@ export function Footer() {
       </div>
 
       <p className="mx-auto mt-12 max-w-7xl text-xs text-muted-foreground">
-        © {year} {profile.name}
+        <span>© {year} {profile.name}</span>
+        <span className="mx-2" aria-hidden="true">·</span>
+        <Link href="/privacy" className="transition-colors hover:text-foreground">
+          Privacy
+        </Link>
+        <span className="mx-2" aria-hidden="true">·</span>
+        <Link href="/terms" className="transition-colors hover:text-foreground">
+          Terms
+        </Link>
       </p>
     </footer>
   );

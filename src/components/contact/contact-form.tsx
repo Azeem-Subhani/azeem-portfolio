@@ -7,6 +7,7 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CheckCircle2, ChevronDown, Loader2 } from "lucide-react";
@@ -24,6 +25,7 @@ type SubmitState = "idle" | "success" | "error";
 const sortedCountries = [...countries].sort((a, b) => a.name.localeCompare(b.name));
 
 export function ContactForm() {
+  const router = useRouter();
   const formId = useId();
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -187,6 +189,7 @@ export function ContactForm() {
       setSubmitState("success");
       reset();
       setPhoneNumber("");
+      router.replace("/contact/thank-you");
     } catch {
       setSubmitState("error");
       setErrorMessage(
@@ -200,6 +203,7 @@ export function ContactForm() {
       onSubmit={handleSubmit(onSubmit)}
       noValidate
       aria-label="Contact form"
+      aria-busy={isSubmitting}
       className="relative flex flex-col gap-6 rounded-2xl border border-border bg-surface/80 p-6 shadow-[0_18px_50px_rgb(var(--shadow-color)/0.08)] backdrop-blur-sm sm:p-8"
     >
       {/* Honeypot: hidden from sighted users and assistive tech. Real visitors never fill it. */}
