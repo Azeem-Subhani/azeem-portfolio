@@ -4,6 +4,7 @@ export function MemorialPlanningPhoneCapture() {
   return (
     <div className="mp-capture-root">
       <section className="capture capture--phone" aria-label="Memorial Planning payment on phone">
+        <div className="mobile-inner">
         <header className="mobile-header">
           <button type="button" className="back-button" aria-label="Go back">
             <svg viewBox="0 0 24 24">
@@ -19,7 +20,7 @@ export function MemorialPlanningPhoneCapture() {
         <div className="mobile-content">
           <div className="mobile-plan-label">Mitchell Family Plan</div>
           <h1 className="mobile-title">Make a payment</h1>
-          <p className="mobile-intro">Choose an amount to apply toward your pre-arranged services.</p>
+          <p className="mobile-intro">Choose an amount toward your pre-arranged services.</p>
 
           <section className="mobile-card" aria-label="Plan balance">
             <div className="balance-topline">
@@ -105,31 +106,12 @@ export function MemorialPlanningPhoneCapture() {
               </button>
             </div>
           </section>
-
-          <section className="review-card" aria-label="Payment summary">
-            <h2 className="review-title">Payment summary</h2>
-            <div className="summary-row">
-              <span>Payment amount</span>
-              <strong>$215.00</strong>
-            </div>
-            <div className="summary-row">
-              <span>Processing fee</span>
-              <strong>$0.00</strong>
-            </div>
-            <div className="summary-row summary-total">
-              <span>Total today</span>
-              <strong>$215.00</strong>
-            </div>
-            <p className="receipt-note">A receipt will be sent to eleanor.mitchell@email.com.</p>
-          </section>
+        </div>
 
           <section className="mobile-action-area">
             <button type="button" className="primary-button mobile-primary">
               Review payment
             </button>
-            <p className="authorization-copy">
-              By continuing, you authorize Memorial Planning to process this payment.
-            </p>
             <div className="trust-line">
               <span className="trust-lock">⌑</span>
               Secure payment processing by Trust Commerce

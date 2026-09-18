@@ -1,0 +1,13 @@
+/* Phone captures are 900×1600 exports centered in a taller iPhone canvas.
+   Stretch them to the scaled host so the UI fills the frame. */
+[data-capture-frame="phone"] [class*="-capture-root"] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+[data-capture-frame="phone"] .capture--phone {
+  width: 100%;
+  height: 100%;
+}

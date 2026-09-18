@@ -3,6 +3,7 @@ export function OxymPhoneCapture() {
   return (
     <div className="oxym-capture-root">
       <section className="capture capture--phone" aria-label="Oxym phone app">
+        <div className="p-inner">
         <header className="p-head">
           <button type="button" className="icon-btn" aria-label="Back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -145,6 +146,7 @@ export function OxymPhoneCapture() {
             </svg>
           </button>
         </footer>
+        </div>
       </section>
     </div>
   );

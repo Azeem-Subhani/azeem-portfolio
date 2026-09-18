@@ -113,11 +113,11 @@
   left: 0;
   z-index: 2;
   display: flex;
-  width: 450px;
-  height: 800px;
+  width: 393px;
+  height: calc(100% * 393 / 900);
   flex-direction: column;
   overflow: hidden;
-  transform: scale(2);
+  transform: scale(calc(900 / 393));
   transform-origin: top left;
 }
 
@@ -751,8 +751,8 @@
 /* Phone */
 .gg-capture-root .ph-head {
   display: flex;
-  height: 52px;
-  flex: 0 0 52px;
+  min-height: 48px;
+  flex: none;
   flex-direction: row;
   align-items: center;
   gap: 9px;
@@ -765,7 +765,7 @@
 }
 
 .gg-capture-root .ph-brand {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.05em;
 }
@@ -785,7 +785,7 @@
 }
 
 .gg-capture-root .ph-title {
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -793,8 +793,8 @@
 
 .gg-capture-root .ph-sub {
   margin-top: 6px;
-  font-size: 8px;
-  letter-spacing: 0.16em;
+  font-size: 11px;
+  letter-spacing: 0.14em;
   color: var(--tx3);
 }
 
@@ -807,17 +807,17 @@
 }
 
 .gg-capture-root .ph-tile .k {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .gg-capture-root .ph-tile .v {
   margin-top: 6px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .gg-capture-root .ph-tile .d {
   margin-top: 5px;
-  font-size: 8.5px;
+  font-size: 11px;
 }
 
 .gg-capture-root .ph-ph {
@@ -825,7 +825,7 @@
 }
 
 .gg-capture-root .ph-ph h3 {
-  font-size: 9.5px;
+  font-size: 12px;
 }
 
 .gg-capture-root .queue-row,
@@ -903,10 +903,31 @@
   font-size: 7px;
 }
 
+.gg-capture-root .ph-inner .queue-title {
+  font-size: 13px;
+}
+
+.gg-capture-root .ph-inner .queue-id {
+  font-size: 10px;
+}
+
+.gg-capture-root .ph-inner .queue-note {
+  font-size: 12px;
+}
+
+.gg-capture-root .ph-inner .user-name {
+  font-size: 13px;
+}
+
+.gg-capture-root .ph-inner .chip-sm {
+  height: 16px;
+  font-size: 9px;
+}
+
 .gg-capture-root .ph-tabbar {
   display: grid;
-  height: 58px;
-  flex: 0 0 58px;
+  min-height: 56px;
+  flex: none;
   grid-template-columns: repeat(5, 1fr);
   background: #151310;
   border-top: 1px solid var(--line);
@@ -929,9 +950,9 @@
 }
 
 .gg-capture-root .ph-tab span {
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: currentColor;
 }
 

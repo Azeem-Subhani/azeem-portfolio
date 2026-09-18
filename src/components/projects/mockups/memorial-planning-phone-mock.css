@@ -11,14 +11,21 @@
   height: 100%;
 }
 
+/* Inner canvas is 393px wide at scale(900/393). Height fills the 900×~1950 mock. */
+.mp-phone-mock-host .mobile-inner {
+  width: 393px;
+  height: calc(100% * 393 / 900);
+}
+
+/* Safe area from iPhone 15 Pro (59pt top, 34pt home indicator)
+   mapped to the 393px inner canvas. */
 .mp-phone-mock-host .mobile-header {
   min-height: 0;
   height: auto;
-  padding-top: 135px;
-  padding-bottom: 28px;
+  padding-top: 59px;
+  padding-bottom: 10px;
 }
 
 .mp-phone-mock-host .mobile-action-area {
-  margin-top: auto;
-  padding-bottom: 78px;
+  padding-bottom: 34px;
 }
