@@ -93,56 +93,52 @@ export function DeviceStage({
   return (
     <div className={cn("w-full", className)}>
       {layout !== "row" && activeWeb ? (
-        <div className="relative">
-          <div
-            className={cn(
-              "relative",
-              layout === "hero" && hasPhones
-                ? "min-h-[280px] pb-24 sm:min-h-[400px] sm:pb-8 lg:min-h-[560px]"
-                : undefined,
-            )}
-          >
-            <div
-              className={cn(
-                "mx-auto w-full max-w-[1000px]",
-                layout === "hero" && hasPhones && "sm:pr-[168px] lg:pr-[220px]",
-              )}
-            >
-              <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
-                <div className="pointer-events-none">{activeWeb.children}</div>
-              </BrowserFrame>
-            </div>
-
-            {layout === "hero" && activePhone ? (
-              <div className="pointer-events-none absolute bottom-[-8px] right-0 hidden w-[270px] origin-bottom-right scale-[0.62] sm:block lg:bottom-0 lg:right-2 lg:scale-[0.7]">
-                <PhoneFrame
-                  shellClassName={activePhone.shellClassName}
-                  screenClassName={activePhone.screenClassName}
-                  statusTone={activePhone.statusTone}
+        layout === "hero" && hasPhones ? (
+          // Same overlap as ProjectMockup case-study, scaled up so the
+          // cluster fills the hero instead of floating in empty space.
+          <div className="relative min-h-[280px] aspect-[16/10] overflow-hidden lg:aspect-auto lg:min-h-[640px]">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative aspect-[16/10] w-full max-w-[1100px] max-h-[640px]">
+                <div
+                  className="pointer-events-none absolute left-1/2 top-[12px] w-[1000px] origin-top"
+                  style={{ transform: "translateX(-50%) scale(0.78)" }}
                 >
-                  <div className="pointer-events-none absolute inset-0">
-                    {activePhone.children}
-                  </div>
-                </PhoneFrame>
-              </div>
-            ) : null}
-          </div>
-
-          {layout === "hero" && activePhone ? (
-            <div className="mt-6 flex justify-center sm:hidden">
-              <PhoneFrame
-                className="origin-top scale-[0.92]"
-                shellClassName={activePhone.shellClassName}
-                screenClassName={activePhone.screenClassName}
-                statusTone={activePhone.statusTone}
-              >
-                <div className="pointer-events-none absolute inset-0">
-                  {activePhone.children}
+                  <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
+                    <div className="pointer-events-none">{activeWeb.children}</div>
+                  </BrowserFrame>
                 </div>
-              </PhoneFrame>
+
+                {activePhone ? (
+                  <div
+                    className="pointer-events-none absolute w-[270px]"
+                    style={{
+                      right: "5%",
+                      bottom: "140px",
+                      transform: "scale(0.66)",
+                      transformOrigin: "bottom right",
+                    }}
+                  >
+                    <PhoneFrame
+                      shellClassName={activePhone.shellClassName}
+                      screenClassName={activePhone.screenClassName}
+                      statusTone={activePhone.statusTone}
+                    >
+                      <div className="pointer-events-none absolute inset-0">
+                        {activePhone.children}
+                      </div>
+                    </PhoneFrame>
+                  </div>
+                ) : null}
+              </div>
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : (
+          <div className="mx-auto w-full max-w-[1000px]">
+            <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
+              <div className="pointer-events-none">{activeWeb.children}</div>
+            </BrowserFrame>
+          </div>
+        )
       ) : null}
 
       {layout === "row" && hasPhones ? (
