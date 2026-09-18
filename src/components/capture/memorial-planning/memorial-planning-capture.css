@@ -79,6 +79,20 @@
   flex-direction: column;
 }
 
+/* 393pt iPhone layout, scaled to the 900px capture canvas. */
+.mp-capture-root .mobile-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 393px;
+  height: calc(100% * 393 / 900);
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(calc(900 / 393));
+  transform-origin: top left;
+}
+
 /* Web — sidebar */
 .mp-capture-root .sidebar {
   display: flex;
@@ -666,15 +680,15 @@
   display: grid;
   grid-template-columns: 44px 1fr 44px;
   align-items: center;
-  min-height: 94px;
-  padding: 0 35px;
+  min-height: 44px;
+  padding: 0 16px;
   background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid var(--line);
   flex: none;
 }
 
 .mp-capture-root .mobile-header-title {
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 750;
   letter-spacing: -0.02em;
   text-align: center;
@@ -683,8 +697,8 @@
 .mp-capture-root .back-button,
 .mp-capture-root .mobile-help {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   color: var(--evergreen);
   background: transparent;
@@ -692,8 +706,8 @@
 }
 
 .mp-capture-root .back-button svg {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -708,12 +722,12 @@
 
 .mp-capture-root .mobile-help span {
   display: grid;
-  width: 21px;
-  height: 21px;
+  width: 20px;
+  height: 20px;
   place-items: center;
-  border: 1.7px solid currentColor;
+  border: 1.5px solid currentColor;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -722,44 +736,45 @@
   flex: 1;
   min-height: 0;
   flex-direction: column;
-  padding: 51px 44px 42px;
+  overflow: hidden;
+  padding: 16px 20px 12px;
 }
 
 .mp-capture-root .mobile-plan-label {
-  margin-bottom: 13px;
+  margin-bottom: 8px;
   color: #718078;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-align: center;
   text-transform: uppercase;
 }
 
 .mp-capture-root .mobile-title {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: var(--evergreen-dark);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 42px;
+  font-size: 28px;
   font-weight: 500;
   letter-spacing: -0.04em;
   text-align: center;
 }
 
 .mp-capture-root .mobile-intro {
-  max-width: 610px;
-  margin: 0 auto 36px;
+  max-width: none;
+  margin: 0 auto 16px;
   color: var(--muted);
-  font-size: 17px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.45;
   text-align: center;
 }
 
 .mp-capture-root .mobile-card {
-  margin-bottom: 29px;
-  padding: 29px;
+  margin-bottom: 14px;
+  padding: 14px 16px;
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 16px;
   box-shadow: var(--soft-shadow);
 }
 
@@ -783,16 +798,16 @@
 }
 
 .mp-capture-root .mobile-balance {
-  margin: 13px 0 24px;
+  margin: 6px 0 12px;
   color: var(--evergreen-dark);
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 750;
   letter-spacing: -0.05em;
 }
 
 .mp-capture-root .mobile-divider {
   height: 1px;
-  margin: 0 0 22px;
+  margin: 0 0 12px;
   background: var(--line);
 }
 
@@ -1078,23 +1093,112 @@
 }
 
 .mp-capture-root .mobile-action-area {
-  margin-top: 35px;
+  flex: none;
+  margin-top: 0;
+  padding: 8px 20px 0;
   text-align: center;
 }
 
 .mp-capture-root .mobile-primary {
   width: 100%;
-  min-height: 66px;
-  border-radius: 14px;
+  min-height: 50px;
+  border-radius: 12px;
   font-size: 17px;
 }
 
 .mp-capture-root .authorization-copy {
-  max-width: 630px;
-  margin: 17px auto 25px;
+  max-width: none;
+  margin: 10px auto 12px;
   color: #7b8680;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.mp-capture-root .mobile-inner .form-section {
+  margin-bottom: 14px;
+}
+
+.mp-capture-root .mobile-inner .form-heading {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.mp-capture-root .mobile-inner .amount-input {
+  min-height: 52px;
+  padding: 0 16px;
+  border-radius: 12px;
+}
+
+.mp-capture-root .mobile-inner .currency {
+  font-size: 22px;
+}
+
+.mp-capture-root .mobile-inner .amount-input input {
+  font-size: 24px;
+}
+
+.mp-capture-root .mobile-inner .amount-help {
+  margin: 8px 0 10px;
+}
+
+.mp-capture-root .mobile-inner .payment-method-card {
+  gap: 12px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.mp-capture-root .mobile-inner .payment-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.mp-capture-root .mobile-inner .method-title {
+  margin-bottom: 3px;
+  font-size: 16px;
+}
+
+.mp-capture-root .mobile-inner .method-subtitle {
+  font-size: 13px;
+}
+
+.mp-capture-root .mobile-inner .date-option {
+  min-height: 72px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.mp-capture-root .mobile-inner .review-card {
+  padding: 14px 16px;
+  border-radius: 16px;
+}
+
+.mp-capture-root .mobile-inner .review-title {
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.mp-capture-root .mobile-inner .receipt-note {
+  margin-top: 12px;
+}
+
+.mp-capture-root .mobile-inner .lock-line {
+  margin-top: 8px;
   font-size: 11px;
-  line-height: 1.55;
+}
+
+.mp-capture-root .mobile-inner .details-grid {
+  gap: 10px;
+}
+
+.mp-capture-root .mobile-inner .detail-value {
+  font-size: 14px;
+}
+
+.mp-capture-root .mobile-inner .amount-chip {
+  padding: 8px 12px;
+  font-size: 13px;
 }
 
 .mp-capture-root .trust-line {
@@ -1115,4 +1219,389 @@
   background: #e5f0e7;
   border-radius: 50%;
   font-size: 13px;
+}
+
+/* Case-study screens */
+.mp-capture-root .secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  color: var(--evergreen);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mp-capture-root .history-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+  padding: 16px 20px;
+}
+
+.mp-capture-root .history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mp-capture-root .filter-chip {
+  padding: 8px 14px;
+  color: #53645d;
+  background: var(--cream);
+  border: 1px solid #d9e2da;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mp-capture-root .filter-chip.active {
+  color: var(--evergreen);
+  background: var(--evergreen-soft);
+  border-color: var(--evergreen);
+}
+
+.mp-capture-root .history-search-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mp-capture-root .history-search-field {
+  min-width: 220px;
+  padding: 10px 14px;
+  color: #87918c;
+  background: #fbfcfb;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.mp-capture-root .history-table-card {
+  margin-bottom: 8px;
+}
+
+.mp-capture-root .receipt-main {
+  padding-bottom: 24px;
+}
+
+.mp-capture-root .receipt-header {
+  margin-bottom: 24px;
+}
+
+.mp-capture-root .receipt-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.mp-capture-root .receipt-detail-card {
+  padding: 28px 30px;
+}
+
+.mp-capture-root .receipt-success-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 26px;
+  padding: 18px 20px;
+  background: var(--evergreen-soft);
+  border: 1px solid #d5e4d7;
+  border-radius: 16px;
+}
+
+.mp-capture-root .receipt-success-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  place-items: center;
+  color: white;
+  background: var(--success);
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.mp-capture-root .receipt-success-title {
+  margin-bottom: 6px;
+  color: var(--evergreen-dark);
+  font-size: 22px;
+  font-weight: 760;
+  letter-spacing: -0.03em;
+}
+
+.mp-capture-root .receipt-success-sub {
+  color: #54675d;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.mp-capture-root .receipt-lines {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mp-capture-root .receipt-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+  color: #54675d;
+  font-size: 14px;
+}
+
+.mp-capture-root .receipt-line strong {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.mp-capture-root .receipt-line-total {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #edf0ed;
+}
+
+.mp-capture-root .receipt-line-total span,
+.mp-capture-root .receipt-line-total strong {
+  color: var(--evergreen-dark);
+  font-size: 17px;
+  font-weight: 760;
+}
+
+.mp-capture-root .receipt-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+
+.mp-capture-root .receipt-meta-label {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mp-capture-root .receipt-meta-value {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 730;
+}
+
+.mp-capture-root .receipt-side-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: #eef5ef;
+  border-color: #d9e6da;
+}
+
+.mp-capture-root .receipt-side-title {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.mp-capture-root .receipt-side-copy {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.mp-capture-root .receipt-notify-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  color: var(--evergreen-dark);
+  background: white;
+  border: 1px solid #d5e4d7;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mp-capture-root .notify-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+}
+
+.mp-capture-root .pay-desktop-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.mp-capture-root .pay-panel {
+  margin-bottom: 18px;
+  padding: 24px 26px;
+}
+
+.mp-capture-root .tight-label {
+  margin-bottom: 0;
+}
+
+.mp-capture-root .desktop-amount-input {
+  margin-bottom: 16px;
+  min-height: 72px;
+}
+
+.mp-capture-root .desktop-date-options {
+  margin-top: 4px;
+}
+
+.mp-capture-root .desktop-method-card {
+  margin-top: 0;
+}
+
+.mp-capture-root .pay-summary-panel {
+  padding: 26px 28px;
+  background: #e7efe8;
+  border-color: #d7e5d8;
+}
+
+.mp-capture-root .pay-summary-balance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  color: #54675d;
+  border-bottom: 1px solid #cadaca;
+  font-size: 14px;
+}
+
+.mp-capture-root .pay-summary-balance strong {
+  color: var(--evergreen-dark);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.mp-capture-root .pay-submit {
+  width: 100%;
+  margin-top: 8px;
+  min-height: 48px;
+}
+
+.mp-capture-root .confirmation-content {
+  align-items: center;
+  text-align: center;
+}
+
+.mp-capture-root .confirmation-badge {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  margin-bottom: 14px;
+  color: white;
+  background: var(--success);
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.mp-capture-root .confirmation-title {
+  margin-bottom: 8px;
+}
+
+.mp-capture-root .confirmation-intro {
+  margin-bottom: 16px;
+}
+
+.mp-capture-root .confirmation-card {
+  width: 100%;
+  text-align: left;
+}
+
+.mp-capture-root .confirmation-amount {
+  margin-bottom: 6px;
+  color: var(--evergreen-dark);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.mp-capture-root .confirmation-meta {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.mp-capture-root .confirmation-notify {
+  width: 100%;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.mp-capture-root .text-button-link {
+  display: inline-block;
+  margin: 10px 0 14px;
+  color: var(--evergreen);
+  background: transparent;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.mp-capture-root .method-picker-content {
+  padding-top: 8px;
+}
+
+.mp-capture-root .method-picker-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.mp-capture-root .method-picker-card {
+  width: 100%;
+  text-align: left;
+}
+
+.mp-capture-root .method-picker-card.selected-method {
+  border-color: var(--evergreen);
+  box-shadow: 0 0 0 3px rgba(33, 72, 62, 0.08);
+}
+
+.mp-capture-root .method-picker-card .radio {
+  position: static;
+  flex: none;
+}
+
+.mp-capture-root .add-method-link {
+  display: block;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 14px;
+  color: var(--evergreen);
+  background: white;
+  border: 1px dashed #b9cfbd;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 750;
+  text-align: center;
 }

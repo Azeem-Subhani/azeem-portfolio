@@ -1,33 +1,30 @@
-/* Stretch the 9:16 export layout to the iPhone 15 Pro screen the frame uses. */
-.oxym-phone-mock-host .oxym-capture-root {
+/* Stretch the 9:16 Posy phone capture into the iPhone 15 Pro frame. */
+.tm-phone-mock-host .tm-capture-root {
   align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
   height: 100%;
 }
 
-.oxym-phone-mock-host .capture--phone {
+.tm-phone-mock-host .capture--phone {
   width: 100%;
   height: 100%;
 }
 
 /* Inner canvas is 393px wide at scale(900/393). Height fills the 900×~1950 mock. */
-.oxym-phone-mock-host .p-inner {
+.tm-phone-mock-host .p-inner {
   width: 393px;
   height: calc(100% * 393 / 900);
 }
 
 /* Safe area from iPhone 15 Pro (59pt top, 34pt home indicator)
    mapped to the 393px inner canvas. */
-.oxym-phone-mock-host .p-head {
+.tm-phone-mock-host .p-head,
+.tm-phone-mock-host .p-head--detail {
   padding-top: 59px;
 }
 
-.oxym-phone-mock-host .composer {
-  padding-bottom: 34px;
-}
-
-.oxym-phone-mock-host .p-body--schedule,
-.oxym-phone-mock-host .p-body--invoice {
+.tm-phone-mock-host .p-tabbar {
+  height: auto;
   padding-bottom: 34px;
 }

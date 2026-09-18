@@ -17,6 +17,12 @@
   padding-bottom: 28px;
 }
 
-.rtc-phone-mock-host .p-composer {
+.rtc-phone-mock-host .p-inbox-head {
+  padding-top: 135px;
+}
+
+.rtc-phone-mock-host .p-composer,
+.rtc-phone-mock-host .p-inbox-live {
+  height: auto;
   padding-bottom: 78px;
 }

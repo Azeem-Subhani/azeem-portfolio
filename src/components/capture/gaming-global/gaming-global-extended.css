@@ -1,0 +1,563 @@
+/* Extra layouts for case-study captures (converter, chat, tables). */
+
+.gg-capture-root .lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tx3);
+}
+
+.gg-capture-root .chead {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.gg-capture-root .chead h1 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.gg-capture-root .chead .sub {
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tx3);
+}
+
+.gg-capture-root .chead .acts {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.gg-capture-root .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: var(--s2);
+}
+
+.gg-capture-root .field .v {
+  font-family: var(--mono);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.gg-capture-root .field .v .u {
+  margin-left: 4px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--tx3);
+}
+
+.gg-capture-root .gsel {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border: 1px solid var(--line2);
+  background: var(--s2);
+}
+
+.gg-capture-root .gsel .gbadge {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line2);
+  background: var(--s3);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--acc);
+}
+
+.gg-capture-root .gsel .gn {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.gg-capture-root .gsel .gs {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--tx3);
+}
+
+.gg-capture-root .gsel .chev {
+  margin-left: auto;
+  color: var(--tx3);
+}
+
+.gg-capture-root .ro {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.gg-capture-root .ro-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #2a2722;
+}
+
+.gg-capture-root .ro-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.gg-capture-root .ro-row .k {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tx3);
+}
+
+.gg-capture-root .ro-row .v {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gg-capture-root .hr {
+  height: 1px;
+  margin: 0 -14px;
+  background: var(--line);
+}
+
+.gg-capture-root .conv-grid {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: 1fr 300px 1fr;
+  gap: 14px;
+}
+
+.gg-capture-root .conv-panel-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+}
+
+.gg-capture-root .conv-match {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px;
+  text-align: center;
+}
+
+.gg-capture-root .conv-match-num {
+  font-family: var(--mono);
+  font-size: 46px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--acc);
+}
+
+.gg-capture-root table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gg-capture-root thead th {
+  height: 30px;
+  padding: 0 13px;
+  border-bottom: 1px solid var(--line);
+  background: #151310;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--tx3);
+}
+
+.gg-capture-root tbody td {
+  height: 34px;
+  padding: 0 13px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.gg-capture-root tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.gg-capture-root tbody tr.hl {
+  background: rgba(255, 122, 42, 0.05);
+}
+
+.gg-capture-root tbody tr.hl td:first-child {
+  box-shadow: inset 2px 0 0 var(--acc);
+}
+
+.gg-capture-root td .gname {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 600;
+}
+
+.gg-capture-root td.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.gg-capture-root .delta {
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.gg-capture-root .delta.ok {
+  color: var(--acc);
+}
+
+.gg-capture-root .delta.mid {
+  color: var(--warn);
+}
+
+.gg-capture-root .content--chat {
+  flex-direction: row;
+  gap: 0;
+  padding: 0;
+}
+
+.gg-capture-root .chat-rail {
+  display: flex;
+  width: 266px;
+  flex: 0 0 266px;
+  flex-direction: column;
+  background: #151310;
+  border-right: 1px solid var(--line);
+}
+
+.gg-capture-root .chat-rail-search {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  background: var(--s1);
+  color: var(--tx3);
+  font-size: 11px;
+}
+
+.gg-capture-root .chat-rail-pad {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.gg-capture-root .chat-rail-sec {
+  padding: 16px 14px 8px;
+}
+
+.gg-capture-root .chat-rail-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.gg-capture-root .chat-thread {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.gg-capture-root .chat-thread-head {
+  display: flex;
+  height: 50px;
+  flex: 0 0 50px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.gg-capture-root .chat-msgs {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  padding: 18px;
+}
+
+.gg-capture-root .chat-day {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--tx3);
+}
+
+.gg-capture-root .chat-day span:nth-child(2) {
+  flex: 0 0 auto;
+}
+
+.gg-capture-root .chat-day::before,
+.gg-capture-root .chat-day::after {
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+  content: "";
+}
+
+.gg-capture-root .chat-line {
+  display: flex;
+  gap: 12px;
+}
+
+.gg-capture-root .chat-time {
+  width: 40px;
+  flex: 0 0 40px;
+  padding-top: 3px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #5c564e;
+}
+
+.gg-capture-root .chat-body {
+  flex: 1;
+}
+
+.gg-capture-root .chat-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gg-capture-root .chat-user-acc {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--acc);
+}
+
+.gg-capture-root .chat-user-hal {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #e8c9ff;
+}
+
+.gg-capture-root .chat-user-v1 {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffd48a;
+}
+
+.gg-capture-root .chat-text {
+  font-size: 11.5px;
+  color: var(--tx3);
+}
+
+.gg-capture-root .chat-embed {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+  padding: 13px 15px;
+  border: 1px solid var(--line2);
+  border-left: 2px solid var(--acc);
+  background: var(--s1);
+}
+
+.gg-capture-root .chat-composer {
+  padding: 14px 18px;
+  background: #151310;
+  border-top: 1px solid var(--line);
+}
+
+.gg-capture-root .chat-composer-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--line2);
+  background: var(--s1);
+}
+
+.gg-capture-root .chat-members {
+  display: flex;
+  width: 290px;
+  flex: 0 0 290px;
+  flex-direction: column;
+  background: #151310;
+  border-left: 1px solid var(--line);
+}
+
+.gg-capture-root .chat-member-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+}
+
+.gg-capture-root .chat-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.gg-capture-root .chat-dot.acc {
+  background: var(--acc);
+}
+
+.gg-capture-root .chat-dot.wrn {
+  background: var(--warn);
+}
+
+.gg-capture-root .chat-dot.off {
+  background: #433e36;
+}
+
+.gg-capture-root .ph-chat-head {
+  display: flex;
+  min-height: 48px;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.gg-capture-root .ph-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.gg-capture-root .ph-chat-title .mono {
+  font-size: 14px;
+  color: var(--tx3);
+}
+
+.gg-capture-root .ph-chat-online {
+  margin-top: 3px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--acc);
+}
+
+.gg-capture-root .ph-chat-search {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+}
+
+.gg-capture-root .ph-chat-msgs {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  overflow: hidden;
+  padding: 14px 16px 8px;
+}
+
+.gg-capture-root .ph-inner .chat-text {
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--tx2);
+}
+
+.gg-capture-root .ph-inner .chat-user-acc,
+.gg-capture-root .ph-inner .chat-user-hal,
+.gg-capture-root .ph-inner .chat-user-v1 {
+  font-size: 15px;
+}
+
+.gg-capture-root .ph-inner .chat-time {
+  width: 42px;
+  flex-basis: 42px;
+  font-size: 11px;
+}
+
+.gg-capture-root .ph-inner .chat-embed {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.gg-capture-root .ph-chat-embed-title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.gg-capture-root .ph-chat-embed-meta {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--tx3);
+}
+
+.gg-capture-root .ph-chat-embed-btn {
+  width: 100%;
+  height: 36px;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.gg-capture-root .ph-inner .chat-composer {
+  flex: none;
+  padding: 10px 14px;
+}
+
+.gg-capture-root .ph-inner .chat-composer-box {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--tx3);
+}
+
+.gg-capture-root .ph-chat-return {
+  margin-left: auto;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  font-size: 11px;
+  color: #5c564e;
+}
+
+.gg-capture-root .ph-conv-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 122, 42, 0.22);
+  background: rgba(255, 122, 42, 0.04);
+}

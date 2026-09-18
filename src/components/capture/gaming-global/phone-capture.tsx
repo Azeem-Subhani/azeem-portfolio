@@ -1,6 +1,7 @@
 /** 900×1600 Gaming Global admin panel. */
 
 import { GamingGlobalMark } from "@/components/capture/gaming-global/mark";
+import { GamingGlobalPhoneTabBar } from "@/components/capture/gaming-global/phone-tabs";
 
 const TILES = [
   { k: "Total users", v: "12,480", d: "▲ 342 this week", tone: "up" },
@@ -39,51 +40,6 @@ const USERS = [
   { initials: "GH", name: "ghost_ay", chip: "dng", role: "FLAGGED", flagged: true },
   { initials: "HC", name: "halcyon", chip: "wrn", role: "IN GAME" },
   { initials: "RG", name: "r0gue_ttv", chip: "inf", role: "CREATOR" },
-] as const;
-
-const TABS = [
-  {
-    label: "CONVERT",
-    icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8">
-        <circle cx="12" cy="12" r="8" />
-        <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-      </svg>
-    ),
-  },
-  {
-    label: "STATS",
-    icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8">
-        <path d="M4 19V11M10 19V5M16 19v-6M22 19h-2" />
-      </svg>
-    ),
-  },
-  {
-    label: "CHAT",
-    icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8">
-        <path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z" />
-      </svg>
-    ),
-  },
-  {
-    label: "MATCHES",
-    icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8">
-        <path d="M4 6h16M4 12h16M4 18h10" />
-      </svg>
-    ),
-  },
-  {
-    label: "ADMIN",
-    active: true,
-    icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8">
-        <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
-      </svg>
-    ),
-  },
 ] as const;
 
 export function GamingGlobalPhoneCapture() {
@@ -126,7 +82,7 @@ export function GamingGlobalPhoneCapture() {
             <div className="panel tick" style={{ flex: "0 0 auto" }}>
               <div className="ph ph-ph">
                 <h3>Moderation queue</h3>
-                <span className="chip dng" style={{ marginLeft: "auto", height: 16, fontSize: 8 }}>
+                <span className="chip dng" style={{ marginLeft: "auto", height: 18, fontSize: 10 }}>
                   37 OPEN
                 </span>
               </div>
@@ -136,7 +92,7 @@ export function GamingGlobalPhoneCapture() {
                     <div className="queue-top">
                       <span
                         className={`chip ${item.chip}`}
-                        style={{ height: 15, fontSize: 7 }}
+                        style={{ height: 17, fontSize: 9 }}
                       >
                         {item.level}
                       </span>
@@ -156,7 +112,7 @@ export function GamingGlobalPhoneCapture() {
                   className="mono"
                   style={{
                     marginLeft: "auto",
-                    fontSize: 8,
+                    fontSize: 10,
                     color: "var(--tx3)",
                     letterSpacing: "0.1em",
                   }}
@@ -181,18 +137,7 @@ export function GamingGlobalPhoneCapture() {
             </div>
           </div>
 
-          <nav className="ph-tabbar">
-            {TABS.map((tab) => (
-              <button
-                type="button"
-                className={"active" in tab && tab.active ? "ph-tab on" : "ph-tab"}
-                key={tab.label}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </nav>
+          <GamingGlobalPhoneTabBar active="ADMIN" />
         </div>
       </section>
     </div>
