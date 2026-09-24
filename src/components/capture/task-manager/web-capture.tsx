@@ -91,7 +91,7 @@ export function TaskManagerWebCapture() {
         <main className="main">
           <div className="topbar">
             <div>
-              <h1 className="greet">Good morning, <em>Mira</em></h1>
+              <div data-h="1" className="greet">Good morning, <em>Mira</em></div>
               <p className="subline">Tuesday, 9 March · <b>12 tasks</b> on your plate today</p>
             </div>
             <div className="topbar-actions">
@@ -143,7 +143,7 @@ export function TaskManagerWebCapture() {
           </div>
 
           <div className="section-head">
-            <h2>Today</h2>
+            <div data-h="2">Today</div>
             <span className="pill-count">6</span>
             <div className="spacer" />
             <button type="button" className="ghost-btn">
@@ -224,7 +224,7 @@ export function TaskManagerWebCapture() {
 
           <div className="later">
             <div className="section-head">
-              <h2>Later this week</h2>
+              <div data-h="2">Later this week</div>
               <span className="pill-count">2</span>
               <div className="spacer" />
             </div>
@@ -325,7 +325,7 @@ export function TaskManagerWebCapture() {
                 <div className="ring-txt">24:18</div>
               </div>
               <div className="focus-info">
-                <h4>Focus session</h4>
+                <div data-h="4">Focus session</div>
                 <p>Deep work · round 3 of 4</p>
                 <button type="button" className="focus-btn">
                   <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z" /></svg>

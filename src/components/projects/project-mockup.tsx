@@ -1,7 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import { createElement, useEffect, useRef, useState } from "react";
+import {
+  createElement,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 import { BrowserFrame } from "@/components/projects/device-frames/browser-frame";
 import { PhoneFrame } from "@/components/projects/device-frames/phone-frame";
@@ -9,16 +14,15 @@ import {
   getLivePhoneMockup,
   getLiveWebMockup,
 } from "@/components/projects/mockups/registry";
+import { useBuildUp } from "@/components/projects/mockups/use-build-up";
 import { cn } from "@/lib/utils";
-import type { Project, ProjectScreen } from "@/types/content";
+import type { Project } from "@/types/content";
 
 export type MockupDensity = "card" | "catalog" | "catalog-mobile" | "case-study";
 
 type ProjectMockupProps = {
   project: Project;
-  sizes: string;
   density?: MockupDensity;
-  priority?: boolean;
   reverse?: boolean;
   hoverable?: boolean;
   /** Soft teal wash over the still. Off for catalog photography. */
@@ -130,39 +134,31 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
   },
 };
 
-function scaledSizes(sizes: string, scale: number): string {
-  const factor = 1 / scale;
-  return sizes.replace(/(\d+(?:\.\d+)?)(vw|px)/g, (_, n, unit) => {
-    const value = Math.ceil(Number(n) * factor);
-    return `${value}${unit}`;
-  });
-}
+/**
+ * Each web capture's own page background. The empty browser pane uses it while the
+ * capture's chunk loads, so it reads as the app's blank screen (the phone pane already
+ * does this through its screen color) instead of a see-through hole.
+ */
+const WEB_SCREEN_BG: Record<string, string> = {
+  "track-hero": "#07080A",
+  oxym: "#F4F6F2",
+  "memorial-planning": "#F7F7F4",
+  "gaming-global": "#12110F",
+  "woody-shop": "#FFFFFF",
+  "real-time-chat": "#14110E",
+  "task-manager": "#FBF5F1",
+  "smart-living": "#F7F9FC",
+};
 
-function ScreenImage({
-  screen,
-  alt,
-  sizes,
-  priority,
-  className,
-}: {
-  screen: ProjectScreen;
-  alt: string;
-  sizes: string;
-  priority?: boolean;
-  className?: string;
-}) {
+/** Holds a lazy live capture and plays the build-up when its chunk arrives. */
+function LiveMockLayer({ children }: { children: ReactNode }) {
+  const layerRef = useRef<HTMLDivElement>(null);
+  useBuildUp(layerRef);
+  // Mock UIs are pictures: inert keeps their buttons out of the tab order and the a11y tree.
   return (
-    <Image
-      src={screen.src}
-      alt={alt || screen.alt}
-      width={screen.width}
-      height={screen.height}
-      sizes={sizes}
-      priority={priority}
-      loading={priority ? "eager" : "lazy"}
-      unoptimized={process.env.NODE_ENV === "development"}
-      className={cn("block h-full w-full object-cover object-top", className)}
-    />
+    <div ref={layerRef} className="live-mock-layer absolute inset-0" inert>
+      {children}
+    </div>
   );
 }
 
@@ -180,9 +176,7 @@ function LivePhoneScreen({ slug }: { slug: string }) {
 
 export function ProjectMockup({
   project,
-  sizes,
   density = "card",
-  priority = false,
   reverse = false,
   hoverable = false,
   glow = true,
@@ -246,12 +240,15 @@ export function ProjectMockup({
     };
   }, []);
 
+  const catalogMeasured = isCatalog && catalogSize.width > 0 && catalogSize.height > 0;
   const catalogScale =
-    isCatalog && catalogSize.width > 0 && catalogSize.height > 0
+    catalogMeasured
       ? Math.min(
           catalogComposition.browserScale,
           (catalogSize.width * 0.92) / 1000,
-          (catalogSize.height * 0.9) / 960,
+          // The scaled browser frame is ~1000×625 (1600×900 capture plus chrome); sizing
+          // against 960 left the mockup a third smaller than the stage allows.
+          (catalogSize.height * 0.9) / 680,
         )
       : catalogComposition.browserScale;
   const catalogPhoneScale =
@@ -282,16 +279,23 @@ export function ProjectMockup({
       : "top-[46px] origin-top",
   );
   const browserTransform = `translateX(-50%) scale(${browserScale})`;
-  const catalogBrowserTransform = `translate(-50%, -50%) scale(${browserScale})`;
-  const imageSizes = scaledSizes(sizes, browserScale);
+  // Until the stage is measured (server render and pre-hydration), fall back to the
+  // --catalog-fit table in globals.css so the still starts at nearly its final size
+  // instead of overflowing the frame at the composition's default scale.
+  const catalogFitCss = `min(var(--catalog-fit, 0.5), ${catalogComposition.browserScale})`;
+  const catalogBrowserTransform = catalogMeasured
+    ? `translate(-50%, -50%) scale(${browserScale})`
+    : `translate(-50%, -50%) scale(${catalogFitCss})`;
+  const catalogPhoneTransform = catalogMeasured
+    ? `scale(${catalogPhoneScale})`
+    : `scale(calc(${Number(catalogComposition.phoneScale) / catalogComposition.browserScale} * ${catalogFitCss}))`;
   const webAlt = descriptiveAlt ? screens.web.alt : "";
   const phoneAlt = descriptiveAlt && screens.phone ? screens.phone.alt : "";
-  const useLiveWeb = Boolean(
-    liveReady && screens.liveWeb && getLiveWebMockup(project.slug),
-  );
-  const useLivePhone = Boolean(
-    liveReady && screens.livePhone && getLivePhoneMockup(project.slug),
-  );
+  // Every screen is a live capture; there are no static images to fall back on.
+  const hasLiveWeb = Boolean(screens.liveWeb && getLiveWebMockup(project.slug));
+  const hasLivePhone = Boolean(screens.livePhone && getLivePhoneMockup(project.slug));
+  const useLiveWeb = liveReady && hasLiveWeb;
+  const useLivePhone = liveReady && hasLivePhone;
 
   const phoneStyle = isCatalog
     ? {
@@ -332,6 +336,7 @@ export function ProjectMockup({
         isCatalog ? "overflow-visible" : "overflow-hidden",
         className,
       )}
+      data-project-mockup=""
       ref={stageRef}
       style={
         isCatalog || density === "case-study"
@@ -378,16 +383,20 @@ export function ProjectMockup({
                             : "site"
               }
             >
-              {useLiveWeb ? (
-                <LiveWebScreen slug={project.slug} />
-              ) : (
-                <ScreenImage
-                  screen={screens.web}
-                  alt={webAlt}
-                  sizes={imageSizes}
-                  priority={priority}
-                />
-              )}
+              {/* The pane holds its 16:9 size as the app's blank screen, and the live
+                  capture builds itself in when its chunk arrives. */}
+              <div
+                className="relative aspect-[16/9] w-full"
+                style={{ backgroundColor: WEB_SCREEN_BG[project.slug] }}
+                role={webAlt ? "img" : undefined}
+                aria-label={webAlt || undefined}
+              >
+                {useLiveWeb ? (
+                  <LiveMockLayer>
+                    <LiveWebScreen slug={project.slug} />
+                  </LiveMockLayer>
+                ) : null}
+              </div>
             </BrowserFrame>
           </div>
 
@@ -399,7 +408,7 @@ export function ProjectMockup({
               )}
               style={
                 isCatalog
-                  ? { ...phoneStyle, transform: `scale(${catalogPhoneScale})` }
+                  ? { ...phoneStyle, transform: catalogPhoneTransform }
                   : phoneStyle
               }
             >
@@ -419,10 +428,14 @@ export function ProjectMockup({
                               ? "bg-[#1A1A1A]"
                               : project.slug === "smart-living"
                                 ? "bg-[#0F141B]"
-                                : undefined
+                                : project.slug === "task-manager"
+                                  ? "bg-[#35222F]"
+                                  : undefined
                 }
                 screenClassName={
-                  project.slug === "track-hero"
+                  project.slug === "oxym"
+                    ? "bg-[#F4F6F2]"
+                    : project.slug === "track-hero"
                     ? "bg-[#07080A]"
                     : project.slug === "gaming-global"
                       ? "bg-[#12110F]"
@@ -433,26 +446,30 @@ export function ProjectMockup({
                           : project.slug === "woody-shop" ||
                             project.slug === "smart-living"
                             ? "bg-white"
-                            : undefined
+                            : project.slug === "task-manager"
+                              ? "bg-[#FBF5F1]"
+                              : undefined
                 }
                 statusTone={
                   project.slug === "memorial-planning" ||
                   project.slug === "woody-shop" ||
-                  project.slug === "smart-living"
+                  project.slug === "smart-living" ||
+                  project.slug === "task-manager"
                     ? "light"
                     : "dark"
                 }
               >
-                {useLivePhone ? (
-                  <LivePhoneScreen slug={project.slug} />
-                ) : (
-                  <ScreenImage
-                    screen={screens.phone}
-                    alt={phoneAlt}
-                    sizes={scaledSizes(sizes, Number(phoneLayout.scale))}
-                    priority={priority}
-                  />
-                )}
+                <div
+                  className="relative h-full w-full"
+                  role={phoneAlt ? "img" : undefined}
+                  aria-label={phoneAlt || undefined}
+                >
+                  {useLivePhone ? (
+                    <LiveMockLayer>
+                      <LivePhoneScreen slug={project.slug} />
+                    </LiveMockLayer>
+                  ) : null}
+                </div>
               </PhoneFrame>
             </div>
           ) : null}

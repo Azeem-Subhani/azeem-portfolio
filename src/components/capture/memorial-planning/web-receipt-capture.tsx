@@ -14,7 +14,7 @@ export function MemorialPlanningWebReceiptCapture() {
           <header className="main-header receipt-header">
             <div>
               <p className="eyebrow">Payment confirmed</p>
-              <h1 className="desktop-title">Receipt MP-2026-0915-4821</h1>
+              <div data-h="1" className="desktop-title">Receipt MP-2026-0915-4821</div>
               <p className="header-copy">Sep 15, 2026 · Visa ending in 4821</p>
             </div>
             <div className="header-actions">
@@ -78,7 +78,7 @@ export function MemorialPlanningWebReceiptCapture() {
             </article>
 
             <aside className="card receipt-side-card">
-              <h2 className="receipt-side-title">Need a copy for your records?</h2>
+              <div data-h="2" className="receipt-side-title">Need a copy for your records?</div>
               <p className="receipt-side-copy">
                 Download the PDF or forward the email receipt to a family member. Your care
                 team can also resend confirmation from your account history.

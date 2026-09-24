@@ -81,7 +81,7 @@ export function GamingGlobalPhoneCapture() {
 
             <div className="panel tick" style={{ flex: "0 0 auto" }}>
               <div className="ph ph-ph">
-                <h3>Moderation queue</h3>
+                <div data-h="3">Moderation queue</div>
                 <span className="chip dng" style={{ marginLeft: "auto", height: 18, fontSize: 10 }}>
                   37 OPEN
                 </span>
@@ -107,7 +107,7 @@ export function GamingGlobalPhoneCapture() {
 
             <div className="panel" style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
               <div className="ph ph-ph">
-                <h3>User management</h3>
+                <div data-h="3">User management</div>
                 <span
                   className="mono"
                   style={{

@@ -79,7 +79,7 @@ export function OxymWebCapture() {
             <div className="topbar-left">
               <span className="crest crest--md">NF</span>
               <div>
-                <h1 className="topbar-title">Northside FC</h1>
+                <div data-h="1" className="topbar-title">Northside FC</div>
                 <p className="topbar-sub">First Team, Season 2025/26</p>
               </div>
             </div>
@@ -166,7 +166,7 @@ export function OxymWebCapture() {
           <section className="panels">
             <article className="card panel">
               <header className="panel-head">
-                <h2>Squad</h2>
+                <div data-h="2">Squad</div>
                 <span className="pill pill--mint">18 available</span>
               </header>
               <ul className="rows">
@@ -205,7 +205,7 @@ export function OxymWebCapture() {
 
             <article className="card panel">
               <header className="panel-head">
-                <h2>Invoices</h2>
+                <div data-h="2">Invoices</div>
                 <span className="pill pill--rose">3 unpaid</span>
               </header>
 
@@ -248,7 +248,7 @@ export function OxymWebCapture() {
 
             <article className="card panel">
               <header className="panel-head">
-                <h2>Matchday email</h2>
+                <div data-h="2">Matchday email</div>
                 <span className="pill pill--grey">Draft</span>
               </header>
 

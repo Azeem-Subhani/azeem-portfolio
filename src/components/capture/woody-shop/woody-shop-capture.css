@@ -238,7 +238,7 @@
   color: var(--ink-2);
 }
 
-.ws-capture-root .dimensions h3 {
+.ws-capture-root .dimensions [data-h="3"] {
   margin: 0 0 8px;
   color: var(--ink);
   font-size: 14px;
@@ -297,7 +297,7 @@
   border-top: 1px solid #eee;
 }
 
-.ws-capture-root .product-copy h2 {
+.ws-capture-root .product-copy [data-h="2"] {
   margin: 0 0 15px;
   color: #111;
   font-family: var(--serif);
@@ -679,7 +679,7 @@
   margin-bottom: 28px;
 }
 
-.ws-capture-root .checkout-block h2 {
+.ws-capture-root .checkout-block [data-h="2"] {
   margin: 0 0 14px;
   font-size: 14px;
   font-weight: 600;

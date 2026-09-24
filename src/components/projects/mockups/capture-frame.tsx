@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { OXYM_PHONE_MOCK_HEIGHT } from "@/components/projects/device-frames/iphone-15-pro";
+import { useBuildUp } from "@/components/projects/mockups/use-build-up";
 import { useCaptureScale } from "@/components/projects/mockups/use-capture-scale";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,8 @@ export function CaptureFrame({
 }: CaptureFrameProps) {
   const size = kind === "web" ? WEB_CAPTURE_SIZE : PHONE_CAPTURE_SIZE;
   const { hostRef, scale } = useCaptureScale(size.width, size.height, "width");
+  // Case-study stages build their screen up as it scrolls in (and on carousel swaps).
+  useBuildUp(hostRef);
 
   return (
     <div
@@ -47,7 +50,9 @@ export function CaptureFrame({
         className,
       )}
       style={{ backgroundColor: background }}
-      aria-hidden="true"
+      // The capture is a picture of an app: inert drops its buttons from the tab order
+      // (aria-hidden alone left them focusable). DeviceStage describes the screen instead.
+      inert
     >
       <div
         className="absolute left-0 top-0 origin-top-left"

@@ -58,7 +58,7 @@ export function WoodyShopWebCapture() {
           </section>
 
           <section className="product-details">
-            <h1 className="product-title">Walnut Coffee Table</h1>
+            <div data-h="1" className="product-title">Walnut Coffee Table</div>
             <div className="price-rating">
               <span className="price">$38.00</span>
               <span className="rating">
@@ -70,7 +70,7 @@ export function WoodyShopWebCapture() {
               grain patterns bringing a touch of sophistication to any living space.
             </p>
             <div className="dimensions">
-              <h3>Dimension:</h3>
+              <div data-h="3">Dimension:</div>
               <ul>
                 <li>Premium: 32.5 cm</li>
                 <li>Open. Raw: 30 mm</li>
@@ -92,7 +92,7 @@ export function WoodyShopWebCapture() {
               </button>
             </div>
             <div className="product-copy">
-              <h2>Product Description</h2>
+              <div data-h="2">Product Description</div>
               <p>
                 Walnut Coffee Table, the epitome of modern elegance and
                 functionality. Crafted from premium walnut wood, this exquisite

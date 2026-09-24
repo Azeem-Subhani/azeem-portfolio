@@ -4,11 +4,9 @@
  *   Web 1: Today studio — TaskManagerWebCapture @ posy.app
  *   Web 2: Task detail — TaskManagerWebTaskDetailCapture @ posy.app/tasks/rotate-keys
  *   Web 3: Upcoming week — TaskManagerWebUpcomingCapture @ posy.app/upcoming
- *   Phone 1: Today list — TaskManagerPhoneCapture (synced with web 1)
- *   Phone 2: Task detail — TaskManagerPhoneDetailCapture (synced with web 2)
- * Secondary DeviceStage (layout row, phones only):
- *   Phone 1: Today list
- *   Phone 2: Task detail
+ *   Phone: Today list — TaskManagerPhoneCapture
+ * Secondary DeviceStage (layout row, phones only; the hero phone is not repeated):
+ *   Phone: Task detail — TaskManagerPhoneDetailCapture
  * All captures: CaptureFrame paper #FBF5F1; browser tone paper; phone shell #35222F, screen #FBF5F1, statusTone light.
  */
 
@@ -23,10 +21,16 @@ import {
 import { TaskManagerWebCapture } from "@/components/capture/task-manager/web-capture";
 import { TaskManagerWebTaskDetailCapture } from "@/components/capture/task-manager/web-task-detail-capture";
 import { TaskManagerWebUpcomingCapture } from "@/components/capture/task-manager/web-upcoming-capture";
-import { ContactCta } from "@/components/sections/contact-cta";
+import {
+  CaseStudyBrief,
+  CaseStudyOutcomes,
+  CaseStudySection,
+  CaseStudyStack,
+} from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
-import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
+import { ProjectCloser } from "@/components/projects/project-closer";
+import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
 import "@/components/capture/task-manager/task-manager-capture.css";
@@ -56,13 +60,10 @@ type TaskManagerCaseStudyProps = {
 
 export function TaskManagerCaseStudy({ project }: TaskManagerCaseStudyProps) {
   return (
-    <article className="mx-auto max-w-7xl px-6 pb-20 pt-32">
+    <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
 
-      <section className="mt-14" aria-labelledby="tm-product-stage">
-        <h2 id="tm-product-stage" className="sr-only">
-          Product screens
-        </h2>
+      <div className="mt-12">
         <DeviceStage
           layout="hero"
           syncPhone
@@ -104,7 +105,7 @@ export function TaskManagerCaseStudy({ project }: TaskManagerCaseStudyProps) {
           phones={[
             {
               id: "phone-today",
-              label: "Today on phone",
+              label: "Today list",
               ...phoneFrame,
               children: (
                 <PhoneCaptureFrame>
@@ -112,9 +113,29 @@ export function TaskManagerCaseStudy({ project }: TaskManagerCaseStudyProps) {
                 </PhoneCaptureFrame>
               ),
             },
+          ]}
+        />
+      </div>
+
+      <CaseStudyBrief
+        problem={[project.context]}
+        solution={[
+          "I built JWT sessions, per-user task CRUD, and SendGrid verification on Express and MongoDB. Posy is the task studio UI that would sit on top once the API pairs with a client.",
+        ]}
+        points={project.approach}
+      />
+
+      {/* The hero phone shows Today; the detail screen is the one left to show. */}
+      <CaseStudySection
+        title="Task detail on the phone"
+        intro="Mira's task detail shares the rose and plum chrome from the studio web app."
+      >
+        <DeviceStage
+          layout="row"
+          phones={[
             {
-              id: "phone-detail",
-              label: "Task detail on phone",
+              id: "row-detail",
+              label: "Task detail",
               ...phoneFrame,
               children: (
                 <PhoneCaptureFrame>
@@ -124,127 +145,11 @@ export function TaskManagerCaseStudy({ project }: TaskManagerCaseStudyProps) {
             },
           ]}
         />
-      </section>
+      </CaseStudySection>
 
-      <section className="mx-auto mt-20 grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-            Problem
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-normal text-foreground">
-            API practice without a client yet
-          </h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.context}</p>
-        </div>
-        <div>
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-            Solution
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-normal text-foreground">
-            Auth-first backend, Posy as the face
-          </h2>
-          <p className="mt-4 leading-7 text-muted-foreground">
-            I built JWT sessions, per-user task CRUD, and SendGrid verification on Express and MongoDB.
-            Posy is the task studio UI that would sit on top once the API pairs with a client.
-          </p>
-          <ul className="mt-5 space-y-2">
-            {project.outcomes.map((item) => (
-              <li key={item} className="flex gap-3 text-sm leading-6 text-muted-foreground">
-                <span
-                  aria-hidden="true"
-                  className="mt-2 size-1.5 shrink-0 rounded-full bg-accent"
-                />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="mt-20" aria-labelledby="tm-mobile-stage">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 id="tm-mobile-stage" className="font-display text-2xl font-normal">
-            Same list on the phone
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Mira&apos;s Today view and task detail share the rose and plum chrome from the studio web app.
-          </p>
-        </div>
-        <div className="mt-10">
-          <DeviceStage
-            layout="row"
-            phones={[
-              {
-                id: "row-today",
-                label: "Today list",
-                ...phoneFrame,
-                children: (
-                  <PhoneCaptureFrame>
-                    <TaskManagerPhoneCapture />
-                  </PhoneCaptureFrame>
-                ),
-              },
-              {
-                id: "row-detail",
-                label: "Task detail",
-                ...phoneFrame,
-                children: (
-                  <PhoneCaptureFrame>
-                    <TaskManagerPhoneDetailCapture />
-                  </PhoneCaptureFrame>
-                ),
-              },
-            ]}
-          />
-        </div>
-      </section>
-
-      <section className="mx-auto mt-20 max-w-5xl" aria-labelledby="tm-stack">
-        <h2 id="tm-stack" className="font-display text-2xl font-normal">
-          Stack
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground">{project.role}</p>
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {project.stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-2xl border border-border bg-card/40 px-5 py-4 shadow-sm"
-            >
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                Layer
-              </p>
-              <p className="mt-2 font-display text-xl font-normal tracking-tight">{tech}</p>
-            </li>
-          ))}
-        </ul>
-        <ul className="mt-10 space-y-3">
-          {project.approach.map((item) => (
-            <li
-              key={item}
-              className="border-l-2 border-accent/40 pl-4 text-sm leading-6 text-muted-foreground"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mx-auto mt-20 max-w-5xl border-t border-border pt-14">
-        <dl className="grid gap-10 sm:grid-cols-2">
-          {project.metrics.map((metric) => (
-            <div key={metric.label}>
-              <dt className="font-display text-[clamp(2.5rem,6vw,4rem)] font-normal leading-none tracking-tight text-accent">
-                {metric.value}
-              </dt>
-              <dd className="mt-2 text-sm text-muted-foreground">{metric.label}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <div className="mt-24">
-        <ContactCta />
-      </div>
+      <CaseStudyStack items={project.stack} intro={project.role} />
+      <CaseStudyOutcomes project={project} />
+      <ProjectCloser slug={project.slug} />
     </article>
   );
 }

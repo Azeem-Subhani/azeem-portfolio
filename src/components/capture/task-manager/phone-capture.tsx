@@ -55,9 +55,9 @@ export function TaskManagerPhoneCapture() {
             <PosyMark />
             <div className="p-head-copy">
               <div className="p-eyebrow">Posy</div>
-              <h1 className="p-title">
+              <div data-h="1" className="p-title">
                 Good morning, <em>Mira</em>
-              </h1>
+              </div>
             </div>
             <div className="avatar p-avatar">MK</div>
           </div>
@@ -79,7 +79,7 @@ export function TaskManagerPhoneCapture() {
           </div>
 
           <div className="p-section-head">
-            <h2>Today</h2>
+            <div data-h="2">Today</div>
             <span className="pill-count">6</span>
           </div>
 
@@ -150,7 +150,7 @@ export function TaskManagerPhoneDetailCapture() {
           </button>
           <div className="p-head-copy">
             <div className="p-eyebrow">Work · Today</div>
-            <h1 className="p-title p-title--task">Rotate signing keys in staging</h1>
+            <div data-h="1" className="p-title p-title--task">Rotate signing keys in staging</div>
           </div>
         </header>
 

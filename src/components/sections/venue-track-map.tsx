@@ -1,31 +1,25 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 
-import {
-  StartFinishFromPoint,
-  TrackDots,
-  type DotLap,
-} from "@/components/sections/track-dots";
+import { TrackDots, type DotLap } from "@/components/sections/track-dots";
 
 const settle = [0.16, 1, 0.3, 1] as const;
 
 const pass: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.55 } },
 };
 
-const pop: Variants = {
-  hidden: { opacity: 0, scale: 0.86 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { type: "spring", stiffness: 400, damping: 18 },
-  },
+const fade: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.35, ease: settle } },
 };
 
 export type TrackCorner = {
   name: string;
+  /** Rough position near the corner; the marker snaps to the closest point on the track. */
   x: number;
   y: number;
   anchor?: "start" | "end";
@@ -41,9 +35,9 @@ export type VenueTrack = {
   startFinish: { cx: number; cy: number; angleDeg: number };
 };
 
+// One car on track reads as "live session"; two neon dots read as a toy.
 const venueDotLaps: readonly DotLap[] = [
-  { fill: "#00ff5c", durationMs: 14000, offset: 0, r: 4.2 },
-  { fill: "#ff453a", durationMs: 17000, offset: 0.42, r: 3.8 },
+  { fill: "currentColor", durationMs: 16000, offset: 0.08, r: 3 },
 ];
 
 /** Extra viewBox margin so dots and stroke aren't clipped at track extremes. */
@@ -131,18 +125,165 @@ export const venueTracks: Record<string, VenueTrack> = {
   },
 };
 
+type Point = { x: number; y: number };
+type PlacedCorner = {
+  name: string;
+  on: Point;
+  tick: [Point, Point];
+  label: Point;
+  anchor: "start" | "middle" | "end";
+};
+type TrackGeometry = {
+  startLine: [Point, Point];
+  corners: PlacedCorner[];
+  /** Crop hugging the drawn track (and its labels), so the outline fills the frame. */
+  viewBox: string;
+};
+
+/** Unit normal at a sample index, flipped to point away from the track's centroid. */
+function outwardNormal(pts: Point[], i: number, centroid: Point): Point {
+  const a = pts[(i - 2 + pts.length) % pts.length];
+  const b = pts[(i + 2) % pts.length];
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+  let nx = -(b.y - a.y) / len;
+  let ny = (b.x - a.x) / len;
+  const p = pts[i];
+  if (nx * (p.x - centroid.x) + ny * (p.y - centroid.y) < 0) {
+    nx = -nx;
+    ny = -ny;
+  }
+  return { x: nx, y: ny };
+}
+
+/**
+ * Measures the rendered track so the start line sits across the tarmac and each
+ * corner label hangs off its own apex instead of floating in the margin.
+ */
+function useTrackGeometry(track: VenueTrack, withLabels: boolean) {
+  const pathRef = useRef<SVGPathElement>(null);
+  const [geometry, setGeometry] = useState<TrackGeometry | null>(null);
+
+  useLayoutEffect(() => {
+    const path = pathRef.current;
+    if (!path || typeof path.getTotalLength !== "function") return;
+
+    let pts: Point[];
+    try {
+      const total = path.getTotalLength();
+      if (total < 20) return;
+      const steps = 360;
+      pts = Array.from({ length: steps }, (_, i) => {
+        const p = path.getPointAtLength((i / steps) * total);
+        return { x: p.x, y: p.y };
+      });
+    } catch {
+      return;
+    }
+
+    const centroid = pts.reduce(
+      (acc, p) => ({
+        x: acc.x + p.x / pts.length,
+        y: acc.y + p.y / pts.length,
+      }),
+      { x: 0, y: 0 },
+    );
+
+    const start = pts[0];
+    const startN = outwardNormal(pts, 0, centroid);
+    const startLine: [Point, Point] = [
+      { x: start.x - startN.x * 6, y: start.y - startN.y * 6 },
+      { x: start.x + startN.x * 6, y: start.y + startN.y * 6 },
+    ];
+
+    const corners = track.corners.map((corner): PlacedCorner => {
+      let best = 0;
+      let bestDist = Infinity;
+      pts.forEach((p, i) => {
+        const d = (p.x - corner.x) ** 2 + (p.y - corner.y) ** 2;
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      const on = pts[best];
+      const n = outwardNormal(pts, best, centroid);
+      const anchor = n.x > 0.35 ? "start" : n.x < -0.35 ? "end" : "middle";
+      return {
+        name: corner.name,
+        on,
+        tick: [
+          { x: on.x + n.x * 4.5, y: on.y + n.y * 4.5 },
+          { x: on.x + n.x * 10, y: on.y + n.y * 10 },
+        ],
+        // Nudge the baseline so text centers on the leader line's end.
+        label: {
+          x: on.x + n.x * 13,
+          y: on.y + n.y * 13 + 3.2 + (anchor === "middle" ? n.y * 3.5 : 0),
+        },
+        anchor,
+      };
+    });
+
+    // Fit the crop to what is actually drawn: the tarmac band, plus label text
+    // (estimated at ~0.52em per glyph) when labels are shown.
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    const grow = (x: number, y: number) => {
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    };
+    pts.forEach((p) => grow(p.x, p.y));
+    if (withLabels) {
+      corners.forEach(({ label, anchor, name }) => {
+        const width = name.length * 9 * 0.52;
+        const left =
+          anchor === "start"
+            ? label.x
+            : anchor === "end"
+              ? label.x - width
+              : label.x - width / 2;
+        grow(left, label.y - 8);
+        grow(left + width, label.y + 2);
+      });
+    }
+    const pad = 6;
+    const viewBox = [
+      minX - pad,
+      minY - pad,
+      maxX - minX + pad * 2,
+      maxY - minY + pad * 2,
+    ]
+      .map((n) => Math.round(n * 10) / 10)
+      .join(" ");
+
+    setGeometry({ startLine, corners, viewBox });
+  }, [track, withLabels]);
+
+  return { pathRef, geometry };
+}
+
 export function VenueTrackMap({
   trackId,
   reduced,
+  compact = false,
+  className = "h-36 sm:h-40",
 }: {
   trackId: string;
   reduced: boolean;
+  compact?: boolean;
+  className?: string;
 }) {
   const track = venueTracks[trackId] ?? venueTracks.sonoma;
   const viewBox = padViewBox(track.viewBox);
 
   return (
-    <div className="relative h-28 w-full overflow-visible text-accent sm:h-32">
+    <div
+      className={`relative w-full overflow-visible text-accent ${className}`}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={trackId}
@@ -152,95 +293,127 @@ export function VenueTrackMap({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
         >
-          <p className="pointer-events-none absolute left-2.5 top-1 font-display text-[2.35rem] leading-[0.8] text-foreground/12 sm:text-[2.7rem]">
-            {track.watermark}
-          </p>
-
-          <motion.svg
+          <TrackDrawing
+            track={track}
             viewBox={viewBox}
-            className="h-full w-full overflow-visible"
-            aria-hidden="true"
-            initial={reduced ? false : "hidden"}
-            animate="visible"
-            variants={pass}
-          >
-            {track.featurePath ? (
-              <path
-                d={track.featurePath}
-                fill="currentColor"
-                className="text-signal"
-                opacity="0.16"
-              />
-            ) : null}
+            reduced={reduced}
+            compact={compact}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
 
-            <path
-              d={track.trackPath}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="11"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity="0.2"
-            />
+function TrackDrawing({
+  track,
+  viewBox,
+  reduced,
+  compact,
+}: {
+  track: VenueTrack;
+  viewBox: string;
+  reduced: boolean;
+  compact: boolean;
+}) {
+  const { pathRef, geometry } = useTrackGeometry(track, !compact);
+  // Measured in a layout effect, so the fitted crop lands before first paint.
+  const fitted = geometry?.viewBox ?? viewBox;
 
-            <motion.path
-              d={track.trackPath}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={
-                reduced ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0.25 }
-              }
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={
-                reduced
-                  ? { duration: 0 }
-                  : { duration: 0.85, ease: settle, delay: 0.05 }
-              }
-            />
+  return (
+    <>
+      <motion.svg
+        viewBox={fitted}
+        className="h-full w-full overflow-visible"
+        aria-hidden="true"
+        initial={reduced ? false : "hidden"}
+        animate="visible"
+        variants={pass}
+      >
+        {/* Tarmac: a quiet neutral band under the racing line. */}
+        <path
+          ref={pathRef}
+          d={track.trackPath}
+          fill="none"
+          stroke="currentColor"
+          className="text-foreground"
+          strokeWidth="6.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.09"
+        />
+        <motion.path
+          d={track.trackPath}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={reduced ? { pathLength: 1 } : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={
+            reduced ? { duration: 0 } : { duration: 0.9, ease: settle }
+          }
+        />
 
-            <StartFinishFromPoint
-              cx={track.startFinish.cx}
-              cy={track.startFinish.cy}
-              angleDeg={track.startFinish.angleDeg}
-              length={12}
-            />
+        {geometry ? (
+          <motion.line
+            variants={reduced ? undefined : fade}
+            x1={geometry.startLine[0].x}
+            y1={geometry.startLine[0].y}
+            x2={geometry.startLine[1].x}
+            y2={geometry.startLine[1].y}
+            stroke="currentColor"
+            className="text-foreground"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        ) : null}
 
-            {track.corners.map((corner) => (
-              <motion.g key={corner.name} variants={reduced ? undefined : pop}>
+        {geometry && !compact
+          ? geometry.corners.map((corner) => (
+              <motion.g key={corner.name} variants={reduced ? undefined : fade}>
+                <line
+                  x1={corner.tick[0].x}
+                  y1={corner.tick[0].y}
+                  x2={corner.tick[1].x}
+                  y2={corner.tick[1].y}
+                  stroke="currentColor"
+                  className="text-muted-foreground"
+                  strokeWidth="0.7"
+                  opacity="0.6"
+                />
                 <circle
-                  cx={corner.anchor === "end" ? corner.x + 8 : corner.x - 7}
-                  cy={corner.y + 3}
-                  r="2.2"
-                  fill="currentColor"
+                  cx={corner.on.x}
+                  cy={corner.on.y}
+                  r="1.9"
+                  style={{ fill: "var(--background)" }}
+                  stroke="currentColor"
                   className="text-foreground"
+                  strokeWidth="1"
                 />
                 <text
-                  x={corner.x}
-                  y={corner.y + 6}
+                  x={corner.label.x}
+                  y={corner.label.y}
                   fill="currentColor"
-                  className="text-foreground"
+                  className="text-muted-foreground"
                   fontSize="9"
-                  textAnchor={corner.anchor === "end" ? "end" : "start"}
+                  letterSpacing="0.02em"
+                  textAnchor={corner.anchor}
                   fontFamily="var(--font-sans), ui-sans-serif, system-ui, sans-serif"
                 >
                   {corner.name}
                 </text>
               </motion.g>
-            ))}
-          </motion.svg>
-
-          <TrackDots
-            reduced={reduced}
-            laps={venueDotLaps}
-            trackPath={track.trackPath}
-            viewBox={viewBox}
-            className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
-          />
-        </motion.div>
-      </AnimatePresence>
-    </div>
+            ))
+          : null}
+      </motion.svg>
+      <TrackDots
+        reduced={reduced}
+        laps={venueDotLaps}
+        trackPath={track.trackPath}
+        viewBox={fitted}
+      />
+    </>
   );
 }

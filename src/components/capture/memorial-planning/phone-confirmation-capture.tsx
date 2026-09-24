@@ -13,7 +13,7 @@ export function MemorialPlanningPhoneConfirmationCapture() {
           <div className="confirmation-badge" aria-hidden="true">
             ✓
           </div>
-          <h1 className="mobile-title confirmation-title">You&apos;re all set</h1>
+          <div data-h="1" className="mobile-title confirmation-title">You&apos;re all set</div>
           <p className="mobile-intro confirmation-intro">
             $215.00 applied to Mitchell Family Plan. A receipt is on its way to
             eleanor.mitchell@email.com.
@@ -36,7 +36,7 @@ export function MemorialPlanningPhoneConfirmationCapture() {
           </section>
 
           <section className="review-card confirmation-notify">
-            <h2 className="review-title">Care team notified</h2>
+            <div data-h="2" className="review-title">Care team notified</div>
             <p className="receipt-note">
               Staff receive an automated update when your payment posts. No call needed
               to confirm it landed.

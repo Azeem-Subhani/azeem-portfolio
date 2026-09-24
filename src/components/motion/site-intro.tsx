@@ -50,7 +50,10 @@ export function SiteIntro() {
         .to(words, { yPercent: 0, rotate: 0, duration: 0.68, stagger: 0.08 }, 0.08)
         .to(rule, { scaleX: 1, duration: 0.72, ease: "power2.inOut" }, 0.18)
         .to(content, { opacity: 0, y: -18, duration: 0.34, ease: "power2.in" }, "+=0.12")
-        .to(shell, { yPercent: -100, duration: 0.82, ease: "power4.inOut" }, "-=0.08");
+        .to(shell, { yPercent: -100, duration: 0.82, ease: "power4.inOut" }, "-=0.08")
+        // Choreography is authored at 1x (~2.1s); played faster so first-time visitors reach
+        // the page in ~1.2s instead of waiting on the name card.
+        .timeScale(1.75);
     }, shell);
 
     return () => {

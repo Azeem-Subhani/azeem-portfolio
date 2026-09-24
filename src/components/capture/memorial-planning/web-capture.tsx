@@ -130,7 +130,7 @@ export function MemorialPlanningWebCapture() {
           <header className="main-header">
             <div>
               <p className="eyebrow">Welcome back</p>
-              <h1 className="desktop-title">Good evening, Eleanor.</h1>
+              <div data-h="1" className="desktop-title">Good evening, Eleanor.</div>
               <p className="header-copy">Here is an overview of your pre-arranged plan.</p>
             </div>
             <div className="header-actions">
@@ -179,7 +179,7 @@ export function MemorialPlanningWebCapture() {
           </div>
 
           <div className="section-heading-row">
-            <h2 className="section-heading">Payment activity</h2>
+            <div data-h="2" className="section-heading">Payment activity</div>
             <span className="text-link">View all history →</span>
           </div>
 
@@ -218,7 +218,7 @@ export function MemorialPlanningWebCapture() {
               <div className="support-icon">
                 <IconChat />
               </div>
-              <h3 className="support-title">Need assistance?</h3>
+              <div data-h="3" className="support-title">Need assistance?</div>
               <p className="support-copy">
                 Our care team is here to help with questions about your plan or payment options.
               </p>

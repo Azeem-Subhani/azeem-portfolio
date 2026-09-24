@@ -14,7 +14,7 @@ export function MemorialPlanningWebMakePaymentCapture() {
           <header className="main-header">
             <div>
               <p className="eyebrow">Secure checkout</p>
-              <h1 className="desktop-title">Make a payment</h1>
+              <div data-h="1" className="desktop-title">Make a payment</div>
               <p className="header-copy">
                 Apply a payment toward Mitchell Family Plan (MP-2841-019).
               </p>

@@ -15,7 +15,7 @@
   gap: 18px;
 }
 
-.gg-capture-root .chead h1 {
+.gg-capture-root .chead [data-h="1"] {
   margin: 0;
   font-size: 27px;
   font-weight: 800;

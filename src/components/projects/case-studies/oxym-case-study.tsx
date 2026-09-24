@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { OxymPhoneCapture } from "@/components/capture/oxym/phone-capture";
@@ -10,8 +9,16 @@ import { OxymWebCapture } from "@/components/capture/oxym/web-capture";
 import { OxymWebEmailsCapture } from "@/components/capture/oxym/web-emails-capture";
 import { OxymWebInvoicesCapture } from "@/components/capture/oxym/web-invoices-capture";
 import { OxymWebScheduleCapture } from "@/components/capture/oxym/web-schedule-capture";
+import {
+  CaseStudyBrief,
+  CaseStudyNote,
+  CaseStudyOutcomes,
+  CaseStudySection,
+  CaseStudyStack,
+} from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -146,116 +153,41 @@ export function OxymCaseStudy({ project }: OxymCaseStudyProps) {
   ];
 
   return (
-    <article className="mx-auto max-w-7xl px-6 pb-20 pt-32">
+    <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
 
       {project.visibility === "anonymized" ? (
-        <p className="mt-6 max-w-3xl text-sm leading-6 text-muted-foreground">
+        <CaseStudyNote>
           Client work under NDA. Names and branding here are stand-ins. The flows, stack, and
           integration patterns match what shipped.
-        </p>
+        </CaseStudyNote>
       ) : null}
 
-      <section className="mt-12" aria-label="Product hero">
+      <div className="mt-12">
         <DeviceStage layout="hero" web={heroWeb} phones={heroPhones} syncPhone />
-      </section>
-
-      <div className="mx-auto mt-20 grid max-w-5xl gap-14 lg:grid-cols-2 lg:gap-16">
-        <section>
-          <h2 className="font-display text-2xl font-normal">The problem</h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.context}</p>
-          <p className="mt-4 leading-7 text-muted-foreground">
-            Coaches were juggling spreadsheets, group texts, and separate payment links. Players
-            missed updates because nothing stayed in sync between web and phone.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-2xl font-normal">What we built</h2>
-          <p className="mt-4 leading-7 text-muted-foreground">
-            Oxym puts scheduling, Stripe Connect invoicing, Firestore messaging, and Socket.IO
-            live updates in one Angular/Ionic codebase. Coaches work on the web dashboard. Players
-            live in team chat, invoices, and schedule on mobile.
-          </p>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.role}</p>
-        </section>
       </div>
 
-      <section className="mx-auto mt-20 max-w-5xl">
-        <h2 className="font-display text-2xl font-normal">Matchday email workflow</h2>
-        <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">
-          Pre-game and post-game emails pull fixture data, squad availability, venue notes, and
-          recent chat context before a coach reviews the draft. That RAG step replaced copying
-          details by hand every Friday night.
-        </p>
-        <div className="mt-10">
-          <DeviceStage layout="browser" web={secondaryWeb} />
-        </div>
-      </section>
+      <CaseStudyBrief
+        problem={[
+          project.context,
+          "Coaches were juggling spreadsheets, group texts, and separate payment links. Players missed updates because nothing stayed in sync between web and phone.",
+        ]}
+        solution={[
+          "Oxym puts scheduling, Stripe Connect invoicing, Firestore messaging, and Socket.IO live updates in one Angular/Ionic codebase. Coaches work on the web dashboard. Players live in team chat, invoices, and schedule on mobile.",
+        ]}
+        points={project.approach}
+      />
 
-      <section className="mx-auto mt-20 max-w-5xl">
-        <h2 className="font-display text-2xl font-normal">Technical approach</h2>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-          {project.approach.map((item) => (
-            <li
-              key={item}
-              className="rounded-2xl border border-border bg-card/40 p-5 text-sm leading-6 text-muted-foreground"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <CaseStudySection
+        title="Matchday email workflow"
+        intro="Pre-game and post-game emails pull fixture data, squad availability, venue notes, and recent chat context before a coach reviews the draft. That RAG step replaced copying details by hand every Friday night."
+      >
+        <DeviceStage layout="browser" web={secondaryWeb} />
+      </CaseStudySection>
 
-      <section className="mx-auto mt-20 max-w-5xl">
-        <h2 className="font-display text-2xl font-normal">Stack</h2>
-        <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {project.stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-2xl border border-border px-4 py-3 font-mono text-xs text-foreground"
-            >
-              {tech}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mx-auto mt-20 max-w-5xl">
-        <h2 className="font-display text-2xl font-normal">Outcomes</h2>
-        <dl className="mt-8 grid gap-8 sm:grid-cols-2">
-          {project.metrics.map((metric) => (
-            <div key={metric.label} className="border-l-2 border-accent/40 pl-5">
-              <dt className="font-display text-[1.625rem] font-normal tracking-tight text-accent">
-                {metric.value}
-              </dt>
-              <dd className="mt-1 text-sm leading-6 text-muted-foreground">{metric.label}</dd>
-            </div>
-          ))}
-        </dl>
-        <ul className="mt-10 space-y-3">
-          {project.outcomes.map((item) => (
-            <li key={item} className="flex gap-3 text-muted-foreground">
-              <span
-                aria-hidden="true"
-                className="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent"
-              />
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <div className="mx-auto mt-20 max-w-5xl border-t border-border pt-10">
-        <p className="font-display text-xl font-normal">Want to talk through a similar build?</p>
-        <Link
-          href="/contact"
-          className="mt-4 inline-flex items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent"
-        >
-          Get in touch
-          <span aria-hidden="true">↗</span>
-        </Link>
-      </div>
+      <CaseStudyStack items={project.stack} />
+      <CaseStudyOutcomes project={project} />
+      <ProjectCloser slug={project.slug} />
     </article>
   );
 }

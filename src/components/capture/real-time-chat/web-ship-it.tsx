@@ -8,7 +8,7 @@ export function RealTimeChatWebShipItCapture() {
       <div className="info-scroll">
         <div className="room-card">
           <div className="room-mark">#</div>
-          <h3>ship-it</h3>
+          <div data-h="3">ship-it</div>
           <p>Release coordination, deploy notes, and rollback threads. Keep alerts concise.</p>
           <div className="room-stats">
             <div>
@@ -26,9 +26,9 @@ export function RealTimeChatWebShipItCapture() {
           </div>
         </div>
 
-        <h4>
+        <div data-h="4">
           Members <em>6 online</em>
-        </h4>
+        </div>
         <div className="member">
           <div className="av" style={av("#6E86B8")}>
             RS<span className="pres on" />

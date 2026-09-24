@@ -1,11 +1,16 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import {
+  ServicesNav,
+  navItemClassName,
+} from "@/components/layout/services-nav";
 import { primaryNav } from "@/content/nav";
 import { useScrolled } from "@/hooks/use-scrolled";
 import { cn } from "@/lib/utils";
@@ -15,12 +20,43 @@ function isCurrentPath(pathname: string, href: string) {
   return pathname.startsWith(href);
 }
 
+const trayLinks = primaryNav.filter((item) => item.href !== "/contact");
+
 export function Header() {
   const pathname = usePathname();
   const scrolled = useScrolled();
+  const headerRef = useRef<HTMLElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  // Publish the bar's resting bottom edge so sticky page chrome can sit below it.
+  // Uses layout offsets, not the bar's rect, so the enter animation's transform is ignored.
+  useEffect(() => {
+    const header = headerRef.current;
+    const bar = barRef.current;
+    if (!header || !bar) return;
+    const root = document.documentElement;
+    const publish = () => {
+      const bottom = header.getBoundingClientRect().top + bar.offsetTop + bar.offsetHeight;
+      root.style.setProperty("--site-header-bottom", `${Math.ceil(bottom)}px`);
+    };
+    publish();
+    // Re-measure after the 300ms top/padding transition in case transitionend is skipped.
+    const settle = window.setTimeout(publish, 350);
+    const observer = new ResizeObserver(publish);
+    observer.observe(bar);
+    header.addEventListener("transitionend", publish);
+    window.addEventListener("resize", publish);
+    return () => {
+      window.clearTimeout(settle);
+      observer.disconnect();
+      header.removeEventListener("transitionend", publish);
+      window.removeEventListener("resize", publish);
+    };
+  }, [scrolled]);
 
   return (
     <header
+      ref={headerRef}
       data-site-header
       data-scrolled={scrolled ? "true" : "false"}
       className={cn(
@@ -29,53 +65,58 @@ export function Header() {
       )}
     >
       <div
+        ref={barRef}
         className={cn(
-          "pointer-events-auto relative flex w-full items-center justify-between border transition-all duration-300",
+          "pointer-events-auto relative flex w-full items-center justify-between overflow-visible border transition-all duration-300",
           "animate-header-enter motion-reduce:animate-none",
           scrolled
-            ? "max-w-5xl rounded-full border-border bg-header-glass px-4 py-3 shadow-lg shadow-black/5 backdrop-blur-xl sm:px-6"
+            ? "max-w-6xl rounded-full border-transparent px-3 py-2 sm:px-4"
             : "max-w-7xl rounded-none border-transparent bg-transparent px-0 py-4",
         )}
       >
+        {scrolled ? (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 rounded-full border border-border bg-header-glass shadow-lg shadow-black/5 backdrop-blur-xl"
+          />
+        ) : null}
         <Link
           href="/"
           aria-label="Azeem Subhani, home"
-          className="relative z-10 font-display text-lg font-normal tracking-tight"
+          className="relative z-10 font-display text-lg font-normal tracking-tight transition-opacity hover:opacity-70"
         >
           Azeem Subhani
         </Link>
 
-        <nav
-          aria-label="Primary navigation"
-          className="absolute left-1/2 hidden -translate-x-1/2 md:block"
+        <div
+          className={cn(
+            "relative z-10 ml-auto flex items-center gap-1",
+            !scrolled &&
+              "rounded-full border border-border/70 bg-surface/70 px-1.5 py-1 shadow-sm backdrop-blur-md",
+          )}
         >
-          <ul
-            className={cn(
-              "flex items-center gap-1",
-              scrolled
-                ? "px-1"
-                : "rounded-full border border-border/70 bg-surface/70 px-1 py-1 backdrop-blur-md",
-            )}
-          >
-            {primaryNav.map((item) => {
-              const current = isCurrentPath(pathname, item.href);
+          <nav aria-label="Primary navigation" className="hidden md:block">
+            <ul className="flex items-center gap-1">
+              <li>
+                <ServicesNav />
+              </li>
+              {trayLinks.map((item) => {
+                const current = isCurrentPath(pathname, item.href);
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={current ? "page" : undefined}
-                    className="rounded-full px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:bg-background aria-[current=page]:text-foreground"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        <div className="relative z-10 flex items-center gap-2">
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={current ? "page" : undefined}
+                      className={navItemClassName}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
           <ThemeToggle />
           <Button asChild className="hidden sm:inline-flex">
             <Link href="/contact">Contact</Link>

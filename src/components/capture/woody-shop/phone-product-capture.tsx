@@ -42,7 +42,7 @@ export function WoodyShopPhoneProductCapture() {
               />
             </div>
             <div className="ph-product-body">
-              <h1 className="ph-product-title">Walnut Coffee Table</h1>
+              <div data-h="1" className="ph-product-title">Walnut Coffee Table</div>
               <p className="ph-product-price">$38.00</p>
               <p className="ph-product-desc">
                 Rich walnut grain and a low profile made for everyday living rooms.

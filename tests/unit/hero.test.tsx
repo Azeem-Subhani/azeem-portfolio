@@ -15,7 +15,7 @@ describe("Hero", () => {
       "href",
       "/contact",
     );
-    expect(screen.getByRole("link", { name: "View projects" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "View portfolio" })).toHaveAttribute(
       "href",
       "/projects",
     );

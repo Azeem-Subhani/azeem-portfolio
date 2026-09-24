@@ -8,7 +8,7 @@
  *   Phone 01 Admin panel (existing phone-capture)
  *   Phone 02 Sensitivity converter (phone-converter-capture)
  *   Phone 03 Realtime chat (phone-chat-capture)
- * Secondary DeviceStage (layout row): same three phone captures, labeled row for mobile read.
+ * Hero phone: admin panel only. Secondary DeviceStage (layout row): converter and chat phones.
  * All captures: CaptureFrame background #12110F; phone shell/screen #12110F, statusTone dark.
  */
 
@@ -20,10 +20,16 @@ import { GamingGlobalPhoneConverterCapture } from "@/components/capture/gaming-g
 import { GamingGlobalWebCapture } from "@/components/capture/gaming-global/web-capture";
 import { GamingGlobalWebChatCapture } from "@/components/capture/gaming-global/web-chat-capture";
 import { GamingGlobalWebConverterCapture } from "@/components/capture/gaming-global/web-converter-capture";
-import { ContactCta } from "@/components/sections/contact-cta";
+import {
+  CaseStudyBrief,
+  CaseStudyOutcomes,
+  CaseStudySection,
+  CaseStudyStack,
+} from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
-import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
+import { ProjectCloser } from "@/components/projects/project-closer";
+import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
 import "@/components/capture/gaming-global/gaming-global-capture.css";
@@ -113,127 +119,37 @@ export function GamingGlobalCaseStudy({ project }: GamingGlobalCaseStudyProps) {
     },
   ];
 
-  const rowPhones = primaryPhones.map((slide) => ({
-    ...slide,
-    children: (
-      <CaptureFrame kind="phone" background={GG_BG} className="gg-phone-mock-host">
-        {slide.id === "admin" ? (
-          <GamingGlobalPhoneCapture />
-        ) : slide.id === "phone-chat" ? (
-          <GamingGlobalPhoneChatCapture />
-        ) : (
-          <GamingGlobalPhoneConverterCapture />
-        )}
-      </CaptureFrame>
-    ),
-  }));
+  // The hero carries the admin panel; the row shows the other phone screens, so none repeat.
+  const heroPhones = primaryPhones.slice(0, 1);
+  const rowPhones = primaryPhones.slice(1);
 
   return (
-    <article className="mx-auto max-w-7xl px-6 pb-20 pt-32">
+    <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
 
-      <DeviceStage
-        className="mt-12 lg:mt-16"
-        layout="hero"
-        syncPhone
-        web={primaryWeb}
-        phones={primaryPhones}
+      <div className="mt-12">
+        <DeviceStage layout="hero" syncPhone web={primaryWeb} phones={heroPhones} />
+      </div>
+
+      <CaseStudyBrief
+        problem={[project.context]}
+        solution={[project.summary]}
+        points={project.approach}
       />
 
-      <div className="mx-auto mt-20 grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <section>
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-            Problem
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-normal text-balance">
-            Aim settings do not travel between games
-          </h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.context}</p>
-        </section>
+      <CaseStudySection
+        title="Mobile surfaces"
+        intro="The same orange ink chrome carries into phone layouts: Socket.IO chat in channel view, and the converter for quick sens checks between scrims."
+      >
+        <DeviceStage layout="row" phones={rowPhones} />
+      </CaseStudySection>
 
-        <section>
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-            Solution
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-normal text-balance">
-            One MERN app for conversion, stats, and chat
-          </h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.summary}</p>
-          <ul className="mt-6 space-y-3">
-            {project.approach.map((item) => (
-              <li
-                key={item}
-                className="border-l-2 border-accent/40 pl-4 text-sm leading-6 text-muted-foreground"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <section className="mt-20">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="font-display text-2xl font-normal">Mobile surfaces</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">
-            The same orange ink chrome carries into phone layouts: admin moderation on the go,
-            Socket.IO chat in channel view, and the converter for quick sens checks between
-            scrims.
-          </p>
-        </div>
-        <DeviceStage className="mt-10" layout="row" phones={rowPhones} />
-      </section>
-
-      <section className="mx-auto mt-20 max-w-5xl">
-        <h2 className="font-display text-2xl font-normal">Stack</h2>
-        <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
-          {project.role} React on the client, Express and Socket.IO on the server, MongoDB for
-          player records and chat history.
-        </p>
-        <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {project.stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-2xl border border-border bg-card/40 px-5 py-4"
-            >
-              <p className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">
-                Layer
-              </p>
-              <p className="mt-2 font-display text-xl font-normal">{tech}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mx-auto mt-20 max-w-3xl">
-        <h2 className="font-display text-2xl font-normal">Outcome</h2>
-        <ul className="mt-6 grid gap-3">
-          {project.outcomes.map((item) => (
-            <li key={item} className="flex gap-3 text-muted-foreground">
-              <span
-                aria-hidden="true"
-                className="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent"
-              />
-              {item}
-            </li>
-          ))}
-        </ul>
-
-        <dl className="mt-10 flex flex-wrap gap-8 border-t border-border pt-10">
-          {project.metrics.map((metric) => (
-            <div key={metric.label}>
-              <dt className="font-display text-[1.625rem] font-normal tracking-tight text-accent">
-                {metric.value}
-              </dt>
-              <dd className="mt-0.5 text-[0.78rem] text-muted-foreground">{metric.label}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <div className="mt-24">
-        <ContactCta />
-      </div>
+      <CaseStudyStack
+        items={project.stack}
+        intro={`${project.role} React on the client, Express and Socket.IO on the server, MongoDB for player records and chat history.`}
+      />
+      <CaseStudyOutcomes project={project} />
+      <ProjectCloser slug={project.slug} />
     </article>
   );
 }

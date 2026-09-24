@@ -30,7 +30,7 @@ export function TrackHeroWebScheduleCapture() {
       >
         <div className="ophead">
           <div>
-            <h2>Event schedule</h2>
+            <div data-h="2">Event schedule</div>
             <p>Week of 15 September 2026 · All five tracks · Live capacity</p>
           </div>
           <div className="ophead-right">
@@ -61,7 +61,7 @@ export function TrackHeroWebScheduleCapture() {
         <div className="panel sched-panel">
           <div className="panel-head">
             <div>
-              <h3>Weekly grid</h3>
+              <div data-h="3">Weekly grid</div>
               <p>Drag to reschedule · click a block for booking detail</p>
             </div>
             <div className="seg">

@@ -28,7 +28,7 @@ export function TrackHeroPhoneCapture() {
               <div className="eyebrow">
                 <span className="tag">ROUND 04</span>
               </div>
-              <h1>Apex Raceway</h1>
+              <div data-h="1">Apex Raceway</div>
               <div className="sub">Sonoma, California · 3.42 mi</div>
             </div>
             <svg className="p-map" viewBox="0 0 260 130" fill="none">
@@ -86,7 +86,7 @@ export function TrackHeroPhoneCapture() {
           </div>
 
           <div className="p-label">
-            <h2>Available sessions</h2>
+            <div data-h="2">Available sessions</div>
             <span>Fri 18 Sep</span>
           </div>
 

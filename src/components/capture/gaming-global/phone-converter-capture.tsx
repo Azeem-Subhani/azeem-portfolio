@@ -47,7 +47,7 @@ export function GamingGlobalPhoneConverterCapture() {
                 <span className="mono" style={{ fontSize: 11, color: "var(--tx3)" }}>
                   01
                 </span>
-                <h3>Source</h3>
+                <div data-h="3">Source</div>
                 <span className="chip acc" style={{ marginLeft: "auto", height: 18, fontSize: 10 }}>
                   <i />
                   LOCKED
@@ -109,7 +109,7 @@ export function GamingGlobalPhoneConverterCapture() {
                 <span className="mono" style={{ fontSize: 11, color: "var(--tx3)" }}>
                   02
                 </span>
-                <h3>Target</h3>
+                <div data-h="3">Target</div>
                 <span className="chip" style={{ marginLeft: "auto", height: 18, fontSize: 10 }}>
                   14 TITLES
                 </span>
@@ -157,7 +157,7 @@ export function GamingGlobalPhoneConverterCapture() {
 
             <div className="panel" style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
               <div className="ph ph-ph">
-                <h3>All titles</h3>
+                <div data-h="3">All titles</div>
                 <span className="mono" style={{ marginLeft: "auto", fontSize: 10, color: "var(--tx3)" }}>
                   FROM CS2 @ 800 DPI
                 </span>

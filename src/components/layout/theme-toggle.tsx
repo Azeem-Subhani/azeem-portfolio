@@ -30,7 +30,7 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="border border-border bg-glass backdrop-blur-md"
+      className="border-transparent bg-transparent hover:bg-background/50"
     >
       {mounted && isDark ? (
         <Sun aria-hidden="true" className="size-4" />

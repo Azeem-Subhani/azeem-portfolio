@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
+import { services } from "@/content/services";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [
@@ -12,11 +13,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${profile.siteUrl}/terms`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
+  const serviceRoutes: MetadataRoute.Sitemap = services.map((service) => ({
+    url: `${profile.siteUrl}/services/${service.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
   const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
     url: `${profile.siteUrl}/projects/${project.slug}`,
     changeFrequency: "monthly",
     priority: 0.7,
   }));
 
-  return [...routes, ...projectRoutes];
+  return [...routes, ...serviceRoutes, ...projectRoutes];
 }

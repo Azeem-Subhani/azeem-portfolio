@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { createElement } from "react";
 import { notFound } from "next/navigation";
 
 import { getCaseStudy } from "@/components/projects/case-studies/registry";
+import { ProjectTextMotion } from "@/components/projects/project-text-motion";
 import { getProjectBySlug, projects } from "@/content/projects";
 
 type ProjectPageProps = {
@@ -44,7 +46,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const CaseStudy = getCaseStudy(slug);
-
-  return <CaseStudy project={project} />;
+  // Registry lookup returns a module-level component, so render it by reference.
+  return (
+    <ProjectTextMotion>{createElement(getCaseStudy(slug), { project })}</ProjectTextMotion>
+  );
 }

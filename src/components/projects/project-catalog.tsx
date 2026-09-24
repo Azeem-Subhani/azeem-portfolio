@@ -10,6 +10,7 @@ import {
   type FilterValue,
 } from "@/components/projects/project-filters";
 import { ProjectMockup } from "@/components/projects/project-mockup";
+import { preloadLiveMockups } from "@/components/projects/mockups/registry";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/content";
@@ -21,11 +22,18 @@ type ProjectCatalogProps = {
 const STAGE_EASE = [0.22, 1, 0.36, 1] as const;
 const AUTO_ADVANCE_MS = 5000;
 
+/** Every project is full-stack, so the index shows the tag that actually sets it apart. */
+function distinctTag(project: Project) {
+  return project.categories.find((category) => category !== "Full-Stack") ?? project.categories[0];
+}
+
 function CatalogStage({
   project,
   projectIndex,
   projectCount,
   reduce,
+  autoplay,
+  onToggleAutoplay,
   onPrevious,
   onNext,
 }: {
@@ -33,15 +41,29 @@ function CatalogStage({
   projectIndex: number;
   projectCount: number;
   reduce: boolean;
+  autoplay: boolean;
+  onToggleAutoplay: () => void;
   onPrevious: () => void;
   onNext: () => void;
 }) {
+  const canAutoplay = !reduce && projectCount > 1;
   return (
     <div className="catalog-stage">
       <div className="catalog-stage-top">
         <span>Currently viewing</span>
-        <span>
+        <span className="catalog-stage-count">
           {projectIndex + 1} of {projectCount}
+          {canAutoplay ? (
+            // Auto-moving content needs a visible pause (WCAG 2.2.2); hover alone never reaches touch.
+            <button
+              type="button"
+              onClick={onToggleAutoplay}
+              aria-pressed={!autoplay}
+              className="catalog-autoplay"
+            >
+              {autoplay ? "Pause" : "Play"}
+            </button>
+          ) : null}
         </span>
       </div>
 
@@ -67,7 +89,6 @@ function CatalogStage({
               project={project}
               density="catalog"
               glow={false}
-              sizes="(min-width: 1280px) 48vw, 90vw"
               className="h-full min-h-0 aspect-auto"
             />
           </motion.div>
@@ -146,7 +167,7 @@ function CatalogListItem({
       >
         <span className="catalog-project-title">{project.title}</span>
         <span className="catalog-project-meta">
-          {project.categories[0]}
+          {distinctTag(project)}
           <ArrowUpRight aria-hidden="true" className="size-4" />
         </span>
       </Link>
@@ -159,6 +180,8 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
   const [activeFilter, setActiveFilter] = useState<FilterValue>("All");
   const [activeSlug, setActiveSlug] = useState(projects[0]?.slug ?? "");
   const [paused, setPaused] = useState(false);
+  // Rotation is a teaser: once someone picks, filters, or presses pause, it stays put.
+  const [autoplay, setAutoplay] = useState(true);
 
   const filtered = useMemo(() => {
     if (activeFilter === "All") return projects;
@@ -170,12 +193,24 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
   const active =
     filtered.find((project) => project.slug === activeSlug) ?? filtered[0];
 
+  // Warm the other slides' live captures once the page is idle, so rotating or picking a
+  // project never waits on a chunk download. First paint only pays for the visible one.
+  useEffect(() => {
+    const idle = window.requestIdleCallback
+      ? window.requestIdleCallback(preloadLiveMockups, { timeout: 2500 })
+      : window.setTimeout(preloadLiveMockups, 1200);
+    return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+    };
+  }, []);
+
   const selectProject = useCallback((slug: string) => {
     setActiveSlug(slug);
   }, []);
 
   useEffect(() => {
-    if (reduce || paused || filtered.length <= 1) return;
+    if (reduce || paused || !autoplay || filtered.length <= 1) return;
 
     const timer = window.setInterval(() => {
       if (document.visibilityState !== "visible") return;
@@ -190,9 +225,10 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
     }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(timer);
-  }, [filtered, paused, reduce]);
+  }, [filtered, paused, autoplay, reduce]);
 
   const moveProject = (direction: -1 | 1) => {
+    setAutoplay(false);
     const index = filtered.findIndex(
       (project) => project.slug === (active?.slug ?? activeSlug),
     );
@@ -201,6 +237,7 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
   };
 
   const handleFilterChange = (value: FilterValue) => {
+    setAutoplay(false);
     setActiveFilter(value);
     const next =
       value === "All"
@@ -233,8 +270,8 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
         <div>
           <p className="catalog-toolbar-title">Browse the work</p>
           <p className="catalog-toolbar-copy">
-            Filter by the problem space or stack. Preview advances every 5 seconds;
-            hover to pause.
+            Filter by problem space. The preview rotates until you pick one or press
+            pause.
           </p>
         </div>
         <div className="catalog-toolbar-filter">
@@ -247,7 +284,8 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
 
       <p role="status" aria-live="polite" className="sr-only">
         Showing {filtered.length} {filtered.length === 1 ? "project" : "projects"}.
-        {filtered.length > 1 ? ` Currently viewing ${active.title}.` : ""}
+        {/* Only announce the project once the visitor is driving; rotation every 5s was noise. */}
+        {filtered.length > 1 && !autoplay ? ` Currently viewing ${active.title}.` : ""}
       </p>
 
       <div className="catalog-layout">
@@ -257,6 +295,8 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
             projectIndex={activeIndex}
             projectCount={filtered.length}
             reduce={reduce}
+            autoplay={autoplay}
+            onToggleAutoplay={() => setAutoplay((value) => !value)}
             onPrevious={() => moveProject(-1)}
             onNext={() => moveProject(1)}
           />

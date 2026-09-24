@@ -27,7 +27,7 @@ export function TrackHeroPhoneSessionDetailCapture() {
         <div className="p-body p-body--scroll">
           <div className="sd-hero">
             <div className="sd-time">09:40</div>
-            <h1>GT Sprint — Open Lapping</h1>
+            <div data-h="1">GT Sprint — Open Lapping</div>
             <p className="sd-sub">45 min · Intermediate · Dry conditions</p>
             <div className="sd-tags">
               <span className="ps-tag">12 seats left</span>
@@ -36,7 +36,7 @@ export function TrackHeroPhoneSessionDetailCapture() {
           </div>
 
           <div className="sd-section">
-            <h2>What is included</h2>
+            <div data-h="2">What is included</div>
             <ul className="sd-list">
               <li>Track time on Apex Raceway full course</li>
               <li>Garage access 30 minutes before session</li>
@@ -46,7 +46,7 @@ export function TrackHeroPhoneSessionDetailCapture() {
           </div>
 
           <div className="sd-section">
-            <h2>Driver requirements</h2>
+            <div data-h="2">Driver requirements</div>
             <ul className="sd-list">
               <li>Valid driver license and signed waiver on file</li>
               <li>Intermediate group approval or prior Track Hero event</li>
@@ -55,7 +55,7 @@ export function TrackHeroPhoneSessionDetailCapture() {
           </div>
 
           <div className="sd-section">
-            <h2>Pricing</h2>
+            <div data-h="2">Pricing</div>
             <div className="sd-price-row">
               <span>Per driver</span>
               <b>$340.00</b>

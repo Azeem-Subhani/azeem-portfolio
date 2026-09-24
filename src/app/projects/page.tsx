@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { MagneticButton } from "@/components/motion/magnetic-button";
 import { ProjectCatalog } from "@/components/projects/project-catalog";
 import { ProjectsIntro } from "@/components/projects/projects-intro";
+import { Button } from "@/components/ui/button";
 import { projects } from "@/content/projects";
 
 export const metadata: Metadata = {
@@ -29,20 +31,21 @@ export default function ProjectsPage() {
           className="projects-grid-backdrop pointer-events-none absolute inset-x-0 top-0 h-[30rem] overflow-hidden"
         />
 
-        <div className="relative mx-auto max-w-[1320px] px-5 pb-24 pt-32 sm:px-8 lg:pb-32 lg:pt-40">
+        <div className="relative mx-auto max-w-[calc(var(--container-7xl)+2.5rem)] px-5 pb-24 pt-32 sm:px-8 lg:pb-32 lg:pt-40">
           <ProjectsIntro />
 
           <dl className="projects-proof mt-14 lg:mt-20">
             <div data-projects-proof>
               <dt>Project stories</dt>
-              <dd>08</dd>
+              <dd>{projects.length}</dd>
             </div>
             <div data-projects-proof>
               <dt>White-label venues</dt>
-              <dd>05</dd>
+              <dd>5</dd>
             </div>
             <div data-projects-proof>
-              <dt>Daily transactions</dt>
+              {/* Placeholder wording matching the Data page; confirm payments vs requests. */}
+              <dt>Authenticated payments a day</dt>
               <dd>500+</dd>
             </div>
           </dl>
@@ -54,17 +57,18 @@ export default function ProjectsPage() {
       </section>
 
       <div data-catalog-outro className="projects-outro relative z-10">
-        <div className="mx-auto flex max-w-[1320px] flex-col gap-6 px-5 py-20 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:py-28">
+        <div className="mx-auto flex max-w-[calc(var(--container-7xl)+2.5rem)] flex-col gap-6 px-5 py-20 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:py-28">
           <p className="max-w-xl text-balance font-display text-[clamp(2rem,4vw,3.75rem)] leading-[0.98]">
             Have a product that needs to work harder?
           </p>
-          <Link
-            href="/contact"
-            className="projects-outro-link inline-flex w-fit items-center gap-3 border-b border-accent pb-2 text-base font-medium text-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-          >
-            Start a conversation
-            <span aria-hidden="true">↗</span>
-          </Link>
+          {/* Same filled button the other pages close on; a text link read as an afterthought. */}
+          <div data-inline-cta className="w-fit">
+            <MagneticButton>
+              <Button asChild size="lg">
+                <Link href="/contact">Start a conversation</Link>
+              </Button>
+            </MagneticButton>
+          </div>
         </div>
       </div>
     </>

@@ -12,7 +12,7 @@ export function OxymPhoneInvoiceCapture() {
           </button>
 
           <div className="p-title">
-            <h1>March subs</h1>
+            <div data-h="1">March subs</div>
             <p>First Team wallet</p>
           </div>
 

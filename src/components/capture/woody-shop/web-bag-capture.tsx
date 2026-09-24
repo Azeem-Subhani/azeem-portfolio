@@ -24,7 +24,7 @@ export function WoodyShopWebBagCapture() {
     <WoodyShopWebStoreChrome ariaLabel="Woody Shop shopping bag" cartCount={2}>
       <div className="bag-page">
         <div className="bag-head">
-          <h1 className="bag-title">Your bag</h1>
+          <div data-h="1" className="bag-title">Your bag</div>
           <p className="bag-sub">2 items · saved in your browser</p>
         </div>
 

@@ -41,19 +41,65 @@ describe("Header", () => {
     expect(header).toHaveAttribute("data-scrolled", "true");
   });
 
-  it("links Home, Projects, and Contact, and has no Resume route", () => {
+  it("links the wordmark home, then Services, Portfolio, and a filled Contact, and has no Resume route", () => {
     render(<Header />);
 
+    expect(screen.getByRole("link", { name: "Azeem Subhani, home" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+
     const nav = screen.getByRole("navigation", { name: "Primary navigation" });
-    expect(within(nav).getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
-    expect(within(nav).getByRole("link", { name: "Projects" })).toHaveAttribute(
+    const topItems = nav.querySelectorAll(":scope > ul > li");
+    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Portfolio|Contact/)?.[0])).toEqual([
+      "Services",
+      "Portfolio",
+    ]);
+    expect(within(nav).queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
+    expect(within(nav).queryByRole("link", { name: "Projects" })).not.toBeInTheDocument();
+    expect(within(nav).queryByRole("link", { name: "Contact" })).not.toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Portfolio" })).toHaveAttribute(
       "href",
       "/projects",
     );
-    expect(within(nav).getByRole("link", { name: "Contact" })).toHaveAttribute(
-      "href",
-      "/contact",
+    expect(within(nav).getByRole("button", { name: "Services" })).toHaveAttribute(
+      "aria-haspopup",
+      "menu",
     );
+    expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
     expect(screen.queryByRole("link", { name: "Resume" })).not.toBeInTheDocument();
+  });
+
+  it("opens the services menu with the four service pages", async () => {
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    render(<Header />);
+
+    await user.click(screen.getByRole("button", { name: "Services" }));
+
+    const menu = screen.getByRole("menu", { name: "Services" });
+    expect(
+      within(menu).getByRole("menuitem", { name: /Cloud services/ }),
+    ).toHaveAttribute("href", "/services/cloud");
+    expect(
+      within(menu).getByRole("menuitem", { name: /Web development/ }),
+    ).toHaveAttribute("href", "/services/web-development");
+    expect(
+      within(menu).getByRole("menuitem", { name: /Mobile development/ }),
+    ).toHaveAttribute("href", "/services/mobile-development");
+    expect(
+      within(menu).getByRole("menuitem", { name: /Data management/ }),
+    ).toHaveAttribute("href", "/services/data-management");
+  });
+
+  it("opens the services menu on hover", async () => {
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    render(<Header />);
+
+    await user.hover(screen.getByRole("button", { name: "Services" }));
+
+    expect(screen.getByRole("menu", { name: "Services" })).toBeVisible();
+    expect(screen.getByRole("menuitem", { name: /Cloud services/ })).toBeVisible();
   });
 });
