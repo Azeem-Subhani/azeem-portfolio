@@ -149,7 +149,7 @@ export function TrackHeroWebCapture() {
           <main className="opmain">
             <div className="ophead">
               <div>
-                <h2>Operations overview</h2>
+                <div data-h="2">Operations overview</div>
                 <p>All five tracks · Friday 18 September 2026 · Live</p>
               </div>
               <div className="ophead-right">
@@ -220,7 +220,7 @@ export function TrackHeroWebCapture() {
             <div className="panel chart">
               <div className="panel-head">
                 <div>
-                  <h3>Revenue &amp; utilisation</h3>
+                  <div data-h="3">Revenue &amp; utilisation</div>
                   <p>Last 14 days · consolidated across five branded booking sites</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
@@ -291,7 +291,7 @@ export function TrackHeroWebCapture() {
               <div className="panel">
                 <div className="panel-head">
                   <div>
-                    <h3>Fleet status</h3>
+                    <div data-h="3">Fleet status</div>
                     <p>38 vehicles · 5 tracks</p>
                   </div>
                   <div className="seg">
@@ -346,7 +346,7 @@ export function TrackHeroWebCapture() {
               <div className="panel">
                 <div className="panel-head">
                   <div>
-                    <h3>Upcoming sessions &amp; capacity</h3>
+                    <div data-h="3">Upcoming sessions &amp; capacity</div>
                     <p>Next 6 departures across the group</p>
                   </div>
                   <div className="seg">

@@ -1,8 +1,5 @@
 import type { Project } from "@/types/content";
 
-const WEB = { width: 1600, height: 900 } as const;
-const PHONE = { width: 900, height: 1600 } as const;
-
 function screens(
   slug: string,
   backdrop: string,
@@ -11,12 +8,9 @@ function screens(
   liveWeb = false,
   livePhone = false,
 ) {
-  const base = `/images/projects/${slug}`;
   return {
-    web: { src: `${base}/web.webp`, alt: webAlt, ...WEB },
-    ...(phoneAlt
-      ? { phone: { src: `${base}/phone.webp`, alt: phoneAlt, ...PHONE } }
-      : {}),
+    web: { alt: webAlt },
+    ...(phoneAlt ? { phone: { alt: phoneAlt } } : {}),
     backdrop,
     ...(liveWeb ? { liveWeb: true as const } : {}),
     ...(livePhone ? { livePhone: true as const } : {}),
@@ -92,8 +86,8 @@ export const projects: Project[] = [
     screens: screens(
       "oxym",
       "#1a1d21",
-      "Oxym team dashboard with schedule, chat, and invoices.",
-      "Oxym coach home screen on iPhone.",
+      "Oxym team dashboard with the next fixture, squad availability, invoices, and matchday email.",
+      "Oxym First Team chat on iPhone.",
       true,
       true,
     ),
@@ -264,7 +258,8 @@ export const projects: Project[] = [
       "task-manager",
       "#FBF5F1",
       "Posy task studio Today list for Mira Kapoor.",
-      undefined,
+      "Posy Today list on iPhone.",
+      true,
       true,
     ),
     metrics: [

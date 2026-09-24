@@ -72,7 +72,7 @@ export function TaskManagerWebTaskDetailCapture() {
           <div className="detail-hero accent-rose">
             <span className="check done-lg"><CheckMark /></span>
             <div>
-              <h1 className="detail-title">Rotate signing keys in staging</h1>
+              <div data-h="1" className="detail-title">Rotate signing keys in staging</div>
               <div className="detail-meta">
                 <span className="tag tag-rose">Work</span>
                 <span className="time-chip hot">11:15 AM</span>
@@ -83,11 +83,11 @@ export function TaskManagerWebTaskDetailCapture() {
 
           <div className="detail-grid">
             <div className="detail-panel">
-              <h2 className="panel-title">Notes</h2>
+              <div data-h="2" className="panel-title">Notes</div>
               <p className="panel-copy">
                 Roll JWT signing keys in staging before the client ships refresh handling. After the swap, log out stale sessions and confirm SendGrid verification still sends for new accounts.
               </p>
-              <h2 className="panel-title">Subtasks</h2>
+              <div data-h="2" className="panel-title">Subtasks</div>
               <ul className="subtask-list">
                 <li className="subtask done">
                   <span className="check"><CheckMark /></span>
@@ -116,7 +116,7 @@ export function TaskManagerWebTaskDetailCapture() {
                     <div className="ring-txt">25:00</div>
                   </div>
                   <div className="focus-info">
-                    <h4>Deep work block</h4>
+                    <div data-h="4">Deep work block</div>
                     <p>Round 1 · staging keys</p>
                     <button type="button" className="focus-btn">
                       <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z" /></svg>

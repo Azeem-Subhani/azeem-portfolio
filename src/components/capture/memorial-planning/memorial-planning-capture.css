@@ -51,9 +51,9 @@
   display: block;
 }
 
-.mp-capture-root h1,
-.mp-capture-root h2,
-.mp-capture-root h3,
+.mp-capture-root [data-h="1"],
+.mp-capture-root [data-h="2"],
+.mp-capture-root [data-h="3"],
 .mp-capture-root p {
   margin-top: 0;
 }

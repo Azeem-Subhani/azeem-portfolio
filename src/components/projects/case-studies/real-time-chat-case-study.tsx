@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
 
 import { RealTimeChatPhoneCapture } from "@/components/capture/real-time-chat/phone-capture";
 import { RealTimeChatPhoneDmCapture } from "@/components/capture/real-time-chat/phone-dm";
@@ -9,9 +8,15 @@ import { RealTimeChatPhoneInboxCapture } from "@/components/capture/real-time-ch
 import { RealTimeChatWebCapture } from "@/components/capture/real-time-chat/web-capture";
 import { RealTimeChatWebSearchCapture } from "@/components/capture/real-time-chat/web-search";
 import { RealTimeChatWebShipItCapture } from "@/components/capture/real-time-chat/web-ship-it";
-import { ContactCta } from "@/components/sections/contact-cta";
+import {
+  CaseStudyBrief,
+  CaseStudyOutcomes,
+  CaseStudySection,
+  CaseStudyStack,
+} from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -26,12 +31,9 @@ import "@/components/projects/mockups/real-time-chat-phone-mock.css";
  *   web · ship-it · invented · RealTimeChatWebShipItCapture
  *   web · search · invented · RealTimeChatWebSearchCapture
  *   phone · design-crit thread · existing · RealTimeChatPhoneCapture
- *   phone · inbox · invented · RealTimeChatPhoneInboxCapture
- *   phone · maya-dm · invented · RealTimeChatPhoneDmCapture
  *
- * Secondary DeviceStage (layout="row", phones only)
+ * Secondary DeviceStage (layout="row", phones only; the hero thread is not repeated)
  *   phone · inbox · invented · RealTimeChatPhoneInboxCapture
- *   phone · design-crit thread · existing · RealTimeChatPhoneCapture
  *   phone · maya-dm · invented · RealTimeChatPhoneDmCapture
  */
 
@@ -62,17 +64,6 @@ function PhoneFrame({ children }: { children: ReactNode }) {
     </CaptureFrame>
   );
 }
-
-const stackGroups = [
-  {
-    title: "Realtime server",
-    items: ["Node.js", "WebSockets", "JavaScript"],
-  },
-  {
-    title: "Rendered UI",
-    items: ["Handlebars", "Moment.js"],
-  },
-];
 
 type RealTimeChatCaseStudyProps = {
   project: Project;
@@ -126,26 +117,6 @@ export function RealTimeChatCaseStudy({ project }: RealTimeChatCaseStudyProps) {
         </PhoneFrame>
       ),
     },
-    {
-      id: "inbox-phone",
-      label: "Inbox",
-      ...phoneShell,
-      children: (
-        <PhoneFrame>
-          <RealTimeChatPhoneInboxCapture />
-        </PhoneFrame>
-      ),
-    },
-    {
-      id: "maya-dm-phone",
-      label: "Direct message",
-      ...phoneShell,
-      children: (
-        <PhoneFrame>
-          <RealTimeChatPhoneDmCapture />
-        </PhoneFrame>
-      ),
-    },
   ];
 
   const rowPhones = [
@@ -156,16 +127,6 @@ export function RealTimeChatCaseStudy({ project }: RealTimeChatCaseStudyProps) {
       children: (
         <PhoneFrame>
           <RealTimeChatPhoneInboxCapture />
-        </PhoneFrame>
-      ),
-    },
-    {
-      id: "thread-row",
-      label: "Room threads with live presence and typing",
-      ...phoneShell,
-      children: (
-        <PhoneFrame>
-          <RealTimeChatPhoneCapture />
         </PhoneFrame>
       ),
     },
@@ -182,108 +143,32 @@ export function RealTimeChatCaseStudy({ project }: RealTimeChatCaseStudyProps) {
   ];
 
   return (
-    <>
-      <article className="mx-auto max-w-7xl px-6 pb-20 pt-32">
+    <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
         <ProjectDetailIntro project={project} />
 
-        <div className="mt-14">
+        <div className="mt-12">
           <DeviceStage layout="hero" web={heroWeb} phones={heroPhones} syncPhone />
         </div>
 
-        <div className="mt-20 grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <section>
-            <h2 className="font-display text-2xl font-normal">Problem</h2>
-            <p className="mt-4 leading-7 text-muted-foreground">{project.context}</p>
-            <p className="mt-4 leading-7 text-muted-foreground">
-              I wanted the full socket lifecycle in view: connect, broadcast, reconnect, and presence. A wrapper library would have hidden the parts I was trying to learn.
-            </p>
-          </section>
-          <section>
-            <h2 className="font-display text-2xl font-normal">Solution</h2>
-            <p className="mt-4 leading-7 text-muted-foreground">{project.role}</p>
-            <ul className="mt-4 space-y-3">
-              {project.approach.map((item) => (
-                <li
-                  key={item}
-                  className="border-l-2 border-accent/40 pl-4 text-sm leading-6 text-muted-foreground"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
+        <CaseStudyBrief
+          problem={[
+            project.context,
+            "I wanted the full socket lifecycle in view: connect, broadcast, reconnect, and presence. A wrapper library would have hidden the parts I was trying to learn.",
+          ]}
+          solution={[project.role]}
+          points={project.approach}
+        />
 
-        <section className="mt-20">
-          <h2 className="font-display text-2xl font-normal">Mobile surfaces</h2>
-          <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
-            The Handlebars UI scales down to a phone-width layout. Inbox, rooms, and DMs share one WebSocket connection, so unread counts and typing state stay aligned across views.
-          </p>
-          <div className="mt-10">
-            <DeviceStage layout="row" phones={rowPhones} syncPhone={false} />
-          </div>
-        </section>
+        <CaseStudySection
+          title="Mobile surfaces"
+          intro="The Handlebars UI scales down to a phone-width layout. Inbox, rooms, and DMs share one WebSocket connection, so unread counts and typing state stay aligned across views."
+        >
+          <DeviceStage layout="row" phones={rowPhones} syncPhone={false} />
+        </CaseStudySection>
 
-        <section className="mt-20">
-          <h2 className="font-display text-2xl font-normal">Technology stack</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {stackGroups.map((group) => (
-              <div
-                key={group.title}
-                className="rounded-[22px] border border-border bg-card/40 p-6"
-              >
-                <h3 className="font-display text-lg font-normal">{group.title}</h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {group.items.map((tech) => (
-                    <li
-                      key={tech}
-                      className="rounded-full border border-border px-3 py-1.5 font-mono text-xs text-foreground"
-                    >
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-20">
-          <h2 className="font-display text-2xl font-normal">Outcomes</h2>
-          <dl className="mt-8 grid gap-8 sm:grid-cols-2">
-            {project.metrics.map((metric) => (
-              <div key={metric.label}>
-                <dt className="font-display text-[clamp(2rem,4vw,2.75rem)] font-normal tracking-tight text-accent">
-                  {metric.value}
-                </dt>
-                <dd className="mt-1 text-sm text-muted-foreground">{metric.label}</dd>
-              </div>
-            ))}
-          </dl>
-          <ul className="mt-10 grid gap-3 max-w-3xl">
-            {project.outcomes.map((item) => (
-              <li key={item} className="flex gap-3 text-muted-foreground">
-                <span
-                  aria-hidden="true"
-                  className="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent"
-                />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <div className="mt-16 max-w-3xl">
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 text-sm font-medium text-foreground underline-offset-4 hover:underline"
-          >
-            Start a conversation about this project
-          </Link>
-        </div>
+        <CaseStudyStack items={project.stack} />
+        <CaseStudyOutcomes project={project} />
+        <ProjectCloser slug={project.slug} />
       </article>
-
-      <ContactCta />
-    </>
-  );
+    );
 }

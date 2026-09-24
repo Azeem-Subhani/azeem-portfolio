@@ -8,7 +8,7 @@ export function OxymWebEmailsCapture() {
         <div className="emails-layout">
           <article className="card panel emails-compose">
             <header className="panel-head">
-              <h2>Pre-game draft</h2>
+              <div data-h="2">Pre-game draft</div>
               <span className="pill pill--grey">Draft</span>
             </header>
 
@@ -30,7 +30,7 @@ export function OxymWebEmailsCapture() {
           <aside className="emails-context">
             <article className="card panel">
               <header className="panel-head">
-                <h2>Retrieved context</h2>
+                <div data-h="2">Retrieved context</div>
                 <span className="pill pill--mint">RAG</span>
               </header>
               <ul className="context-list">
@@ -55,7 +55,7 @@ export function OxymWebEmailsCapture() {
 
             <article className="card panel">
               <header className="panel-head">
-                <h2>Scheduled sends</h2>
+                <div data-h="2">Scheduled sends</div>
               </header>
               <ul className="rows">
                 <li className="row">

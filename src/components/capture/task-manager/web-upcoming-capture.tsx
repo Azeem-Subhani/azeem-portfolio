@@ -66,7 +66,7 @@ export function TaskManagerWebUpcomingCapture() {
         <main className="main">
           <div className="topbar">
             <div>
-              <h1 className="greet">Upcoming <em>week</em></h1>
+              <div data-h="1" className="greet">Upcoming <em>week</em></div>
               <p className="subline">10 March through 16 March · <b>7 tasks</b> scheduled</p>
             </div>
             <button type="button" className="btn-primary">

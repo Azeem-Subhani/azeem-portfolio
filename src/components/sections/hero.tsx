@@ -21,6 +21,13 @@ const lines = [
   { text: "customers", className: "block text-accent" },
 ] as const;
 
+// Operated numbers from the service pages (cloud, mobile, web), so the fold carries proof.
+const proof = [
+  { value: "500+", label: "authenticated payments a day" },
+  { value: "25+", label: "apps shipped" },
+  { value: "5", label: "venue sites on one codebase" },
+] as const;
+
 /** Survives Strict Mode remount so a finished entrance is not replayed. */
 let heroEntranceDone = false;
 
@@ -43,11 +50,12 @@ export function Hero() {
 
     const lineEls = section.querySelectorAll<HTMLElement>("[data-hero-line]");
     const actions = section.querySelector<HTMLElement>("[data-hero-actions]");
+    const proofRow = section.querySelector<HTMLElement>("[data-hero-proof]");
     const mapPanel = section.querySelector<HTMLElement>("[data-hero-map-panel]");
     const map = section.querySelector<HTMLElement>("[data-hero-map]");
     const graph = section.querySelector<HTMLElement>("[data-hero-graph]");
     const title = section.querySelector<HTMLElement>("[data-hero-title]");
-    const targets = [...lineEls, actions, mapPanel, graph].filter(Boolean);
+    const targets = [...lineEls, actions, proofRow, mapPanel, graph].filter(Boolean);
     let removeIntroListener = () => {};
     let media: ReturnType<typeof gsap.matchMedia> | undefined;
     let alive = true;
@@ -80,7 +88,7 @@ export function Hero() {
           rotate: 1.25,
           transformOrigin: "left bottom",
         });
-        gsap.set(actions, { opacity: 0, y: 20 });
+        gsap.set([actions, proofRow], { opacity: 0, y: 20 });
         gsap.set(mapPanel, { opacity: 0, y: 30, scale: 0.975 });
         gsap.set(graph, { opacity: 0, scale: 1.035 });
 
@@ -97,6 +105,7 @@ export function Hero() {
             .to(graph, { opacity: 1, scale: 1, duration: 1.6 })
             .to(lineEls, { yPercent: 0, rotate: 0, duration: 1.05, stagger: 0.1 }, 0.1)
             .to(actions, { opacity: 1, y: 0, duration: 0.82, ease: "power3.out" }, 0.58)
+            .to(proofRow, { opacity: 1, y: 0, duration: 0.82, ease: "power3.out" }, 0.72)
             .to(
               mapPanel,
               { opacity: 1, y: 0, scale: 1, duration: 1.12, ease: "power3.out" },
@@ -182,16 +191,20 @@ export function Hero() {
                 key={line.text}
                 className={cn("overflow-hidden pb-[0.08em] -mb-[0.08em]", line.className)}
               >
+                {/* Trailing space keeps the heading's text "take the idea to customers" for
+                    search and copy; it collapses at the end of each block line. */}
                 <span data-hero-line className="block will-change-transform">
-                  {line.text}
+                  {line.text}{" "}
                 </span>
               </span>
             ))}
           </h1>
 
+          {/* Side by side at every width; stacked, the two pills sat at different widths on phones. */}
           <div
             data-hero-actions
-            className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center"
+            data-inline-cta
+            className="mt-10 flex flex-wrap items-center gap-3"
           >
             <MagneticButton>
               <Button asChild size="lg">
@@ -200,10 +213,24 @@ export function Hero() {
             </MagneticButton>
             <MagneticButton>
               <Button asChild size="lg" variant="outline">
-                <Link href="/projects">View projects</Link>
+                <Link href="/projects">View portfolio</Link>
               </Button>
             </MagneticButton>
           </div>
+
+          <dl
+            data-hero-proof
+            className="mt-10 grid max-w-xl grid-cols-3 gap-x-4 border-t border-border/70 pt-6 sm:gap-x-8"
+          >
+            {proof.map((item) => (
+              <div key={item.label} className="flex flex-col-reverse justify-end">
+                <dt className="mt-1 text-xs text-muted-foreground">{item.label}</dt>
+                <dd className="font-display text-3xl leading-none tabular-nums text-foreground">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <div data-hero-map className="relative isolate lg:justify-self-end">

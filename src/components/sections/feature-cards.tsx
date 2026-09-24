@@ -166,15 +166,9 @@ export function FeatureCards() {
       className="px-4 py-20 sm:px-6 sm:py-28"
     >
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-        <ul className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
-          {cards.map((card) => (
-            <li key={card.title} data-feature-card>
-              <FeatureCard {...card} />
-            </li>
-          ))}
-        </ul>
 
-        <div>
+        {/* Heading first in the DOM so phones read it before the cards; desktop still puts the cards left. */}
+        <div className="lg:order-2">
           <h2
             id="process-title"
             // -mb cancels the descender-guard padding on the last line so the
@@ -189,7 +183,7 @@ export function FeatureCards() {
                 className={cn("overflow-hidden pb-[0.16em] -mb-[0.16em]", line.className)}
               >
                 <span data-feature-line className="block will-change-transform">
-                  {line.text}
+                  {line.text}{" "}
                 </span>
               </span>
             ))}
@@ -201,6 +195,14 @@ export function FeatureCards() {
             I own all three, from the first sketch to launch.
           </p>
         </div>
+
+        <ul className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:order-1">
+          {cards.map((card) => (
+            <li key={card.title} data-feature-card>
+              <FeatureCard {...card} />
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

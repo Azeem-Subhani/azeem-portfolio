@@ -1,0 +1,170 @@
+/* Data Management Hero Gemini styling */
+
+body:has(.data-management-gemini-page) {
+  background: #061517 !important;
+}
+
+body:has(.data-management-gemini-page) [data-site-header],
+html:has(.data-management-gemini-page) .site-intro,
+main:has(.data-management-gemini-page) ~ footer,
+main:has(.data-management-gemini-page) ~ aside[aria-label="Contact shortcut"],
+body:has(.data-management-gemini-page) nextjs-portal {
+  display: none !important;
+}
+
+.data-gemini-hero {
+  --gemini-bg: #061517;
+  --gemini-bg-deep: #030d0f;
+  --gemini-cyan: #38d9c4;
+  --gemini-cyan-glow: rgba(56, 217, 196, 0.22);
+  --gemini-violet: #8b5cf6;
+  --gemini-ivory: #f2eee5;
+  --gemini-muted: #8aa9a5;
+  --gemini-btn: #63ada3;
+  --gemini-btn-hover: #73c0b5;
+  --gemini-btn-text: #05191a;
+
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--gemini-bg);
+  background-image:
+    radial-gradient(ellipse 90% 70% at 70% 48%, rgba(20, 95, 90, 0.28) 0%, rgba(6, 21, 23, 0.7) 65%, var(--gemini-bg-deep) 100%),
+    radial-gradient(circle 500px at 15% 20%, rgba(13, 60, 58, 0.2) 0%, transparent 80%),
+    radial-gradient(circle 600px at 85% 85%, rgba(15, 65, 62, 0.25) 0%, transparent 80%);
+  color: var(--gemini-ivory);
+  overflow-x: clip;
+}
+
+/* Background organic depth blur / cloudy bokeh */
+.data-gemini-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.data-gemini-cloud {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.data-gemini-cloud-1 {
+  top: -10%;
+  right: -5%;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(circle, #2dd4bf 0%, #0d9488 40%, transparent 70%);
+}
+
+.data-gemini-cloud-2 {
+  bottom: -15%;
+  left: -10%;
+  width: 700px;
+  height: 550px;
+  background: radial-gradient(circle, #14b8a6 0%, #064e3b 50%, transparent 75%);
+}
+
+.data-gemini-cloud-3 {
+  top: 35%;
+  right: 15%;
+  width: 550px;
+  height: 450px;
+  background: radial-gradient(circle, #38d9c4 0%, #0f766e 45%, transparent 70%);
+  opacity: 0.18;
+}
+
+/* Subtle background technical grid */
+.data-gemini-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-size: 72px 72px;
+  background-image:
+    linear-gradient(to right, rgba(56, 178, 172, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 178, 172, 0.035) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 50%, black 20%, transparent 85%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Navigation bar */
+.data-gemini-nav {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  border-bottom: 1px solid rgba(56, 178, 172, 0.1);
+  background: rgba(6, 21, 23, 0.35);
+  backdrop-filter: blur(12px);
+}
+
+/* Typography */
+.data-gemini-headline {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.018em;
+  line-height: 0.96;
+}
+
+.data-gemini-sans {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Editorial CTA button */
+.data-gemini-cta {
+  background: var(--gemini-btn);
+  color: var(--gemini-btn-text);
+  box-shadow: 0 4px 20px rgba(99, 173, 163, 0.22);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.data-gemini-cta:hover {
+  background: var(--gemini-btn-hover);
+  box-shadow: 0 6px 28px rgba(99, 173, 163, 0.38);
+  transform: translateY(-1px);
+}
+
+.data-gemini-cta:active {
+  transform: translateY(0);
+}
+
+/* Annotation Labels */
+.data-gemini-label {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #d1f7f2;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.data-gemini-label-violet {
+  color: #e9d5ff;
+}
+
+.data-gemini-connector {
+  stroke: rgba(94, 234, 212, 0.45);
+  stroke-width: 1.25;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.data-gemini-connector-violet {
+  stroke: rgba(192, 132, 252, 0.5);
+}
+
+.data-gemini-node-dot {
+  fill: #5eead4;
+  filter: drop-shadow(0 0 4px rgba(94, 234, 212, 0.8));
+}
+
+.data-gemini-node-dot-violet {
+  fill: #c084fc;
+  filter: drop-shadow(0 0 4px rgba(192, 132, 252, 0.85));
+}

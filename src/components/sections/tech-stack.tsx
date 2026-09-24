@@ -202,6 +202,18 @@ function StackMark({ item }: { item: (typeof stack)[number] }) {
   );
 }
 
+/** Mark plus a visible name: monochrome marks alone left most of the stack unreadable. */
+function StackTile({ item }: { item: (typeof stack)[number] }) {
+  return (
+    <span className="flex min-w-[5.5rem] flex-col items-center gap-3">
+      <StackMark item={item} />
+      <span className="text-xs font-medium leading-none tracking-wide text-muted-foreground">
+        {item.label}
+      </span>
+    </span>
+  );
+}
+
 export function TechStack() {
   const reduced = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -297,15 +309,15 @@ export function TechStack() {
           id="stack-title"
           // -mb cancels the descender-guard padding on the last line so the
           // copy below keeps its original gap.
-          className="-mb-[0.16em] text-center font-sans text-[clamp(2.25rem,6.5vw,4.5rem)] leading-[0.9] tracking-tight"
+          className="-mb-[0.16em] text-center font-display text-[clamp(2.75rem,7.5vw,5.5rem)] leading-[0.9] tracking-tight"
         >
           <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
-            <span data-stack-line className="block font-extralight will-change-transform">
-              every layer of the
+            <span data-stack-line className="block will-change-transform">
+              every layer of the{" "}
             </span>
           </span>
           <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
-            <span data-stack-line className="block font-black text-accent will-change-transform">
+            <span data-stack-line className="block text-accent will-change-transform">
               technology stack
             </span>
           </span>
@@ -318,7 +330,7 @@ export function TechStack() {
         </p>
         <p
           data-stack-copy
-          className="pt-10 text-left text-lg leading-relaxed text-muted-foreground"
+          className="mx-auto max-w-2xl pt-10 text-center text-lg leading-relaxed text-muted-foreground"
         >
           Track Hero is Next.js and React on a Django API. Oxym is Angular and Ionic
           on NestJS and Firestore. Different answers for different products, both
@@ -326,7 +338,7 @@ export function TechStack() {
         </p>
         <p
           data-stack-copy
-          className="pt-10 text-right text-lg leading-relaxed text-muted-foreground"
+          className="mx-auto max-w-2xl pt-6 text-center text-lg leading-relaxed text-muted-foreground"
         >
           I work across the frontend, the API, the database, and the AWS account
           underneath, so nothing has to change hands between them.
@@ -347,7 +359,7 @@ export function TechStack() {
                 aria-label={item.label}
                 className="inline-flex rounded transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-current"
               >
-                <StackMark item={item} />
+                <StackTile item={item} />
               </a>
             </li>
           ))}
@@ -359,14 +371,14 @@ export function TechStack() {
         >
           <LogoLoop
             logos={stack.map((item) => ({
-              node: <StackMark item={item} />,
+              node: <StackTile item={item} />,
               href: stackPages[item.label],
               title: item.label,
               ariaLabel: item.label,
             }))}
             speed={80}
             gap={24}
-            logoHeight={64}
+            logoHeight={52}
             pauseOnHover
             scaleOnHover
             ariaLabel="Technology stack"

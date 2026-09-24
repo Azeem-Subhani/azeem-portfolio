@@ -322,7 +322,7 @@ export function RealTimeChatWebCapture() {
             <div className="info-scroll">
               <div className="room-card">
                 <div className="room-mark">#</div>
-                <h3>design-crit</h3>
+                <div data-h="3">design-crit</div>
                 <p>Weekly critiques, token changes and screenshots. Keep it kind, keep it specific.</p>
                 <div className="room-stats">
                   <div><strong>12</strong><span>Members</span></div>
@@ -331,7 +331,7 @@ export function RealTimeChatWebCapture() {
                 </div>
               </div>
 
-              <h4>Members <em>4 online</em></h4>
+              <div data-h="4">Members <em>4 online</em></div>
 
               <div className="member">
                 <div className="av" style={av("#C2704E")}>PR<span className="pres on" /></div>
@@ -358,7 +358,7 @@ export function RealTimeChatWebCapture() {
                 <div><div className="m-name">Ada Fernández</div><div className="m-role">offline</div></div>
               </div>
 
-              <h4>Shared <em>3 files</em></h4>
+              <div data-h="4">Shared <em>3 files</em></div>
               <div className="file">
                 <div className="fi">FIG</div>
                 <div><div className="fn">tokens-v3.fig</div><div className="fs">4.2 MB · Priya</div></div>

@@ -137,7 +137,7 @@ export function ContactCta() {
                 variants={variants.lineMask}
               >
                 <motion.span className="block" variants={variants.lineIn}>
-                  {line}
+                  {line}{" "}
                 </motion.span>
               </motion.span>
             );
@@ -153,6 +153,7 @@ export function ContactCta() {
         </motion.p>
 
         <motion.div
+          data-inline-cta
           className="mx-auto mt-10 flex w-fit max-w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center"
           variants={variants.fadeUp}
         >

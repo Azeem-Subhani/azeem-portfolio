@@ -6,13 +6,20 @@ test.describe("navigation", () => {
   test("desktop nav links reach every primary route", async ({ page }) => {
     await page.goto("/");
 
-    for (const label of ["Projects", "Contact", "Home"]) {
+    for (const label of ["Portfolio"]) {
       await page
         .getByRole("navigation", { name: "Primary navigation" })
         .getByRole("link", { name: label })
         .click();
       await page.waitForLoadState("networkidle");
     }
+
+    await page.getByRole("banner").getByRole("link", { name: "Contact" }).click();
+    await page.waitForLoadState("networkidle");
+
+    await page.goto("/services/mobile-development");
+    await page.getByRole("link", { name: "Azeem Subhani, home" }).click();
+    await expect(page).toHaveURL("/");
   });
 
   test("marks the current page with aria-current", async ({ page }) => {
@@ -21,7 +28,7 @@ test.describe("navigation", () => {
     await expect(
       page
         .getByRole("navigation", { name: "Primary navigation" })
-        .getByRole("link", { name: "Projects" }),
+        .getByRole("link", { name: "Portfolio" }),
     ).toHaveAttribute("aria-current", "page");
   });
 
@@ -33,9 +40,20 @@ test.describe("navigation", () => {
     const sheet = page.getByRole("navigation", { name: "Mobile navigation" });
     await expect(sheet).toBeVisible();
 
-    for (const label of ["Home", "Projects", "Contact"]) {
-      await expect(sheet.getByRole("link", { name: label })).toBeVisible();
+    const expected = [
+      { href: "/projects", name: "Portfolio" },
+      { href: "/contact", name: "Contact" },
+      { href: "/services/cloud", name: "Cloud" },
+      { href: "/services/web-development", name: "Web" },
+      { href: "/services/mobile-development", name: "Mobile" },
+      { href: "/services/data-management", name: "Data" },
+    ];
+    for (const { href, name } of expected) {
+      await expect(
+        sheet.locator(`a[href="${href}"]`).filter({ hasText: name }),
+      ).toBeVisible();
     }
+    await expect(sheet.getByRole("link", { name: "Home" })).toHaveCount(0);
   });
 
   test("every primary route responds with 200 and a real title", async ({ page }) => {
@@ -103,10 +121,49 @@ test.describe("navigation", () => {
   test("sitemap and robots routes return valid output", async ({ request }) => {
     const sitemap = await request.get("/sitemap.xml");
     expect(sitemap.ok()).toBeTruthy();
-    expect(await sitemap.text()).toContain("<urlset");
+    const sitemapText = await sitemap.text();
+    expect(sitemapText).toContain("<urlset");
+    expect(sitemapText).toContain("/services/cloud");
+    expect(sitemapText).toContain("/services/web-development");
 
     const robots = await request.get("/robots.txt");
     expect(robots.ok()).toBeTruthy();
     expect(await robots.text()).toContain("Sitemap:");
+  });
+
+  test("header services menu reaches a service page", async ({ page }) => {
+    await page.goto("/");
+    await page
+      .getByRole("navigation", { name: "Primary navigation" })
+      .getByRole("button", { name: "Services" })
+      .click();
+    await page
+      .getByRole("menuitem", { name: /Web development/ })
+      .click();
+    await expect(page).toHaveURL(/\/services\/web-development$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("service pages respond and footer links reach them", async ({ page }) => {
+    await page.goto("/");
+    const servicesNav = page.getByRole("navigation", { name: "Services" });
+
+    await servicesNav.getByRole("link", { name: "Web" }).click();
+    await expect(page).toHaveURL(/\/services\/web-development$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+    const routes = [
+      "/services/cloud",
+      "/services/web-development",
+      "/services/mobile-development",
+      "/services/data-management",
+    ];
+
+    for (const route of routes) {
+      const response = await page.goto(route);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Start a conversation" }).first()).toBeVisible();
+    }
   });
 });

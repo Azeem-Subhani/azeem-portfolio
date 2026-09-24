@@ -32,7 +32,7 @@ export function MemorialPlanningPhoneMethodPickerCapture() {
 
         <div className="mobile-content method-picker-content">
           <div className="mobile-plan-label">Mitchell Family Plan</div>
-          <h1 className="mobile-title">Choose how to pay</h1>
+          <div data-h="1" className="mobile-title">Choose how to pay</div>
           <p className="mobile-intro">
             Pick a saved method for this $215.00 payment, or add a new card or bank
             account.

@@ -79,7 +79,7 @@ export function GamingGlobalWebConverterCapture() {
       >
         <div className="chead">
           <div>
-            <h1>SENSITIVITY CONVERTER</h1>
+            <div data-h="1">SENSITIVITY CONVERTER</div>
             <div className="sub">Cross-game aim translation · 14 titles supported · yaw-accurate</div>
           </div>
           <div className="acts">
@@ -101,7 +101,7 @@ export function GamingGlobalWebConverterCapture() {
           <div className="panel tick">
             <div className="ph">
               <span className="idx">01</span>
-              <h3>Source</h3>
+              <div data-h="3">Source</div>
               <div className="rt">
                 <span className="chip acc">
                   <i />
@@ -157,7 +157,7 @@ export function GamingGlobalWebConverterCapture() {
           <div className="panel tick">
             <div className="ph">
               <span className="idx">02</span>
-              <h3>Match</h3>
+              <div data-h="3">Match</div>
             </div>
             <div className="conv-match">
               <div className="lbl">Locked distance</div>
@@ -192,7 +192,7 @@ export function GamingGlobalWebConverterCapture() {
           <div className="panel tick">
             <div className="ph">
               <span className="idx">03</span>
-              <h3>Target</h3>
+              <div data-h="3">Target</div>
               <div className="rt">
                 <span className="chip">14 TITLES</span>
               </div>
@@ -258,7 +258,7 @@ export function GamingGlobalWebConverterCapture() {
         <div className="panel" style={{ flex: "0 0 auto" }}>
           <div className="ph">
             <span className="idx">04</span>
-            <h3>All titles · converted from CS2 @ 800 DPI</h3>
+            <div data-h="3">All titles · converted from CS2 @ 800 DPI</div>
             <div className="rt">
               <span className="chip">TOLERANCE ±0.10%</span>
               <span className="chip inf">

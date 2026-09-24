@@ -35,7 +35,7 @@ export function TrackHeroWebFleetCapture() {
       >
         <div className="ophead">
           <div>
-            <h2>Fleet management</h2>
+            <div data-h="2">Fleet management</div>
             <p>38 vehicles · 5 tracks · assignments and service status</p>
           </div>
           <div className="ophead-right">

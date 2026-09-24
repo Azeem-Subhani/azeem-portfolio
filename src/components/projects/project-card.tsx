@@ -20,14 +20,12 @@ type ProjectCardProps = {
    */
   animateEntrance?: boolean;
   reverse?: boolean;
-  priority?: boolean;
 };
 
 export function ProjectCard({
   project,
   animateEntrance = false,
   reverse = false,
-  priority = false,
 }: ProjectCardProps) {
   const reduce = useReducedMotion();
   const hasLinks = Boolean(project.liveUrl || project.repositoryUrl);
@@ -58,9 +56,7 @@ export function ProjectCard({
           project={project}
           density="card"
           reverse={reverse}
-          priority={priority}
           hoverable
-          sizes="(min-width: 1024px) 52vw, 100vw"
           className={cn(reverse && "lg:order-2")}
         />
 

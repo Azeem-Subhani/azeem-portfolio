@@ -9,10 +9,10 @@ export function WoodyShopWebCheckoutCapture() {
     <WoodyShopWebStoreChrome ariaLabel="Woody Shop checkout" cartCount={2}>
       <div className="checkout-page">
         <div className="checkout-main">
-          <h1 className="checkout-title">Checkout</h1>
+          <div data-h="1" className="checkout-title">Checkout</div>
 
           <section className="checkout-block">
-            <h2>Contact</h2>
+            <div data-h="2">Contact</div>
             <div className="checkout-fields">
               <div className="checkout-field">
                 <span>Email</span>
@@ -22,7 +22,7 @@ export function WoodyShopWebCheckoutCapture() {
           </section>
 
           <section className="checkout-block">
-            <h2>Shipping</h2>
+            <div data-h="2">Shipping</div>
             <div className="checkout-fields checkout-fields-grid">
               <div className="checkout-field">
                 <span>First name</span>
@@ -48,7 +48,7 @@ export function WoodyShopWebCheckoutCapture() {
           </section>
 
           <section className="checkout-block">
-            <h2>Payment</h2>
+            <div data-h="2">Payment</div>
             <p className="checkout-stripe-note">Card details handled by Stripe Checkout.</p>
             <div className="checkout-card-placeholder">
               <span>4242 ···· ···· 4242</span>
@@ -58,7 +58,7 @@ export function WoodyShopWebCheckoutCapture() {
         </div>
 
         <aside className="checkout-aside">
-          <h2 className="checkout-aside-title">Order summary</h2>
+          <div data-h="2" className="checkout-aside-title">Order summary</div>
           <ul className="checkout-items">
             <li>
               <div className="checkout-item-thumb">

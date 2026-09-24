@@ -6,11 +6,9 @@ export type ProjectCategory =
   | "Mobile"
   | "Cloud";
 
+/** A device screen. It is always a live React capture; alt describes it for screen readers. */
 export type ProjectScreen = {
-  src: string;
   alt: string;
-  width: number;
-  height: number;
 };
 
 export type ProjectScreens = {
@@ -18,9 +16,9 @@ export type ProjectScreens = {
   phone?: ProjectScreen;
   /** Charcoal sampled from mockup edges so the pane dissolves into the screenshot. */
   backdrop: string;
-  /** When true, the web pane renders a live React mockup instead of web.src. */
+  /** When true, the web pane renders its live React mockup (otherwise it stays blank). */
   liveWeb?: boolean;
-  /** When true, the phone pane renders a live React mockup instead of phone.src. */
+  /** When true, the phone pane renders its live React mockup (otherwise it stays blank). */
   livePhone?: boolean;
 };
 
@@ -43,10 +41,13 @@ export const STACK_ICON_IDS = [
   "express",
   "mongodb",
   "firebase",
+  "firestore",
   "socketio",
   "aws",
   "redux",
   "graphql",
+  "javascript",
+  "jwt",
   "text",
 ] as const;
 
@@ -130,4 +131,101 @@ export type Profile = {
   githubUrl: string;
   siteUrl: string;
   resumeUrl: string;
+};
+
+export const SERVICE_SLUGS = [
+  "cloud",
+  "web-development",
+  "mobile-development",
+  "data-management",
+] as const;
+
+export type ServiceSlug = (typeof SERVICE_SLUGS)[number];
+
+export type ServiceProof = {
+  value: string;
+  label: string;
+};
+
+export type ServiceItem = {
+  title: string;
+  copy: string;
+};
+
+export type ServiceSection =
+  | {
+      kind: "capabilities";
+      title: string;
+      copy: string;
+      items: ServiceItem[];
+    }
+  | {
+      kind: "compare";
+      title: string;
+      copy: string;
+      left: { title: string; subtitle: string };
+      right: { title: string; subtitle: string };
+      rows: { label: string; left: string; right: string }[];
+    }
+  | {
+      kind: "process";
+      title: string;
+      copy: string;
+      left: { title: string; copy: string; steps: string[] };
+      right: { title: string; copy: string; steps: string[] };
+      outcomes: ServiceItem[];
+    }
+  | {
+      kind: "metrics";
+      title: string;
+      copy?: string;
+      items: ServiceProof[];
+    }
+  | {
+      kind: "features";
+      title: string;
+      copy: string;
+      items: ServiceItem[];
+    }
+  | {
+      kind: "steps";
+      title: string;
+      copy: string;
+      items: ServiceItem[];
+    }
+  | {
+      kind: "case";
+      kicker: string;
+      title: string;
+      client: string;
+      challenge: string;
+      solution: string;
+      results: ServiceProof[];
+      path: { name: string; copy: string }[];
+    }
+  | {
+      kind: "platforms";
+      title: string;
+      copy: string;
+      items: (ServiceItem & { meta?: string })[];
+    }
+  | {
+      kind: "coverage";
+      title: string;
+      copy: string;
+      groups: { title: string; copy: string; items: string[] }[];
+    };
+
+export type ServicePageContent = {
+  slug: ServiceSlug;
+  label: string;
+  metaTitle: string;
+  metaDescription: string;
+  kicker: string;
+  titleLines: string[];
+  lede: string;
+  proof: ServiceProof[];
+  sections: ServiceSection[];
+  ctaTitle: string;
+  ctaCopy: string;
 };

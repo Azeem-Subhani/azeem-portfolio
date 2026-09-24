@@ -1,0 +1,328 @@
+.data-hero-visual {
+  --data-hero-grid: color-mix(in srgb, var(--fg) 10%, transparent);
+  --data-hero-line: color-mix(in srgb, var(--fg) 32%, transparent);
+  --data-hero-line-soft: color-mix(in srgb, var(--fg) 17%, transparent);
+  --data-hero-core-start: color-mix(in srgb, var(--fg) 86%, var(--accent));
+  --data-hero-core-mid: color-mix(in srgb, var(--surface) 62%, var(--accent));
+  --data-hero-core-end: color-mix(in srgb, var(--bg) 78%, var(--accent));
+  --data-hero-core-ink: var(--fg);
+  --data-hero-cyan: color-mix(in srgb, var(--accent-secondary) 78%, var(--accent));
+  --data-hero-teal: var(--accent);
+  --data-hero-violet: #9b7bea;
+  position: relative;
+  width: 100%;
+  max-width: 46rem;
+  min-width: 0;
+  min-height: clamp(25rem, 42vw, 38rem);
+  margin-inline: auto;
+  overflow: visible;
+  touch-action: pan-y;
+}
+
+.data-hero-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 700 / 540;
+}
+
+.data-hero-webgl {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.data-hero-webgl-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.data-hero-visual-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+.data-hero-grid-line {
+  fill: none;
+  stroke: var(--data-hero-grid);
+  stroke-width: 0.8;
+}
+
+.data-hero-grid {
+  opacity: 0.62;
+}
+
+.data-hero-atmosphere {
+  fill: var(--accent);
+  opacity: 0.12;
+}
+
+.data-hero-orbit {
+  fill: none;
+  stroke: var(--data-hero-line-soft);
+  stroke-width: 0.8;
+  opacity: 0.5;
+}
+
+.data-hero-orbit-back {
+  opacity: 0.78;
+}
+
+.data-hero-orbit-front {
+  stroke: color-mix(in srgb, var(--data-hero-cyan) 52%, transparent);
+  opacity: 0.72;
+}
+
+.data-hero-orbit-side {
+  stroke: color-mix(in srgb, var(--data-hero-violet) 48%, transparent);
+  opacity: 0.5;
+}
+
+.data-hero-route {
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.data-hero-route-postgres {
+  stroke: var(--data-hero-cyan);
+}
+
+.data-hero-route-writes {
+  stroke: var(--data-hero-teal);
+}
+
+.data-hero-route-warehouse {
+  stroke: var(--data-hero-violet);
+}
+
+.data-hero-route-glimmer {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 0.03 0.97;
+  opacity: 0.62;
+  filter: blur(1px);
+}
+
+.data-hero-visual:not(.is-reduced) .data-hero-route-glimmer {
+  animation: data-hero-route-glimmer 4.8s linear infinite;
+}
+
+.data-hero-visual:not(.is-reduced) .data-hero-route-glimmer.data-hero-route-writes {
+  animation-delay: -1.5s;
+}
+
+.data-hero-visual:not(.is-reduced) .data-hero-route-glimmer.data-hero-route-warehouse {
+  animation-delay: -2.8s;
+}
+
+@keyframes data-hero-route-glimmer {
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+.data-hero-core-shadow {
+  fill: color-mix(in srgb, var(--fg) 30%, transparent);
+  opacity: 0.22;
+  filter: blur(22px);
+}
+
+.data-hero-core {
+  opacity: 0.94;
+}
+
+.data-hero-visual.is-webgl-ready .data-hero-core-surface,
+.data-hero-visual.is-webgl-ready .data-hero-core-shadow,
+.data-hero-visual.is-webgl-ready .data-hero-core-highlight {
+  opacity: 0;
+}
+
+.data-hero-core-rim {
+  fill: none;
+  stroke: color-mix(in srgb, var(--fg) 60%, var(--accent));
+  stroke-width: 1.5;
+  opacity: 0.72;
+}
+
+.data-hero-core-highlight {
+  fill: color-mix(in srgb, var(--fg) 22%, transparent);
+  opacity: 0.34;
+  filter: blur(11px);
+}
+
+.data-hero-core-glyph {
+  color: var(--data-hero-core-ink);
+  opacity: 0.82;
+}
+
+.data-hero-core-stop-light {
+  stop-color: var(--data-hero-core-start);
+  stop-opacity: 0.86;
+}
+
+.data-hero-core-stop-mid {
+  stop-color: var(--data-hero-core-mid);
+  stop-opacity: 0.78;
+}
+
+.data-hero-core-stop-dark {
+  stop-color: var(--data-hero-core-end);
+  stop-opacity: 0.96;
+}
+
+.data-hero-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.data-hero-node-halo {
+  fill: currentColor;
+  opacity: 0.12;
+  filter: blur(10px);
+}
+
+.data-hero-node-shell {
+  fill: color-mix(in srgb, var(--bg) 42%, transparent);
+  stroke: currentColor;
+  stroke-width: 1.3;
+  opacity: 0.88;
+}
+
+.data-hero-node-core {
+  fill: color-mix(in srgb, var(--surface) 58%, transparent);
+  stroke: color-mix(in srgb, currentColor 62%, transparent);
+  stroke-width: 0.8;
+  opacity: 0.78;
+}
+
+.data-hero-node-cyan {
+  color: var(--data-hero-cyan);
+}
+
+.data-hero-node-teal {
+  color: var(--data-hero-teal);
+}
+
+.data-hero-node-violet {
+  color: var(--data-hero-violet);
+}
+
+.data-hero-node-glyph {
+  color: currentColor;
+  opacity: 0.9;
+}
+
+.data-hero-label {
+  fill: var(--fg);
+  font-family: var(--font-h2), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.data-hero-caption {
+  fill: var(--muted);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.data-hero-node-ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.8;
+  stroke-dasharray: 2 5;
+  opacity: 0.45;
+}
+
+.data-hero-port-ring {
+  fill: color-mix(in srgb, var(--bg) 70%, transparent);
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.9;
+}
+
+.data-hero-port-dot {
+  fill: currentColor;
+}
+
+.data-hero-ring-dashed {
+  fill: none;
+  stroke: var(--data-hero-line-soft);
+  stroke-width: 1;
+  stroke-dasharray: 1 7;
+  stroke-linecap: round;
+}
+
+.data-hero-ring-ticks {
+  fill: none;
+  stroke: var(--data-hero-line-soft);
+  stroke-width: 6;
+  stroke-dasharray: 0.8 24;
+  opacity: 0.55;
+}
+
+.data-hero-core-ping {
+  fill: none;
+  stroke: var(--data-hero-teal);
+  stroke-width: 1.4;
+  opacity: 0;
+}
+
+.data-hero-pulse {
+  fill: var(--fg);
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+.data-hero-pulse-postgres {
+  color: var(--data-hero-cyan);
+}
+
+.data-hero-pulse-writes {
+  color: var(--data-hero-teal);
+}
+
+.data-hero-pulse-warehouse {
+  color: var(--data-hero-violet);
+}
+
+@media (max-width: 639px) {
+  /* Let the scene's aspect ratio set the height; a fixed min-height left an empty band under it. */
+  .data-hero-visual {
+    min-height: 0;
+    max-width: 32rem;
+    margin-top: -1.25rem;
+  }
+
+  .service-hero-stage:has(.data-hero-visual) {
+    min-height: 0;
+  }
+
+  .data-hero-label {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .data-hero-route-glimmer,
+  .data-hero-pulses {
+    animation: none;
+    display: none;
+  }
+}
+
+.data-hero-visual.is-reduced .data-hero-pulses {
+  display: none;
+}

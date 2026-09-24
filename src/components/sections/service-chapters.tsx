@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -17,6 +18,8 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 type Chapter = {
   id: string;
+  href: string;
+  linkLabel: string;
   title: string;
   copy: string;
   copySecondary?: string;
@@ -28,6 +31,8 @@ type Chapter = {
 const chapters: Chapter[] = [
   {
     id: "cloud",
+    href: "/services/cloud",
+    linkLabel: "How I run cloud",
     title: "Serverless backends",
     copy: "I build on Lambda, Cognito, Amplify, and DynamoDB, deployed as one SAM stack. The memorial planning portal runs on that stack and handles 500+ authenticated requests a day.",
     copySecondary:
@@ -38,6 +43,8 @@ const chapters: Chapter[] = [
   },
   {
     id: "web",
+    href: "/services/web-development",
+    linkLabel: "How I build web",
     title: "Web design & development",
     copy: "I build product UI in Next.js and React. Track Hero's white-label booking sites run five race tracks from one codebase. Each venue gets its own brand, domain, and pages, while calendars and checkout stay shared.",
     chips: [...webV4Mock1Chips],
@@ -46,6 +53,8 @@ const chapters: Chapter[] = [
   },
   {
     id: "mobile",
+    href: "/services/mobile-development",
+    linkLabel: "How I ship mobile",
     title: "Cross-platform mobile apps",
     copy: "I ship mobile apps with Ionic, Angular, and React Native. Oxym's web and mobile apps come from one codebase, so coaches and players see the same live schedule.",
     visual: <MobileVisual />,
@@ -53,6 +62,8 @@ const chapters: Chapter[] = [
   },
   {
     id: "data",
+    href: "/services/data-management",
+    linkLabel: "How I keep data in one place",
     title: "Enterprise data management",
     copy: "Postgres holds the relational records. DynamoDB and Firestore take over when a product needs partitioned writes or live sync. Queries run against those same stores, so AI answers come from live data, not a copy.",
     copySecondary:
@@ -243,7 +254,8 @@ export function ServiceChapters() {
           data-service-chapter
           data-visual-first={chapter.visualFirst ? "true" : "false"}
           aria-labelledby={`${chapter.id}-title`}
-          className={`scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28${
+          // Tighter than the other home bands: each chapter carries a tall visual of its own.
+          className={`scroll-mt-28 px-4 py-14 sm:px-6 sm:py-20${
             chapter.id === "mobile" ? " overflow-visible" : ""
           }`}
         >
@@ -258,7 +270,7 @@ export function ServiceChapters() {
             >
               <h2
                 id={`${chapter.id}-title`}
-                className="overflow-hidden pb-[0.08em] -mb-[0.08em] font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.05] tracking-tight"
+                className="overflow-hidden pb-[0.08em] -mb-[0.08em] font-display text-[clamp(2.25rem,5.5vw,4.25rem)] font-normal leading-[1.05] tracking-tight"
               >
                 <span data-chapter-title className="block will-change-transform">
                   {chapter.title}
@@ -294,6 +306,15 @@ export function ServiceChapters() {
                   ))}
                 </ul>
               ) : null}
+              <p data-chapter-copy className="mt-8">
+                <Link
+                  href={chapter.href}
+                  className="inline-flex w-fit items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  {chapter.linkLabel}
+                  <span aria-hidden="true">↗</span>
+                </Link>
+              </p>
             </div>
             <div
               data-chapter-visual

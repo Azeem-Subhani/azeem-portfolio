@@ -26,7 +26,7 @@ export function OxymWebInvoicesCapture() {
 
           <article className="card panel invoices-table">
             <header className="panel-head">
-              <h2>March subs</h2>
+              <div data-h="2">March subs</div>
               <div className="invoices-actions">
                 <button type="button" className="btn btn--ghost btn--sm">
                   Filter

@@ -384,7 +384,7 @@
   border-bottom: 1px solid var(--line);
 }
 
-.gg-capture-root .ph h3 {
+.gg-capture-root .ph [data-h="3"] {
   margin: 0;
   font-size: 10.5px;
   font-weight: 700;
@@ -824,7 +824,7 @@
   padding: 7px 11px;
 }
 
-.gg-capture-root .ph-ph h3 {
+.gg-capture-root .ph-ph [data-h="3"] {
   font-size: 12px;
 }
 

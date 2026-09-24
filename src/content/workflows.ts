@@ -51,7 +51,7 @@ export const workflows: Record<string, ProjectWorkflow> = {
       { id: "express", label: "Express", icon: "express" },
       { id: "mongo", label: "MongoDB", icon: "mongodb" },
       { id: "socket", label: "Socket.IO", icon: "socketio" },
-      { id: "js", label: "JavaScript", icon: "text" },
+      { id: "js", label: "JavaScript", icon: "javascript" },
     ],
   },
 
@@ -63,7 +63,7 @@ export const workflows: Record<string, ProjectWorkflow> = {
       { id: "redux", label: "Redux", icon: "redux" },
       { id: "firebase", label: "Firebase", icon: "firebase" },
       { id: "stripe", label: "Stripe", icon: "stripe" },
-      { id: "js", label: "JavaScript", icon: "text" },
+      { id: "js", label: "JavaScript", icon: "javascript" },
       { id: "storage", label: "Local storage", icon: "text" },
     ],
   },
@@ -74,8 +74,8 @@ export const workflows: Record<string, ProjectWorkflow> = {
     hub: { id: "hub", label: "Node.js", icon: "nodejs" },
     orbit: [
       { id: "handlebars", label: "Handlebars", icon: "text" },
-      { id: "ws", label: "WebSockets", icon: "text" },
-      { id: "js", label: "JavaScript", icon: "text" },
+      { id: "ws", label: "WebSockets", icon: "socketio" },
+      { id: "js", label: "JavaScript", icon: "javascript" },
       { id: "moment", label: "Moment.js", icon: "text" },
       { id: "clients", label: "Chat clients", icon: "text" },
     ],
@@ -88,7 +88,7 @@ export const workflows: Record<string, ProjectWorkflow> = {
     orbit: [
       { id: "node", label: "Node.js", icon: "nodejs" },
       { id: "mongo", label: "MongoDB", icon: "mongodb" },
-      { id: "jwt", label: "JWT", icon: "text" },
+      { id: "jwt", label: "JWT", icon: "jwt" },
       { id: "sendgrid", label: "SendGrid", icon: "text" },
       { id: "express-api", label: "REST API", icon: "text" },
     ],

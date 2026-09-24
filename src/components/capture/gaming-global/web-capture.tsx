@@ -235,7 +235,7 @@ export function GamingGlobalWebCapture() {
               <div className="panel tick">
                 <div className="ph">
                   <span className="idx">01</span>
-                  <h3>Performance · last 20 matches</h3>
+                  <div data-h="3">Performance · last 20 matches</div>
                   <div className="rt">
                     <span className="chip acc">
                       <i />
@@ -301,7 +301,7 @@ export function GamingGlobalWebCapture() {
               <div className="panel tick">
                 <div className="ph">
                   <span className="idx">02</span>
-                  <h3>Recent matches</h3>
+                  <div data-h="3">Recent matches</div>
                   <div className="rt">
                     <span className="chip inf">
                       <i />
@@ -337,7 +337,7 @@ export function GamingGlobalWebCapture() {
             <div className="panel" style={{ flex: "0 0 auto" }}>
               <div className="ph">
                 <span className="idx">03</span>
-                <h3>Map pool · win rate</h3>
+                <div data-h="3">Map pool · win rate</div>
                 <div className="rt">
                   <span className="chip">412 MATCHES</span>
                 </div>

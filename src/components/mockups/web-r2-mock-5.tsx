@@ -190,7 +190,7 @@ export function GantryLights({
                 }}
               >
                 <p
-                  className={`truncate text-[8px] leading-snug sm:text-[9px] ${
+                  className={`line-clamp-2 text-balance break-words text-[9px] leading-tight sm:text-[10px] ${
                     labelHot ? "text-accent" : "text-foreground"
                   }`}
                 >

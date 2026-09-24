@@ -1,11 +1,16 @@
 "use client";
 
-import { useId, useState, type ComponentProps, type ReactNode } from "react";
+import {
+  useId,
+  useState,
+  type ComponentProps,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { BrowserFrame } from "@/components/projects/device-frames/browser-frame";
 import { PhoneFrame } from "@/components/projects/device-frames/phone-frame";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export type DeviceStageWebSlide = {
@@ -35,14 +40,13 @@ type DeviceStageProps = {
   syncPhone?: boolean;
 };
 
-function pad(value: number) {
-  return String(value).padStart(2, "0");
-}
-
 function wrapIndex(index: number, length: number) {
   if (length <= 0) return 0;
   return (index + length) % length;
 }
+
+const arrowClassName =
+  "inline-flex size-10 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur-md transition-colors hover:border-foreground/30 hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)] sm:size-11";
 
 export function DeviceStage({
   web = [],
@@ -51,7 +55,7 @@ export function DeviceStage({
   className,
   syncPhone = true,
 }: DeviceStageProps) {
-  const labelId = useId();
+  const statusId = useId();
   const [webIndex, setWebIndex] = useState(0);
   const [phoneIndex, setPhoneIndex] = useState(0);
 
@@ -90,53 +94,178 @@ export function DeviceStage({
     if (phoneAt >= 0) setPhoneIndex(phoneAt);
   };
 
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!showControls) return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      go(-1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      go(1);
+    }
+  };
+
+  const renderArrows = () =>
+    showControls ? (
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-between px-1 sm:px-2">
+        <button
+          type="button"
+          className={cn("pointer-events-auto", arrowClassName)}
+          aria-label="Previous screen"
+          aria-controls={statusId}
+          onClick={() => go(-1)}
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+        <button
+          type="button"
+          className={cn("pointer-events-auto", arrowClassName)}
+          aria-label="Next screen"
+          aria-controls={statusId}
+          onClick={() => go(1)}
+        >
+          <ChevronRight className="size-5" />
+        </button>
+      </div>
+    ) : null;
+
+  const tabs = showControls ? (
+    <>
+      <div className="mt-6 flex justify-center">
+        <div
+          role="tablist"
+          aria-label="Choose a screen"
+          className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-border/70 bg-surface/70 p-1 shadow-sm backdrop-blur-md"
+        >
+          {controlSlides.map((slide, slideIndex) => {
+            const selected = slideIndex === controlIndex;
+            return (
+              <button
+                key={slide.id}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={statusId}
+                className={cn(
+                  "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]",
+                  selected
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-background/60 hover:text-foreground",
+                )}
+                onClick={() => select(slide.id)}
+              >
+                {slide.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  ) : null;
+
+  // The captures themselves are inert pictures, so this line is what a screen reader gets.
+  // It doubles as the live status when the pager changes the screen.
+  const description = activeWeb ? (
+    <p id={statusId} className="sr-only" aria-live={showControls ? "polite" : undefined}>
+      {`Web app screen: ${activeWeb.label}`}
+      {layout === "hero" && activePhone ? `, with ${activePhone.label} on a phone` : ""}
+      {showControls ? `. ${controlIndex + 1} of ${controlSlides.length}` : ""}
+    </p>
+  ) : null;
+
+  // Slide wrappers are keyed by slide id: slides that share a capture shell would otherwise
+  // keep the same DOM, and the build-up (useBuildUp in CaptureFrame) would not replay.
   return (
-    <div className={cn("w-full", className)}>
+    <div
+      className={cn("relative w-full", className)}
+      data-device-stage=""
+      // The floating mobile CTA steps aside while a hero stage is on screen (see MobileCta).
+      data-inline-cta={layout === "hero" ? "" : undefined}
+      role={showControls ? "group" : undefined}
+      aria-roledescription={showControls ? "carousel" : undefined}
+      aria-label={showControls ? "Product screens" : undefined}
+      tabIndex={showControls ? 0 : undefined}
+      onKeyDown={onKeyDown}
+    >
+      {description}
       {layout !== "row" && activeWeb ? (
         layout === "hero" && hasPhones ? (
-          // Same overlap as ProjectMockup case-study, scaled up so the
-          // cluster fills the hero instead of floating in empty space.
-          <div className="relative min-h-[280px] aspect-[16/10] overflow-hidden lg:aspect-auto lg:min-h-[640px]">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative aspect-[16/10] w-full max-w-[1100px] max-h-[640px]">
-                <div
-                  className="pointer-events-none absolute left-1/2 top-[12px] w-[1000px] origin-top"
-                  style={{ transform: "translateX(-50%) scale(0.78)" }}
-                >
+          <>
+            <div className="relative lg:hidden">
+              <div className="overflow-visible pb-[12%]">
+                <div className="relative">
                   <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
-                    <div className="pointer-events-none">{activeWeb.children}</div>
+                    <div key={activeWeb.id} className="pointer-events-none">{activeWeb.children}</div>
                   </BrowserFrame>
+                  {renderArrows()}
+                  {activePhone ? (
+                    <div className="pointer-events-none absolute bottom-0 right-[2%] z-[1] w-[min(42%,10.25rem)] translate-y-[10%]">
+                      <PhoneFrame
+                        className="!w-full"
+                        shellClassName={activePhone.shellClassName}
+                        screenClassName={activePhone.screenClassName}
+                        statusTone={activePhone.statusTone}
+                      >
+                        <div key={activePhone.id} className="pointer-events-none absolute inset-0">
+                          {activePhone.children}
+                        </div>
+                      </PhoneFrame>
+                    </div>
+                  ) : null}
                 </div>
-
-                {activePhone ? (
-                  <div
-                    className="pointer-events-none absolute w-[270px]"
-                    style={{
-                      right: "5%",
-                      bottom: "140px",
-                      transform: "scale(0.66)",
-                      transformOrigin: "bottom right",
-                    }}
-                  >
-                    <PhoneFrame
-                      shellClassName={activePhone.shellClassName}
-                      screenClassName={activePhone.screenClassName}
-                      statusTone={activePhone.statusTone}
-                    >
-                      <div className="pointer-events-none absolute inset-0">
-                        {activePhone.children}
-                      </div>
-                    </PhoneFrame>
-                  </div>
-                ) : null}
               </div>
             </div>
-          </div>
+
+            <div className="relative hidden min-h-[640px] lg:block">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="flex h-full items-center justify-center">
+                  <div className="relative aspect-[16/10] w-full max-h-[640px] max-w-[1100px]">
+                    <div
+                      className="pointer-events-none absolute left-1/2 top-[12px] w-[1000px] origin-top"
+                      style={{ transform: "translateX(-50%) scale(0.78)" }}
+                    >
+                      <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
+                        <div key={activeWeb.id} className="pointer-events-none">{activeWeb.children}</div>
+                      </BrowserFrame>
+                    </div>
+
+                    {activePhone ? (
+                      <div
+                        className="pointer-events-none absolute w-[270px]"
+                        style={{
+                          right: "5%",
+                          bottom: "140px",
+                          transform: "scale(0.66)",
+                          transformOrigin: "bottom right",
+                        }}
+                      >
+                        <PhoneFrame
+                          shellClassName={activePhone.shellClassName}
+                          screenClassName={activePhone.screenClassName}
+                          statusTone={activePhone.statusTone}
+                        >
+                          <div key={activePhone.id} className="pointer-events-none absolute inset-0">
+                            {activePhone.children}
+                          </div>
+                        </PhoneFrame>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+              {renderArrows()}
+            </div>
+            {tabs}
+          </>
         ) : (
           <div className="mx-auto w-full max-w-[1000px]">
-            <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
-              <div className="pointer-events-none">{activeWeb.children}</div>
-            </BrowserFrame>
+            <div className="relative">
+              <BrowserFrame url={activeWeb.url} tone={activeWeb.tone}>
+                <div key={activeWeb.id} className="pointer-events-none">{activeWeb.children}</div>
+              </BrowserFrame>
+              {renderArrows()}
+            </div>
+            {tabs}
           </div>
         )
       ) : null}
@@ -155,66 +284,12 @@ export function DeviceStage({
                 </div>
               </PhoneFrame>
               <p className="max-w-[12rem] text-center text-sm text-muted-foreground">
+                <span className="sr-only">Phone screen: </span>
                 {phone.label}
               </p>
             </li>
           ))}
         </ul>
-      ) : null}
-
-      {showControls ? (
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              aria-label="Previous screen"
-              onClick={() => go(-1)}
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              aria-label="Next screen"
-              onClick={() => go(1)}
-            >
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-
-          <p
-            id={labelId}
-            className="font-mono text-xs tabular-nums text-muted-foreground"
-          >
-            {pad(controlIndex + 1)} / {pad(controlSlides.length)}
-          </p>
-
-          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Product screens">
-            {controlSlides.map((slide, index) => {
-              const selected = index === controlIndex;
-              return (
-                <button
-                  key={slide.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 text-[0.7rem] font-medium transition-colors",
-                    selected
-                      ? "border-foreground text-foreground"
-                      : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
-                  )}
-                  onClick={() => select(slide.id)}
-                >
-                  {slide.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       ) : null}
     </div>
   );

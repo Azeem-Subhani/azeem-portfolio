@@ -95,8 +95,9 @@ export function ProjectsIntro() {
         <h1 className="projects-title text-balance">
           {titleLines.map((line) => (
             <span key={line} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+              {/* Trailing space keeps the heading's text readable for search and copy. */}
               <span data-projects-line className="block will-change-transform">
-                {line}
+                {line}{" "}
               </span>
             </span>
           ))}
@@ -105,7 +106,7 @@ export function ProjectsIntro() {
       <div data-projects-copy className="projects-intro-copy">
         <p>
           Booking platforms, payment portals, live systems, and AI
-          features—designed to stay useful when the stakes are high.
+          features, designed to stay useful when the stakes are high.
         </p>
         <p className="projects-note">
           Some client work is anonymized. The systems, decisions, and

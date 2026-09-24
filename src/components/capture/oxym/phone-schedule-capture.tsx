@@ -12,7 +12,7 @@ export function OxymPhoneScheduleCapture() {
           </button>
 
           <div className="p-title">
-            <h1>My schedule</h1>
+            <div data-h="1">My schedule</div>
             <p>First Team · live updates</p>
           </div>
 

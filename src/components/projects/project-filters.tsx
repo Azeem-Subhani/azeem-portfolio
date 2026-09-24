@@ -8,7 +8,7 @@ export type FilterValue = "All" | ProjectCategory;
 export const filterValues: FilterValue[] = [
   "All",
   "AI & RAG",
-  "Full-Stack",
+  // No "Full-Stack": every project carries it, so the filter never narrowed anything.
   "Payments",
   "Real-Time",
   "Mobile",

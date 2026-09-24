@@ -131,7 +131,7 @@ export function OxymWebShell({
           <div className="topbar-left">
             <span className="crest crest--md">NF</span>
             <div>
-              <h1 className="topbar-title">{topbarTitle}</h1>
+              <div data-h="1" className="topbar-title">{topbarTitle}</div>
               <p className="topbar-sub">{topbarSub}</p>
             </div>
           </div>

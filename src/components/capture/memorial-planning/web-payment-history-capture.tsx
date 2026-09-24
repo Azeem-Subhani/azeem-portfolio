@@ -61,7 +61,7 @@ export function MemorialPlanningWebPaymentHistoryCapture() {
           <header className="main-header">
             <div>
               <p className="eyebrow">Account activity</p>
-              <h1 className="desktop-title">Payment history</h1>
+              <div data-h="1" className="desktop-title">Payment history</div>
               <p className="header-copy">
                 Mitchell Family Plan · Plan ID MP-2841-019
               </p>

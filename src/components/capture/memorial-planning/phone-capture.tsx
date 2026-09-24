@@ -19,7 +19,7 @@ export function MemorialPlanningPhoneCapture() {
 
         <div className="mobile-content">
           <div className="mobile-plan-label">Mitchell Family Plan</div>
-          <h1 className="mobile-title">Make a payment</h1>
+          <div data-h="1" className="mobile-title">Make a payment</div>
           <p className="mobile-intro">Choose an amount toward your pre-arranged services.</p>
 
           <section className="mobile-card" aria-label="Plan balance">
@@ -42,7 +42,7 @@ export function MemorialPlanningPhoneCapture() {
           </section>
 
           <section className="form-section">
-            <h2 className="form-heading">Payment amount</h2>
+            <div data-h="2" className="form-heading">Payment amount</div>
             <label className="amount-input">
               <span className="currency">$</span>
               <input type="text" defaultValue="215.00" readOnly inputMode="decimal" aria-label="Payment amount" />
@@ -63,7 +63,7 @@ export function MemorialPlanningPhoneCapture() {
 
           <section className="form-section">
             <div className="method-heading">
-              <h2 className="form-heading tight">Payment method</h2>
+              <div data-h="2" className="form-heading tight">Payment method</div>
               <button type="button" className="change-link">
                 Change
               </button>
@@ -92,7 +92,7 @@ export function MemorialPlanningPhoneCapture() {
           </section>
 
           <section className="form-section">
-            <h2 className="form-heading">When would you like to pay?</h2>
+            <div data-h="2" className="form-heading">When would you like to pay?</div>
             <div className="date-options">
               <button type="button" className="date-option selected">
                 <span className="radio" />

@@ -337,6 +337,29 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                   </p>
                 </div>
               </motion.div>
+              <motion.div className="flex items-end gap-2" variants={bubble}>
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-[9px] font-medium text-accent-foreground">
+                  MR
+                </span>
+                <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-background px-3 py-2">
+                  <p className="text-[12px] leading-4 text-foreground">Warm-up 5:30 on pitch 2.</p>
+                </div>
+              </motion.div>
+              {/* Typing indicator fills the thread so the chat reads live, not cut off. */}
+              <motion.div className="flex items-center gap-2" variants={bubble}>
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-signal/40 text-[9px] font-medium text-foreground">
+                  NS
+                </span>
+                <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm bg-background px-3 py-2.5">
+                  {[0, 1, 2].map((dot) => (
+                    <span
+                      key={dot}
+                      className={`size-1.5 rounded-full bg-muted-foreground/60 ${reduced ? "" : "animate-pulse"}`}
+                      style={{ animationDelay: `${dot * 160}ms` }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
             </motion.div>
 
             <motion.div className="mt-auto flex items-center gap-2" variants={fade}>
