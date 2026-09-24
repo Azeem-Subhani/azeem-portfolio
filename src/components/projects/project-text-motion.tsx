@@ -13,8 +13,12 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const ease = "power4.out";
 
+// `scroll` is not in ScrollTrigger's published types, so type the optional getter here and
+// keep the runtime check (it follows the smooth-scroll proxy when one is registered).
+const scrollTrigger = ScrollTrigger as typeof ScrollTrigger & { scroll?: () => number };
+
 function scrollY() {
-  return typeof ScrollTrigger.scroll === "function" ? ScrollTrigger.scroll() : window.scrollY;
+  return typeof scrollTrigger.scroll === "function" ? scrollTrigger.scroll() : window.scrollY;
 }
 
 function inSkip(el: Element) {

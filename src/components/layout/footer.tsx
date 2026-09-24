@@ -4,7 +4,8 @@ import { GithubIcon, LinkedinIcon } from "@/components/icons";
 import { primaryNav, serviceNav } from "@/content/nav";
 import { profile } from "@/content/profile";
 
-const workNav = primaryNav.filter((item) => item.href !== "/");
+// primaryNav holds page links only (no "/" entry), so it lists as-is.
+const workNav = primaryNav;
 
 const socialLinks = [
   { href: profile.githubUrl, label: "GitHub", icon: GithubIcon },
