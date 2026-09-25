@@ -35,35 +35,63 @@ const stages: { id: Stage; meta: string; copy: string }[] = [
   },
 ];
 
-// `from` is where the engagement joins the line. Every bar runs to ship.
-const engagements: { title: string; copy: string; from: Stage }[] = [
+// `from` is where the engagement joins the line. Every path runs to ship.
+// `steps` is what the visitor gets at each stage the engagement covers, and
+// what they bring to the ones it skips. Wording stays inside src/content/process.ts.
+const engagements: {
+  title: string;
+  copy: string;
+  from: Stage;
+  steps: Record<Stage, string>;
+}[] = [
   {
     title: "Ship an MVP",
     copy: "Turn a proposal into software the first users can actually book, pay, or log into.",
     from: "plan",
+    steps: {
+      plan: "Scope, cost, and dates signed off",
+      build: "Booking, payments, and login working end to end",
+      ship: "In front of the first real users",
+    },
   },
   {
     title: "Custom product work",
     copy: "White-label booking, Stripe flows, and RAG workflows built for the business, not a template.",
     from: "plan",
+    steps: {
+      plan: "Business rules written down before any code",
+      build: "Built to fit the business, reviewed every sprint",
+      ship: "Approved in UAT, released with zero downtime",
+    },
   },
   {
     title: "Add the hard parts",
     copy: "Payments, real-time, and AI features dropped into a product that already exists.",
     from: "build",
+    steps: {
+      plan: "You bring the product",
+      build: "The feature built into your codebase",
+      ship: "Approved in UAT, then released",
+    },
   },
   {
     title: "Untangle infrastructure",
     copy: "Serverless AWS, auth, and data so the product holds up past launch.",
     from: "ship",
+    steps: {
+      plan: "You bring the product",
+      build: "Already built",
+      ship: "AWS, auth, and data that hold up past launch",
+    },
   },
 ];
 
-// Stage columns are grid columns 2–4 on desktop; column 1 holds the labels.
-const colStart: Record<Stage, string> = {
-  plan: "lg:col-start-2",
-  build: "lg:col-start-3",
-  ship: "lg:col-start-4",
+// The stage area is a subgrid over columns 2–4, so its own lines count from
+// plan. The rail starts at the entry stage and always ends after ship.
+const railStart: Record<Stage, string> = {
+  plan: "lg:col-start-1",
+  build: "lg:col-start-2",
+  ship: "lg:col-start-3",
 };
 
 function coverageLabel(from: Stage) {
@@ -133,6 +161,7 @@ export function FeatureCards() {
         const intro = q("[data-stage-intro]");
         const rows = q("[data-engagement]");
         const bars = q("[data-engagement-bar]");
+        const tiles = q("[data-engagement-tile]");
         const pulse = section.querySelector<HTMLElement>("[data-stage-pulse]");
         const track = section.querySelector<HTMLElement>(`[data-stage-track="${axis}"]`);
         const fill = section.querySelector<HTMLElement>(`[data-stage-fill="${axis}"]`);
@@ -171,6 +200,7 @@ export function FeatureCards() {
         });
         gsap.set(rows, { opacity: 0, y: 12 });
         gsap.set(bars, { scaleX: 0, transformOrigin: "left center" });
+        gsap.set(tiles, { opacity: 0, y: 10 });
 
         // The words land dim, then a pulse carries the line from stop to
         // stop. Each stage lights, pings, and shows its detail on arrival.
@@ -217,7 +247,8 @@ export function FeatureCards() {
         const rowTl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
         rowTl
           .to(rows, { opacity: 1, y: 0, duration: 0.5, stagger: 0.09 })
-          .to(bars, { scaleX: 1, duration: 0.8, stagger: 0.09, ease: "power2.inOut" }, 0.15);
+          .to(bars, { scaleX: 1, duration: 0.8, stagger: 0.09, ease: "power2.inOut" }, 0.15)
+          .to(tiles, { opacity: 1, y: 0, duration: 0.45, stagger: 0.035 }, 0.25);
 
         const triggers = (
           [
@@ -366,14 +397,19 @@ export function FeatureCards() {
 
         <div
           data-engagements
-          className="mt-20 lg:col-span-4 lg:mt-24 lg:grid lg:grid-cols-subgrid"
+          className="mt-20 lg:col-span-4 lg:mt-28 lg:grid lg:grid-cols-subgrid"
         >
-          <p className="mb-6 text-sm font-medium text-foreground lg:col-span-4">
-            Where you come in
-          </p>
+          <div className="mb-8 lg:col-span-4 lg:mb-10">
+            <p className="font-display text-[clamp(1.9rem,3.6vw,2.75rem)] leading-none tracking-tight text-foreground">
+              Where you come in
+            </p>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Join at whichever stage you are at. Every path ends at ship.
+            </p>
+          </div>
 
           <ul className="lg:col-span-4 lg:grid lg:grid-cols-subgrid">
-            {engagements.map((item) => {
+            {engagements.map((item, index) => {
               const fromIndex = stageOrder.indexOf(item.from);
               return (
                 <li
@@ -388,49 +424,36 @@ export function FeatureCards() {
                   onPointerLeave={(e) => {
                     if (e.pointerType === "mouse") setActive(null);
                   }}
-                  className="group border-t border-border py-5 lg:col-span-4 lg:grid lg:grid-cols-subgrid lg:items-center"
+                  className="group border-t border-border py-7 lg:col-span-4 lg:grid lg:grid-cols-subgrid lg:items-start"
                 >
                   <div className="lg:pr-6">
-                    <h3 className="text-base font-medium">{item.title}</h3>
-                    <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{item.copy}</p>
+                    <p className="text-xs font-medium tabular-nums text-accent-readable">
+                      0{index + 1}
+                    </p>
+                    <h3 className="mt-2 font-display text-[1.65rem] font-normal leading-[1.05] tracking-tight sm:text-[1.85rem]">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                      {item.copy}
+                    </p>
                   </div>
 
                   <div
                     className={cn(
-                      "relative mt-4 transition-opacity duration-300 motion-reduce:transition-none lg:col-end-5 lg:mt-0",
-                      colStart[item.from],
+                      "relative mt-5 grid grid-cols-3 gap-1.5 transition-opacity duration-300 motion-reduce:transition-none sm:gap-2 lg:col-span-3 lg:col-start-2 lg:mt-1 lg:grid-cols-subgrid lg:gap-y-0",
                       active && active !== item.title && "lg:opacity-35",
                     )}
                   >
                     <span className="sr-only">{coverageLabel(item.from)}</span>
 
-                    {/* Phones: all three stages as segments, filled from the entry point. */}
-                    <div aria-hidden="true" className="grid grid-cols-3 gap-1.5 lg:hidden">
-                      {stageOrder.map((s, i) => (
-                        <div key={s}>
-                          <span
-                            className={cn(
-                              "block h-1 rounded-full",
-                              i >= fromIndex ? "bg-accent" : "bg-border",
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              "mt-1.5 block text-xs",
-                              i >= fromIndex ? "text-foreground" : "text-muted-foreground/70",
-                            )}
-                          >
-                            {s}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Desktop: one bar under the stage columns it covers. */}
+                    {/* Desktop: the rail from the entry stage out to ship. */}
                     <span
                       aria-hidden="true"
                       data-engagement-bar
-                      className="relative hidden h-1 rounded-full bg-accent/70 transition-colors group-hover:bg-accent lg:block"
+                      className={cn(
+                        "relative col-end-4 mb-4 hidden h-1 self-center rounded-full bg-accent/70 transition-colors group-hover:bg-accent lg:row-start-1 lg:block",
+                        railStart[item.from],
+                      )}
                     >
                       <span className="absolute top-1/2 left-0 size-[11px] -translate-y-1/2 rounded-full border-2 border-accent bg-background" />
                       <span
@@ -443,6 +466,52 @@ export function FeatureCards() {
                         className="absolute top-1/2 left-0 size-[9px] rounded-full bg-accent opacity-0 shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent)_22%,transparent),0_0_16px_var(--accent)]"
                       />
                     </span>
+
+                    {/* One tile per stage: what you get where the engagement
+                        covers it, what you bring where it does not. */}
+                    {stageOrder.map((stage, i) => {
+                      const covered = i >= fromIndex;
+                      const entry = i === fromIndex;
+                      return (
+                        <div
+                          key={stage}
+                          aria-hidden="true"
+                          data-engagement-tile
+                          className={cn(
+                            "relative flex min-h-[6.25rem] flex-col rounded-xl border px-2.5 pt-2.5 pb-3 transition-[border-color,background-color,box-shadow] duration-300 sm:px-3.5 lg:row-start-2 lg:min-h-[5.5rem]",
+                            covered
+                              ? "border-accent/30 bg-accent/[0.07] group-hover:border-accent/55"
+                              : "border-dashed border-foreground/15",
+                            entry &&
+                              "shadow-[0_0_28px_-12px_var(--accent)] group-hover:shadow-[0_0_32px_-8px_var(--accent)]",
+                          )}
+                        >
+                          <span className="flex items-center justify-between gap-2">
+                            <span
+                              className={cn(
+                                "text-[11px] font-medium",
+                                covered ? "text-accent-readable" : "text-muted-foreground/70",
+                              )}
+                            >
+                              {stage}
+                            </span>
+                            {entry ? (
+                              <span className="hidden rounded-full bg-accent px-1.5 py-px text-[10px] font-semibold text-accent-foreground sm:inline">
+                                starts here
+                              </span>
+                            ) : null}
+                          </span>
+                          <span
+                            className={cn(
+                              "mt-1.5 text-[11.5px] leading-[1.35] sm:text-[13px] sm:leading-5",
+                              covered ? "text-foreground" : "text-muted-foreground/70",
+                            )}
+                          >
+                            {item.steps[stage]}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </li>
               );
