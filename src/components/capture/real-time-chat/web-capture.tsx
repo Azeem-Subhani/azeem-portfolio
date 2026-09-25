@@ -2,6 +2,8 @@
 
 import type { CSSProperties } from "react";
 
+import { realTimeChatFonts } from "@/components/capture/capture-fonts";
+
 function av(hex: string): CSSProperties {
   return { ["--c"]: hex } as CSSProperties;
 }
@@ -51,7 +53,7 @@ function SlidersIcon() {
 
 export function RealTimeChatWebCapture() {
   return (
-    <div className="rtc-capture-root">
+    <div className={`rtc-capture-root ${realTimeChatFonts}`}>
       <section className="capture capture--web" aria-label="Relay chat desktop">
         <div className="app">
           <nav className="rail" aria-label="Relay">

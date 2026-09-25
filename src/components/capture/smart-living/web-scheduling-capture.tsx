@@ -1,5 +1,6 @@
 /** 1600×900 Smart Living — Event scheduling. */
 
+import { smartLivingFonts } from "@/components/capture/capture-fonts";
 import { Ic, SmartLivingSidebar } from "@/components/capture/smart-living/shared";
 
 const CAL_LINES = [0, 68, 136, 204, 272, 340, 408, 476, 544, 612];
@@ -23,7 +24,7 @@ function CalColumn({
 
 export function SmartLivingWebSchedulingCapture() {
   return (
-    <div className="sl-capture-root">
+    <div className={`sl-capture-root ${smartLivingFonts}`}>
       <section className="capture capture--web" aria-label="Smart Living event scheduling">
         <SmartLivingSidebar active="events" foot="scheduler" />
 

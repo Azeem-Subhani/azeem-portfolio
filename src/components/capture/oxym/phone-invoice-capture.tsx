@@ -1,7 +1,9 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
+
 /** 900×1600 Oxym player invoice screen */
 export function OxymPhoneInvoiceCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <section className="capture capture--phone" aria-label="Oxym invoice on phone">
         <div className="p-inner">
         <header className="p-head">

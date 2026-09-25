@@ -1,3 +1,5 @@
+import { smartLivingFonts } from "@/components/capture/capture-fonts";
+
 /** 900×1600 Smart Living — mobile overview. */
 
 function Ic({ children, size = 16 }: { children: React.ReactNode; size?: number }) {
@@ -64,7 +66,7 @@ const TABS = [
 
 export function SmartLivingPhoneCapture() {
   return (
-    <div className="sl-capture-root">
+    <div className={`sl-capture-root ${smartLivingFonts}`}>
       <section className="capture capture--phone" aria-label="Smart Living overview on phone">
         <div className="phone-inner">
           <header className="p-head">

@@ -1,3 +1,4 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
 import { OxymWebShell } from "@/components/capture/oxym/oxym-web-shell";
 
 const days = [
@@ -83,7 +84,7 @@ const days = [
 /** 1600×900 Oxym coach schedule view */
 export function OxymWebScheduleCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <OxymWebShell activeNav="schedule" topbarTitle="Schedule" topbarSub="March 2026, First Team">
         <div className="schedule-layout">
           <div className="schedule-toolbar">

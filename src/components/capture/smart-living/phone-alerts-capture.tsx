@@ -1,5 +1,6 @@
 /** 900×1600 Smart Living — Alerts tab on phone. */
 
+import { smartLivingFonts } from "@/components/capture/capture-fonts";
 import { Ic } from "@/components/capture/smart-living/shared";
 
 const TABS = [
@@ -55,7 +56,7 @@ function TabIcon({ kind }: { kind: (typeof TABS)[number]["icon"] }) {
 
 export function SmartLivingPhoneAlertsCapture() {
   return (
-    <div className="sl-capture-root">
+    <div className={`sl-capture-root ${smartLivingFonts}`}>
       <section className="capture capture--phone" aria-label="Smart Living alerts on phone">
         <div className="phone-inner">
           <header className="p-head">

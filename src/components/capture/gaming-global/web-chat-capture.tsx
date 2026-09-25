@@ -1,10 +1,11 @@
 /** 1600×900 Gaming Global realtime chat. */
 
+import { gamingGlobalFonts } from "@/components/capture/capture-fonts";
 import { GamingGlobalWebFrame } from "@/components/capture/gaming-global/web-shell";
 
 export function GamingGlobalWebChatCapture() {
   return (
-    <div className="gg-capture-root">
+    <div className={`gg-capture-root ${gamingGlobalFonts}`}>
       <GamingGlobalWebFrame
         active="chat"
         crumb={

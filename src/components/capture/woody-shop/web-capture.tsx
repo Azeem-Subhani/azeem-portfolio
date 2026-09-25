@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 
+import { woodyShopFonts } from "@/components/capture/capture-fonts";
+
 const NAV = ["Chairs", "Tables", "Storage", "About"] as const;
 
 export function WoodyShopWebCapture() {
   return (
-    <div className="ws-capture-root">
+    <div className={`ws-capture-root ${woodyShopFonts}`}>
       <section className="capture capture--web" aria-label="Woody Shop product page">
         <header className="masthead">
           <div className="logo">WOODY</div>

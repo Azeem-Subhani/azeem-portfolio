@@ -1,3 +1,5 @@
+import { taskManagerFonts } from "@/components/capture/capture-fonts";
+
 /** 1600×900 Posy task studio — Mira's Today list. */
 
 function CheckMark() {
@@ -10,7 +12,7 @@ function CheckMark() {
 
 export function TaskManagerWebCapture() {
   return (
-    <div className="tm-capture-root">
+    <div className={`tm-capture-root ${taskManagerFonts}`}>
       <section className="capture capture--web" aria-label="Posy task studio">
         <aside className="sidebar">
           <div className="brand">

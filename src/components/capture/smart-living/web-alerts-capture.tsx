@@ -1,5 +1,6 @@
 /** 1600×900 Smart Living — Alert console. */
 
+import { smartLivingFonts } from "@/components/capture/capture-fonts";
 import { CallWaveform, Ic, SmartLivingSidebar } from "@/components/capture/smart-living/shared";
 
 function FloorPlan() {
@@ -51,7 +52,7 @@ function FloorPlan() {
 
 export function SmartLivingWebAlertsCapture() {
   return (
-    <div className="sl-capture-root">
+    <div className={`sl-capture-root ${smartLivingFonts}`}>
       <section className="capture capture--web" aria-label="Smart Living alert console">
         <SmartLivingSidebar active="live-alerts" foot="webrtc" />
 

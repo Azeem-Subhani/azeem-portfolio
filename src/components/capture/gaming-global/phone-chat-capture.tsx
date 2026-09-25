@@ -1,10 +1,11 @@
 /** 900×1600 Gaming Global realtime chat on phone. */
 
+import { gamingGlobalFonts } from "@/components/capture/capture-fonts";
 import { GamingGlobalPhoneTabBar } from "@/components/capture/gaming-global/phone-tabs";
 
 export function GamingGlobalPhoneChatCapture() {
   return (
-    <div className="gg-capture-root">
+    <div className={`gg-capture-root ${gamingGlobalFonts}`}>
       <section className="capture capture--phone" aria-label="Gaming Global chat on phone">
         <div className="ph-inner">
           <header className="ph-chat-head">

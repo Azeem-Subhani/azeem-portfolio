@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 
+import { gamingGlobalFonts } from "@/components/capture/capture-fonts";
 import { GamingGlobalMark } from "@/components/capture/gaming-global/mark";
 
 const NAV_TOOLS = [
@@ -120,7 +121,7 @@ function NavItem({
 
 export function GamingGlobalWebCapture() {
   return (
-    <div className="gg-capture-root">
+    <div className={`gg-capture-root ${gamingGlobalFonts}`}>
       <section
         className="capture capture--web"
         aria-label="Gaming Global player stats"
@@ -267,7 +268,7 @@ export function GamingGlobalWebCapture() {
                       x="6"
                       y="67"
                       fill="#6A645C"
-                      fontFamily="JetBrains Mono"
+                      style={{ fontFamily: "var(--mono)" }}
                       fontSize="9"
                     >
                       1.60 TARGET

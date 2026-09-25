@@ -1,3 +1,5 @@
+import { smartLivingFonts } from "@/components/capture/capture-fonts";
+
 /** 1600×900 Smart Living — Operations overview. */
 
 function Ic({
@@ -136,7 +138,7 @@ const NAV = [
 
 export function SmartLivingWebCapture() {
   return (
-    <div className="sl-capture-root">
+    <div className={`sl-capture-root ${smartLivingFonts}`}>
       <section className="capture capture--web" aria-label="Smart Living operations overview">
         <aside className="sb">
           <div className="sb-brand">

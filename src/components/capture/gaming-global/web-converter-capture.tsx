@@ -1,5 +1,6 @@
 /** 1600×900 Gaming Global sensitivity converter. */
 
+import { gamingGlobalFonts } from "@/components/capture/capture-fonts";
 import { GamingGlobalWebFrame } from "@/components/capture/gaming-global/web-shell";
 
 const TABLE_ROWS = [
@@ -68,7 +69,7 @@ const TABLE_ROWS = [
 
 export function GamingGlobalWebConverterCapture() {
   return (
-    <div className="gg-capture-root">
+    <div className={`gg-capture-root ${gamingGlobalFonts}`}>
       <GamingGlobalWebFrame
         active="converter"
         crumb={

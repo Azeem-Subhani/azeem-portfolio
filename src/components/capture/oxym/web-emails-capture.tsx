@@ -1,9 +1,10 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
 import { OxymWebShell } from "@/components/capture/oxym/oxym-web-shell";
 
 /** 1600×900 Oxym matchday email workflow */
 export function OxymWebEmailsCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <OxymWebShell activeNav="emails" topbarTitle="Matchday emails" topbarSub="RAG drafts from team context">
         <div className="emails-layout">
           <article className="card panel emails-compose">

@@ -1,9 +1,10 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
 import { OxymWebShell } from "@/components/capture/oxym/oxym-web-shell";
 
 /** 1600×900 Oxym coach invoices and wallet */
 export function OxymWebInvoicesCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <OxymWebShell activeNav="invoices" topbarTitle="Invoices" topbarSub="Stripe Connect, First Team wallet">
         <div className="invoices-layout">
           <div className="invoices-summary">

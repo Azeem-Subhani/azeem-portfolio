@@ -11,21 +11,21 @@
   height: 100%;
 }
 
-/* Inner canvas is 450px wide at scale(2). Height fills the 900×~1950 mock. */
+/* Inner canvas is 393px wide at scale(900/393). Height fills the 900×~1950 mock. */
 .sl-phone-mock-host .phone-inner {
-  width: 450px;
-  height: 50%;
+  width: 393px;
+  height: calc(100% * 393 / 900);
 }
 
 /* Safe area from iPhone 15 Pro (59pt top, 34pt home indicator)
-   mapped to the 450px inner canvas (half of the 900px capture). */
+   mapped to the 393px inner canvas. */
 .sl-phone-mock-host .p-head {
-  padding-top: 68px;
-  padding-bottom: 14px;
+  padding-top: 59px;
+  padding-bottom: 12px;
 }
 
 .sl-phone-mock-host .p-tabbar {
   height: auto;
   flex-basis: auto;
-  padding-bottom: 39px;
+  padding-bottom: 34px;
 }

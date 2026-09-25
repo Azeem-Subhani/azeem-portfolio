@@ -1,8 +1,10 @@
+import { trackHeroFonts } from "@/components/capture/capture-fonts";
+
 /** 900×1600 Track Hero customer checkout — mobile web. */
 
 export function TrackHeroPhoneCheckoutCapture() {
   return (
-    <div className="th-capture-root">
+    <div className={`th-capture-root ${trackHeroFonts}`}>
       <section className="capture capture--phone" aria-label="Track Hero checkout on phone">
         <div className="p-topbar">
           <button type="button" className="p-icon" aria-label="Back">

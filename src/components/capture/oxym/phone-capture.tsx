@@ -1,7 +1,9 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
+
 /** 900×1600 Oxym team chat — ported from deepseek_html_20260911_c7333f.html */
 export function OxymPhoneCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <section className="capture capture--phone" aria-label="Oxym phone app">
         <div className="p-inner">
         <header className="p-head">

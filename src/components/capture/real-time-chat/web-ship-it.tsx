@@ -1,5 +1,6 @@
 /** 1600×900 Relay chat — #ship-it release thread. */
 
+import { realTimeChatFonts } from "@/components/capture/capture-fonts";
 import { av, RelayLivePill, RelaySocketPanel, RelayWebChrome } from "@/components/capture/real-time-chat/web-chrome";
 
 export function RealTimeChatWebShipItCapture() {
@@ -176,7 +177,7 @@ export function RealTimeChatWebShipItCapture() {
   );
 
   return (
-    <div className="rtc-capture-root">
+    <div className={`rtc-capture-root ${realTimeChatFonts}`}>
       <RelayWebChrome ariaLabel="Relay ship-it release thread" activeConv="ship-it" main={main} info={info} />
     </div>
   );

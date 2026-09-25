@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 
+import { woodyShopFonts } from "@/components/capture/capture-fonts";
 import { WoodyShopPhoneTabbar } from "@/components/capture/woody-shop/phone-tabbar";
 
 export function WoodyShopPhoneProductCapture() {
   return (
-    <div className="ws-capture-root">
+    <div className={`ws-capture-root ${woodyShopFonts}`}>
       <section
         className="capture capture--phone"
         aria-label="Woody Shop product detail on phone"

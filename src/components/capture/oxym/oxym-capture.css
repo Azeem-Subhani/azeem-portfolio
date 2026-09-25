@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,400..900&display=swap");
-
 .oxym-capture-root {
   --forest:#0C3B2E;
   --forest-2:#16523F;
@@ -26,7 +24,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  font-family: "Archivo", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-capture-archivo), system-ui, -apple-system, sans-serif;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

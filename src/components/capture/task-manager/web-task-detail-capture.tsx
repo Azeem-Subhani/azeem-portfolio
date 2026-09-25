@@ -1,3 +1,5 @@
+import { taskManagerFonts } from "@/components/capture/capture-fonts";
+
 /** 1600×900 Posy task detail — focused work item for Mira. */
 
 function CheckMark() {
@@ -10,7 +12,7 @@ function CheckMark() {
 
 export function TaskManagerWebTaskDetailCapture() {
   return (
-    <div className="tm-capture-root">
+    <div className={`tm-capture-root ${taskManagerFonts}`}>
       <section className="capture capture--web capture--detail" aria-label="Posy task detail">
         <aside className="sidebar sidebar--compact">
           <div className="brand">
