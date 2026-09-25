@@ -516,6 +516,23 @@
   width: 100%;
 }
 
+/* Desktop lobby row: slots, rank and the button keep their size; only the lobby
+   title block gives up width (its meta line wraps) when the chat column is narrow. */
+.gg-capture-root .chat-embed > * {
+  flex: none;
+  white-space: nowrap;
+}
+
+.gg-capture-root .chat-embed > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+}
+
+.gg-capture-root .ph-inner .chat-embed > * {
+  white-space: normal;
+}
+
 .gg-capture-root .ph-chat-embed-title {
   font-size: 16px;
   font-weight: 800;

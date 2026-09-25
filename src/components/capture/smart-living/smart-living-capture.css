@@ -81,8 +81,12 @@
 
 .sl-capture-root .capture--web {
   display: flex;
-  width: 1600px;
-  height: 900px;
+  /* Lay out on a 1.1x smaller canvas and zoom back to 1600x900, so the UI reads at
+     the same size as the other project captures instead of a zoomed-out desktop. */
+  --capture-zoom: 1.1;
+  zoom: var(--capture-zoom);
+  width: calc(1600px / var(--capture-zoom));
+  height: calc(900px / var(--capture-zoom));
   flex-direction: row;
 }
 
@@ -98,12 +102,12 @@
   left: 0;
   z-index: 2;
   display: flex;
-  width: 450px;
-  height: 800px;
+  width: 393px;
+  height: calc(100% * 393 / 900);
   flex-direction: column;
   overflow: hidden;
   background: #fff;
-  transform: scale(2);
+  transform: scale(calc(900 / 393));
   transform-origin: top left;
 }
 
@@ -1222,7 +1226,8 @@
 
 .sl-capture-root .content--alert-console {
   display: grid;
-  grid-template-columns: 336px 1fr 380px;
+  /* Side columns sized for the zoomed web canvas, so the alert detail keeps its width. */
+  grid-template-columns: 300px 1fr 336px;
   gap: 14px;
   min-height: 0;
 }

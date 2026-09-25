@@ -57,15 +57,24 @@
 
 .th-capture-root .capture--web {
   display: flex;
-  width: 1600px;
-  height: 900px;
+  /* Lay out on a 1.15x smaller canvas and zoom back to 1600x900, so the UI reads at
+     the same size as the other project captures instead of a zoomed-out desktop. */
+  --capture-zoom: 1.15;
+  zoom: var(--capture-zoom);
+  width: calc(1600px / var(--capture-zoom));
+  height: calc(900px / var(--capture-zoom));
   flex-direction: column;
 }
 
 .th-capture-root .capture--phone {
   display: flex;
-  width: 900px;
-  height: 1600px;
+  /* These screens were authored straight on the 900px canvas, so they read at about half
+     the size of the other phone captures (which lay out at 393pt and scale up). Lay out
+     on a 1.6x smaller canvas (562px wide) and zoom back to 900px to match them. */
+  --capture-zoom: 1.6;
+  zoom: var(--capture-zoom);
+  width: calc(900px / var(--capture-zoom));
+  height: calc(1600px / var(--capture-zoom));
   flex-direction: column;
 }
 
@@ -1207,6 +1216,8 @@
 }
 
 .th-capture-root .sched-block b {
+  /* Keep the session title when a short block runs out of height; the track line clips instead. */
+  flex: none;
   display: -webkit-box;
   overflow: hidden;
   font-size: 11px;

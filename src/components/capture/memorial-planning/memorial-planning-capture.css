@@ -67,8 +67,12 @@
 
 .mp-capture-root .capture--web {
   display: grid;
-  width: 1600px;
-  height: 900px;
+  /* Lay out on a 1.1x smaller canvas and zoom back to 1600x900, so the UI reads at
+     the same size as the other project captures instead of a zoomed-out desktop. */
+  --capture-zoom: 1.1;
+  zoom: var(--capture-zoom);
+  width: calc(1600px / var(--capture-zoom));
+  height: calc(900px / var(--capture-zoom));
   grid-template-columns: 272px 1fr;
 }
 
