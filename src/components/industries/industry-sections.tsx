@@ -139,17 +139,14 @@ function HeroHeadline({ industry, large }: { industry: IndustryPageContent; larg
         <span data-im="hero-line" className="relative inline-block text-accent will-change-transform">
           {industry.titleAccent}
           <svg
+            data-im="underline"
             aria-hidden="true"
             viewBox="0 0 300 12"
             preserveAspectRatio="none"
             className="absolute -bottom-[0.14em] left-0 h-[0.16em] w-full overflow-visible"
           >
             <path
-              data-im="underline"
               d="M2 8.5C58 3 120 2.5 180 5.5S262 10 298 4"
-              pathLength={1}
-              strokeDasharray={1}
-              strokeDashoffset={0}
               fill="none"
               stroke="currentColor"
               strokeWidth={3}
