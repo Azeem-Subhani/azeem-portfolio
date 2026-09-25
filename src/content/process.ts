@@ -67,6 +67,7 @@ export const preProjectSteps: ProcessStep[] = [
 export const preProjectTimeline: WhyFigure = {
   value: "1–2 weeks",
   label: "from first call to kickoff, with scope, cost, and dates agreed",
+  lowerIsBetter: true,
 };
 
 export const sprintBars: SprintBar[] = [

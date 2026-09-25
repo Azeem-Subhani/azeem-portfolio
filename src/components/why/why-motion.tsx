@@ -16,6 +16,9 @@ gsap.registerPlugin(ScrollTrigger);
  *   data-why="scale"  summary stats grow in from 80%
  *   data-why-count    numbers inside those elements count up from 0 as they enter,
  *                     matching the proof stats on the cloud service hero
+ *   data-why-count-down  on a data-why-count figure where lower is better (timelines):
+ *                     it counts down from a larger value instead, so it reads as shrinking;
+ *                     data-why-count-from sets that value (e.g. "8–12 weeks")
  * Hidden states are applied only after hydration, so the server HTML is always visible
  * (no-JS visitors see the finished page), and reduced-motion visitors get no motion.
  */
@@ -26,23 +29,35 @@ type Kind = "up" | "side" | "scale";
 
 const REVEAL_SELECTOR = '[data-why="up"], [data-why="side"], [data-why="scale"]';
 const NUMBER = /\d+(?:\.\d+)?/g;
+// Where a count-down starts when it has no explicit start, as a multiple of the final figure:
+// "1–2 weeks" opens on "3–6 weeks".
+const COUNT_DOWN_FROM = 3;
 
 /**
  * Returns a formatter that rebuilds a figure with every number scaled by progress (0..1),
  * so ranges like "3–4 weeks" count both ends and decimals like "99.95%" keep their places.
+ * By default numbers rise from 0. With countDown, for figures where a smaller number is the
+ * better outcome, they fall to the target from the matching numbers in `from` ("8–12 weeks"
+ * into "3–4 weeks"), or from COUNT_DOWN_FROM times the target when `from` is missing or has
+ * a different count of numbers.
  */
-export function parseCount(value: string) {
-  const numbers = (value.match(NUMBER) ?? []).map((n) => ({
-    target: Number(n),
-    decimals: n.split(".")[1]?.length ?? 0,
-  }));
-  if (!numbers.length) return null;
+export function parseCount(value: string, countDown = false, from?: string) {
+  const targets = value.match(NUMBER) ?? [];
+  if (!targets.length) return null;
+  const starts = from?.match(NUMBER)?.map(Number) ?? [];
+  const numbers = targets.map((n, i) => {
+    const target = Number(n);
+    let start = 0;
+    if (countDown) start = starts.length === targets.length ? starts[i] : target * COUNT_DOWN_FROM;
+    return { start, target, decimals: n.split(".")[1]?.length ?? 0 };
+  });
   const parts = value.split(NUMBER);
   return (progress: number) =>
     parts
       .map((part, i) => {
         const n = numbers[i];
-        return n ? part + (n.target * progress).toFixed(n.decimals) : part;
+        if (!n) return part;
+        return part + (n.start + (n.target - n.start) * progress).toFixed(n.decimals);
       })
       .join("");
 }
@@ -76,10 +91,15 @@ export function WhyMotion({ children }: { children: ReactNode }) {
         playHero();
       }
 
-      // Zero every count-up figure that a reveal will play; figures outside a reveal stay final.
+      // Reset every counting figure that a reveal will play to its start (0, or the higher
+      // opening value for a count-down); figures outside a reveal stay final.
       const counters = new Map<HTMLElement, (progress: number) => string>();
       root.querySelectorAll<HTMLElement>("[data-why-count]").forEach((el) => {
-        const format = parseCount(el.dataset.whyCount ?? "");
+        const format = parseCount(
+          el.dataset.whyCount ?? "",
+          "whyCountDown" in el.dataset,
+          el.dataset.whyCountFrom,
+        );
         if (!format || !el.closest(REVEAL_SELECTOR)) return;
         counters.set(el, format);
         el.textContent = format(0);

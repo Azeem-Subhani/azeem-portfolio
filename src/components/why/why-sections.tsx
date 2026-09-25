@@ -13,11 +13,25 @@ import {
 } from "@/content/why";
 import { cn } from "@/lib/utils";
 
-export function Figure({ value, className }: { value: string; className?: string }) {
+export function Figure({
+  value,
+  lowerIsBetter,
+  countFrom,
+  className,
+}: {
+  value: string;
+  lowerIsBetter?: boolean;
+  countFrom?: string;
+  className?: string;
+}) {
+  const counts = /\d/.test(value);
   return (
     <span
-      // Numeric figures count up on scroll-in (see WhyMotion); word figures just fade in.
-      data-why-count={/\d/.test(value) ? value : undefined}
+      // Numeric figures count on scroll-in (see WhyMotion); word figures just fade in.
+      // Lower-is-better figures such as timelines count down to the value instead of up.
+      data-why-count={counts ? value : undefined}
+      data-why-count-down={counts && lowerIsBetter ? "" : undefined}
+      data-why-count-from={counts && lowerIsBetter ? countFrom : undefined}
       className={cn(
         "inline-block origin-left font-display font-normal leading-none text-accent transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
         className,
@@ -115,7 +129,9 @@ export function WhyDifferentiators() {
         {differentiators.map((item) => (
           <li key={item.label} data-why="up" className={cardClassName}>
             <CardGlow />
-            <Figure value={item.value} className="text-[2.4rem]" />
+            <Figure value={item.value} lowerIsBetter={item.lowerIsBetter}
+              countFrom={item.countFrom}
+              className="text-[2.4rem]" />
             <p className="mt-3 font-medium text-foreground">{item.label}</p>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.copy}</p>
           </li>
@@ -156,7 +172,9 @@ export function WhyProcess() {
         <aside data-why="up" className={cn(cardClassName, "self-start")}>
           <CardGlow />
           <p className="text-sm text-muted-foreground">{timeline.label}</p>
-          <Figure value={timeline.value} className="mt-3 block text-[2.6rem]" />
+          <Figure value={timeline.value} lowerIsBetter={timeline.lowerIsBetter}
+            countFrom={timeline.countFrom}
+            className="mt-3 block text-[2.6rem]" />
           <p className="mt-4 text-sm leading-6 text-muted-foreground">{timeline.copy}</p>
         </aside>
       </div>
@@ -222,7 +240,9 @@ export function WhyResults() {
         {results.map((result) => (
           <li key={result.label} data-why="up" className={cardClassName}>
             <CardGlow />
-              <Figure value={result.value} className="text-[2.6rem]" />
+              <Figure value={result.value} lowerIsBetter={result.lowerIsBetter}
+                countFrom={result.countFrom}
+                className="text-[2.6rem]" />
             <p className="mt-3 font-medium text-foreground">{result.label}</p>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{result.copy}</p>
           </li>

@@ -1,7 +1,15 @@
 export type WhyFigure = {
   value: string;
   label: string;
+  /** Durations and other figures where smaller wins: the count-up runs downward instead. */
+  lowerIsBetter?: boolean;
+  /** Where a count-down opens, e.g. the agency timeline; without it, a multiple of value. */
+  countFrom?: string;
 };
+
+// The traditional-agency timeline the 3–4 week figures are measured against. The count-downs
+// open on it, so the animation shows the gap the timeline card describes.
+const agencyTimeline = "8–12 weeks";
 
 export type WhyDifferentiator = WhyFigure & { copy: string };
 
@@ -22,6 +30,8 @@ export const differentiators: WhyDifferentiator[] = [
   {
     value: "3–4 weeks",
     label: "to a working build",
+    lowerIsBetter: true,
+    countFrom: agencyTimeline,
     copy: "Ideas get prototyped in real code early, so you react to something you can click instead of a static mockup.",
   },
   {
@@ -82,7 +92,9 @@ export const steps: WhyStep[] = [
 export const timeline: WhyFigure & { copy: string } = {
   value: "3–4 weeks",
   label: "typical timeline",
-  copy: "From kickoff to a production-ready first release, compared with the 8–12 weeks a traditional agency quotes.",
+  lowerIsBetter: true,
+  countFrom: agencyTimeline,
+  copy: `From kickoff to a production-ready first release, compared with the ${agencyTimeline} a traditional agency quotes.`,
 };
 
 export const areas: WhyArea[] = [
@@ -128,6 +140,8 @@ export const results: WhyResult[] = [
   {
     value: "3–4 weeks",
     label: "to a working release",
+    lowerIsBetter: true,
+    countFrom: agencyTimeline,
     copy: "First users see a working site within a month, with feedback coming from use rather than a slide deck.",
   },
   {
