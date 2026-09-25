@@ -15,10 +15,13 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
 
   return (
     <article className="service-page relative">
-      <div
-        aria-hidden="true"
-        className="service-grid-backdrop pointer-events-none absolute inset-x-0 top-0 h-[30rem] overflow-hidden"
-      />
+      {/* The cloud hero has a 3D scene; the grid wallpaper behind it read as noise. */}
+      {cloud ? null : (
+        <div
+          aria-hidden="true"
+          className="service-grid-backdrop pointer-events-none absolute inset-x-0 top-0 h-[30rem] overflow-hidden"
+        />
+      )}
 
       {cloud ? (
         <div className="relative mx-auto max-w-7xl px-5 pb-4 pt-32 sm:px-8 lg:pt-40">

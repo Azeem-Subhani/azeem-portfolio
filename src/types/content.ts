@@ -201,7 +201,13 @@ export type ServiceSection =
       challenge: string;
       solution: string;
       results: ServiceProof[];
-      path: { name: string; copy: string }[];
+      /** Where traffic or data enters the stack, shown as the root of the trace. */
+      entry?: string;
+      /**
+       * Services in the stack. `parent` names the service that calls or reads
+       * from this one; services without a parent hang off `entry`.
+       */
+      path: { name: string; copy: string; parent?: string }[];
     }
   | {
       kind: "platforms";

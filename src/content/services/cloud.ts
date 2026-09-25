@@ -12,8 +12,8 @@ export const cloudService: ServicePageContent = {
     "AWS, Azure, and GCP. Fifty-plus production apps, one deploy, traced hops. Built to ship, not sit idle.",
   proof: [
     { value: "50+", label: "Production apps" },
-    { value: "40%", label: "Infrastructure cost cut" },
-    { value: "99.95%", label: "Uptime" },
+    { value: "40%", label: "Average infrastructure cost cut" },
+    { value: "99.95%", label: "Uptime on the stacks I run" },
   ],
   sections: [
     {
@@ -39,6 +39,7 @@ export const cloudService: ServicePageContent = {
       kind: "case",
       kicker: "AWS",
       title: "E-commerce platform migration",
+      entry: "Shopper traffic",
       client: "Enterprise e-commerce, name withheld",
       challenge:
         "On-premise hardware could not take 10x traffic during sales. Checkouts failed when the catalog spiked. The team needed a path that scaled without buying more racks.",
@@ -56,22 +57,27 @@ export const cloudService: ServicePageContent = {
         },
         {
           name: "ALB",
+          parent: "CloudFront",
           copy: "Spreads checkout across healthy ECS tasks. Unhealthy ones drop out of the pool.",
         },
         {
           name: "ECS",
+          parent: "ALB",
           copy: "Containerized storefront. Tasks scale with the sale, not a rack order.",
         },
         {
-          name: "RDS",
-          copy: "Catalog and orders. The source of truth for a cart.",
-        },
-        {
           name: "ElastiCache",
+          parent: "ECS",
           copy: "Hot reads so the catalog page does not query RDS on every hit.",
         },
         {
+          name: "RDS",
+          parent: "ECS",
+          copy: "Catalog and orders. The source of truth for a cart.",
+        },
+        {
           name: "S3",
+          parent: "CloudFront",
           copy: "Product media. CloudFront reads from here, not the app.",
         },
       ],
@@ -80,6 +86,7 @@ export const cloudService: ServicePageContent = {
       kind: "case",
       kicker: "Azure",
       title: "Financial services platform",
+      entry: "Customer traffic",
       client: "Financial institution, name withheld",
       challenge:
         "Three million active users, regulated data, and an on-premise Active Directory the business could not abandon. The new platform had to sit next to that directory, not replace it on day one.",
@@ -93,14 +100,17 @@ export const cloudService: ServicePageContent = {
       path: [
         {
           name: "App Service",
+          parent: "API Management",
           copy: "The apps sit here, next to the identity the bank already runs.",
         },
         {
           name: "Azure SQL",
+          parent: "App Service",
           copy: "Records with Always Encrypted. The database can store what it cannot read.",
         },
         {
           name: "Azure AD",
+          parent: "App Service",
           copy: "Identity. The on-prem directory stays the source until cutover is done.",
         },
         {
@@ -109,6 +119,7 @@ export const cloudService: ServicePageContent = {
         },
         {
           name: "Key Vault",
+          parent: "App Service",
           copy: "Secrets out of config files and out of the repo.",
         },
       ],
@@ -117,6 +128,7 @@ export const cloudService: ServicePageContent = {
       kind: "case",
       kicker: "GCP",
       title: "AI analytics platform",
+      entry: "Raw events",
       client: "SaaS analytics company, name withheld",
       challenge:
         "The product had to score live data and return model output the same day. Batch warehouses were too slow. The volume was already past a single Postgres box.",
@@ -134,18 +146,22 @@ export const cloudService: ServicePageContent = {
         },
         {
           name: "Data Fusion",
+          parent: "Cloud Storage",
           copy: "Pipelines from lake to warehouse. No weekend of cron on a box.",
         },
         {
           name: "BigQuery",
+          parent: "Data Fusion",
           copy: "Columnar warehouse. The app never scans the lake on a user request.",
         },
         {
           name: "Looker",
+          parent: "BigQuery",
           copy: "Boards on warehouse SQL, not on the product database.",
         },
         {
           name: "Vertex AI",
+          parent: "BigQuery",
           copy: "Models trained on the warehouse copy. Scoring does not touch checkout.",
         },
       ],

@@ -1,5 +1,8 @@
 "use client";
 
+import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { gsap } from "gsap";
+
 import { cn } from "@/lib/utils";
 
 function Lights() {
@@ -110,59 +113,169 @@ export function StackStage() {
   );
 }
 
-const platformMark: Record<
-  string,
-  { src: string; lightSrc?: string; alt: string; w: number; h: number }
-> = {
-  // AWS's default wordmark is cream for dark mode; light mode uses the squid-ink variant.
-  AWS: {
-    src: "/images/cloud-v3/amazonaws.svg",
-    lightSrc: "/images/cloud-v3/amazonaws-light.svg",
-    alt: "",
-    w: 56,
-    h: 34,
-  },
-  Azure: { src: "/images/cloud-v3/microsoftazure.svg", alt: "", w: 22, h: 22 },
-  GCP: { src: "/images/cloud-v3/googlecloud.svg", alt: "", w: 24, h: 21 },
+type TraceHop = { name: string; copy: string; parent?: string };
+
+type TraceRow = {
+  hop: TraceHop;
+  index: number;
+  /** 1 for services hanging off the entry, 2 for their children, and so on. */
+  depth: number;
+  /** Names from the first service down to this one. */
+  path: string[];
+  /** For each ancestor level, whether its line keeps running past this row. */
+  pass: boolean[];
+  last: boolean;
 };
+
+/** Flattens the hops into depth-first rows, the order a trace view reads in. */
+function traceRows(hops: TraceHop[]): TraceRow[] {
+  const names = new Set(hops.map((hop) => hop.name));
+  const rows: TraceRow[] = [];
+  const seen = new Set<string>();
+
+  const walk = (siblings: TraceHop[], depth: number, pass: boolean[], path: string[]) => {
+    siblings.forEach((hop, i) => {
+      // A bad parent loop in content should drop a row, not hang the page.
+      if (seen.has(hop.name)) return;
+      seen.add(hop.name);
+      const last = i === siblings.length - 1;
+      const rowPath = [...path, hop.name];
+      rows.push({ hop, index: rows.length, depth, path: rowPath, pass, last });
+      walk(
+        hops.filter((child) => child.parent === hop.name),
+        depth + 1,
+        [...pass, !last],
+        rowPath,
+      );
+    });
+  };
+
+  walk(
+    hops.filter((hop) => !hop.parent || !names.has(hop.parent)),
+    1,
+    [],
+    [],
+  );
+  return rows;
+}
+
+function samePrefix(a: string[], b: string[], length: number) {
+  for (let i = 0; i < length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+/**
+ * Whether the vertical line in guide column `level` of `row` is part of the
+ * hovered service's path: it is when the path branches off to a later sibling
+ * of this row's ancestor at that level.
+ */
+function lineOnPath(row: TraceRow, level: number, active: TraceRow | null) {
+  if (!active || active.index <= row.index || active.path.length <= level) return false;
+  return samePrefix(active.path, row.path, level) && active.path[level] !== row.path[level];
+}
 
 export function ShipStage({
   kicker,
+  entry,
   hops,
+  animate = false,
 }: {
   kicker: string;
-  hops: { name: string; copy: string }[];
+  entry?: string;
+  hops: TraceHop[];
+  /** Fade the rows in, used when the visitor switches platform. */
+  animate?: boolean;
 }) {
-  const mark = platformMark[kicker];
+  const rows = useMemo(() => traceRows(hops), [hops]);
+  const [activeName, setActiveName] = useState<string | null>(null);
+  const active = rows.find((row) => row.hop.name === activeName) ?? null;
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!animate || !list || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const context = gsap.context(() => {
+      gsap.from("[data-trace-row]", {
+        opacity: 0,
+        y: 6,
+        duration: 0.35,
+        stagger: 0.035,
+        ease: "power2.out",
+      });
+    }, list);
+    return () => context.revert();
+  }, [animate]);
 
   return (
-    <div className="cloud-topo">
-      <div className="cloud-topo-head" data-cloud-shell="cloud" aria-hidden="true">
-        {mark?.lightSrc ? (
-          <>
-            <img className="svgl-light" src={mark.lightSrc} alt="" width={mark.w} height={mark.h} />
-            <img className="svgl-dark" src={mark.src} alt="" width={mark.w} height={mark.h} />
-          </>
-        ) : mark ? (
-          <img src={mark.src} alt="" width={mark.w} height={mark.h} />
-        ) : null}
-        <b>{kicker}</b>
-      </div>
-      <ol className="cloud-topo-path" aria-label={`${kicker} path`}>
-        {hops.map((hop, index) => {
-          const last = index === hops.length - 1;
-          const wrap = !last && (index + 1) % 3 === 0;
+    <div
+      ref={listRef}
+      className="cloud-trace"
+      data-active={active ? "" : undefined}
+      onPointerLeave={() => setActiveName(null)}
+    >
+      <p className="cloud-trace-row is-entry" data-cloud-node data-trace-row>
+        <span className="cloud-trace-gutter" aria-hidden="true">
+          <span className={cn("cloud-trace-guide is-node", rows.length && "has-children", active && "is-lit")}>
+            <i className="cloud-trace-dot is-entry" />
+          </span>
+        </span>
+        <span className="cloud-trace-entry">{entry ?? "Traffic"}</span>
+      </p>
+
+      <ol className="cloud-trace-list" aria-label={`${kicker} request path`}>
+        {rows.map((row) => {
+          const onPath =
+            !!active && active.path.length >= row.depth && samePrefix(active.path, row.path, row.depth);
+          const elbowLevel = row.depth - 1;
           return (
-            <li key={hop.name} data-cloud-node>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{hop.name}</strong>
-              <em>{hop.copy}</em>
-              {!last ? (
-                <i
-                  className={cn("cloud-topo-join", wrap ? "is-wrap" : "is-across")}
-                  aria-hidden="true"
+            <li
+              key={row.hop.name}
+              data-cloud-node
+              data-trace-row
+              className={cn("cloud-trace-row", active && (onPath ? "is-on" : "is-off"))}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") setActiveName(row.hop.name);
+              }}
+            >
+              <span className="cloud-trace-gutter" aria-hidden="true">
+                {row.pass.map((continues, level) => (
+                  <span
+                    key={level}
+                    className={cn(
+                      "cloud-trace-guide",
+                      continues && "is-pass",
+                      lineOnPath(row, level, active) && "is-lit",
+                    )}
+                  />
+                ))}
+                <span
+                  className={cn(
+                    "cloud-trace-guide is-elbow",
+                    !row.last && "is-pass",
+                    lineOnPath(row, elbowLevel, active) && "is-lit",
+                    onPath && "is-hit",
+                  )}
                 />
-              ) : null}
+                {/* The service's own column: its dot, and the line down to its children. */}
+                <span
+                  className={cn(
+                    "cloud-trace-guide is-node",
+                    rows[row.index + 1]?.depth === row.depth + 1 && "has-children",
+                    onPath && active && active.depth > row.depth && "is-lit",
+                  )}
+                >
+                  <i className={cn("cloud-trace-dot", onPath && "is-on", row === active && "is-active")} />
+                </span>
+              </span>
+              {/* Inline style lives here, not on the row: the chapter's scroll
+                  reveal clears every inline style on [data-cloud-node]. */}
+              <span className="cloud-trace-body" style={{ "--trace-depth": row.depth } as CSSProperties}>
+                <strong>{row.hop.name}</strong>
+                <span className="cloud-trace-copy">
+                  {row.hop.copy}
+                  {row.hop.parent ? <span className="sr-only"> Reached from {row.hop.parent}.</span> : null}
+                </span>
+              </span>
             </li>
           );
         })}

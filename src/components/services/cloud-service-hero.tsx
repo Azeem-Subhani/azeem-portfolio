@@ -4,216 +4,127 @@ import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowDown } from "lucide-react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 
-import { MagneticButton } from "@/components/motion/magnetic-button";
-import { CloudV3Diagram } from "@/components/services/cloud-v3-diagram";
+import { CloudStage } from "@/components/services/cloud-hero/cloud-stage";
 import { Button } from "@/components/ui/button";
-import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { cn } from "@/lib/utils";
 import type { ServicePageContent } from "@/types/content";
-
-import "./cloud-v3.css";
-
-gsap.registerPlugin(ScrollTrigger, SplitText);
 
 type CloudServiceHeroProps = {
   service: ServicePageContent;
 };
 
-function parseStat(value: string) {
-  const match = value.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
-  if (!match) return null;
-  const [, prefix, number, suffix] = match;
-  return {
-    prefix,
-    suffix,
-    target: Number(number),
-    decimals: number.includes(".") ? number.split(".")[1].length : 0,
-  };
-}
-
-function useCloudHeroMotion<T extends HTMLElement>() {
+// Attribute names are prefixed with "cloud-intro" on purpose: globals.css hides
+// any [data-hero-*] element until the homepage hero clears a flag.
+function useCloudIntro<T extends HTMLElement>() {
   const rootRef = useRef<T>(null);
-  const reduced = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     const root = rootRef.current;
-    if (!root) return;
-    if (reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const ease = "expo.out";
+    // The copy lands while the cloud is still forming beside it; the stage
+    // runs its own sequence, so this only covers the words and the numbers.
     const context = gsap.context(() => {
-      const kicker = root.querySelector<HTMLElement>(".cloud-v3-kicker");
-      const kickerRule = kicker?.querySelector<HTMLElement>("span");
-      const lines = root.querySelectorAll<HTMLElement>(".cloud-hero-line");
-      const lede = root.querySelector<HTMLElement>(".cloud-v3-lede");
-      const actions = root.querySelectorAll<HTMLElement>(".cloud-v3-actions > *");
-      const stage = root.querySelector<HTMLElement>(".cloud-hero-stage");
-      const proof = root.querySelector<HTMLElement>(".cloud-v3-proof");
-
-      const ledeSplit = lede
-        ? SplitText.create(lede, { type: "words", wordsClass: "cloud-copy-word" })
-        : null;
-
-      const intro = gsap.timeline({ defaults: { ease } });
-
-      if (kicker) intro.from(kicker, { opacity: 0, x: -12, duration: 0.9 }, 0);
-      if (kickerRule) {
-        intro.from(kickerRule, { scaleX: 0, transformOrigin: "left center", duration: 1 }, 0.15);
-      }
-      if (lines.length) {
-        intro.from(
-          lines,
-          { yPercent: 110, rotate: 1.5, transformOrigin: "left bottom", duration: 1.25, stagger: 0.11 },
-          0.1,
-        );
-      }
-      if (ledeSplit) {
-        intro.fromTo(
-          ledeSplit.words,
-          { opacity: 0, yPercent: 50, filter: "blur(6px)" },
-          {
-            opacity: 1,
-            yPercent: 0,
-            filter: "blur(0px)",
-            duration: 0.9,
-            stagger: 0.018,
-            clearProps: "filter",
-          },
-          0.45,
-        );
-      }
-      if (actions.length) {
-        intro.from(actions, { opacity: 0, y: 12, duration: 0.9, stagger: 0.1 }, 0.75);
-      }
-      if (stage) {
-        intro.from(stage, { opacity: 0, scale: 0.94, y: 24, duration: 1.6 }, 0.05);
-      }
-
-      if (proof) {
-        const cells = proof.querySelectorAll<HTMLElement>(":scope > div");
-        const values = proof.querySelectorAll<HTMLElement>(".cloud-v3-proof__value");
-        const counters = Array.from(values).map((node) => {
-          const stat = parseStat(node.dataset.value ?? "");
-          if (!stat) return null;
-          const state = { n: 0 };
-          const render = () => {
-            node.textContent = `${stat.prefix}${state.n.toFixed(stat.decimals)}${stat.suffix}`;
-          };
-          render();
-          return { stat, state, render };
-        });
-
-        const proofTl = gsap
-          .timeline({ paused: true, defaults: { ease } })
-          .from(cells, { opacity: 0, y: 18, duration: 1, stagger: 0.1 }, 0);
-        counters.forEach((counter, index) => {
-          if (!counter) return;
-          proofTl.to(
-            counter.state,
-            {
-              n: counter.stat.target,
-              duration: 1.6,
-              ease: "power3.out",
-              onUpdate: counter.render,
-            },
-            0.1 + index * 0.1,
-          );
-        });
-
-        ScrollTrigger.create({
-          trigger: proof,
-          start: "top 92%",
-          once: true,
-          onEnter: () => proofTl.play(),
-        });
-      }
+      gsap
+        .timeline({ defaults: { ease: "expo.out" } })
+        .from("[data-cloud-intro-line]", { yPercent: 108, duration: 1.1, stagger: 0.1 })
+        .from("[data-cloud-intro-fade]", { opacity: 0, y: 12, duration: 0.9, stagger: 0.08 }, 0.3)
+        .from(
+          "[data-cloud-intro-rule]",
+          { scaleX: 0, transformOrigin: "left center", duration: 1.2, ease: "power3.inOut" },
+          0.6,
+        )
+        .from("[data-cloud-intro-stat]", { opacity: 0, y: 10, duration: 0.8, stagger: 0.08 }, 0.8);
     }, root);
 
-    return () => {
-      context.revert();
-      root.querySelectorAll<HTMLElement>(".cloud-v3-proof__value").forEach((node) => {
-        if (node.dataset.value) node.textContent = node.dataset.value;
-      });
-    };
-  }, [reduced]);
+    return () => context.revert();
+  }, []);
 
   return rootRef;
 }
 
 export function CloudServiceHero({ service }: CloudServiceHeroProps) {
-  const [lead, second, third] = service.proof;
-  const rootRef = useCloudHeroMotion<HTMLDivElement>();
+  const rootRef = useCloudIntro<HTMLDivElement>();
 
   return (
-    <div ref={rootRef} className="cloud-v3-embed">
-      <header className="cloud-v3-hero cloud-v3-hero--service">
-        <div className="cloud-v3-hero__copy">
-          <p className="cloud-v3-kicker">
-            <i className="cloud-hero-pulse" aria-hidden />
+    <div ref={rootRef}>
+      <header className="grid items-center gap-12 lg:grid-cols-12 lg:gap-x-10">
+        <div className="lg:col-span-6">
+          <p data-cloud-intro-fade className="text-sm font-medium text-muted-foreground">
             {service.metaTitle}
-            <span aria-hidden />
           </p>
-          <h1 className="service-title text-balance" aria-label={service.titleLines.join(" ")}>
-            {service.titleLines.map((line) => (
-              <span key={line} className="cloud-hero-line-mask" aria-hidden>
-                <span className="cloud-hero-line">{line}</span>
+
+          <h1
+            className="mt-5 font-display text-[clamp(3.25rem,6.4vw,6rem)] leading-[0.9] font-normal tracking-[-0.03em] text-foreground"
+            aria-label={service.titleLines.join(" ")}
+          >
+            {service.titleLines.map((line, index) => (
+              // Descender guard so "p" and "y" survive the mask at 0.9 leading.
+              <span key={line} aria-hidden className="-mb-[0.12em] block overflow-hidden pb-[0.12em]">
+                <span
+                  data-cloud-intro-line
+                  className={cn(
+                    "block will-change-transform",
+                    // The last line fades from paper into teal. w-fit ties the
+                    // gradient to the words, and the padding lets the clipped
+                    // background reach the descenders.
+                    index === service.titleLines.length - 1 &&
+                      "-mb-[0.12em] w-fit bg-linear-100 from-foreground from-30% to-accent-readable bg-clip-text pb-[0.12em] text-transparent",
+                  )}
+                >
+                  {line}
+                </span>
               </span>
             ))}
           </h1>
-          <p className="cloud-v3-lede">{service.lede}</p>
-          {/* Provider logos already live in the cloud diagram; the copy column carries the actions. */}
-          <div className="cloud-v3-actions" data-inline-cta>
-            <MagneticButton>
-              <Button asChild size="lg">
-                <Link href="/contact">Start a conversation</Link>
-              </Button>
-            </MagneticButton>
-            <a href="#cloud-shipped" className="cloud-v3-actions__link">
+
+          <p
+            data-cloud-intro-fade
+            className="mt-7 max-w-[32rem] text-lg leading-8 text-muted-foreground"
+          >
+            {service.lede}
+          </p>
+
+          <div
+            data-cloud-intro-fade
+            data-inline-cta
+            className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4"
+          >
+            <Button asChild size="lg">
+              <Link href="/contact">Start a conversation</Link>
+            </Button>
+            <a
+              href="#cloud-shipped"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground underline decoration-muted-foreground/50 decoration-1 underline-offset-[6px] transition-colors hover:decoration-accent focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            >
               See shipped stacks
-              <ArrowDown aria-hidden="true" />
+              <ArrowDown aria-hidden className="size-3.5" />
             </a>
           </div>
         </div>
 
-        <div className="cloud-hero-stage">
-          <div className="cloud-hero-aura" aria-hidden />
-          <div className="cloud-hero-orbit" aria-hidden />
-          <div className="cloud-hero-float">
-            <CloudV3Diagram />
-          </div>
-        </div>
+        <CloudStage className="mx-auto max-w-[40rem] lg:col-span-6 lg:max-w-none" />
       </header>
 
-      {lead ? (
-        <section className="cloud-v3-proof" aria-label="Operated results">
-          <div>
-            <p>{lead.label}</p>
-            <strong className="cloud-v3-proof__value" data-value={lead.value}>
-              {lead.value}
-            </strong>
-          </div>
-          {second ? (
-            <div>
-              {/* Qualifier lives in the label so all three stat columns share one height. */}
-              <p>
-                {second.label}
-                {second.label.toLowerCase().includes("cost") ? " (avg.)" : null}
-              </p>
-              <strong className="cloud-v3-proof__value" data-value={second.value}>
-              {second.value}
-            </strong>
-            </div>
-          ) : null}
-          {third ? (
-            <div>
-              <p>{third.label}</p>
-              <strong className="cloud-v3-proof__value" data-value={third.value}>
-              {third.value}
-            </strong>
-            </div>
-          ) : null}
+      {service.proof.length ? (
+        <section aria-label="Operated results" className="relative mt-10 lg:mt-6">
+          <span
+            aria-hidden
+            data-cloud-intro-rule
+            className="absolute inset-x-0 top-0 h-px bg-foreground/15"
+          />
+          <dl className="grid gap-y-8 py-8 sm:grid-cols-3 sm:gap-x-10">
+            {service.proof.map((item) => (
+              <div key={item.label} data-cloud-intro-stat className="flex flex-col-reverse gap-2">
+                <dt className="text-sm leading-6 text-muted-foreground">{item.label}</dt>
+                <dd className="font-display text-[clamp(2.75rem,4.6vw,4rem)] leading-none tracking-[-0.02em] text-foreground tabular-nums">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <span aria-hidden className="block h-px bg-foreground/15" />
         </section>
       ) : null}
     </div>

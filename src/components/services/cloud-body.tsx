@@ -119,10 +119,13 @@ function ShipChapter({
   cases: Extract<ServiceSection, { kind: "case" }>[];
 }) {
   const [index, setIndex] = useState(0);
+  // The first platform arrives with the scroll reveal; later ones fade in on switch.
+  const [switched, setSwitched] = useState(false);
   const section = cases[index] ?? cases[0];
 
   const select = (next: number, tablist?: HTMLElement) => {
     setIndex(next);
+    setSwitched(true);
     tablist
       ?.querySelectorAll<HTMLButtonElement>("[data-cloud-platform]")
       [next]?.focus();
@@ -161,14 +164,24 @@ function ShipChapter({
                 aria-controls="cloud-ship-panel"
                 tabIndex={itemIndex === index ? 0 : -1}
                 className={cn("cloud-ship-tab", itemIndex === index && "is-selected")}
-                onClick={() => setIndex(itemIndex)}
+                onClick={() => {
+                  if (itemIndex === index) return;
+                  setIndex(itemIndex);
+                  setSwitched(true);
+                }}
               >
                 {item.kicker}
               </button>
             ))}
           </div>
           <div id="cloud-ship-panel" role="tabpanel">
-            <ShipStage key={section.kicker} kicker={section.kicker} hops={section.path} />
+            <ShipStage
+              key={section.kicker}
+              kicker={section.kicker}
+              entry={section.entry}
+              hops={section.path}
+              animate={switched}
+            />
           </div>
         </div>
       </div>
