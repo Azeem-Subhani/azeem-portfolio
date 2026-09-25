@@ -1,5 +1,7 @@
 export const primaryNav = [
   { href: "/projects", label: "Portfolio" },
+  { href: "/why-me", label: "Why me" },
+  { href: "/process", label: "Process" },
   { href: "/contact", label: "Contact" },
 ] as const;
 

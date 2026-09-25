@@ -2651,3 +2651,26 @@ body:has(.cloud-v2-page) [data-site-header] nav button[aria-current="true"] {
     display: none !important;
   }
 }
+
+/* Why page scroll cue: the wheel dot drifts down and back, like a mouse hint. */
+.why-scroll-dot {
+  animation: why-scroll-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes why-scroll-dot {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(0.75rem);
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-scroll-dot {
+    animation: none;
+  }
+}

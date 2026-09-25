@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-const routes = ["/", "/projects", "/contact"];
+const routes = ["/", "/projects", "/why-me", "/process", "/contact"];
 
 test.describe("navigation", () => {
   test("desktop nav links reach every primary route", async ({ page }) => {
     await page.goto("/");
 
-    for (const label of ["Portfolio"]) {
+    for (const label of ["Portfolio", "Why me", "Process"]) {
       await page
         .getByRole("navigation", { name: "Primary navigation" })
         .getByRole("link", { name: label })
@@ -42,6 +42,8 @@ test.describe("navigation", () => {
 
     const expected = [
       { href: "/projects", name: "Portfolio" },
+      { href: "/why-me", name: "Why me" },
+      { href: "/process", name: "Process" },
       { href: "/contact", name: "Contact" },
       { href: "/services/cloud", name: "Cloud" },
       { href: "/services/web-development", name: "Web" },
