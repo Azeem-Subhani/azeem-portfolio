@@ -203,14 +203,18 @@ function stageTimeline(visual: HTMLElement) {
 
   if (panels.length) {
     gsap.set(panels, { opacity: 0, y: 16 });
-    tl.to(panels, { opacity: 1, y: 0, duration: 0.55, stagger: 0.09 }, 0);
+    tl.to(
+      panels,
+      { opacity: 1, y: 0, duration: 0.55, stagger: 0.09, clearProps: "opacity,transform" },
+      0,
+    );
   }
 
-  // Rails draw out of the panel they leave, so the pipeline reads left to
-  // right instead of every panel popping in at once.
+  // Rails fade in between the panels they join. They run across on tablets and
+  // down the pinned column on desktop, so a directional scale would be wrong half the time.
   if (rails.length) {
-    gsap.set(rails, { scaleX: 0, transformOrigin: "left center", opacity: 0 });
-    tl.to(rails, { scaleX: 1, opacity: 1, duration: 0.6, stagger: 0.12 }, 0.18);
+    gsap.set(rails, { opacity: 0 });
+    tl.to(rails, { opacity: 1, duration: 0.5, stagger: 0.12, clearProps: "opacity" }, 0.22);
   }
 
   if (stops.length) {
@@ -225,6 +229,115 @@ function stageTimeline(visual: HTMLElement) {
 
   return tl;
 }
+
+/**
+ * Desktop only: while a job row sits across the reading line, the pinned
+ * pipeline lights the stage that job lives in and names it in the focus chip.
+ */
+function bindJobFocus(chapter: HTMLElement) {
+  const pipeline = chapter.querySelector<HTMLElement>("[data-pipeline]");
+  const label = pipeline?.querySelector<HTMLElement>("[data-focus-label]");
+  const rows = Array.from(chapter.querySelectorAll<HTMLElement>("[data-job]"));
+  if (!pipeline || !rows.length) return null;
+
+  const idle = label?.textContent ?? "";
+  let current: HTMLElement | null = null;
+
+  const focus = (row: HTMLElement | null) => {
+    if (current === row) return;
+    current?.removeAttribute("data-active");
+    current = row;
+    if (row) {
+      row.setAttribute("data-active", "");
+      pipeline.setAttribute("data-focus", row.dataset.job ?? "all");
+      if (label) label.textContent = row.querySelector("[data-job-title]")?.textContent ?? idle;
+    } else {
+      pipeline.removeAttribute("data-focus");
+      if (label) label.textContent = idle;
+    }
+  };
+
+  rows.forEach((row) => {
+    ScrollTrigger.create({
+      trigger: row,
+      // Row ranges touch end to end, so focus hands straight from one job to the next.
+      start: "top 58%",
+      end: "bottom 58%",
+      onToggle: (self) => {
+        if (self.isActive) focus(row);
+        else if (current === row) focus(null);
+      },
+    });
+  });
+
+  return () => focus(null);
+}
+
+/**
+ * The migration plays forward as the chapter scrolls: the track fills, each
+ * step it reaches lights up, and the console above switches to that step's
+ * state. Wide screens scrub one continuous line; phones advance per step.
+ */
+function bindMigration(chapter: HTMLElement, mm: gsap.MatchMedia) {
+  const root = chapter.querySelector<HTMLElement>("[data-migration]");
+  if (!root) return null;
+
+  const stations = Array.from(root.querySelectorAll<HTMLElement>("[data-station]"));
+  const last = Math.max(0, stations.length - 1);
+  const finalPhase = root.dataset.phase ?? String(last);
+
+  const setPhase = (phase: number) => {
+    const next = String(phase);
+    if (root.dataset.phase === next && root.hasAttribute("data-motion")) return;
+    root.dataset.phase = next;
+    stations.forEach((station, index) => station.toggleAttribute("data-reached", index <= phase));
+  };
+
+  setPhase(0);
+  root.setAttribute("data-motion", "on");
+
+  mm.add(
+    { wide: "(min-width: 1024px)", narrow: "(max-width: 1023px)" },
+    (context) => {
+      if (context.conditions?.wide) {
+        gsap.set(root, { "--p": 0 });
+        gsap.to(root, {
+          "--p": 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            // From the console clearing the fold to it reaching the sticky nav.
+            start: "top 65%",
+            end: "top 16%",
+            scrub: 0.5,
+          },
+          // Read the eased playhead, not the scrollbar, so a step lights exactly
+          // when the fill reaches its dot.
+          onUpdate() {
+            setPhase(Math.min(last, Math.floor(this.progress() * last + 0.02)));
+          },
+        });
+        return;
+      }
+
+      stations.forEach((station, index) => {
+        ScrollTrigger.create({
+          trigger: station,
+          start: "top 62%",
+          onEnter: () => setPhase(index),
+          onLeaveBack: () => setPhase(Math.max(0, index - 1)),
+        });
+      });
+    },
+  );
+
+  return () => {
+    root.removeAttribute("data-motion");
+    root.style.removeProperty("--p");
+    setPhase(Number(finalPhase));
+  };
+}
+
 type Playable = { play(): void; kill(): void };
 type ListPlayable = Playable | gsap.core.Timeline | null;
 
@@ -361,6 +474,7 @@ export function useDataBodyMotion<T extends HTMLElement>() {
     }
 
     const triggers: Array<() => void> = [];
+    const mm = gsap.matchMedia();
 
     const context = gsap.context(() => {
       root.querySelectorAll<HTMLElement>("[data-data-chapter]").forEach((chapter) => {
@@ -374,8 +488,19 @@ export function useDataBodyMotion<T extends HTMLElement>() {
           ":scope > .service-band-head [data-data-copy]",
         );
         const visual = chapter.querySelector<HTMLElement>("[data-data-stage]");
-        const list = chapter.querySelector<HTMLElement>(":scope > [data-data-list]");
+        const list = chapter.querySelector<HTMLElement>("[data-data-list]");
         bindBlock(kicker, title, copy, visual, list, triggers);
+
+        const resetMigration = bindMigration(chapter, mm);
+        if (resetMigration) triggers.push(resetMigration);
+      });
+
+      // Same query as the CSS that pins the pipeline column.
+      mm.add("(min-width: 1024px) and (min-height: 760px)", () => {
+        const resets = Array.from(root.querySelectorAll<HTMLElement>("[data-data-chapter]"))
+          .map((chapter) => bindJobFocus(chapter))
+          .filter(Boolean) as Array<() => void>;
+        return () => resets.forEach((reset) => reset());
       });
     }, root);
 
@@ -384,6 +509,7 @@ export function useDataBodyMotion<T extends HTMLElement>() {
 
     return () => {
       window.removeEventListener("load", refresh);
+      mm.revert();
       context.revert();
       clear();
       triggers.forEach((kill) => kill());
