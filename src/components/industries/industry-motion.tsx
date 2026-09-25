@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
  * heading, then body, then the supporting bits, instead of one generic fade.
  *
  *   data-im="hero-line"    hero headline lines rise out of a mask on load
- *   data-im="underline"    SVG path under the accent line draws after the lines land
+ *   data-im="underline"    SVG under the accent line wipes in left to right after the lines land
  *   data-im="hero-fade"    kicker, lede, actions, scroll cue fade up in order
  *   data-im="hero-visual"  the live ledger panel settles in beside the copy
  *   data-im-head           section head: kicker slides, [data-im-word]s rise, [data-im-intro] follows
@@ -76,7 +76,10 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
 
       gsap.set(heroLines, { yPercent: 110, rotate: 1.5, transformOrigin: "left bottom" });
       gsap.set(heroFade, { opacity: 0, y: 22 });
-      gsap.set(underline, { strokeDashoffset: 1 });
+      // A clip wipe instead of a dash draw: with non-scaling-stroke, browsers measure dashes
+      // in screen pixels, so a pathLength-based dash is shorter than the line and wraps around.
+      // Negative top/bottom insets keep the round caps and stroke overflow unclipped.
+      gsap.set(underline, { clipPath: "inset(-50% 100% -50% -2%)" });
       gsap.set(heroVisual, { opacity: 0, y: 36, scale: 0.96, rotateX: 8, transformPerspective: 900 });
 
       const hero = gsap
@@ -84,7 +87,11 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
         .to(heroFade.slice(0, 1), { opacity: 1, y: 0, duration: 0.6 }, 0)
         .to(heroLines, { yPercent: 0, rotate: 0, duration: 1.05, stagger: 0.13 }, 0.08)
         .to(heroFade.slice(1), { opacity: 1, y: 0, duration: 0.7, stagger: 0.1 }, 0.5)
-        .to(underline, { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 0.85)
+        .to(
+          underline,
+          { clipPath: "inset(-50% 0% -50% -2%)", duration: 0.9, ease: "power2.inOut", clearProps: "clipPath" },
+          0.85,
+        )
         .to(heroVisual, { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1.2, clearProps: "transform" }, 0.45);
 
       if (document.documentElement.dataset.introState === "fresh") {
