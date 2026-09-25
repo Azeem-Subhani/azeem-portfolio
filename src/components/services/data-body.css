@@ -173,106 +173,6 @@
   outline-offset: 2px;
 }
 
-/* ---------- Shared stage + card system ---------- */
-
-.data-stage {
-  margin: 0.25rem 0 2.5rem;
-}
-
-.data-stage-caption {
-  display: flex;
-  justify-content: center;
-  gap: 0.6rem;
-  align-items: center;
-  margin-top: 1.1rem;
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.data-stage-caption span:nth-child(even) {
-  color: var(--accent);
-}
-
-.data-card {
-  position: relative;
-  overflow: hidden;
-  padding: 1.6rem 1.6rem 1.7rem;
-  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
-  border-radius: var(--shape-radius-lg);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 46%, transparent), transparent 55%),
-    var(--surface);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--bg) 60%, transparent) inset;
-  transition:
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.25s ease,
-    box-shadow 0.3s ease;
-}
-
-.data-card::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.data-card:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-  box-shadow:
-    0 1px 0 color-mix(in srgb, var(--bg) 60%, transparent) inset,
-    0 22px 40px -26px rgb(var(--shadow-color) / 0.5);
-}
-
-.data-card:hover::after {
-  opacity: 1;
-}
-
-.data-card:focus-within {
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-}
-
-.data-card-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
-  border-radius: 0.85rem;
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent-readable);
-}
-
-.data-card-icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.data-card h3 {
-  font-family: var(--font-h2), sans-serif;
-  font-size: 1.06rem;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-}
-
-.data-card p {
-  margin-top: 0.6rem;
-  color: var(--muted);
-  font-size: 0.96rem;
-  line-height: 1.65;
-  text-wrap: pretty;
-}
-
 /* ---------- Console panel chrome ---------- */
 
 .data-panel {
@@ -314,11 +214,10 @@
 }
 /* ---------- Chapter 01 · pipeline ---------- */
 
+/* Stacked top to bottom so it fits the pinned column beside the jobs list. */
 .data-pipeline {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) auto minmax(0, 1fr) auto minmax(0, 1.15fr);
-  gap: 1rem;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .data-flow-list {
@@ -358,15 +257,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 2.5rem;
+  width: 100%;
+  height: 2.6rem;
 }
 
 .data-rail-line {
-  width: 100%;
-  height: 1px;
+  width: 1px;
+  height: 100%;
   background: linear-gradient(
-    90deg,
+    180deg,
     color-mix(in srgb, var(--accent) 25%, transparent),
     color-mix(in srgb, var(--accent) 85%, transparent)
   );
@@ -374,11 +273,11 @@
 
 .data-rail-spark {
   position: absolute;
-  top: 50%;
-  left: 0;
+  top: 0;
+  left: 50%;
   width: 0.4rem;
   height: 0.4rem;
-  margin-top: -0.2rem;
+  margin-left: -0.2rem;
   border-radius: 999px;
   background: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
@@ -391,9 +290,9 @@
 
 .data-rail-badge {
   position: absolute;
-  top: -0.55rem;
-  left: 50%;
-  translate: -50% 0;
+  top: 50%;
+  left: calc(50% + 0.7rem);
+  translate: 0 -50%;
   padding: 0.1rem 0.35rem;
   border-radius: 999px;
   background: var(--surface);
@@ -405,7 +304,7 @@
 
 @keyframes data-rail-run {
   0% {
-    left: 0;
+    top: 0;
     opacity: 0;
   }
   15% {
@@ -415,7 +314,7 @@
     opacity: 1;
   }
   100% {
-    left: calc(100% - 0.4rem);
+    top: calc(100% - 0.4rem);
     opacity: 0;
   }
 }
@@ -546,72 +445,406 @@
 .data-warehouse-list b.is-busy {
   color: var(--signal-readable);
 }
-/* ---------- Chapter 02 · migration track ---------- */
+/* ---------- Shared stage ---------- */
 
-.data-migrate-track {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  padding: 1.4rem 1.1rem 1.1rem;
+.data-stage {
+  margin: 0.25rem 0 2.5rem;
 }
 
-.data-migrate-track::before {
+.data-stage-caption {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1.1rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.data-stage-caption span:nth-child(even) {
+  color: var(--accent);
+}
+
+/* Title and copy side by side: the migration chapter opens wide instead of stacked. */
+.data-chapter-head.is-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  column-gap: 4rem;
+  align-items: end;
+  max-width: none;
+}
+
+.data-chapter-head.is-wide .data-chapter-kicker {
+  grid-column: 1 / -1;
+}
+
+.data-chapter-head.is-wide .service-band-copy {
+  justify-self: end;
+  margin-top: 0;
+}
+
+/* ---------- Chapter 01 · pinned pipeline + jobs ---------- */
+
+.data-jobs-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 4.5rem;
+  align-items: start;
+}
+
+.data-jobs-visual {
+  position: sticky;
+  /* Below the fixed header and the sticky on-page nav. */
+  top: calc(var(--site-header-bottom, 4.5rem) + 5.25rem);
+}
+
+.data-jobs-visual .data-stage {
+  margin: 0;
+}
+
+/* Pinned, the pipeline has to fit under the nav on a 900px-tall screen, so it
+   sheds the detail the focus chip and the jobs list already carry. */
+@media (min-width: 1024px) and (min-height: 760px) {
+  .data-jobs-visual .data-stage-caption,
+  .data-jobs-visual .data-store-meta {
+    display: none;
+  }
+
+  .data-jobs-visual .data-pipeline-rail {
+    height: 2rem;
+  }
+
+  .data-jobs-visual .data-flow-list {
+    gap: 0.4rem;
+    padding: 0.8rem 1rem 0.9rem;
+  }
+
+  .data-jobs-visual .data-flow-list li {
+    padding-bottom: 0.4rem;
+  }
+
+  .data-jobs-visual .data-pipeline .data-store-label,
+  .data-jobs-visual .data-warehouse-list {
+    margin-top: 0.8rem;
+  }
+
+  .data-jobs-visual .data-warehouse-list {
+    gap: 0.35rem;
+    padding-bottom: 0.9rem;
+  }
+}
+
+.data-pipeline-focus {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+}
+
+.data-pipeline-focus b {
+  overflow: hidden;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent-readable);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-pipeline [data-node] {
+  transition:
+    opacity 0.45s ease,
+    border-color 0.35s ease,
+    box-shadow 0.45s ease;
+}
+
+/* A job is in focus: every stage it doesn't touch steps back. */
+.data-pipeline[data-focus] [data-node] {
+  opacity: 0.36;
+}
+
+.data-pipeline[data-focus="all"] [data-node],
+.data-pipeline[data-focus="ingest"] [data-node="ingest"],
+.data-pipeline[data-focus="store"] [data-node="store"],
+.data-pipeline[data-focus="sync"] [data-node="sync"],
+.data-pipeline[data-focus="warehouse"] [data-node="warehouse"] {
+  opacity: 1;
+}
+
+.data-pipeline[data-focus="all"] .data-panel[data-node],
+.data-pipeline[data-focus="ingest"] .data-panel[data-node="ingest"],
+.data-pipeline[data-focus="store"] .data-panel[data-node="store"],
+.data-pipeline[data-focus="warehouse"] .data-panel[data-node="warehouse"] {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 24px 44px -30px rgb(var(--shadow-color) / 0.55);
+}
+
+.data-pipeline[data-focus="sync"] [data-node="sync"] .data-rail-badge,
+.data-pipeline[data-focus="ingest"] [data-node="ingest"] .data-rail-badge {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.data-jobs-list {
+  display: grid;
+}
+
+.data-job {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 2.2rem 0 2.4rem;
+  border-top: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+}
+
+.data-job:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+}
+
+/* The rule above the job being read draws across in accent. */
+.data-job::before {
   content: "";
   position: absolute;
-  top: 1.95rem;
-  right: 1.1rem;
-  left: 1.1rem;
+  top: -1px;
+  left: 0;
+  width: 100%;
   height: 1px;
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-}
-
-.data-migrate-stop {
-  position: relative;
-  display: grid;
-  gap: 0.25rem;
-}
-
-.data-migrate-dot {
-  width: 0.62rem;
-  height: 0.62rem;
-  margin-bottom: 0.55rem;
-  border: 2px solid var(--surface);
-  border-radius: 999px;
-  background: var(--muted);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 18%, transparent);
-}
-
-.data-migrate-stop.is-live .data-migrate-dot {
   background: var(--accent);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent),
-    0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.data-migrate-stop.is-running .data-migrate-dot,
-.data-migrate-stop.is-passing .data-migrate-dot {
-  background: var(--signal);
+.data-job[data-active]::before {
+  transform: scaleX(1);
 }
 
-.data-migrate-stop.is-ready .data-migrate-dot {
-  background: var(--success);
+.data-job-index {
+  color: var(--muted);
+  font-family: var(--font-h1), serif;
+  font-size: 2.1rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.35s ease;
 }
 
-.data-migrate-stop b {
+.data-job[data-active] .data-job-index {
+  color: var(--accent-readable);
+}
+
+.data-job h3 {
+  font-family: var(--font-h1), serif;
+  font-size: clamp(1.45rem, 2.2vw, 1.9rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.data-job p {
+  max-width: 34rem;
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+/* ---------- Chapter 02 · migration console + scrubbed track ---------- */
+
+.data-migration {
+  /* Share of the migration played; the scroll scrub drives it. */
+  --p: 1;
+  --copied: 1;
+}
+
+.data-migration[data-phase="0"],
+.data-migration[data-phase="1"] {
+  --copied: 0;
+}
+
+.data-migration[data-phase="2"] {
+  --copied: 0.08;
+}
+
+.data-migration .data-stage {
+  margin: 0 0 2.5rem;
+}
+
+.data-mig-lanes {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1.1rem 1.1rem 0.9rem;
+}
+
+.data-mig-lane {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(3rem, 1fr) minmax(0, 17rem);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--bg) 45%, transparent);
+  transition:
+    border-color 0.4s ease,
+    background 0.4s ease;
+}
+
+.data-mig-app {
+  padding: 0.15rem 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.62rem;
+  text-align: center;
+}
+
+.data-mig-flow {
+  position: relative;
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+}
+
+.data-mig-flow i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0.38rem;
+  height: 0.38rem;
+  margin-top: -0.19rem;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0;
+}
+
+/* The store node at the end of the lane: name over its current role. */
+.data-mig-store {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+  border-radius: 0.65rem;
+  background: var(--surface);
+}
+
+.data-mig-lane b {
   color: var(--fg);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-.data-migrate-stop em {
+.data-mig-lane em {
+  overflow: hidden;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
   font-style: normal;
-  line-height: 1.45;
+  transition: color 0.35s ease;
 }
 
-.data-migrate-footer {
+/* The lane taking traffic in the current phase: writes flow and the label lights. */
+:is(
+    .data-migration[data-phase="0"] [data-live~="0"],
+    .data-migration[data-phase="1"] [data-live~="1"],
+    .data-migration[data-phase="2"] [data-live~="2"],
+    .data-migration[data-phase="3"] [data-live~="3"],
+    .data-migration[data-phase="4"] [data-live~="4"]
+  ) {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+:is(
+    .data-migration[data-phase="0"] [data-live~="0"],
+    .data-migration[data-phase="1"] [data-live~="1"],
+    .data-migration[data-phase="2"] [data-live~="2"],
+    .data-migration[data-phase="3"] [data-live~="3"],
+    .data-migration[data-phase="4"] [data-live~="4"]
+  )
+  em {
+  color: var(--accent-readable);
+}
+
+:is(
+    .data-migration[data-phase="0"] [data-live~="0"],
+    .data-migration[data-phase="1"] [data-live~="1"],
+    .data-migration[data-phase="2"] [data-live~="2"],
+    .data-migration[data-phase="3"] [data-live~="3"],
+    .data-migration[data-phase="4"] [data-live~="4"]
+  )
+  .data-mig-flow
+  i {
+  animation: data-mig-run 1.8s linear infinite;
+}
+
+.data-mig-flow i:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.data-mig-flow i:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes data-mig-run {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 0.38rem);
+    opacity: 0;
+  }
+}
+
+/* Stacked values: only the current phase's shows, the outgoing one slides away. */
+.data-phase-value {
+  display: inline-grid;
+}
+
+.data-phase-value > span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  translate: 0 0.4em;
+  white-space: nowrap;
+  transition:
+    opacity 0.35s ease,
+    translate 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:is(
+    .data-migration[data-phase="0"] [data-at~="0"],
+    .data-migration[data-phase="1"] [data-at~="1"],
+    .data-migration[data-phase="2"] [data-at~="2"],
+    .data-migration[data-phase="3"] [data-at~="3"],
+    .data-migration[data-phase="4"] [data-at~="4"]
+  ) {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.data-mig-footer {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem 1rem;
@@ -620,7 +853,7 @@
   border-top: 1px solid color-mix(in srgb, var(--fg) 9%, transparent);
 }
 
-.data-migrate-meter {
+.data-mig-meter {
   flex: 1;
   min-width: 8rem;
   height: 0.3rem;
@@ -629,98 +862,415 @@
   background: color-mix(in srgb, var(--fg) 12%, transparent);
 }
 
-.data-migrate-meter i {
+.data-mig-meter i {
   display: block;
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--accent), var(--signal));
+  transform: scaleX(var(--copied));
+  transform-origin: left center;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.data-migrate-footer p {
+.data-mig-footer p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
   color: var(--muted);
   font-size: 0.76rem;
   font-variant-numeric: tabular-nums;
 }
 
-.data-migrate-footer p b {
+.data-mig-footer p b {
   color: var(--fg);
   font-weight: 600;
 }
 
-/* ---------- Chapter 03 · isolated lanes ---------- */
+.data-track {
+  /* Five equal columns; the line runs from the first dot to the last. */
+  --gap: 1.5rem;
+  position: relative;
+}
 
-.data-warehouse {
+.data-track-line {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  width: calc(80% + 0.8 * var(--gap));
+  height: 1px;
+  background: color-mix(in srgb, var(--fg) 14%, transparent);
+}
+
+.data-track-line i {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--accent), var(--signal));
+  transform: scaleX(var(--p));
+  transform-origin: left center;
+}
+
+.data-track-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--gap);
 }
 
-.data-warehouse .is-lane {
-  padding-bottom: 1.1rem;
+.data-station {
+  position: relative;
+  padding-top: 1.6rem;
 }
 
-.data-lane-name {
-  margin: 1rem 1.1rem 0;
-  color: var(--fg);
+.data-station-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.4s ease;
+}
+
+.data-station-mark {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--accent-readable);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.74rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-station h3 {
   font-family: var(--font-h2), sans-serif;
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1.35;
   letter-spacing: -0.01em;
+  text-wrap: balance;
+  transition: color 0.35s ease;
 }
 
-.data-lane-note {
-  margin: 0.35rem 1.1rem 0;
+.data-station p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Steps the migration hasn't reached yet (only while the scroll motion runs). */
+[data-motion="on"] .data-station:not([data-reached]) .data-station-dot {
+  border-color: color-mix(in srgb, var(--fg) 26%, transparent);
+  background: var(--bg);
+  box-shadow: none;
+}
+
+[data-motion="on"] .data-station:not([data-reached]) h3 {
+  color: var(--muted);
+}
+
+/* The step in progress pulses. */
+:is(
+    [data-motion="on"][data-phase="0"] .data-station:nth-child(1),
+    [data-motion="on"][data-phase="1"] .data-station:nth-child(2),
+    [data-motion="on"][data-phase="2"] .data-station:nth-child(3),
+    [data-motion="on"][data-phase="3"] .data-station:nth-child(4),
+    [data-motion="on"][data-phase="4"] .data-station:nth-child(5)
+  )
+  .data-station-dot {
+  animation: data-station-pulse 1.8s ease-out infinite;
+}
+
+@keyframes data-station-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+/* ---------- Chapter 03 · row store vs column store ---------- */
+
+.data-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.data-split-pane {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1.1rem;
+}
+
+.data-split-name {
+  margin: 1rem 1.1rem 0;
+  color: var(--fg);
+  font-family: var(--font-h1), serif;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.data-split-note {
+  margin: 0.3rem 1.1rem 0;
   color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.5;
 }
 
-.data-lane-state {
-  display: inline-flex;
+.data-rowstore {
+  height: 13.25rem;
+  margin: 1rem 1.1rem 0;
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 80%, transparent);
+}
+
+/* The list is doubled; sliding it down by half loops seamlessly, so new rows keep landing on top. */
+.data-rowstore-feed {
+  animation: data-feed 21s linear infinite;
+}
+
+.data-rowstore-feed li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.7rem;
   align-items: center;
-  gap: 0.4rem;
-  margin: 0.85rem 1.1rem 0;
-  color: var(--accent-readable);
+  margin-bottom: 0.4rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--bg) 52%, transparent);
+}
+
+.data-rowstore-feed code {
+  overflow: hidden;
+  color: var(--fg);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-rowstore-feed span {
+  color: var(--muted);
   font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-rowstore-feed b {
+  color: var(--accent-readable);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.data-lane-state i {
-  width: 0.42rem;
-  height: 0.42rem;
-  border-radius: 999px;
-  background: var(--success);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 20%, transparent);
+@keyframes data-feed {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
-.data-warehouse-rule {
-  grid-column: 1 / -1;
+.data-split-wall {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  margin-top: 0.25rem;
+}
+
+.data-split-wall::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 1px dashed color-mix(in srgb, var(--fg) 24%, transparent);
+}
+
+.data-split-wall span {
+  position: relative;
+  padding: 0.7rem 0.2rem;
+  background: var(--bg);
   color: var(--muted);
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
 }
 
-/* ---------- Chapter 04 · connector catalog ---------- */
-
-.data-source-list {
+.data-colstore {
   display: grid;
-  gap: 0;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.9rem;
+  height: 10.25rem;
+  margin: 1rem 1.1rem 0;
+}
+
+.data-colstore span {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.data-colstore i {
+  position: relative;
+  display: block;
+  height: var(--h);
+  overflow: hidden;
+  border-radius: 0.45rem 0.45rem 0.2rem 0.2rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 36%, transparent),
+    color-mix(in srgb, var(--accent) 12%, transparent)
+  );
+}
+
+/* A query scans column by column, left to right. */
+.data-colstore i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  animation: data-col-scan 3.6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.16s);
+}
+
+.data-colstore em {
+  margin-top: 0.45rem;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.6rem;
+  font-style: normal;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes data-col-scan {
+  0%,
+  45%,
+  100% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.7;
+  }
+}
+
+.data-colstore-query {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.9rem 1.1rem 0;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+}
+
+.data-colstore-query code {
+  overflow: hidden;
+  color: var(--fg);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-colstore-query b {
+  color: var(--accent-readable);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.data-engines {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  margin-top: 0.75rem;
+}
+
+.data-engine {
+  position: relative;
+  padding-top: 1.3rem;
+  border-top: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+}
+
+.data-engine::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.data-engine:hover::before {
+  width: 100%;
+}
+
+.data-engine h3 {
+  font-family: var(--font-h1), serif;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.data-engine p {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+/* ---------- Chapter 04 · heading beside the catalog ---------- */
+
+.data-chapter.is-aside {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 4rem;
+  align-items: start;
+}
+
+.data-chapter.is-aside .service-band-head {
+  margin-bottom: 0;
+}
+
+.data-chapter.is-aside .data-stage {
+  margin: 0;
 }
 
 .data-source-list li {
   display: grid;
-  grid-template-columns: 5.5rem 6rem minmax(0, 1fr);
+  grid-template-columns: 4.75rem 7.5rem minmax(0, 1fr);
   gap: 0.85rem;
-  align-items: baseline;
-  padding: 0.85rem 1.1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
   border-top: 1px solid color-mix(in srgb, var(--fg) 9%, transparent);
 }
 
@@ -739,101 +1289,164 @@
 }
 
 .data-source-cadence {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: start;
+}
+
+.data-source-pill {
   padding: 0.1rem 0.4rem;
   border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
   border-radius: 999px;
   color: var(--accent-readable);
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 0.66rem;
-  justify-self: start;
 }
 
 .data-source-list em {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-style: normal;
   line-height: 1.5;
 }
-/* ---------- Chapter lists ---------- */
 
-/* Six jobs: a fixed 3-up (2-up on tablets) so the last row never leaves a hole. */
-.data-jobs-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.data-warehouse-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-/* Stepper: numbered surfaces that read left to right in order. */
-.data-steps {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-
-.data-step {
+/* Delivery signal: CDC streams steadily, webhooks arrive in bursts, batch fills
+   a block and flushes it, realtime runs dense. */
+.data-signal {
   position: relative;
-  padding: 1.3rem 1.25rem 1.4rem;
-  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
-  border-radius: var(--shape-radius-lg);
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
-  transition:
-    border-color 0.25s ease,
-    background 0.25s ease;
+  display: block;
+  width: 4.5rem;
+  height: 0.4rem;
+  --dur: 2.4s;
+  --d2: 0.8s;
+  --d3: 1.6s;
 }
 
-.data-step::before {
+.data-signal::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 1.25rem;
-  width: 1.75rem;
-  height: 2px;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.data-signal i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0.3rem;
+  height: 0.3rem;
+  margin-top: -0.15rem;
+  border-radius: 999px;
   background: var(--accent);
+  opacity: 0;
+  animation: data-signal-run var(--dur) linear infinite;
 }
 
-.data-step:hover {
-  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
-  background: var(--surface);
+.data-signal i:nth-child(2) {
+  animation-delay: var(--d2);
 }
 
-.data-step-mark {
-  display: block;
-  margin-bottom: 0.7rem;
-  color: var(--accent-readable);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.78rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+.data-signal i:nth-child(3) {
+  animation-delay: var(--d3);
 }
 
-.data-step h3 {
-  font-family: var(--font-h2), sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
+.data-signal[data-kind="realtime"] {
+  --dur: 1s;
+  --d2: 0.33s;
+  --d3: 0.66s;
 }
 
-.data-step p {
-  margin-top: 0.5rem;
-  color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.6;
-  text-wrap: pretty;
+.data-signal[data-kind="webhook"] i {
+  animation-name: data-signal-burst;
+  animation-duration: 3s;
+}
+
+.data-signal[data-kind="webhook"] {
+  --d2: 0.14s;
+  --d3: 0.28s;
+}
+
+.data-signal[data-kind="batch"] i:first-child {
+  width: 100%;
+  opacity: 1;
+  transform-origin: left center;
+  animation: data-signal-fill 4.2s ease-in-out infinite;
+}
+
+.data-signal[data-kind="batch"] i:not(:first-child) {
+  display: none;
+}
+
+@keyframes data-signal-run {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 0.3rem);
+    opacity: 0;
+  }
+}
+
+@keyframes data-signal-burst {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 1;
+  }
+  32%,
+  100% {
+    left: calc(100% - 0.3rem);
+    opacity: 0;
+  }
+}
+
+@keyframes data-signal-fill {
+  0% {
+    transform: scaleX(0);
+    opacity: 0.9;
+  }
+  70%,
+  85% {
+    transform: scaleX(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
 }
 
 /* ---------- Responsive ---------- */
 
+/* Short desktop screens: the pipeline column is taller than the room left under the nav. */
+@media (max-height: 759px) {
+  .data-jobs-visual {
+    position: static;
+  }
+
+  .data-pipeline-focus {
+    display: none;
+  }
+}
+
 @media (max-width: 1279px) {
-  .data-steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .data-jobs-split {
+    gap: 3rem;
   }
 }
 
@@ -862,7 +1475,30 @@
     white-space: nowrap;
   }
 
+  .data-chapter-head.is-wide {
+    display: block;
+    max-width: 44rem;
+  }
+
+  .data-chapter-head.is-wide .service-band-copy {
+    margin-top: 0.85rem;
+  }
+
+  .data-jobs-split {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .data-jobs-visual {
+    position: static;
+  }
+
+  .data-pipeline-focus {
+    display: none;
+  }
+
   .data-pipeline {
+    display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
   }
@@ -886,37 +1522,119 @@
     grid-row: 1 / span 2;
   }
 
-  .data-migrate-track {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.1rem;
+  /* The console stays in view while the steps scroll under it and drive it. */
+  .data-migration .data-stage {
+    position: sticky;
+    top: calc(var(--site-header-bottom, 4.5rem) + 4.75rem);
+    z-index: 5;
+    margin-bottom: 1.75rem;
   }
 
-  .data-migrate-track::before {
+  .data-track-line {
     display: none;
   }
 
-  .data-steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .data-track-list {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .data-warehouse-grid,
-  .data-jobs-grid {
-    grid-template-columns: 1fr 1fr;
+  .data-station {
+    padding: 0 0 1.9rem 2.1rem;
+  }
+
+  .data-station-dot {
+    top: 0.3rem;
+  }
+
+  /* Connector down to the next step; it fills once that step is reached. */
+  .data-station::before {
+    content: "";
+    position: absolute;
+    top: 1.1rem;
+    bottom: 0.1rem;
+    left: 0.35rem;
+    width: 1px;
+    background: var(--accent);
+    transition: background 0.4s ease;
+  }
+
+  .data-station:last-child::before {
+    display: none;
+  }
+
+  [data-motion="on"] .data-station:not(:has(+ [data-reached]))::before {
+    background: color-mix(in srgb, var(--fg) 14%, transparent);
+  }
+
+  .data-station-mark {
+    display: inline-block;
+    margin: 0 0.5rem 0.35rem 0;
+  }
+
+  .data-station h3 {
+    display: inline;
+  }
+
+  .data-chapter.is-aside {
+    display: block;
+  }
+
+  .data-chapter.is-aside .service-band-head {
+    margin-bottom: 2.4rem;
   }
 }
 
 @media (max-width: 767px) {
-  .data-warehouse {
+  .data-split {
     grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .data-split-wall {
+    flex-direction: row;
+    gap: 1.25rem;
+    min-height: 1.5rem;
+  }
+
+  .data-split-wall::before {
+    top: 50%;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    border-top: 1px dashed color-mix(in srgb, var(--fg) 24%, transparent);
+    border-left: 0;
+  }
+
+  .data-split-wall span {
+    padding: 0.1rem 0.6rem;
+    writing-mode: horizontal-tb;
+    rotate: none;
+  }
+
+  .data-engines {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .data-mig-lane {
+    grid-template-columns: 2.5rem minmax(1.5rem, 1fr) minmax(0, 11rem);
+    gap: 0.6rem;
+    padding: 0.5rem 0.6rem;
   }
 
   .data-source-list li {
-    grid-template-columns: 1fr;
-    gap: 0.3rem;
+    grid-template-columns: 1fr auto;
+    gap: 0.4rem 0.85rem;
+  }
+
+  .data-source-cadence {
+    grid-auto-flow: column;
+    align-items: center;
   }
 
   .data-source-list em {
-    color: var(--muted);
+    grid-column: 1 / -1;
   }
 }
 
@@ -959,15 +1677,12 @@
     min-height: 3rem;
   }
 
-  .data-card {
-    padding: 1.35rem 1.3rem 1.45rem;
+  /* The on-page nav no longer sticks here, so the console tucks right under the header. */
+  .data-migration .data-stage {
+    top: calc(var(--site-header-bottom, 4.5rem) + 0.5rem);
   }
 
-  .data-pipeline,
-  .data-jobs-grid,
-  .data-warehouse-grid,
-  .data-steps,
-  .data-migrate-track {
+  .data-pipeline {
     grid-template-columns: 1fr;
   }
 
@@ -978,16 +1693,30 @@
     grid-row: auto;
   }
 
-  .data-step {
-    padding: 1.2rem 1.2rem 1.3rem;
+  .data-job {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 0.9rem;
+    padding: 1.6rem 0 1.8rem;
+  }
+
+  .data-job-index {
+    font-size: 1.6rem;
+  }
+
+  .data-mig-footer p span[aria-hidden="true"],
+  .data-mig-footer p > .data-phase-value {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .data-card,
-  .data-step,
   .data-toc-link,
   .data-toc-link svg,
+  .data-job::before,
+  .data-engine::before,
+  .data-phase-value > span,
+  .data-mig-meter i,
+  .data-pipeline [data-node],
   .data-title-word,
   .data-item-word,
   .data-copy-word {
@@ -995,13 +1724,52 @@
     will-change: auto;
   }
 
-  .data-card:hover {
-    transform: none;
-  }
-
   .data-rail-spark {
     animation: none;
-    left: calc(50% - 0.2rem);
+    top: calc(50% - 0.2rem);
     opacity: 1;
+  }
+
+  .data-rowstore-feed,
+  .data-colstore i::after,
+  .data-station-dot {
+    animation: none;
+  }
+
+  /* Loops hold still at readable positions instead of disappearing. */
+  .data-mig-flow i,
+  :is(
+      .data-migration[data-phase="0"] [data-live~="0"],
+      .data-migration[data-phase="1"] [data-live~="1"],
+      .data-migration[data-phase="2"] [data-live~="2"],
+      .data-migration[data-phase="3"] [data-live~="3"],
+      .data-migration[data-phase="4"] [data-live~="4"]
+    )
+    .data-mig-flow
+    i,
+  .data-signal i,
+  .data-signal[data-kind="batch"] i:first-child {
+    animation: none;
+    opacity: 0.85;
+  }
+
+  .data-mig-flow i:nth-child(1),
+  .data-signal i:nth-child(1) {
+    left: 15%;
+  }
+
+  .data-mig-flow i:nth-child(2),
+  .data-signal i:nth-child(2) {
+    left: 48%;
+  }
+
+  .data-mig-flow i:nth-child(3),
+  .data-signal i:nth-child(3) {
+    left: 80%;
+  }
+
+  .data-signal[data-kind="batch"] i:first-child {
+    left: 0;
+    transform: scaleX(0.7);
   }
 }

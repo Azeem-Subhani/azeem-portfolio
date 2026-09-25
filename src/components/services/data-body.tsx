@@ -1,19 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  Columns3,
-  DatabaseZap,
-  Gauge,
-  GitCompare,
-  Radio,
-  ShieldCheck,
-  Table2,
-  Warehouse,
-  Workflow,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import {
   MigrationStage,
@@ -23,19 +11,16 @@ import {
 } from "@/components/services/data-surfaces";
 import { useDataBodyMotion } from "@/components/services/data-motion";
 import { ServiceTocGlass } from "@/components/services/service-toc-glass";
+import { cn } from "@/lib/utils";
 import type { ServicePageContent, ServiceSection } from "@/types/content";
 
 import "@/components/services/data-body.css";
 
-const JOB_ICONS: LucideIcon[] = [
-  Workflow,
-  GitCompare,
-  Radio,
-  Warehouse,
-  ShieldCheck,
-  Gauge,
-];
-const WAREHOUSE_ICONS: LucideIcon[] = [Table2, DatabaseZap, Columns3];
+/**
+ * Which pipeline stage each job lives in, by position in the content list.
+ * `all` is governance: it applies to every stage at once.
+ */
+const JOB_FOCUS = ["ingest", "store", "sync", "warehouse", "all", "warehouse"] as const;
 
 const CHAPTERS = [
   { id: "data-jobs", index: "01", kicker: "Work", label: "What I do" },
@@ -57,13 +42,16 @@ function ChapterHead({
   chapter,
   title,
   copy,
+  wide = false,
 }: {
   chapter: (typeof CHAPTERS)[number];
   title: string;
   copy?: string;
+  /** Title and copy side by side, so consecutive chapters don't open the same way. */
+  wide?: boolean;
 }) {
   return (
-    <header className="service-band-head data-chapter-head">
+    <header className={cn("service-band-head data-chapter-head", wide && "is-wide")}>
       <p className="data-chapter-kicker" data-data-kicker aria-hidden="true">
         <span className="data-chapter-index">{chapter.index}</span>
         <span className="data-chapter-rule" />
@@ -89,29 +77,40 @@ function JobsChapter({
   return (
     <section aria-labelledby="data-jobs" data-data-chapter className="data-chapter">
       <ChapterHead chapter={CHAPTERS[0]} title={section.title} copy={section.copy} />
-      <figure data-data-stage data-device="pipeline" className="data-stage">
-        <PipelineStage />
-        <figcaption className="data-stage-caption">
-          <span>Writes</span>
-          <span aria-hidden="true">→</span>
-          <span>One record</span>
-          <span aria-hidden="true">→</span>
-          <span>Analytical copy</span>
-        </figcaption>
-      </figure>
-      <div data-data-list className="data-jobs-grid">
-        {section.items.map((item, index) => {
-          const Icon = JOB_ICONS[index % JOB_ICONS.length];
-          return (
-            <article key={item.title} data-data-card className="data-card">
-              <span className="data-card-icon" aria-hidden="true">
-                <Icon strokeWidth={1.75} />
+      {/* The pipeline stays pinned while the jobs scroll past it, lighting the stage each one lives in. */}
+      <div className="data-jobs-split">
+        <div className="data-jobs-visual">
+          <figure data-data-stage data-device="pipeline" className="data-stage">
+            <PipelineStage />
+            <figcaption className="data-stage-caption">
+              <span>Writes</span>
+              <span aria-hidden="true">→</span>
+              <span>One record</span>
+              <span aria-hidden="true">→</span>
+              <span>Analytical copy</span>
+            </figcaption>
+          </figure>
+        </div>
+        <ol data-data-list className="data-jobs-list">
+          {section.items.map((item, index) => (
+            <li
+              key={item.title}
+              data-data-card
+              data-job={JOB_FOCUS[index % JOB_FOCUS.length]}
+              className="data-job"
+            >
+              <span className="data-job-index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 data-data-item-title>{item.title}</h3>
-              <p>{item.copy}</p>
-            </article>
-          );
-        })}
+              <div>
+                <h3 data-data-item-title data-job-title>
+                  {item.title}
+                </h3>
+                <p>{item.copy}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -128,21 +127,30 @@ function MigrationChapter({
       data-data-chapter
       className="data-chapter"
     >
-      <ChapterHead chapter={CHAPTERS[1]} title={section.title} copy={section.copy} />
-      <div data-data-stage data-device="migrate" className="data-stage">
-        <MigrationStage />
+      <ChapterHead chapter={CHAPTERS[1]} title={section.title} copy={section.copy} wide />
+      {/* Final phase by default; the scroll motion rewinds it to 0 and plays it forward. */}
+      <div className="data-migration" data-migration data-phase={section.items.length - 1}>
+        <div data-data-stage data-device="migrate" className="data-stage">
+          <MigrationStage />
+        </div>
+        <div className="data-track">
+          <span className="data-track-line" aria-hidden="true">
+            <i />
+          </span>
+          <ol data-data-list className="data-track-list">
+            {section.items.map((item, index) => (
+              <li key={item.title} data-data-step data-station className="data-station">
+                <span className="data-station-dot" aria-hidden="true" />
+                <span className="data-station-mark" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
-      <ol data-data-list className="data-steps">
-        {section.items.map((item, index) => (
-          <li key={item.title} data-data-step className="data-step">
-            <span className="data-step-mark" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h3>{item.title}</h3>
-            <p>{item.copy}</p>
-          </li>
-        ))}
-      </ol>
     </section>
   );
 }
@@ -162,20 +170,14 @@ function WarehouseChapter({
       <div data-data-stage data-device="warehouse" className="data-stage">
         <WarehouseStage />
       </div>
-      <div data-data-list className="data-warehouse-grid">
-        {section.items.map((item, index) => {
-          const Icon = WAREHOUSE_ICONS[index % WAREHOUSE_ICONS.length];
-          return (
-            <article key={item.title} data-data-card className="data-card">
-              <span className="data-card-icon" aria-hidden="true">
-                <Icon strokeWidth={1.75} />
-              </span>
-              <h3 data-data-item-title>{item.title}</h3>
-              <p>{item.copy}</p>
-            </article>
-          );
-        })}
-      </div>
+      <ul data-data-list className="data-engines">
+        {section.items.map((item) => (
+          <li key={item.title} data-data-card className="data-engine">
+            <h3 data-data-item-title>{item.title}</h3>
+            <p>{item.copy}</p>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -186,7 +188,11 @@ function SourcesChapter({
   section: Extract<ServiceSection, { kind: "platforms" }>;
 }) {
   return (
-    <section aria-labelledby="data-sources" data-data-chapter className="data-chapter">
+    <section
+      aria-labelledby="data-sources"
+      data-data-chapter
+      className="data-chapter is-aside"
+    >
       <ChapterHead chapter={CHAPTERS[3]} title={section.title} copy={section.copy} />
       <div data-data-stage data-device="sources" className="data-stage">
         <SourcesStage items={section.items} />
