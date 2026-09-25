@@ -28,7 +28,7 @@ export function Figure({ value, className }: { value: string; className?: string
   );
 }
 
-function SectionHead({
+export function SectionHead({
   kicker,
   title,
   intro,
@@ -50,11 +50,11 @@ function SectionHead({
   );
 }
 
-const cardClassName =
+export const cardClassName =
   "group relative isolate overflow-hidden rounded-[var(--shape-radius-lg)] border border-border bg-surface/60 p-6 transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-foreground/25 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
 
 /** Soft accent glow that fades in behind a card on hover. */
-function CardGlow() {
+export function CardGlow() {
   return (
     <span
       aria-hidden="true"
@@ -68,7 +68,7 @@ function CardGlow() {
 }
 
 /** "Scroll to explore" mouse with a bouncing wheel dot, as on the reference hero. */
-function ScrollCue() {
+export function ScrollCue() {
   return (
     <div data-why="hero" aria-hidden="true" className="mt-14 hidden items-center gap-3 lg:flex">
       <span className="flex h-10 w-6 justify-center rounded-full border-2 border-foreground/20 pt-2">

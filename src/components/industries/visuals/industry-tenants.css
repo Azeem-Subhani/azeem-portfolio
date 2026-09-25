@@ -1,0 +1,37 @@
+/* Keyframes for the SaaS hero visual (IndustryTenants). */
+
+/* A plan badge pops when a workspace changes plan. */
+.industry-tenants-badge-in {
+  animation: industry-tenants-badge-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+@keyframes industry-tenants-badge-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(4px);
+  }
+}
+
+/* New events slide in at the top of the feed. */
+.industry-tenants-event-in {
+  animation: industry-tenants-event-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes industry-tenants-event-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Older events fade toward the panel floor. */
+.industry-tenants-feed {
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-tenants-badge-in,
+  .industry-tenants-event-in {
+    animation: none;
+  }
+}

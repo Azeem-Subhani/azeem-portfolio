@@ -229,3 +229,157 @@ export type ServicePageContent = {
   ctaTitle: string;
   ctaCopy: string;
 };
+
+export const INDUSTRY_SLUGS = [
+  "fintech",
+  "healthtech",
+  "ecommerce",
+  "saas",
+  "education",
+  "real-estate",
+  "logistics",
+  "media",
+] as const;
+
+export type IndustrySlug = (typeof INDUSTRY_SLUGS)[number];
+
+/** Icon keys an industry page can use; the component maps each to a lucide icon. */
+export type IndustryIcon =
+  | "card"
+  | "wallet"
+  | "shield"
+  | "key"
+  | "lock"
+  | "landmark"
+  | "refresh"
+  | "database"
+  | "fingerprint"
+  | "scroll"
+  | "waypoints"
+  | "split"
+  | "cart"
+  | "store"
+  | "zap"
+  | "layers"
+  | "users"
+  | "gauge"
+  | "heart"
+  | "stethoscope"
+  | "video"
+  | "calendar"
+  | "graduation"
+  | "book"
+  | "sparkles"
+  | "home"
+  | "map"
+  | "building"
+  | "truck"
+  | "route"
+  | "radio"
+  | "bell"
+  | "film"
+  | "message"
+  | "globe"
+  | "trophy";
+
+/** Solarized accent a page is tinted with; matches the tone of its nav entry. */
+export type IndustryTone =
+  | "green"
+  | "red"
+  | "yellow"
+  | "cyan"
+  | "violet"
+  | "orange"
+  | "blue"
+  | "magenta";
+
+/** Which illustration runs beside the hero copy. */
+export type IndustryHeroVisual =
+  | "ledger"
+  | "checkout"
+  | "tenants"
+  | "routes"
+  | "stream"
+  | "care"
+  | "course"
+  | "listings";
+
+/** Per-page arrangement, so no two industry pages read as the same template. */
+export type IndustryLayout = {
+  hero: "split" | "split-reverse" | "centered";
+  challenges: "cards" | "list" | "columns";
+  solutions: "stacked" | "alternating" | "tabs";
+  stack: "grid" | "rows";
+  practices: "grid" | "checklist";
+};
+
+export type IndustryChallenge = {
+  icon: IndustryIcon;
+  title: string;
+  copy: string;
+};
+
+export type IndustrySolution = {
+  icon: IndustryIcon;
+  title: string;
+  copy: string;
+  features: string[];
+  /**
+   * "shipped" points at the project where this ran in production; "related" points at the
+   * closest real work when the solution itself has not shipped yet. Omit when nothing fits.
+   */
+  link?: { kind: "shipped" | "related"; label: string; href: string };
+};
+
+export type IndustryStackGroup = {
+  title: string;
+  items: string[];
+};
+
+export type IndustryPractice = {
+  icon: IndustryIcon;
+  title: string;
+  copy: string;
+  /** Standards the practice helps a review of; never a certification claim. */
+  supports: string;
+};
+
+export type IndustryPageContent = {
+  slug: IndustrySlug;
+  label: string;
+  /**
+   * "shipped": the page cites production work and shows proof figures.
+   * "approach": no shipped product in this industry yet; the page describes the build and
+   * links related work instead, and shows no figures.
+   */
+  evidence: "shipped" | "approach";
+  tone: IndustryTone;
+  heroVisual: IndustryHeroVisual;
+  layout: IndustryLayout;
+  metaTitle: string;
+  metaDescription: string;
+  kicker: string;
+  title: string;
+  titleAccent: string;
+  lede: string;
+  /** Empty on approach pages. */
+  proof: ServiceProof[];
+  /** Shown in place of the proof band on approach pages. */
+  approachNote?: string;
+  challengesTitle: string;
+  challengesIntro: string;
+  challenges: IndustryChallenge[];
+  solutionsTitle: string;
+  solutionsIntro: string;
+  solutions: IndustrySolution[];
+  stackIntro: string;
+  stack: IndustryStackGroup[];
+  /** Defaults to "Security & compliance". */
+  practicesKicker?: string;
+  practicesTitle: string;
+  practicesIntro: string;
+  practices: IndustryPractice[];
+  practicesNote: string;
+  ctaTitle: string;
+  ctaCopy: string;
+};

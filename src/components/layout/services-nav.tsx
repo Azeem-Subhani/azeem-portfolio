@@ -3,16 +3,35 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, type LucideIcon } from "lucide-react";
 
-import { serviceIcons } from "@/components/layout/service-icons";
-import { serviceNav } from "@/content/nav";
+import { industryIcons, serviceIcons } from "@/components/layout/service-icons";
+import { industryNav, serviceNav } from "@/content/nav";
 import { cn } from "@/lib/utils";
 
 export const navItemClassName =
   "inline-flex min-h-8 items-center gap-1 rounded-full px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current]:bg-background aria-[current]:text-foreground";
 
-export function ServicesNav() {
+type NavMenuItem<Tone extends string> = {
+  href: string;
+  title: string;
+  copy: string;
+  tone: Tone;
+};
+
+type NavMenuProps<Tone extends string> = {
+  label: string;
+  items: readonly NavMenuItem<Tone>[];
+  icons: Record<Tone, LucideIcon>;
+  /** Routes under this prefix mark the trigger as current. */
+  currentPrefix: string;
+};
+
+/** Fired when a menu opens so any other open header menu closes at once instead of overlapping. */
+const MENU_OPEN_EVENT = "site-nav-menu-open";
+
+/** Header dropdown shared by Services and Industries: same panel, motion, and keyboard model. */
+function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: NavMenuProps<Tone>) {
   const pathname = usePathname();
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -29,7 +48,7 @@ export function ServicesNav() {
     setMenuPath(pathname);
     setOpen(false);
   }
-  const current = pathname.startsWith("/services/");
+  const current = pathname.startsWith(currentPrefix);
 
   const cancelClose = () => {
     window.clearTimeout(closeTimer.current);
@@ -40,6 +59,17 @@ export function ServicesNav() {
     focusOnOpen.current = focus;
     setOpen(true);
   };
+
+  useEffect(() => {
+    const onOtherOpen = (event: Event) => {
+      if ((event as CustomEvent<string>).detail !== menuId) {
+        window.clearTimeout(closeTimer.current);
+        setOpen(false);
+      }
+    };
+    window.addEventListener(MENU_OPEN_EVENT, onOtherOpen);
+    return () => window.removeEventListener(MENU_OPEN_EVENT, onOtherOpen);
+  }, [menuId]);
 
   const closeMenu = () => {
     cancelClose();
@@ -56,6 +86,10 @@ export function ServicesNav() {
   useEffect(() => {
     return () => window.clearTimeout(closeTimer.current);
   }, []);
+
+  useEffect(() => {
+    if (open) window.dispatchEvent(new CustomEvent(MENU_OPEN_EVENT, { detail: menuId }));
+  }, [open, menuId]);
 
   useEffect(() => {
     if (!open) return;
@@ -90,7 +124,7 @@ export function ServicesNav() {
       if (!items.length) return;
 
       const index = items.findIndex((item) => item === document.activeElement);
-      const cols = 2;
+      const cols = Math.min(2, items.length);
       if (index < 0) {
         if (
           event.key === "ArrowDown" ||
@@ -109,7 +143,9 @@ export function ServicesNav() {
         }
         return;
       }
-      if (event.key === "ArrowRight") {
+      if ((event.key === "ArrowRight" || event.key === "ArrowLeft") && cols < 2) {
+        event.preventDefault();
+      } else if (event.key === "ArrowRight") {
         event.preventDefault();
         const col = index % cols;
         items[col === cols - 1 ? index - 1 : index + 1]?.focus();
@@ -176,7 +212,7 @@ export function ServicesNav() {
           }
         }}
       >
-        Services
+        {label}
         <ChevronDown
           aria-hidden="true"
           className={cn(
@@ -188,14 +224,15 @@ export function ServicesNav() {
       <div
         id={menuId}
         data-open={open ? "true" : "false"}
+        data-cols={Math.min(2, items.length)}
         aria-hidden={!open}
         {...(!open ? { inert: true } : {})}
         className="services-menu"
       >
-        <ul role="menu" aria-label="Services" className="services-menu-panel">
-          {serviceNav.map((item, index) => {
+        <ul role="menu" aria-label={label} className="services-menu-panel">
+          {items.map((item, index) => {
             const selected = pathname === item.href;
-            const Icon = serviceIcons[item.tone];
+            const Icon: LucideIcon = icons[item.tone];
             return (
               <li
                 key={item.href}
@@ -230,5 +267,15 @@ export function ServicesNav() {
         </ul>
       </div>
     </div>
+  );
+}
+
+export function ServicesNav() {
+  return <NavMenu label="Services" items={serviceNav} icons={serviceIcons} currentPrefix="/services/" />;
+}
+
+export function IndustriesNav() {
+  return (
+    <NavMenu label="Industries" items={industryNav} icons={industryIcons} currentPrefix="/industries/" />
   );
 }

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import {
+  IndustriesNav,
   ServicesNav,
   navItemClassName,
 } from "@/components/layout/services-nav";
@@ -99,6 +100,9 @@ export function Header() {
             <ul className="flex items-center gap-1">
               <li>
                 <ServicesNav />
+              </li>
+              <li>
+                <IndustriesNav />
               </li>
               {trayLinks.map((item) => {
                 const current = isCurrentPath(pathname, item.href);

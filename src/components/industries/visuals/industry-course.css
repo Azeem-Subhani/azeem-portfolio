@@ -1,0 +1,49 @@
+/* Keyframes for the Education hero illustration (industry-course.tsx). */
+
+/* Quiz option flips over when it is marked correct. */
+.industry-course-flip {
+  animation: industry-course-flip 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-course-flip {
+  0% {
+    transform: perspective(400px) rotateX(0deg);
+  }
+  45% {
+    transform: perspective(400px) rotateX(90deg);
+  }
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+  }
+}
+
+/* Question text and the certificate chip ease in when they change. */
+.industry-course-in {
+  animation: industry-course-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-course-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Soft glow on the module currently being worked through. */
+.industry-course-active-dot {
+  animation: industry-course-active-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes industry-course-active-dot {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-course-flip,
+  .industry-course-in,
+  .industry-course-active-dot {
+    animation: none;
+  }
+}

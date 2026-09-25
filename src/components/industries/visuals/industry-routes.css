@@ -1,0 +1,24 @@
+/* A stop rings out once when its vehicle arrives. Remounted per lap, so it replays. */
+.industry-routes-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: industry-routes-pulse 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-routes-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-routes-pulse {
+    animation: none;
+    opacity: 0;
+  }
+}

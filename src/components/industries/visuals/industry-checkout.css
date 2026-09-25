@@ -1,0 +1,53 @@
+/* Keyframes for the e-commerce hero visual (IndustryCheckout). */
+
+/* A product drops into the cart from the right. */
+.industry-checkout-row-in {
+  animation: industry-checkout-row-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes industry-checkout-row-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px) scale(0.98);
+  }
+}
+
+/* The quantity badge pops just after its row lands. */
+.industry-checkout-qty-in {
+  animation: industry-checkout-qty-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.18s backwards;
+}
+
+@keyframes industry-checkout-qty-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* A soft sheen travels across the button while payment is processing. */
+.industry-checkout-sheen {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 35%, transparent),
+    transparent
+  );
+  animation: industry-checkout-sheen 1.1s ease-in-out infinite;
+}
+
+@keyframes industry-checkout-sheen {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-checkout-row-in,
+  .industry-checkout-qty-in,
+  .industry-checkout-sheen {
+    animation: none;
+  }
+}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 
-import { serviceIcons } from "@/components/layout/service-icons";
+import { industryIcons, serviceIcons } from "@/components/layout/service-icons";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,7 +13,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { primaryNav, serviceNav } from "@/content/nav";
+import { industryNav, primaryNav, serviceNav } from "@/content/nav";
+
+// Grouped sections at the top of the sheet, in the same order as the desktop dropdowns.
+const menuGroups = [
+  {
+    label: "Services",
+    items: serviceNav.map((item) => ({ ...item, Icon: serviceIcons[item.tone] })),
+  },
+  {
+    label: "Industries",
+    items: industryNav.map((item) => ({ ...item, Icon: industryIcons[item.tone] })),
+  },
+];
 
 export function MobileNav() {
   return (
@@ -34,14 +46,11 @@ export function MobileNav() {
         </SheetHeader>
         <nav aria-label="Mobile navigation" className="mt-8">
           <ul className="grid gap-2">
-            <li>
-              <p className="px-4 pb-1 text-sm text-muted-foreground">
-                Services
-              </p>
-              <ul className="grid gap-1">
-                {serviceNav.map((item) => {
-                  const Icon = serviceIcons[item.tone];
-                  return (
+            {menuGroups.map((group) => (
+              <li key={group.label}>
+                <p className="px-4 pb-1 text-sm text-muted-foreground">{group.label}</p>
+                <ul className="grid gap-1">
+                  {group.items.map(({ Icon, ...item }) => (
                     <li key={item.href}>
                       <SheetClose asChild>
                         <Link
@@ -60,10 +69,10 @@ export function MobileNav() {
                         </Link>
                       </SheetClose>
                     </li>
-                  );
-                })}
-              </ul>
-            </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
             {primaryNav.map((item) => (
               <li key={item.href}>
                 <SheetClose asChild>
