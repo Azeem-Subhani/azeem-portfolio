@@ -2210,6 +2210,55 @@ html.dark .svgl-invert-dark,
   background: color-mix(in srgb, #d33682 16%, transparent);
 }
 
+.services-menu-icon[data-tone="fintech"] {
+  color: #859900;
+  background: color-mix(in srgb, #859900 18%, transparent);
+}
+
+.services-menu-icon[data-tone="healthtech"] {
+  color: #dc322f;
+  background: color-mix(in srgb, #dc322f 16%, transparent);
+}
+
+.services-menu-icon[data-tone="ecommerce"] {
+  color: #b58900;
+  background: color-mix(in srgb, #b58900 16%, transparent);
+}
+
+.services-menu-icon[data-tone="saas"] {
+  color: var(--accent-readable);
+  background: color-mix(in srgb, #2aa198 18%, transparent);
+}
+
+.services-menu-icon[data-tone="education"] {
+  color: #6c71c4;
+  background: color-mix(in srgb, #6c71c4 18%, transparent);
+}
+
+.services-menu-icon[data-tone="real-estate"] {
+  color: #cb4b16;
+  background: color-mix(in srgb, #cb4b16 16%, transparent);
+}
+
+.services-menu-icon[data-tone="logistics"] {
+  color: #268bd2;
+  background: color-mix(in srgb, #268bd2 16%, transparent);
+}
+
+.services-menu-icon[data-tone="media"] {
+  color: #d33682;
+  background: color-mix(in srgb, #d33682 16%, transparent);
+}
+
+/* A menu with a single entry (Industries today) drops to one narrow column. */
+.services-menu[data-cols="1"] {
+  width: min(20rem, calc(100vw - 2rem));
+}
+
+.services-menu[data-cols="1"] .services-menu-panel {
+  grid-template-columns: 1fr;
+}
+
 .services-menu-copy {
   display: grid;
   gap: 0.25rem;
@@ -2671,6 +2720,202 @@ body:has(.cloud-v2-page) [data-site-header] nav button[aria-current="true"] {
 
 @media (prefers-reduced-motion: reduce) {
   .why-scroll-dot {
+    animation: none;
+  }
+}
+
+/* Industry pages: drifting hero light, live ledger rows, and the security scan sweep. */
+.industry-hero-glow {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    color-mix(in srgb, var(--accent) 6%, transparent) 60%,
+    transparent
+  );
+  filter: blur(24px);
+  animation: industry-glow-drift 16s ease-in-out infinite alternate;
+}
+
+.industry-hero-glow--alt {
+  opacity: 0.7;
+  animation-duration: 21s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes industry-glow-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-6%, 4%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(4%, -3%, 0) scale(0.96);
+  }
+}
+
+.industry-live-ping {
+  animation: industry-live-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes industry-live-ping {
+  75%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* Rows fade toward the panel floor so the oldest one leaves quietly. */
+.industry-ledger-list {
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+}
+
+.industry-ledger-row-in {
+  animation: industry-ledger-row-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-ledger-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.98);
+  }
+}
+
+.industry-scan {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--accent) 14%, transparent) 85%,
+    color-mix(in srgb, var(--accent) 70%, transparent) 99%,
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-hero-glow,
+  .industry-live-ping,
+  .industry-ledger-row-in {
+    animation: none;
+  }
+}
+
+/*
+ * Industry page tones. Each page retints the accent tokens to its Solarized hue.
+ * Accents are adjusted so button text meets AA (4.5:1) against --accent-foreground,
+ * and --accent-readable meets AA on both page backgrounds. Keep the hex values in step
+ * with toneColors in src/components/industries/industry-icons.tsx. Cyan is the site default.
+ */
+[data-industry-tone="green"] {
+  --accent: #859900;
+  --accent-strong: #6f8000;
+  --accent-readable: #5c6a00;
+  --accent-foreground: #002b36;
+}
+
+[data-industry-tone="red"] {
+  --accent: #d3302d;
+  --accent-strong: #bd2b28;
+  --accent-readable: #b1251f;
+  --accent-foreground: #fdf6e3;
+}
+
+[data-industry-tone="yellow"] {
+  --accent: #b58900;
+  --accent-strong: #9a7500;
+  --accent-readable: #7f6000;
+  --accent-foreground: #002b36;
+}
+
+[data-industry-tone="violet"] {
+  --accent: #6367b4;
+  --accent-strong: #585ca0;
+  --accent-readable: #5156a8;
+  --accent-foreground: #fdf6e3;
+}
+
+[data-industry-tone="orange"] {
+  --accent: #c24815;
+  --accent-strong: #ae4012;
+  --accent-readable: #a33b0f;
+  --accent-foreground: #fdf6e3;
+}
+
+[data-industry-tone="blue"] {
+  --accent: #1f74b0;
+  --accent-strong: #1c669b;
+  --accent-readable: #1a67a0;
+  --accent-foreground: #fdf6e3;
+}
+
+[data-industry-tone="magenta"] {
+  --accent: #c8337b;
+  --accent-strong: #b32d6e;
+  --accent-readable: #ad2667;
+  --accent-foreground: #fdf6e3;
+}
+
+.dark [data-industry-tone="green"],
+[data-theme="dark"] [data-industry-tone="green"] {
+  --accent-readable: #a3b82e;
+}
+
+.dark [data-industry-tone="red"],
+[data-theme="dark"] [data-industry-tone="red"] {
+  --accent-readable: #f0706a;
+}
+
+.dark [data-industry-tone="yellow"],
+[data-theme="dark"] [data-industry-tone="yellow"] {
+  --accent-readable: #d9a82a;
+}
+
+.dark [data-industry-tone="violet"],
+[data-theme="dark"] [data-industry-tone="violet"] {
+  --accent-readable: #9da1e8;
+}
+
+.dark [data-industry-tone="orange"],
+[data-theme="dark"] [data-industry-tone="orange"] {
+  --accent-readable: #ef8452;
+}
+
+.dark [data-industry-tone="blue"],
+[data-theme="dark"] [data-industry-tone="blue"] {
+  --accent-readable: #5eb0ec;
+}
+
+.dark [data-industry-tone="magenta"],
+[data-theme="dark"] [data-industry-tone="magenta"] {
+  --accent-readable: #ee70ad;
+}
+
+/* Solution tabs: the panel and its checklist replay a short entrance on every switch. */
+.industry-tab-panel {
+  animation: industry-tab-panel 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.industry-tab-item {
+  animation: industry-tab-item 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes industry-tab-panel {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes industry-tab-item {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-tab-panel,
+  .industry-tab-item {
     animation: none;
   }
 }

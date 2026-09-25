@@ -31,7 +31,7 @@ const NUMBER = /\d+(?:\.\d+)?/g;
  * Returns a formatter that rebuilds a figure with every number scaled by progress (0..1),
  * so ranges like "3–4 weeks" count both ends and decimals like "99.95%" keep their places.
  */
-function parseCount(value: string) {
+export function parseCount(value: string) {
   const numbers = (value.match(NUMBER) ?? []).map((n) => ({
     target: Number(n),
     decimals: n.split(".")[1]?.length ?? 0,

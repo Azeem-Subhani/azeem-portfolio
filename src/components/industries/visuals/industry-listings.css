@@ -1,0 +1,56 @@
+/* Keyframes for the Real Estate hero illustration (industry-listings.tsx). */
+
+/* Listing card content slides in each time a new pin activates. */
+.industry-listings-card-in {
+  animation: industry-listings-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-listings-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+/* Ripple under the active pin. */
+.industry-listings-ripple {
+  transform: translate(-50%, -50%);
+  animation: industry-listings-ripple 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes industry-listings-ripple {
+  from {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.2);
+  }
+}
+
+/* A tour slot fills when it gets booked. */
+.industry-listings-book {
+  animation: industry-listings-book 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-listings-book {
+  from {
+    transform: scale(0.94);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-listings-card-in,
+  .industry-listings-ripple,
+  .industry-listings-book {
+    animation: none;
+  }
+
+  .industry-listings-ripple {
+    display: none;
+  }
+}

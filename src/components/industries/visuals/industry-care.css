@@ -1,0 +1,58 @@
+/* Keyframes for the HealthTech hero illustration (industry-care.tsx). */
+
+/* Care-team typing indicator: three dots bob in sequence. */
+.industry-care-dot {
+  animation: industry-care-dot 1s ease-in-out infinite;
+}
+
+@keyframes industry-care-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* Join button breathes an accent ring once the visit is about to start. */
+.industry-care-join-pulse {
+  animation: industry-care-join-pulse 1.6s ease-out infinite;
+}
+
+@keyframes industry-care-join-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+/* New messages and access-log entries settle in from above. */
+.industry-care-in {
+  animation: industry-care-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes industry-care-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+}
+
+/* Oldest log entry fades toward the floor of its list. */
+.industry-care-log {
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-care-dot,
+  .industry-care-join-pulse,
+  .industry-care-in {
+    animation: none;
+  }
+}

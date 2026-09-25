@@ -14,6 +14,7 @@ vi.mock("@/components/layout/mobile-nav", () => ({
 }));
 
 import { Header } from "@/components/layout/header";
+import { industries, industryPath } from "@/content/industries";
 
 function setScrollY(value: number) {
   Object.defineProperty(window, "scrollY", {
@@ -41,7 +42,7 @@ describe("Header", () => {
     expect(header).toHaveAttribute("data-scrolled", "true");
   });
 
-  it("links the wordmark home, then Services, Portfolio, Why me, Process, and a filled Contact, and has no Resume route", () => {
+  it("links the wordmark home, then Services, Industries, Portfolio, Why me, Process, and a filled Contact, and has no Resume route", () => {
     render(<Header />);
 
     expect(screen.getByRole("link", { name: "Azeem Subhani, home" })).toHaveAttribute(
@@ -51,8 +52,9 @@ describe("Header", () => {
 
     const nav = screen.getByRole("navigation", { name: "Primary navigation" });
     const topItems = nav.querySelectorAll(":scope > ul > li");
-    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Portfolio|Why me|Process|Contact/)?.[0])).toEqual([
+    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Industries|Portfolio|Why me|Process|Contact/)?.[0])).toEqual([
       "Services",
+      "Industries",
       "Portfolio",
       "Why me",
       "Process",
@@ -67,6 +69,10 @@ describe("Header", () => {
     expect(within(nav).getByRole("link", { name: "Why me" })).toHaveAttribute("href", "/why-me");
     expect(within(nav).getByRole("link", { name: "Process" })).toHaveAttribute("href", "/process");
     expect(within(nav).getByRole("button", { name: "Services" })).toHaveAttribute(
+      "aria-haspopup",
+      "menu",
+    );
+    expect(within(nav).getByRole("button", { name: "Industries" })).toHaveAttribute(
       "aria-haspopup",
       "menu",
     );
@@ -105,5 +111,32 @@ describe("Header", () => {
 
     expect(screen.getByRole("menu", { name: "Services" })).toBeVisible();
     expect(screen.getByRole("menuitem", { name: /Cloud services/ })).toBeVisible();
+  });
+
+  it("opens the industries menu with every industry page", async () => {
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    render(<Header />);
+
+    await user.click(screen.getByRole("button", { name: "Industries" }));
+
+    const menu = screen.getByRole("menu", { name: "Industries" });
+    const hrefs = within(menu)
+      .getAllByRole("menuitem")
+      .map((item) => item.getAttribute("href"));
+    expect(hrefs).toEqual(industries.map((industry) => industryPath(industry.slug)));
+  });
+
+  it("closes the services menu when the industries menu opens", async () => {
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    render(<Header />);
+
+    await user.hover(screen.getByRole("button", { name: "Services" }));
+    expect(screen.getByRole("button", { name: "Services" })).toHaveAttribute("aria-expanded", "true");
+
+    await user.hover(screen.getByRole("button", { name: "Industries" }));
+    expect(screen.getByRole("button", { name: "Industries" })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("button", { name: "Services" })).toHaveAttribute("aria-expanded", "false");
   });
 });

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { industries, industryPath } from "@/content/industries";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { services } from "@/content/services";
@@ -21,11 +22,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  const industryRoutes: MetadataRoute.Sitemap = industries.map((industry) => ({
+    url: `${profile.siteUrl}${industryPath(industry.slug)}`,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
+
   const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
     url: `${profile.siteUrl}/projects/${project.slug}`,
     changeFrequency: "monthly",
     priority: 0.7,
   }));
 
-  return [...routes, ...serviceRoutes, ...projectRoutes];
+  return [...routes, ...serviceRoutes, ...industryRoutes, ...projectRoutes];
 }
