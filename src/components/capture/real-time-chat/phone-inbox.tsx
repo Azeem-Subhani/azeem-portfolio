@@ -2,13 +2,15 @@
 
 import type { CSSProperties } from "react";
 
+import { realTimeChatFonts } from "@/components/capture/capture-fonts";
+
 function av(hex: string): CSSProperties {
   return { ["--c"]: hex } as CSSProperties;
 }
 
 export function RealTimeChatPhoneInboxCapture() {
   return (
-    <div className="rtc-capture-root">
+    <div className={`rtc-capture-root ${realTimeChatFonts}`}>
       <section className="capture capture--phone" aria-label="Relay inbox on phone">
         <div className="p-app p-app--inbox">
           <header className="p-inbox-head">

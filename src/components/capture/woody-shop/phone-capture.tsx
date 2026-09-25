@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { woodyShopFonts } from "@/components/capture/capture-fonts";
+
 const PRODUCTS = [
   {
     title: "Walnut Coffee Table",
@@ -35,7 +37,7 @@ const CATEGORIES = [
 
 export function WoodyShopPhoneCapture() {
   return (
-    <div className="ws-capture-root">
+    <div className={`ws-capture-root ${woodyShopFonts}`}>
       <section
         className="capture capture--phone"
         aria-label="Woody Shop Discover on phone"

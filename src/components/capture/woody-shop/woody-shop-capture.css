@@ -1,13 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap");
-
 .ws-capture-root {
   --bg: #ffffff;
   --ink: #333333;
   --ink-2: #555555;
   --muted: #888888;
   --line: #f0f0f0;
-  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
-  --sans: Inter, system-ui, -apple-system, sans-serif;
+  --serif: var(--font-capture-playfair-display), Georgia, "Times New Roman", serif;
+  --sans: var(--font-capture-inter), system-ui, -apple-system, sans-serif;
 
   box-sizing: border-box;
   display: flex;

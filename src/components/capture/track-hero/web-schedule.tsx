@@ -1,5 +1,6 @@
 /** 1600×900 Track Hero operator console — event schedule. */
 
+import { trackHeroFonts } from "@/components/capture/capture-fonts";
 import { TrackHeroWebConsoleChrome } from "@/components/capture/track-hero/web-console-chrome";
 
 const days = [
@@ -22,7 +23,7 @@ const blocks = [
 
 export function TrackHeroWebScheduleCapture() {
   return (
-    <div className="th-capture-root">
+    <div className={`th-capture-root ${trackHeroFonts}`}>
       <TrackHeroWebConsoleChrome
         ariaLabel="Track Hero event schedule"
         activeNav="schedule"

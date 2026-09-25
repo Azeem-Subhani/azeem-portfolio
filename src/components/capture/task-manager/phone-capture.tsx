@@ -1,3 +1,5 @@
+import { taskManagerFonts } from "@/components/capture/capture-fonts";
+
 /** 900×1600 Posy mobile — Mira's Today list and task detail. */
 
 function CheckMark() {
@@ -47,7 +49,7 @@ function PhoneTabBar({ active }: { active: "today" | "upcoming" | "lists" | "pro
 
 export function TaskManagerPhoneCapture() {
   return (
-    <div className="tm-capture-root">
+    <div className={`tm-capture-root ${taskManagerFonts}`}>
       <section className="capture capture--phone" aria-label="Posy Today on phone">
         <div className="p-inner">
         <header className="p-head">
@@ -139,7 +141,7 @@ export function TaskManagerPhoneCapture() {
 
 export function TaskManagerPhoneDetailCapture() {
   return (
-    <div className="tm-capture-root">
+    <div className={`tm-capture-root ${taskManagerFonts}`}>
       <section className="capture capture--phone" aria-label="Posy task detail on phone">
         <div className="p-inner">
         <header className="p-head p-head--detail">

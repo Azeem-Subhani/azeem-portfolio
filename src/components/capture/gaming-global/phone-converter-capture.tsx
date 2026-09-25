@@ -1,5 +1,6 @@
 /** 900×1600 Gaming Global sensitivity converter on phone. */
 
+import { gamingGlobalFonts } from "@/components/capture/capture-fonts";
 import { GamingGlobalMark } from "@/components/capture/gaming-global/mark";
 import { GamingGlobalPhoneTabBar } from "@/components/capture/gaming-global/phone-tabs";
 
@@ -18,7 +19,7 @@ const TITLES: {
 
 export function GamingGlobalPhoneConverterCapture() {
   return (
-    <div className="gg-capture-root">
+    <div className={`gg-capture-root ${gamingGlobalFonts}`}>
       <section className="capture capture--phone" aria-label="Gaming Global converter on phone">
         <div className="ph-inner">
           <header className="ph-head">

@@ -1,10 +1,11 @@
 /** 900×1600 Smart Living — Resident detail with live call. */
 
+import { smartLivingFonts } from "@/components/capture/capture-fonts";
 import { CallWaveform, Ic } from "@/components/capture/smart-living/shared";
 
 export function SmartLivingPhoneCallCapture() {
   return (
-    <div className="sl-capture-root">
+    <div className={`sl-capture-root ${smartLivingFonts}`}>
       <section className="capture capture--phone" aria-label="Smart Living resident call on phone">
         <div className="phone-inner">
           <header className="p-head" style={{ paddingBottom: 10, alignItems: "center" }}>

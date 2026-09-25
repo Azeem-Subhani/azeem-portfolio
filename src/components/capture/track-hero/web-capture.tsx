@@ -1,3 +1,5 @@
+import { trackHeroFonts } from "@/components/capture/capture-fonts";
+
 /** 1600×900 Track Hero operator console — Group Overview. */
 
 function IconOverview() {
@@ -68,7 +70,7 @@ function IconSettings() {
 
 export function TrackHeroWebCapture() {
   return (
-    <div className="th-capture-root">
+    <div className={`th-capture-root ${trackHeroFonts}`}>
       <section className="capture capture--web" aria-label="Track Hero operator console">
         <header className="topbar">
           <div className="brand">

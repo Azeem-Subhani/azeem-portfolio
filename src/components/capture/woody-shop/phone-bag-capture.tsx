@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 
+import { woodyShopFonts } from "@/components/capture/capture-fonts";
 import { WoodyShopPhoneTabbar } from "@/components/capture/woody-shop/phone-tabbar";
 
 const BAG_ITEMS = [
@@ -19,7 +20,7 @@ const BAG_ITEMS = [
 
 export function WoodyShopPhoneBagCapture() {
   return (
-    <div className="ws-capture-root">
+    <div className={`ws-capture-root ${woodyShopFonts}`}>
       <section className="capture capture--phone" aria-label="Woody Shop bag on phone">
         <div className="ph-inner">
           <header className="ph-header">

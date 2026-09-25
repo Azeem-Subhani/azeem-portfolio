@@ -1,7 +1,9 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
+
 /** 900×1600 Oxym player schedule */
 export function OxymPhoneScheduleCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <section className="capture capture--phone" aria-label="Oxym schedule on phone">
         <div className="p-inner">
         <header className="p-head">

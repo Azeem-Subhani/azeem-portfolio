@@ -1,5 +1,6 @@
 /** 900×1600 Gaming Global admin panel. */
 
+import { gamingGlobalFonts } from "@/components/capture/capture-fonts";
 import { GamingGlobalMark } from "@/components/capture/gaming-global/mark";
 import { GamingGlobalPhoneTabBar } from "@/components/capture/gaming-global/phone-tabs";
 
@@ -44,7 +45,7 @@ const USERS = [
 
 export function GamingGlobalPhoneCapture() {
   return (
-    <div className="gg-capture-root">
+    <div className={`gg-capture-root ${gamingGlobalFonts}`}>
       <section
         className="capture capture--phone"
         aria-label="Gaming Global admin panel on phone"

@@ -1,3 +1,5 @@
+import { taskManagerFonts } from "@/components/capture/capture-fonts";
+
 /** 1600×900 Posy Upcoming week view for Mira. */
 
 function CheckMark() {
@@ -10,7 +12,7 @@ function CheckMark() {
 
 export function TaskManagerWebUpcomingCapture() {
   return (
-    <div className="tm-capture-root">
+    <div className={`tm-capture-root ${taskManagerFonts}`}>
       <section className="capture capture--web capture--upcoming" aria-label="Posy upcoming tasks">
         <aside className="sidebar">
           <div className="brand">

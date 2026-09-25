@@ -1,7 +1,9 @@
+import { oxymFonts } from "@/components/capture/capture-fonts";
+
 /** 1600×900 Oxym coach dashboard — ported from deepseek_html_20260911_c7333f.html */
 export function OxymWebCapture() {
   return (
-    <div className="oxym-capture-root">
+    <div className={`oxym-capture-root ${oxymFonts}`}>
       <section className="capture capture--web" aria-label="Oxym web app">
         <aside className="sidebar">
           <div className="brand">

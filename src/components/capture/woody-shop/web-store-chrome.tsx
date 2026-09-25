@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { woodyShopFonts } from "@/components/capture/capture-fonts";
+
 const NAV = ["Chairs", "Tables", "Storage", "About"] as const;
 
 type WoodyShopWebStoreChromeProps = {
@@ -14,7 +16,7 @@ export function WoodyShopWebStoreChrome({
   children,
 }: WoodyShopWebStoreChromeProps) {
   return (
-    <div className="ws-capture-root">
+    <div className={`ws-capture-root ${woodyShopFonts}`}>
       <section className="capture capture--web capture--web-flow" aria-label={ariaLabel}>
         <header className="masthead">
           <div className="logo">WOODY</div>

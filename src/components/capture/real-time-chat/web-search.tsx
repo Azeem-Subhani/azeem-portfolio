@@ -1,5 +1,6 @@
 /** 1600×900 Relay chat — inbox search results. */
 
+import { realTimeChatFonts } from "@/components/capture/capture-fonts";
 import { av, RelayWebChrome } from "@/components/capture/real-time-chat/web-chrome";
 
 export function RealTimeChatWebSearchCapture() {
@@ -98,7 +99,7 @@ export function RealTimeChatWebSearchCapture() {
   );
 
   return (
-    <div className="rtc-capture-root">
+    <div className={`rtc-capture-root ${realTimeChatFonts}`}>
       <RelayWebChrome
         ariaLabel="Relay message search"
         activeConv="design-crit"
