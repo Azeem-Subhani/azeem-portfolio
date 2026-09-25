@@ -7,57 +7,22 @@ import { useTheme } from "next-themes";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
 import {
+  CORE,
+  FLOW,
+  NODE_R,
+  ORBIT,
+  nodePositions,
+  orbitRotations,
+  routes,
+  type Point,
+} from "./data-hero-geometry";
+import {
   DataHeroWebgl,
-  type DataHeroPointer,
+  createDataHeroMotion,
+  type DataHeroMotion,
 } from "./data-hero-webgl";
 
 import "./data-hero-visual.css";
-
-const CORE = { x: 393, y: 270, r: 104 };
-const NODE_R = 34;
-const PORT_GAP = 7;
-
-const nodePositions = {
-  postgres: { x: 393, y: 62 },
-  writes: { x: 160, y: 372 },
-  warehouse: { x: 626, y: 372 },
-} as const;
-
-type Point = { x: number; y: number };
-
-function edgePoint(from: Point, toward: Point, radius: number): Point {
-  const dx = toward.x - from.x;
-  const dy = toward.y - from.y;
-  const length = Math.hypot(dx, dy);
-  return { x: from.x + (dx / length) * radius, y: from.y + (dy / length) * radius };
-}
-
-function routeBetween(start: Point, startR: number, end: Point, endR: number, bend: number) {
-  const a = edgePoint(start, end, startR);
-  const b = edgePoint(end, start, endR);
-  const mx = (a.x + b.x) / 2;
-  const my = (a.y + b.y) / 2;
-  const nx = -(b.y - a.y);
-  const ny = b.x - a.x;
-  const length = Math.hypot(nx, ny) || 1;
-  const cx = mx + (nx / length) * bend;
-  const cy = my + (ny / length) * bend;
-  const round = (n: number) => Math.round(n * 10) / 10;
-  return {
-    d: `M ${round(a.x)} ${round(a.y)} Q ${round(cx)} ${round(cy)} ${round(b.x)} ${round(b.y)}`,
-    start: a,
-    end: b,
-  };
-}
-
-const coreR = CORE.r + PORT_GAP;
-const nodeR = NODE_R + PORT_GAP;
-
-const routes = {
-  writes: routeBetween(nodePositions.writes, nodeR, CORE, coreR, -18),
-  postgres: routeBetween(CORE, coreR, nodePositions.postgres, nodeR, 0),
-  warehouse: routeBetween(CORE, coreR, nodePositions.warehouse, nodeR, -18),
-};
 
 const paths = {
   postgres: routes.postgres.d,
@@ -65,7 +30,9 @@ const paths = {
   warehouse: routes.warehouse.d,
 } as const;
 
-const FLOW = { dur: "3.6s", handoff: 0.46 } as const;
+const FLOW_DUR = `${FLOW.seconds}s`;
+const FLOOR_Y = 478;
+const orbitNames = ["back", "front", "side"] as const;
 
 function DatabaseGlyph({ className = "" }: { className?: string }) {
   return (
@@ -154,7 +121,8 @@ export function DataHeroVisual() {
   const orbitRef = useRef<SVGGElement>(null);
   const systemRef = useRef<SVGGElement>(null);
   const coreRef = useRef<SVGGElement>(null);
-  const pointerRef = useRef<DataHeroPointer>({ x: 0, y: 0 });
+  const svgRef = useRef<SVGSVGElement>(null);
+  const motionRef = useRef<DataHeroMotion>(createDataHeroMotion());
   const rawId = useId();
   const id = rawId.replace(/:/g, "");
   const ids = {
@@ -164,7 +132,21 @@ export function DataHeroVisual() {
     postgres: `${id}-postgres`,
     writes: `${id}-writes`,
     warehouse: `${id}-warehouse`,
+    floor: `${id}-floor`,
+    beam: `${id}-beam`,
   };
+
+  // Hand the SVG's SMIL clock to the glass scene so its tube energy tracks
+  // the pulse circles exactly.
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    const motion = motionRef.current;
+    if (!svg) return;
+    motion.clock = () => svg.getCurrentTime();
+    return () => {
+      motion.clock = null;
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const visual = visualRef.current;
@@ -177,49 +159,67 @@ export function DataHeroVisual() {
       "[data-data-hero-route]",
     );
     const nodes = visual.querySelectorAll<SVGGElement>("[data-data-hero-node]");
+    const motion = motionRef.current;
     let cleanup = () => {};
     const context = gsap.context(() => {
       gsap.set(routeElements, { strokeDashoffset: 1 });
       gsap.set(nodes, { opacity: 0, scale: 0.82, transformOrigin: "center" });
+      gsap.set(motion, {
+        routePostgres: 0,
+        routeWrites: 0,
+        routeWarehouse: 0,
+        nodePostgres: 0,
+        nodeWrites: 0,
+        nodeWarehouse: 0,
+      });
 
+      // The glass scene gets the same timings as the SVG it sits under:
+      // routes in DOM order at 0.1 + 0.12n, nodes after the ports group at
+      // 0.55 + 0.1n.
       const reveal = gsap
         .timeline({ defaults: { ease: "power3.out" } })
         .to(routeElements, { strokeDashoffset: 0, duration: 1.25, stagger: 0.12 }, 0.1)
-        .to(nodes, { opacity: 1, scale: 1, duration: 0.65, stagger: 0.1 }, 0.55);
+        .to(nodes, { opacity: 1, scale: 1, duration: 0.65, stagger: 0.1 }, 0.55)
+        .to(motion, { routePostgres: 1, duration: 1.25 }, 0.1)
+        .to(motion, { routeWrites: 1, duration: 1.25 }, 0.22)
+        .to(motion, { routeWarehouse: 1, duration: 1.25 }, 0.34)
+        .to(motion, { nodePostgres: 1, duration: 0.65 }, 0.65)
+        .to(motion, { nodeWrites: 1, duration: 0.65 }, 0.75)
+        .to(motion, { nodeWarehouse: 1, duration: 0.65 }, 0.85);
 
-      const float = gsap.to(core, {
-        y: -5,
-        duration: 5.8,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
+      const floatVars = { duration: 5.8, ease: "sine.inOut", repeat: -1, yoyo: true };
+      const float = gsap.to(core, { y: -5, ...floatVars });
+      const floatGlass = gsap.to(motion, { float: -5, ...floatVars });
       const spin = gsap.to(orbit, {
         rotation: 360,
-        svgOrigin: "393 270",
+        svgOrigin: `${CORE.x} ${CORE.y}`,
         duration: 48,
         ease: "none",
         repeat: -1,
       });
 
-      const xTo = gsap.quickTo(system, "x", { duration: 0.7, ease: "power3.out" });
-      const yTo = gsap.quickTo(system, "y", { duration: 0.7, ease: "power3.out" });
+      const follow = { duration: 0.7, ease: "power3.out" };
+      const xTo = gsap.quickTo(system, "x", follow);
+      const yTo = gsap.quickTo(system, "y", follow);
+      const glassXTo = gsap.quickTo(motion, "offsetX", follow);
+      const glassYTo = gsap.quickTo(motion, "offsetY", follow);
 
-      const onPointerMove = (event: PointerEvent) => {
-        const bounds = visual.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-        pointerRef.current.x = x;
-        pointerRef.current.y = y;
+      const moveTo = (x: number, y: number) => {
+        motion.pointerX = x;
+        motion.pointerY = y;
         xTo(x * 10);
         yTo(y * 7);
+        glassXTo(x * 10);
+        glassYTo(y * 7);
       };
-      const onPointerLeave = () => {
-        pointerRef.current.x = 0;
-        pointerRef.current.y = 0;
-        xTo(0);
-        yTo(0);
+      const onPointerMove = (event: PointerEvent) => {
+        const bounds = visual.getBoundingClientRect();
+        moveTo(
+          (event.clientX - bounds.left) / bounds.width - 0.5,
+          (event.clientY - bounds.top) / bounds.height - 0.5,
+        );
       };
+      const onPointerLeave = () => moveTo(0, 0);
 
       visual.addEventListener("pointermove", onPointerMove);
       visual.addEventListener("pointerleave", onPointerLeave);
@@ -227,9 +227,11 @@ export function DataHeroVisual() {
       cleanup = () => {
         reveal.kill();
         float.kill();
+        floatGlass.kill();
         spin.kill();
         visual.removeEventListener("pointermove", onPointerMove);
         visual.removeEventListener("pointerleave", onPointerLeave);
+        Object.assign(motion, createDataHeroMotion(), { clock: motion.clock });
       };
     }, visual);
 
@@ -250,10 +252,11 @@ export function DataHeroVisual() {
         <DataHeroWebgl
           reduced={reduced}
           theme={theme}
-          pointerRef={pointerRef}
+          motionRef={motionRef}
           onReadyChange={setWebglReady}
         />
         <svg
+          ref={svgRef}
           className="data-hero-visual-svg"
           viewBox="0 0 700 540"
           xmlns="http://www.w3.org/2000/svg"
@@ -272,15 +275,47 @@ export function DataHeroVisual() {
           <filter id={ids.coreGlow} x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur stdDeviation="22" />
           </filter>
+          <radialGradient id={ids.floor} cx="50%" cy="50%" r="50%">
+            <stop offset="0" className="data-hero-floor-stop data-hero-floor-stop-core" />
+            <stop offset="0.45" className="data-hero-floor-stop data-hero-floor-stop-mid" />
+            <stop offset="1" className="data-hero-floor-stop data-hero-floor-stop-edge" />
+          </radialGradient>
+          <linearGradient id={ids.beam} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" className="data-hero-beam-stop data-hero-beam-stop-top" />
+            <stop offset="1" className="data-hero-beam-stop data-hero-beam-stop-bottom" />
+          </linearGradient>
         </defs>
 
         <rect className="data-hero-grid" width="700" height="540" fill={`url(#${ids.grid})`} />
-        <circle className="data-hero-atmosphere" cx="393" cy="270" r="148" filter={`url(#${ids.coreGlow})`} />
+        <circle className="data-hero-atmosphere" cx={CORE.x} cy={CORE.y} r="148" filter={`url(#${ids.coreGlow})`} />
+
+        {/* Light pooled on the floor under the core, with a faint reflection. */}
+        <g className="data-hero-floor">
+          <rect
+            className="data-hero-beam"
+            x={CORE.x - 46}
+            y={CORE.y + CORE.r - 6}
+            width="92"
+            height={FLOOR_Y - (CORE.y + CORE.r) + 6}
+            fill={`url(#${ids.beam})`}
+          />
+          <ellipse className="data-hero-floor-pool" cx={CORE.x} cy={FLOOR_Y} rx="210" ry="26" fill={`url(#${ids.floor})`} />
+          <ellipse className="data-hero-floor-line" cx={CORE.x} cy={FLOOR_Y} rx="150" ry="3" />
+          <ellipse className="data-hero-floor-reflection" cx={CORE.x} cy={FLOOR_Y + 22} rx="64" ry="14" />
+        </g>
 
         <g ref={orbitRef} className="data-hero-orbit-system">
-          <ellipse className="data-hero-orbit data-hero-orbit-back" cx="393" cy="270" rx="205" ry="142" />
-          <ellipse className="data-hero-orbit data-hero-orbit-front" cx="393" cy="270" rx="205" ry="142" transform="rotate(58 393 270)" />
-          <ellipse className="data-hero-orbit data-hero-orbit-side" cx="393" cy="270" rx="205" ry="142" transform="rotate(-58 393 270)" />
+          {orbitRotations.map((degrees, index) => (
+            <ellipse
+              key={degrees}
+              className={`data-hero-orbit data-hero-orbit-${orbitNames[index]}`}
+              cx={CORE.x}
+              cy={CORE.y}
+              rx={ORBIT.rx}
+              ry={ORBIT.ry}
+              transform={degrees ? `rotate(${degrees} ${CORE.x} ${CORE.y})` : undefined}
+            />
+          ))}
         </g>
         <circle className="data-hero-ring-dashed" cx="393" cy="270" r="142" />
         <circle className="data-hero-ring-ticks" cx="393" cy="270" r="160" />
@@ -299,7 +334,7 @@ export function DataHeroVisual() {
             <g className="data-hero-pulses">
               <circle className="data-hero-pulse data-hero-pulse-writes" opacity="0" r="4">
                 <animateMotion
-                  dur={FLOW.dur}
+                  dur={FLOW_DUR}
                   repeatCount="indefinite"
                   keyPoints="0;1;1"
                   keyTimes={`0;${FLOW.handoff};1`}
@@ -309,7 +344,7 @@ export function DataHeroVisual() {
                 </animateMotion>
                 <animate
                   attributeName="opacity"
-                  dur={FLOW.dur}
+                  dur={FLOW_DUR}
                   repeatCount="indefinite"
                   values="0;1;1;0;0"
                   keyTimes={`0;0.06;${FLOW.handoff - 0.04};${FLOW.handoff};1`}
@@ -318,17 +353,17 @@ export function DataHeroVisual() {
               {(["postgres", "warehouse"] as const).map((key) => (
                 <circle key={key} className={`data-hero-pulse data-hero-pulse-${key}`} opacity="0" r="4">
                   <animateMotion
-                    dur={FLOW.dur}
+                    dur={FLOW_DUR}
                     repeatCount="indefinite"
                     keyPoints="0;0;1;1"
-                    keyTimes={`0;${FLOW.handoff};0.92;1`}
+                    keyTimes={`0;${FLOW.handoff};${FLOW.outboundEnd};1`}
                     calcMode="linear"
                   >
                     <mpath href={`#${ids[key]}`} />
                   </animateMotion>
                   <animate
                     attributeName="opacity"
-                    dur={FLOW.dur}
+                    dur={FLOW_DUR}
                     repeatCount="indefinite"
                     values="0;0;1;1;0"
                     keyTimes={`0;${FLOW.handoff};${FLOW.handoff + 0.05};0.88;0.94`}
@@ -338,14 +373,14 @@ export function DataHeroVisual() {
               <circle className="data-hero-core-ping" cx={CORE.x} cy={CORE.y} r={CORE.r}>
                 <animate
                   attributeName="r"
-                  dur={FLOW.dur}
+                  dur={FLOW_DUR}
                   repeatCount="indefinite"
                   values={`${CORE.r};${CORE.r};${CORE.r + 26};${CORE.r + 26}`}
                   keyTimes={`0;${FLOW.handoff};${FLOW.handoff + 0.3};1`}
                 />
                 <animate
                   attributeName="opacity"
-                  dur={FLOW.dur}
+                  dur={FLOW_DUR}
                   repeatCount="indefinite"
                   values="0;0;0.7;0;0"
                   keyTimes={`0;${FLOW.handoff - 0.01};${FLOW.handoff};${FLOW.handoff + 0.3};1`}

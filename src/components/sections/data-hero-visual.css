@@ -146,6 +146,69 @@
   opacity: 0;
 }
 
+/* With WebGL up, the glass scene draws the core, satellites, pipes, and
+   rings. The SVG keeps glyphs, labels, ports, and pulses on top; the replaced
+   shapes stay in the DOM (for the fallback and tests) but go transparent. */
+.data-hero-visual.is-webgl-ready .data-hero-core-rim,
+.data-hero-visual.is-webgl-ready .data-hero-orbit-system,
+.data-hero-visual.is-webgl-ready .data-hero-ring-ticks,
+.data-hero-visual.is-webgl-ready .data-hero-route,
+.data-hero-visual.is-webgl-ready .data-hero-route-glimmer,
+.data-hero-visual.is-webgl-ready .data-hero-node-halo,
+.data-hero-visual.is-webgl-ready .data-hero-node-shell,
+.data-hero-visual.is-webgl-ready .data-hero-node-core {
+  opacity: 0;
+}
+
+.data-hero-visual.is-webgl-ready .data-hero-pulse {
+  filter: drop-shadow(0 0 7px currentColor) drop-shadow(0 0 2px currentColor);
+}
+
+.data-hero-floor-stop-core {
+  stop-color: var(--accent);
+  stop-opacity: 0.34;
+}
+
+.data-hero-floor-stop-mid {
+  stop-color: var(--accent);
+  stop-opacity: 0.1;
+}
+
+.data-hero-floor-stop-edge {
+  stop-color: var(--accent);
+  stop-opacity: 0;
+}
+
+.data-hero-beam-stop-top {
+  stop-color: var(--accent);
+  stop-opacity: 0.16;
+}
+
+.data-hero-beam-stop-bottom {
+  stop-color: var(--accent);
+  stop-opacity: 0;
+}
+
+.data-hero-beam {
+  filter: blur(10px);
+}
+
+.data-hero-floor-line {
+  fill: color-mix(in srgb, var(--accent) 45%, var(--fg));
+  opacity: 0.22;
+  filter: blur(2px);
+}
+
+.data-hero-floor-reflection {
+  fill: var(--accent);
+  opacity: 0.12;
+  filter: blur(9px);
+}
+
+:root:not(.dark) .data-hero-floor-stop-core {
+  stop-opacity: 0.22;
+}
+
 .data-hero-core-rim {
   fill: none;
   stroke: color-mix(in srgb, var(--fg) 60%, var(--accent));
