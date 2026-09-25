@@ -505,172 +505,185 @@
   outline-offset: 2px;
 }
 
-.cloud-topo {
-  overflow: hidden;
-  padding: 1.4rem 1.3rem 1.5rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
-  border-radius: var(--shape-radius-lg);
-  background:
-    radial-gradient(ellipse at 50% -10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 58%),
-    var(--surface);
+/* Shipped stacks as a request trace: each service hangs off the one that
+   calls it, drawn with guide lines instead of cards and connectors. */
+.cloud-trace {
+  --trace-cell: 1.5rem;
+  --trace-elbow: 1.55rem; /* centre of a row's first line */
+  --trace-name: 16rem; /* gutter + name, so the copy column lines up */
+  --trace-line: color-mix(in srgb, var(--fg) 20%, transparent);
+  --trace-lit: var(--accent);
+  padding-block: 0.6rem 0.4rem;
+  border-block: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
 }
 
-.cloud-topo-head {
+.cloud-trace-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cloud-trace-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  width: min(18rem, 70%);
-  margin: 0 auto 1.5rem;
-  padding: 1.1rem 1.4rem;
-  border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  border-radius: 2.4rem 2.4rem 1.5rem 1.5rem;
-  background: color-mix(in srgb, var(--bg) 55%, transparent);
-  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 22%, transparent);
+  align-items: stretch;
+  margin: 0;
 }
 
-.cloud-topo-head img {
-  display: block;
-  height: 1.35rem;
-  width: auto;
+.cloud-trace-gutter {
+  display: flex;
+  flex: none;
 }
 
-/* Theme swap for the AWS mark; the rule above would otherwise show both images. */
-.cloud-topo-head img.svgl-dark {
-  display: none;
-}
-
-html.dark .cloud-topo-head img.svgl-light,
-[data-theme="dark"] .cloud-topo-head img.svgl-light {
-  display: none;
-}
-
-html.dark .cloud-topo-head img.svgl-dark,
-[data-theme="dark"] .cloud-topo-head img.svgl-dark {
-  display: block;
-}
-
-.cloud-topo-head b {
-  font-family: var(--font-h1), serif;
-  font-size: 1.45rem;
-  font-weight: 400;
-  letter-spacing: -0.03em;
-}
-
-.cloud-topo-path {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.35rem 1.1rem;
-}
-
-.cloud-topo-path li {
+.cloud-trace-guide {
   position: relative;
-  display: grid;
-  align-content: start;
-  gap: 0.28rem;
-  min-height: 7.4rem;
-  padding: 0.95rem 1rem 1.05rem;
-  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
-  border-radius: 1.15rem;
-  background: color-mix(in srgb, var(--bg) 48%, transparent);
+  flex: none;
+  width: var(--trace-cell);
 }
 
-/* Entry connector: AWS head (grid center) down, across, and into card 01. */
-.cloud-topo-path li:first-child::before,
-.cloud-topo-path li:first-child::after {
-  content: "";
+.cloud-trace-guide::before,
+.cloud-trace-guide::after {
   position: absolute;
+  left: calc(50% - 0.5px);
   pointer-events: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
-.cloud-topo-path li:first-child::before {
-  top: -1.5rem;
-  left: 50%;
-  width: calc(100% + 1.1rem);
-  height: 0.75rem;
-  border-right: 2px solid var(--accent);
-  border-bottom: 2px solid var(--accent);
-}
-
-.cloud-topo-path li:first-child::after {
-  top: -0.75rem;
-  left: 50%;
-  width: 2px;
-  height: 0.75rem;
-  background: var(--accent);
-}
-
-.cloud-topo-path span {
-  color: var(--accent-readable);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.68rem;
-  font-weight: 600;
-}
-
-.cloud-topo-path strong {
-  font-size: 0.98rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.cloud-topo-path em {
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-style: normal;
-  line-height: 1.45;
-}
-
-.cloud-topo-join {
-  position: absolute;
-  pointer-events: none;
-}
-
-.cloud-topo-join.is-across {
-  top: 50%;
-  right: -1.15rem;
-  width: 1.15rem;
-  height: 2px;
-  background: var(--accent);
-  transform: translateY(-50%);
-}
-
-.cloud-topo-join.is-across::after {
+/* A line that keeps running down to a later sibling. */
+.cloud-trace-guide.is-pass::before {
   content: "";
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--trace-line);
+}
+
+/* The branch into this row's service, ending at its dot one column over. */
+.cloud-trace-guide.is-elbow::after {
+  content: "";
+  top: 0;
+  width: calc(var(--trace-cell) - 3.5px);
+  height: var(--trace-elbow);
+  border-bottom: 1px solid var(--trace-line);
+  border-left: 1px solid var(--trace-line);
+}
+
+.cloud-trace-guide.is-elbow:not(.is-pass)::after {
+  border-bottom-left-radius: 5px;
+}
+
+/* A service with children drops a line from its dot to their branches. */
+.cloud-trace-guide.is-node.has-children::before {
+  content: "";
+  top: calc(var(--trace-elbow) + 3.5px);
+  bottom: 0;
+  width: 1px;
+  background: var(--trace-line);
+}
+
+/* Scoped under .cloud-trace so lit lines outrank the base line rules above. */
+.cloud-trace .cloud-trace-guide.is-lit::before {
+  background: var(--trace-lit);
+}
+
+.cloud-trace .cloud-trace-guide.is-hit::after {
+  border-color: var(--trace-lit);
+}
+
+.cloud-trace-dot {
   position: absolute;
-  top: 50%;
-  right: 0;
-  width: 0.32rem;
-  height: 0.32rem;
+  top: calc(var(--trace-elbow) - 3.5px);
+  left: calc(50% - 3.5px);
+  width: 7px;
+  height: 7px;
+  border: 1px solid color-mix(in srgb, var(--fg) 40%, transparent);
   border-radius: 999px;
-  background: var(--accent);
-  transform: translate(40%, -50%);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  background: var(--bg);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
-/* Row wrap: down from card 03, back across, and into card 04. */
-.cloud-topo-join.is-wrap {
-  top: 100%;
-  right: 50%;
-  width: calc(200% + 2.2rem);
-  height: 1.35rem;
+.cloud-trace-dot.is-on {
+  border-color: var(--trace-lit);
 }
 
-.cloud-topo-join.is-wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 50%;
-  border-right: 2px solid var(--accent);
-  border-bottom: 2px solid var(--accent);
+.cloud-trace-dot.is-active {
+  background: var(--trace-lit);
 }
 
-.cloud-topo-join.is-wrap::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 2px;
-  height: 50%;
-  background: var(--accent);
+.cloud-trace-dot.is-entry {
+  border-color: var(--trace-lit);
+  background: var(--trace-lit);
+}
+
+.cloud-trace-entry {
+  padding: 0.75rem 0 0.75rem 0.35rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.6rem;
+}
+
+.cloud-trace-body {
+  display: grid;
+  flex: 1;
+  /* Every row's gutter is (depth + 1) columns wide; shrink the name column by
+     the same amount so the copy starts at one x for the whole tree. */
+  grid-template-columns:
+    calc(var(--trace-name) - (var(--trace-depth, 1) + 1) * var(--trace-cell))
+    minmax(0, 1fr);
+  column-gap: 1.5rem;
+  min-width: 0;
+  padding: 0.75rem 0 0.75rem 0.35rem;
+  transition: opacity 0.2s ease;
+}
+
+.cloud-trace-body strong {
+  font-family: var(--font-h1), serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+.cloud-trace-copy {
+  max-width: 52ch;
+  padding-top: 0.05rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Hovering a service keeps its path at full strength and steps the rest back.
+   Only the text fades, so lit lines through a faded row stay unbroken. */
+.cloud-trace[data-active] .cloud-trace-row.is-off .cloud-trace-body,
+.cloud-trace[data-active] .cloud-trace-row.is-off .cloud-trace-dot {
+  opacity: 0.4;
+}
+
+@media (max-width: 47.99rem) {
+  .cloud-trace {
+    --trace-cell: 1.1rem;
+  }
+
+  /* Phones stack the copy under the name; the guides run beside both. */
+  .cloud-trace-body {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-trace-guide::before,
+  .cloud-trace-guide::after,
+  .cloud-trace-dot,
+  .cloud-trace-body {
+    transition: none;
+  }
 }
 
 .cloud-case {
@@ -1070,55 +1083,6 @@ html.dark .cloud-topo-head img.svgl-dark,
   .cloud-hosts,
   .cloud-case-results {
     grid-template-columns: 1fr;
-  }
-
-  .cloud-topo-path {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-
-  /* Compact rows on phones: step number beside title and copy. */
-  .cloud-topo-path li {
-    grid-template-columns: 1.6rem minmax(0, 1fr);
-    column-gap: 0.6rem;
-    row-gap: 0.15rem;
-    min-height: 0;
-    padding: 0.8rem 0.9rem;
-  }
-
-  .cloud-topo-path li span {
-    grid-row: span 2;
-    padding-top: 0.2rem;
-  }
-
-  .cloud-topo-head {
-    margin-bottom: 1rem;
-    padding: 0.8rem 1.2rem;
-  }
-
-  .cloud-topo-path li::before,
-  .cloud-topo-path li::after,
-  .cloud-topo-path li:first-child::before,
-  .cloud-topo-path li:first-child::after {
-    display: none;
-  }
-
-  .cloud-topo-join.is-across,
-  .cloud-topo-join.is-wrap {
-    top: auto;
-    right: auto;
-    left: 1.45rem;
-    bottom: -0.75rem;
-    width: 2px;
-    height: 0.75rem;
-    background: var(--accent);
-    transform: none;
-  }
-
-  .cloud-topo-join.is-across::after,
-  .cloud-topo-join.is-wrap::before,
-  .cloud-topo-join.is-wrap::after {
-    display: none;
   }
 
   .cloud-sam {
