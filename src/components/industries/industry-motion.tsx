@@ -98,7 +98,11 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
       // ---- Count-up figures -----------------------------------------------------------
       const counters = new Map<HTMLElement, (progress: number) => string>();
       q("[data-im-proof] [data-why-count]").forEach((el) => {
-        const format = parseCount(el.dataset.whyCount ?? "");
+        const format = parseCount(
+          el.dataset.whyCount ?? "",
+          "whyCountDown" in el.dataset,
+          el.dataset.whyCountFrom,
+        );
         if (!format) return;
         counters.set(el, format);
         el.textContent = format(0);

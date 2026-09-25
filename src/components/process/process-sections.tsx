@@ -84,7 +84,11 @@ export function ProcessPreProject() {
             intro="Scope, timeline, and expectations are settled before any code is written, so the build starts from one shared plan."
           />
           <div data-why="up" className="mt-10 max-w-xs border-t border-border pt-6">
-            <Figure value={preProjectTimeline.value} className="text-[3rem]" />
+            <Figure
+              value={preProjectTimeline.value}
+              lowerIsBetter={preProjectTimeline.lowerIsBetter}
+              className="text-[3rem]"
+            />
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{preProjectTimeline.label}</p>
           </div>
         </div>
