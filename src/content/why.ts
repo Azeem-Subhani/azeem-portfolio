@@ -64,8 +64,8 @@ export const steps: WhyStep[] = [
   },
   {
     title: "Build and test",
-    timing: "Every week",
-    copy: "Short cycles with a preview deploy on every change. Automated tests run on each push.",
+    timing: "Every two weeks",
+    copy: "Two-week sprints that each end in a UAT build you can test. Preview deploys and automated tests run on every push.",
   },
   {
     title: "Launch",

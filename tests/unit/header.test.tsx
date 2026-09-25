@@ -41,7 +41,7 @@ describe("Header", () => {
     expect(header).toHaveAttribute("data-scrolled", "true");
   });
 
-  it("links the wordmark home, then Services, Portfolio, Why me, and a filled Contact, and has no Resume route", () => {
+  it("links the wordmark home, then Services, Portfolio, Why me, Process, and a filled Contact, and has no Resume route", () => {
     render(<Header />);
 
     expect(screen.getByRole("link", { name: "Azeem Subhani, home" })).toHaveAttribute(
@@ -51,10 +51,11 @@ describe("Header", () => {
 
     const nav = screen.getByRole("navigation", { name: "Primary navigation" });
     const topItems = nav.querySelectorAll(":scope > ul > li");
-    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Portfolio|Why me|Contact/)?.[0])).toEqual([
+    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Portfolio|Why me|Process|Contact/)?.[0])).toEqual([
       "Services",
       "Portfolio",
       "Why me",
+      "Process",
     ]);
     expect(within(nav).queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
     expect(within(nav).queryByRole("link", { name: "Projects" })).not.toBeInTheDocument();
@@ -64,6 +65,7 @@ describe("Header", () => {
       "/projects",
     );
     expect(within(nav).getByRole("link", { name: "Why me" })).toHaveAttribute("href", "/why-me");
+    expect(within(nav).getByRole("link", { name: "Process" })).toHaveAttribute("href", "/process");
     expect(within(nav).getByRole("button", { name: "Services" })).toHaveAttribute(
       "aria-haspopup",
       "menu",

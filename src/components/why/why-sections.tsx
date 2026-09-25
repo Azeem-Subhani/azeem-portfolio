@@ -13,9 +13,11 @@ import {
 } from "@/content/why";
 import { cn } from "@/lib/utils";
 
-function Figure({ value, className }: { value: string; className?: string }) {
+export function Figure({ value, className }: { value: string; className?: string }) {
   return (
     <span
+      // Numeric figures count up on scroll-in (see WhyMotion); word figures just fade in.
+      data-why-count={/\d/.test(value) ? value : undefined}
       className={cn(
         "inline-block origin-left font-display font-normal leading-none text-accent transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
         className,
@@ -129,7 +131,7 @@ export function WhyProcess() {
       <SectionHead
         kicker="02 · How a build runs"
         title="Working software early, then every week"
-        intro="The process is short on documents and long on previews. You see the product running from the first week."
+        intro="Scope is agreed on paper up front, then the build runs on previews. You see the product running from the first sprint."
       />
       <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
         <ol className="relative border-l border-border">
@@ -233,7 +235,7 @@ export function WhyResults() {
 export function WhyCta() {
   return (
     <section
-      className="mt-28 flex flex-col gap-8 border-t border-border pt-16 lg:mt-36 lg:flex-row lg:items-end lg:justify-between"
+      className="mt-28 flex flex-col gap-8 lg:mt-36 lg:flex-row lg:items-end lg:justify-between"
     >
       <div data-why="up" className="max-w-2xl">
         <h2 className="text-balance font-display text-[clamp(2rem,4vw,3.75rem)] font-normal leading-[0.98]">
