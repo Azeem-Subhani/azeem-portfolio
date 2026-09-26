@@ -27,17 +27,29 @@ export function Figure({
   const counts = /\d/.test(value);
   return (
     <span
-      // Numeric figures count on scroll-in (see WhyMotion); word figures just fade in.
-      // Lower-is-better figures such as timelines count down to the value instead of up.
-      data-why-count={counts ? value : undefined}
-      data-why-count-down={counts && lowerIsBetter ? "" : undefined}
-      data-why-count-from={counts && lowerIsBetter ? countFrom : undefined}
       className={cn(
-        "inline-block origin-left font-display font-normal leading-none text-accent transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
+        "inline-block origin-left font-display font-normal leading-none text-accent-ink transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
         className,
       )}
     >
-      {value}
+      {counts ? (
+        <>
+          {/* Numeric figures count on scroll-in (see WhyMotion); word figures just fade in.
+              Lower-is-better figures such as timelines count down to the value instead of up.
+              The animated copy is hidden from assistive tech, which reads the final value. */}
+          <span
+            aria-hidden="true"
+            data-why-count={value}
+            data-why-count-down={lowerIsBetter ? "" : undefined}
+            data-why-count-from={lowerIsBetter ? countFrom : undefined}
+          >
+            {value}
+          </span>
+          <span className="sr-only">{value}</span>
+        </>
+      ) : (
+        value
+      )}
     </span>
   );
 }
@@ -105,7 +117,7 @@ export function WhyHero() {
       <h1 data-why="hero" className="mt-5 font-display text-[clamp(3.25rem,8vw,6.5rem)] font-normal leading-[0.9]">
         one builder,
         <br />
-        <span className="text-accent">the whole stack</span>
+        <span className="text-accent-ink">the whole stack</span>
       </h1>
       <p data-why="hero" className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
         Product teams hire me when they need the interface, the API, the data, and the cloud

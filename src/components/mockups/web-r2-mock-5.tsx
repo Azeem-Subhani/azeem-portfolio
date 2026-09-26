@@ -149,6 +149,8 @@ export function GantryLights({
               {interactive && onSelect ? (
                 <button
                   type="button"
+                  // Rendered inside aria-hidden hero/chapter wrappers: pointer-only.
+                  tabIndex={-1}
                   onClick={() => onSelect(index)}
                   className="rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
                   aria-label={`Select ${venue.label}`}
@@ -167,7 +169,7 @@ export function GantryLights({
               >
                 <p
                   className={`line-clamp-2 text-balance break-words text-[9px] leading-tight sm:text-[10px] ${
-                    labelHot ? "text-accent" : "text-foreground"
+                    labelHot ? "text-accent-ink" : "text-foreground"
                   }`}
                 >
                   {venue.label}

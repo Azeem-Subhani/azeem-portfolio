@@ -140,7 +140,8 @@ test.describe("navigation", () => {
       .getByRole("button", { name: "Services" })
       .click();
     await page
-      .getByRole("menuitem", { name: /Web development/ })
+      .getByRole("list", { name: "Services" })
+      .getByRole("link", { name: /Web development/ })
       .click();
     await expect(page).toHaveURL(/\/services\/web-development$/);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

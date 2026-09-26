@@ -125,7 +125,7 @@ export function CaseStudyOutcomes({ project }: { project: Project }) {
       <dl className="mt-8 grid gap-8 sm:grid-cols-2">
         {project.metrics.map((metric) => (
           <div key={metric.label} className="border-l-2 border-accent/40 pl-5">
-            <dt className="font-display text-[1.625rem] font-normal tracking-tight text-accent">
+            <dt className="font-display text-[1.625rem] font-normal tracking-tight text-accent-ink">
               {metric.value}
             </dt>
             <dd className="mt-1 text-sm leading-6 text-muted-foreground">

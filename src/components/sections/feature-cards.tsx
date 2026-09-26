@@ -355,7 +355,7 @@ export function FeatureCards() {
                 >
                   <span
                     data-stage-word
-                    className={cn("block will-change-transform", i === 2 && "text-accent")}
+                    className={cn("block will-change-transform", i === 2 && "text-accent-ink")}
                   >
                     {stage.id}.
                   </span>

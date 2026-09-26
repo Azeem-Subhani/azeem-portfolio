@@ -282,7 +282,7 @@ export function VenueTrackMap({
 
   return (
     <div
-      className={`relative w-full overflow-visible text-accent ${className}`}
+      className={`relative w-full overflow-visible text-accent-ink ${className}`}
     >
       <AnimatePresence mode="wait">
         <motion.div

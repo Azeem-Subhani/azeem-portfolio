@@ -30,7 +30,7 @@ export function ProjectCloser({ slug }: ProjectCloserProps) {
       <Link
         href="/contact"
         data-inline-cta=""
-        className="mt-4 inline-flex items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent"
+        className="mt-4 inline-flex items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent-ink"
       >
         Get in touch
         <span aria-hidden="true">↗</span>

@@ -5,6 +5,7 @@ import "./industry-listings.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CalendarCheck, Check } from "lucide-react";
 
+import { useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -96,6 +97,8 @@ function BlockMap() {
 
 export function IndustryListings() {
   const reduced = usePrefersReducedMotion();
+  // The page's pause control freezes the loop on its current frame.
+  const paused = useMotionPaused();
   const panelRef = useRef<HTMLDivElement>(null);
   // Steps taken since mount; the visible tick is derived so the first frame is fixed.
   const [step, setStep] = useState(0);
@@ -104,7 +107,7 @@ export function IndustryListings() {
   // Only tick while the panel is on screen and the tab is visible.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel || reduced) return;
+    if (!panel || reduced || paused) return;
     let inView = false;
     const update = () => setRunning(inView && document.visibilityState === "visible");
     const observer = new IntersectionObserver(([entry]) => {
@@ -118,7 +121,7 @@ export function IndustryListings() {
       document.removeEventListener("visibilitychange", update);
       setRunning(false);
     };
-  }, [reduced]);
+  }, [reduced, paused]);
 
   useEffect(() => {
     if (!running) return;

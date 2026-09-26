@@ -6,6 +6,7 @@ import { IconMark, toneColors } from "@/components/industries/industry-icons";
 import { IndustryLedger } from "@/components/industries/industry-ledger";
 import { IndustrySolutionTabs } from "@/components/industries/industry-solution-tabs";
 import { IndustryStackLoop } from "@/components/industries/industry-stack-loop";
+import { MotionPauseButton } from "@/components/motion/motion-pause-button";
 import { SolutionLink } from "@/components/industries/solution-link";
 import { IndustryCare } from "@/components/industries/visuals/industry-care";
 import { IndustryCheckout } from "@/components/industries/visuals/industry-checkout";
@@ -136,7 +137,7 @@ function HeroHeadline({ industry, large }: { industry: IndustryPageContent; larg
         </span>
       </span>
       <span className="block overflow-hidden pb-[0.22em] -mb-[0.12em]">
-        <span data-im="hero-line" className="relative inline-block text-accent will-change-transform">
+        <span data-im="hero-line" className="relative inline-block text-accent-ink will-change-transform">
           {industry.titleAccent}
           <svg
             data-im="underline"
@@ -213,6 +214,7 @@ export function IndustryHero({ industry }: SectionProps) {
       {copy}
       <div
         data-im="hero-visual"
+        data-pausable=""
         className={cn(
           "w-full max-w-md justify-self-center",
           centered ? "max-w-xl" : "lg:max-w-none",
@@ -220,6 +222,9 @@ export function IndustryHero({ industry }: SectionProps) {
         )}
       >
         <Visual />
+        <div className="mt-3 flex justify-end">
+          <MotionPauseButton />
+        </div>
       </div>
     </header>
   );
@@ -308,7 +313,7 @@ export function IndustryChallenges({ industry }: SectionProps) {
             >
               <span
                 aria-hidden="true"
-                className="font-display text-5xl leading-none text-accent transition-transform duration-500 group-hover:translate-x-1 sm:text-6xl"
+                className="font-display text-5xl leading-none text-accent-ink transition-transform duration-500 group-hover:translate-x-1 sm:text-6xl"
               >
                 {index2(index)}
               </span>
@@ -404,7 +409,7 @@ export function IndustrySolutions({ industry }: SectionProps) {
               <li key={solution.title} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
                 <div data-im-card className={cn(flip && "lg:order-2")}>
                   <div className="flex items-center gap-4">
-                    <span aria-hidden="true" className="font-display text-6xl leading-none text-accent/70">
+                    <span aria-hidden="true" className="font-display text-6xl leading-none text-accent-ink/70">
                       {index2(index)}
                     </span>
                     <IconMark icon={solution.icon} />

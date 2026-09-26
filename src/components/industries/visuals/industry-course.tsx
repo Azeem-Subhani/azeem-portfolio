@@ -5,6 +5,7 @@ import "./industry-course.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Award, Check, Lock } from "lucide-react";
 
+import { useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -72,6 +73,8 @@ function MonoLabel({ children, className }: { children: ReactNode; className?: s
 
 export function IndustryCourse() {
   const reduced = usePrefersReducedMotion();
+  // The page's pause control freezes the loop on its current frame.
+  const paused = useMotionPaused();
   const panelRef = useRef<HTMLDivElement>(null);
   // Steps taken since mount; the visible tick is derived so the first frame is fixed.
   const [step, setStep] = useState(0);
@@ -80,7 +83,7 @@ export function IndustryCourse() {
   // Only tick while the panel is on screen and the tab is visible.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel || reduced) return;
+    if (!panel || reduced || paused) return;
     let inView = false;
     const update = () => setRunning(inView && document.visibilityState === "visible");
     const observer = new IntersectionObserver(([entry]) => {
@@ -94,7 +97,7 @@ export function IndustryCourse() {
       document.removeEventListener("visibilitychange", update);
       setRunning(false);
     };
-  }, [reduced]);
+  }, [reduced, paused]);
 
   useEffect(() => {
     if (!running) return;

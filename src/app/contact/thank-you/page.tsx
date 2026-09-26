@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function ThankYouPage() {
   return (
     <section className="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-6 py-32 text-center">
-      <div className="flex size-12 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent">
+      <div className="flex size-12 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent-ink">
         <CheckCircle2 aria-hidden="true" className="size-6" />
       </div>
       <p className="mt-6 font-mono text-xs tracking-[0.12em] text-accent-readable">

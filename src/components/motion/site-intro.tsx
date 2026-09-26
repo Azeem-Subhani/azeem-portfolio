@@ -75,7 +75,7 @@ export function SiteIntro() {
             </span>
           </span>
           <span className="overflow-hidden">
-            <span data-intro-word className="block text-accent">
+            <span data-intro-word className="block text-accent-ink">
               Subhani
             </span>
           </span>

@@ -132,7 +132,7 @@ export function ContactPageContent() {
               {titleLines.map((line, index) => (
                 <span
                   key={line}
-                  className={`block overflow-hidden pb-[0.12em] -mb-[0.12em] ${index === titleLines.length - 1 ? "text-accent" : ""}`}
+                  className={`block overflow-hidden pb-[0.12em] -mb-[0.12em] ${index === titleLines.length - 1 ? "text-accent-ink" : ""}`}
                 >
                   <span data-contact-title-line className="block will-change-transform">
                     {line}
@@ -155,13 +155,13 @@ export function ContactPageContent() {
             <ul className="mt-5 flex flex-col gap-4">
               {directLinks.map((item) => (
                 <li key={item.label} data-contact-direct className="flex items-center gap-3">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-accent">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-accent-ink">
                     <item.icon aria-hidden="true" className="size-4" />
                   </span>
                   {item.href ? (
                     <a
                       href={item.href}
-                      className="text-sm underline decoration-border underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+                      className="text-sm underline decoration-border underline-offset-4 transition-colors hover:text-accent-ink hover:decoration-accent"
                     >
                       {item.label}
                     </a>
@@ -181,7 +181,7 @@ export function ContactPageContent() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={item.label}
-                  className="group flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-accent"
+                  className="group flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-accent-ink"
                 >
                   <item.icon aria-hidden="true" className="size-4" />
                   <span>{item.label}</span>
@@ -204,7 +204,7 @@ export function ContactPageContent() {
               </p>
             </div>
             <div className="hidden items-center gap-2 text-right text-xs text-muted-foreground sm:flex">
-              <Clock3 aria-hidden="true" className="size-4 text-accent" />
+              <Clock3 aria-hidden="true" className="size-4 text-accent-ink" />
               Usually replies within 2 days
             </div>
           </div>
@@ -212,7 +212,7 @@ export function ContactPageContent() {
             <ContactForm />
           </div>
           <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground sm:hidden">
-            <Clock3 aria-hidden="true" className="size-3.5 text-accent" />
+            <Clock3 aria-hidden="true" className="size-3.5 text-accent-ink" />
             Usually replies within 2 days
           </p>
         </div>

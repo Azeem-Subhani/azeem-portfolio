@@ -465,7 +465,7 @@
 }
 
 .data-stage-caption span:nth-child(even) {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* Title and copy side by side: the migration chapter opens wide instead of stacked. */

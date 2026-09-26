@@ -233,7 +233,6 @@ function HardwareChapter({
               role="tabpanel"
               id="mobile-hw-panel"
               aria-labelledby={hardwareTabId(group.title)}
-              aria-live="polite"
             >
               <div key={group.title} className="mobile-hw-detail-copy">
                 <h3>{group.title}</h3>

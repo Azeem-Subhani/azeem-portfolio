@@ -181,7 +181,7 @@ export function ProjectDetailIntro({ project }: ProjectDetailIntroProps) {
       <dl className="mt-8 flex flex-wrap gap-8">
         {project.metrics.map((metric) => (
           <div key={metric.label} data-detail-metric>
-            <dt className="font-display text-[1.625rem] font-normal tracking-tight text-accent">
+            <dt className="font-display text-[1.625rem] font-normal tracking-tight text-accent-ink">
               {metric.value}
             </dt>
             <dd className="mt-0.5 text-[0.78rem] text-muted-foreground">

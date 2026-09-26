@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Eye } from "lucide-react";
 
+import { useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -82,6 +83,8 @@ function frameAt(tick: number) {
 
 export function IndustryStream() {
   const reduced = usePrefersReducedMotion();
+  // The page's pause control freezes the loop on its current frame.
+  const paused = useMotionPaused();
   const panelRef = useRef<HTMLDivElement>(null);
   const [tick, setTick] = useState(INITIAL_TICK);
   const [running, setRunning] = useState(false);
@@ -89,7 +92,7 @@ export function IndustryStream() {
   // Only tick while the panel is on screen and the tab is visible.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel || reduced) return;
+    if (!panel || reduced || paused) return;
     let inView = false;
     const update = () => setRunning(inView && document.visibilityState === "visible");
     const observer = new IntersectionObserver(([entry]) => {
@@ -103,7 +106,7 @@ export function IndustryStream() {
       document.removeEventListener("visibilitychange", update);
       setRunning(false);
     };
-  }, [reduced]);
+  }, [reduced, paused]);
 
   useEffect(() => {
     if (!running) return;

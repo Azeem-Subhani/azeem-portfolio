@@ -188,7 +188,7 @@
 }
 
 .web-stage-caption span:nth-child(even) {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .web-card {
@@ -374,7 +374,7 @@
     linear-gradient(to right, color-mix(in srgb, var(--fg) 5%, transparent) 1px, transparent 1px) 0 0 / 14px 14px,
     linear-gradient(to bottom, color-mix(in srgb, var(--fg) 5%, transparent) 1px, transparent 1px) 0 0 / 14px 14px,
     var(--bg);
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .web-book-map > div:first-child {

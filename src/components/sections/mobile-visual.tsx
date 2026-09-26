@@ -91,7 +91,7 @@ const dock: Variants = {
 const faces = [
   { initials: "MR", className: "bg-accent text-accent-foreground" },
   { initials: "AK", className: "bg-signal text-foreground" },
-  { initials: "JL", className: "bg-surface-elevated text-accent" },
+  { initials: "JL", className: "bg-surface-elevated text-accent-ink" },
   { initials: "TP", className: "bg-accent/35 text-foreground" },
   { initials: "NS", className: "bg-signal/40 text-foreground" },
 ];
@@ -179,7 +179,7 @@ function Pitch() {
     <motion.div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-background" variants={pass}>
       <svg
         viewBox="0 0 100 132"
-        className="absolute inset-0 h-full w-full text-accent/45"
+        className="absolute inset-0 h-full w-full text-accent-ink/45"
         aria-hidden="true"
       >
         <rect x="5" y="5" width="90" height="122" rx="3" fill="rgb(42 161 152 / 0.08)" stroke="currentColor" strokeWidth="0.9" />
@@ -224,7 +224,7 @@ function CoachTablet() {
               <p className="text-[11px] text-muted-foreground">Coach board</p>
               <p className="font-display text-2xl leading-none text-foreground">4-3-3</p>
             </div>
-            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent">
+            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent-ink">
               synced
             </span>
           </motion.div>
@@ -296,7 +296,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                 <div className="text-center">
                   <p className="text-[10px] text-muted-foreground">Riverside</p>
                   <p className="font-display text-[1.65rem] leading-none text-foreground">6:00</p>
-                  <p className="mt-0.5 text-[10px] font-medium text-accent">vs</p>
+                  <p className="mt-0.5 text-[10px] font-medium text-accent-ink">vs</p>
                 </div>
                 <KitMark letters="NS" away />
               </div>
@@ -318,7 +318,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                   </motion.span>
                 ))}
               </div>
-              <p className="ml-2.5 text-[12px] text-accent">14 going</p>
+              <p className="ml-2.5 text-[12px] text-accent-ink">14 going</p>
             </motion.div>
 
             <motion.div className="mt-3.5 grid gap-2" variants={pass}>
@@ -387,7 +387,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                   <div
                     key={tab.label}
                     className={`flex flex-col items-center gap-0.5 ${
-                      tab.active ? "text-accent" : "text-muted-foreground"
+                      tab.active ? "text-accent-ink" : "text-muted-foreground"
                     }`}
                   >
                     <Icon className="size-4" strokeWidth={1.75} />

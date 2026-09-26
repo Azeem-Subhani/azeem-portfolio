@@ -69,12 +69,12 @@ describe("Header", () => {
     expect(within(nav).getByRole("link", { name: "Why me" })).toHaveAttribute("href", "/why-me");
     expect(within(nav).getByRole("link", { name: "Process" })).toHaveAttribute("href", "/process");
     expect(within(nav).getByRole("button", { name: "Services" })).toHaveAttribute(
-      "aria-haspopup",
-      "menu",
+      "aria-expanded",
+      "false",
     );
     expect(within(nav).getByRole("button", { name: "Industries" })).toHaveAttribute(
-      "aria-haspopup",
-      "menu",
+      "aria-expanded",
+      "false",
     );
     expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
     expect(screen.queryByRole("link", { name: "Resume" })).not.toBeInTheDocument();
@@ -87,18 +87,18 @@ describe("Header", () => {
 
     await user.click(screen.getByRole("button", { name: "Services" }));
 
-    const menu = screen.getByRole("menu", { name: "Services" });
+    const menu = screen.getByRole("list", { name: "Services" });
     expect(
-      within(menu).getByRole("menuitem", { name: /Cloud services/ }),
+      within(menu).getByRole("link", { name: /Cloud services/ }),
     ).toHaveAttribute("href", "/services/cloud");
     expect(
-      within(menu).getByRole("menuitem", { name: /Web development/ }),
+      within(menu).getByRole("link", { name: /Web development/ }),
     ).toHaveAttribute("href", "/services/web-development");
     expect(
-      within(menu).getByRole("menuitem", { name: /Mobile development/ }),
+      within(menu).getByRole("link", { name: /Mobile development/ }),
     ).toHaveAttribute("href", "/services/mobile-development");
     expect(
-      within(menu).getByRole("menuitem", { name: /Data management/ }),
+      within(menu).getByRole("link", { name: /Data management/ }),
     ).toHaveAttribute("href", "/services/data-management");
   });
 
@@ -109,8 +109,8 @@ describe("Header", () => {
 
     await user.hover(screen.getByRole("button", { name: "Services" }));
 
-    expect(screen.getByRole("menu", { name: "Services" })).toBeVisible();
-    expect(screen.getByRole("menuitem", { name: /Cloud services/ })).toBeVisible();
+    expect(screen.getByRole("list", { name: "Services" })).toBeVisible();
+    expect(screen.getByRole("link", { name: /Cloud services/ })).toBeVisible();
   });
 
   it("opens the industries menu with every industry page", async () => {
@@ -120,9 +120,9 @@ describe("Header", () => {
 
     await user.click(screen.getByRole("button", { name: "Industries" }));
 
-    const menu = screen.getByRole("menu", { name: "Industries" });
+    const menu = screen.getByRole("list", { name: "Industries" });
     const hrefs = within(menu)
-      .getAllByRole("menuitem")
+      .getAllByRole("link")
       .map((item) => item.getAttribute("href"));
     expect(hrefs).toEqual(industries.map((industry) => industryPath(industry.slug)));
   });
@@ -138,5 +138,24 @@ describe("Header", () => {
     await user.hover(screen.getByRole("button", { name: "Industries" }));
     expect(screen.getByRole("button", { name: "Industries" })).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("button", { name: "Services" })).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("lets Tab move from the Services button into its links", async () => {
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    render(<Header />);
+
+    const button = screen.getByRole("button", { name: "Services" });
+    button.focus();
+    await user.keyboard("{Enter}");
+    expect(button).toHaveAttribute("aria-expanded", "true");
+
+    await user.tab();
+    expect(screen.getByRole("link", { name: /Cloud services/ })).toHaveFocus();
+
+    // A second Enter on the button (after a keyboard open) closes it again.
+    button.focus();
+    await user.keyboard("{Enter}");
+    expect(button).toHaveAttribute("aria-expanded", "false");
   });
 });
