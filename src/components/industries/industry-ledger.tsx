@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 
+import { useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -102,6 +103,8 @@ function LedgerRow({ row, fresh }: { row: Row; fresh: boolean }) {
 
 export function IndustryLedger() {
   const reduced = usePrefersReducedMotion();
+  // The page's pause control freezes the loop on its current frame.
+  const paused = useMotionPaused();
   const panelRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
   const [running, setRunning] = useState(false);
@@ -109,7 +112,7 @@ export function IndustryLedger() {
   // Only tick while the panel is on screen and the tab is visible.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel || reduced) return;
+    if (!panel || reduced || paused) return;
     let inView = false;
     const update = () => setRunning(inView && document.visibilityState === "visible");
     const observer = new IntersectionObserver(([entry]) => {
@@ -123,7 +126,7 @@ export function IndustryLedger() {
       document.removeEventListener("visibilitychange", update);
       setRunning(false);
     };
-  }, [reduced]);
+  }, [reduced, paused]);
 
   useEffect(() => {
     if (!running) return;

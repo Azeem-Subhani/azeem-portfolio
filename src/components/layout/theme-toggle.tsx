@@ -20,7 +20,9 @@ export function ThemeToggle() {
   }, []);
 
   const isDark = mounted && resolvedTheme === "dark";
-  const label = isDark ? "Use light theme" : "Use dark theme";
+  // Until mount the active theme is unknown (the site defaults to dark), so the
+  // pre-hydration label stays neutral instead of guessing wrong.
+  const label = !mounted ? "Change theme" : isDark ? "Use light theme" : "Use dark theme";
 
   return (
     <Button

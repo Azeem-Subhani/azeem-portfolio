@@ -26,6 +26,7 @@
   --ring: #1c827a;
   --success: #859900;
   --error: #dc322f;
+  --error-readable: #b8231f;
   --glass: rgb(251 247 238 / 82%);
   --header-glass: rgb(251 247 238 / 20%);
   --shadow-color: 7 54 66;
@@ -66,6 +67,7 @@
   --ring: #2aa198;
   --success: #859900;
   --error: #dc322f;
+  --error-readable: #ff8a80;
   --glass: rgb(0 43 54 / 82%);
   --header-glass: rgb(0 43 54 / 20%);
   --shadow-color: 0 0 0;
@@ -100,6 +102,7 @@
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-error: var(--error);
+  --color-error-readable: var(--error-readable);
   --color-glass: var(--glass);
   --color-header-glass: var(--header-glass);
   --font-display: var(--font-h1);
@@ -134,6 +137,18 @@
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 3px;
+  }
+
+  /* Skip-link and TOC targets receive focus so the next Tab starts there,
+     but a ring around a whole section reads as a bug. */
+  [data-scroll-target]:focus {
+    outline: none;
+  }
+
+  /* Page pause control (MotionPauseButton): hold CSS loops on their current frame. */
+  [data-motion-paused] [data-pausable],
+  [data-motion-paused] [data-pausable] * {
+    animation-play-state: paused !important;
   }
 }
 

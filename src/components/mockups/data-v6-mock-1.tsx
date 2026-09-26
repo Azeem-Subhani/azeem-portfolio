@@ -382,6 +382,9 @@ export function StoreOfRecordVisual({
                   <button
                     key={id}
                     type="button"
+                    // The visual sits inside an aria-hidden wrapper, so keep this
+                    // pointer-only demo control out of the keyboard tab order.
+                    tabIndex={-1}
                     aria-pressed={selected}
                     onClick={() => pick(id)}
                     className="relative h-8 rounded-full px-3 text-[12px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"

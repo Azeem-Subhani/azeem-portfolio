@@ -6,6 +6,7 @@ import { IconMark, toneColors } from "@/components/industries/industry-icons";
 import { IndustryLedger } from "@/components/industries/industry-ledger";
 import { IndustrySolutionTabs } from "@/components/industries/industry-solution-tabs";
 import { IndustryStackLoop } from "@/components/industries/industry-stack-loop";
+import { MotionPauseButton } from "@/components/motion/motion-pause-button";
 import { SolutionLink } from "@/components/industries/solution-link";
 import { IndustryCare } from "@/components/industries/visuals/industry-care";
 import { IndustryCheckout } from "@/components/industries/visuals/industry-checkout";
@@ -213,6 +214,7 @@ export function IndustryHero({ industry }: SectionProps) {
       {copy}
       <div
         data-im="hero-visual"
+        data-pausable=""
         className={cn(
           "w-full max-w-md justify-self-center",
           centered ? "max-w-xl" : "lg:max-w-none",
@@ -220,6 +222,9 @@ export function IndustryHero({ industry }: SectionProps) {
         )}
       >
         <Visual />
+        <div className="mt-3 flex justify-end">
+          <MotionPauseButton />
+        </div>
       </div>
     </header>
   );

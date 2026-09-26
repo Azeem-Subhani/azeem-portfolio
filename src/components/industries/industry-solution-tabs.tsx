@@ -107,7 +107,7 @@ export function IndustrySolutionTabs({
           role="tabpanel"
           aria-labelledby={`${baseId}-tab-${active}`}
           tabIndex={0}
-          className="industry-tab-panel focus-visible:outline-none"
+          className="industry-tab-panel rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
           <h3 className="font-display text-[1.9rem] font-normal leading-tight">{solution.title}</h3>
           <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">{solution.copy}</p>

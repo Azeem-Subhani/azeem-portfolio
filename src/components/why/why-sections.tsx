@@ -27,17 +27,29 @@ export function Figure({
   const counts = /\d/.test(value);
   return (
     <span
-      // Numeric figures count on scroll-in (see WhyMotion); word figures just fade in.
-      // Lower-is-better figures such as timelines count down to the value instead of up.
-      data-why-count={counts ? value : undefined}
-      data-why-count-down={counts && lowerIsBetter ? "" : undefined}
-      data-why-count-from={counts && lowerIsBetter ? countFrom : undefined}
       className={cn(
         "inline-block origin-left font-display font-normal leading-none text-accent transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
         className,
       )}
     >
-      {value}
+      {counts ? (
+        <>
+          {/* Numeric figures count on scroll-in (see WhyMotion); word figures just fade in.
+              Lower-is-better figures such as timelines count down to the value instead of up.
+              The animated copy is hidden from assistive tech, which reads the final value. */}
+          <span
+            aria-hidden="true"
+            data-why-count={value}
+            data-why-count-down={lowerIsBetter ? "" : undefined}
+            data-why-count-from={lowerIsBetter ? countFrom : undefined}
+          >
+            {value}
+          </span>
+          <span className="sr-only">{value}</span>
+        </>
+      ) : (
+        value
+      )}
     </span>
   );
 }

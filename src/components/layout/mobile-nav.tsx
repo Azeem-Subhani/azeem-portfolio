@@ -40,7 +40,9 @@ export function MobileNav() {
           <Menu aria-hidden="true" className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="bg-background">
+      {/* No description: the title and link list say it all. Opting out explicitly
+          keeps Radix from warning about a missing SheetDescription. */}
+      <SheetContent side="right" className="bg-background" aria-describedby={undefined}>
         <SheetHeader>
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>

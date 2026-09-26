@@ -5,6 +5,7 @@ import "./industry-checkout.css";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, ChevronRight } from "lucide-react";
 
+import { useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +77,8 @@ function useCountUp(target: number, animate: boolean) {
 
 export function IndustryCheckout() {
   const reduced = usePrefersReducedMotion();
+  // The page's pause control freezes the loop on its current frame.
+  const paused = useMotionPaused();
   const panelRef = useRef<HTMLDivElement>(null);
   const [tick, setTick] = useState(INITIAL_TICK);
   const [running, setRunning] = useState(false);
@@ -83,7 +86,7 @@ export function IndustryCheckout() {
   // Only tick while the panel is on screen and the tab is visible.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel || reduced) return;
+    if (!panel || reduced || paused) return;
     let inView = false;
     const update = () => setRunning(inView && document.visibilityState === "visible");
     const observer = new IntersectionObserver(([entry]) => {
@@ -97,7 +100,7 @@ export function IndustryCheckout() {
       document.removeEventListener("visibilitychange", update);
       setRunning(false);
     };
-  }, [reduced]);
+  }, [reduced, paused]);
 
   // Steps have different lengths, so chain timeouts instead of a fixed interval.
   useEffect(() => {

@@ -30,7 +30,12 @@ type NavMenuProps<Tone extends string> = {
 /** Fired when a menu opens so any other open header menu closes at once instead of overlapping. */
 const MENU_OPEN_EVENT = "site-nav-menu-open";
 
-/** Header dropdown shared by Services and Industries: same panel, motion, and keyboard model. */
+/**
+ * Header dropdown shared by Services and Industries: same panel, motion, and
+ * keyboard model. Built as a disclosure (button + list of links) rather than
+ * an ARIA menu, so Tab walks from the button into the links; arrow keys are
+ * an extra shortcut on top.
+ */
 function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: NavMenuProps<Tone>) {
   const pathname = usePathname();
   const menuId = useId();
@@ -71,11 +76,6 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
     return () => window.removeEventListener(MENU_OPEN_EVENT, onOtherOpen);
   }, [menuId]);
 
-  const closeMenu = () => {
-    cancelClose();
-    setOpen(false);
-  };
-
   const scheduleClose = () => {
     cancelClose();
     closeTimer.current = window.setTimeout(() => setOpen(false), 140);
@@ -94,6 +94,11 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
   useEffect(() => {
     if (!open) return;
 
+    const closeMenu = () => {
+      window.clearTimeout(closeTimer.current);
+      setOpen(false);
+    };
+
     if (focusOnOpen.current) {
       itemsRef.current[0]?.focus();
       focusOnOpen.current = false;
@@ -110,11 +115,6 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
         event.preventDefault();
         closeMenu();
         buttonRef.current?.focus();
-        return;
-      }
-
-      if (event.key === "Tab") {
-        closeMenu();
         return;
       }
 
@@ -186,20 +186,29 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
       onPointerLeave={(event) => {
         if (event.pointerType === "mouse") scheduleClose();
       }}
+      onBlur={(event) => {
+        // Tabbing past the last link (or back before the button) closes it.
+        const next = event.relatedTarget;
+        if (open && next instanceof Node && !event.currentTarget.contains(next)) {
+          setOpen(false);
+        }
+      }}
     >
       <button
         ref={buttonRef}
         type="button"
         className={cn(navItemClassName, open && "text-foreground")}
         aria-expanded={open}
-        aria-haspopup="menu"
         aria-controls={menuId}
         aria-current={current ? "true" : undefined}
         onPointerDown={(event) => {
           pointerType.current = event.pointerType;
         }}
         onClick={() => {
-          if (pointerType.current === "mouse") {
+          const fromMouse = pointerType.current === "mouse";
+          // Reset so a later Enter/Space press is treated as a keyboard toggle.
+          pointerType.current = "";
+          if (fromMouse) {
             openMenu();
             return;
           }
@@ -229,14 +238,13 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
         {...(!open ? { inert: true } : {})}
         className="services-menu"
       >
-        <ul role="menu" aria-label={label} className="services-menu-panel">
+        <ul aria-label={label} className="services-menu-panel">
           {items.map((item, index) => {
             const selected = pathname === item.href;
             const Icon: LucideIcon = icons[item.tone];
             return (
               <li
                 key={item.href}
-                role="none"
                 className="services-menu-item"
                 style={{ animationDelay: `${50 + index * 45}ms` }}
               >
@@ -245,8 +253,6 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
                     itemsRef.current[index] = node;
                   }}
                   href={item.href}
-                  role="menuitem"
-                  tabIndex={-1}
                   aria-current={selected ? "page" : undefined}
                   className={cn(
                     "services-menu-link",

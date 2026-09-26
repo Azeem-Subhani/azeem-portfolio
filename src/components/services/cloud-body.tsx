@@ -159,6 +159,7 @@ function ShipChapter({
                 key={item.kicker}
                 type="button"
                 role="tab"
+                id={`cloud-ship-tab-${itemIndex}`}
                 data-cloud-platform={item.kicker}
                 aria-selected={itemIndex === index}
                 aria-controls="cloud-ship-panel"
@@ -174,7 +175,7 @@ function ShipChapter({
               </button>
             ))}
           </div>
-          <div id="cloud-ship-panel" role="tabpanel">
+          <div id="cloud-ship-panel" role="tabpanel" aria-labelledby={`cloud-ship-tab-${index}`}>
             <ShipStage
               key={section.kicker}
               kicker={section.kicker}

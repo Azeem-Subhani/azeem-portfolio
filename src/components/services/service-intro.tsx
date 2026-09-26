@@ -56,7 +56,10 @@ export function ServiceIntro({ service }: ServiceIntroProps) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const row = intro.querySelector<HTMLElement>(".service-proof-hero");
-    const statValues = Array.from(intro.querySelectorAll<HTMLElement>("[data-service-proof] dd"));
+    // Only the aria-hidden copy animates; the sr-only sibling keeps the final value.
+    const statValues = Array.from(
+      intro.querySelectorAll<HTMLElement>("[data-service-proof] dd [data-value]"),
+    );
     if (!row || statValues.length === 0) return;
 
     // If the stats are on screen and their fade has already begun (slow hydration),
@@ -188,7 +191,10 @@ export function ServiceIntro({ service }: ServiceIntroProps) {
         <dl className="service-proof-hero">
           <div data-service-proof style={{ "--i": 0 } as CSSProperties}>
             <dt>{lead.label}</dt>
-            <dd data-value={lead.value}>{lead.value}</dd>
+            <dd>
+              <span aria-hidden="true" data-value={lead.value}>{lead.value}</span>
+              <span className="sr-only">{lead.value}</span>
+            </dd>
           </div>
           {rest.map((item, index) => (
             <div
@@ -197,7 +203,10 @@ export function ServiceIntro({ service }: ServiceIntroProps) {
               style={{ "--i": index + 1 } as CSSProperties}
             >
               <dt>{item.label}</dt>
-              <dd data-value={item.value}>{item.value}</dd>
+              <dd>
+                <span aria-hidden="true" data-value={item.value}>{item.value}</span>
+                <span className="sr-only">{item.value}</span>
+              </dd>
             </div>
           ))}
         </dl>

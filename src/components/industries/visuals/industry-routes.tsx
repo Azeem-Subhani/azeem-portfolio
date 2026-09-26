@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { useMotionPaused } from "@/hooks/use-motion-paused";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -152,6 +153,8 @@ const toPoints = (points: readonly Pt[]) => points.map(([x, y]) => `${x},${y}`).
 
 export function IndustryRoutes() {
   const reduced = usePrefersReducedMotion();
+  // The page's pause control freezes the loop on its current frame.
+  const paused = useMotionPaused();
   const panelRef = useRef<HTMLDivElement>(null);
   const distRef = useRef<number[]>([...INITIAL_DIST]);
   const lapRef = useRef<number[]>(INITIAL_STATUS.map((s) => s.lap));
@@ -162,7 +165,7 @@ export function IndustryRoutes() {
   // Only animate while the panel is on screen and the tab is visible.
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel || reduced) return;
+    if (!panel || reduced || paused) return;
     let inView = false;
     const update = () => setRunning(inView && document.visibilityState === "visible");
     const observer = new IntersectionObserver(([entry]) => {
@@ -176,7 +179,7 @@ export function IndustryRoutes() {
       document.removeEventListener("visibilitychange", update);
       setRunning(false);
     };
-  }, [reduced]);
+  }, [reduced, paused]);
 
   // Continuous movement is written straight to the DOM each frame; React only
   // re-renders when a stop is reached or an ETA minute ticks over.

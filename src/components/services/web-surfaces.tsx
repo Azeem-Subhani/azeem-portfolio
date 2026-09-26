@@ -353,6 +353,7 @@ export function PrototypeStage() {
             key={item.id}
             type="button"
             role="tab"
+            id={`web-proto-tab-${item.id}`}
             data-proto-tab={item.id}
             aria-selected={item.id === active}
             aria-controls="web-proto-panel"
@@ -368,7 +369,12 @@ export function PrototypeStage() {
           </button>
         ))}
       </div>
-      <div className="web-proto-stage" id="web-proto-panel">
+      <div
+        className="web-proto-stage"
+        id="web-proto-panel"
+        role="tabpanel"
+        aria-labelledby={`web-proto-tab-${active}`}
+      >
         {prototypes.map((item) => (
           <div
             key={item.id}

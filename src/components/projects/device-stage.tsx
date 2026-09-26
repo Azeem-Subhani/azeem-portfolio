@@ -2,6 +2,7 @@
 
 import {
   useId,
+  useRef,
   useState,
   type ComponentProps,
   type KeyboardEvent,
@@ -94,6 +95,26 @@ export function DeviceStage({
     if (phoneAt >= 0) setPhoneIndex(phoneAt);
   };
 
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const tabId = (index: number) => `${statusId}-tab-${index}`;
+
+  // Tabs follow the APG pattern: one tab stop, arrows/Home/End move selection
+  // and focus together. Handled here so the stage-level arrows don't also fire.
+  const onTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const last = controlSlides.length - 1;
+    let next: number | null = null;
+    if (event.key === "ArrowRight") next = controlIndex === last ? 0 : controlIndex + 1;
+    else if (event.key === "ArrowLeft") next = controlIndex === 0 ? last : controlIndex - 1;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = last;
+    if (next === null) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    setWebIndex(next);
+    tabRefs.current[next]?.focus();
+  };
+
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (!showControls) return;
     if (event.key === "ArrowLeft") {
@@ -135,6 +156,7 @@ export function DeviceStage({
         <div
           role="tablist"
           aria-label="Choose a screen"
+          onKeyDown={onTabKeyDown}
           className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-border/70 bg-surface/70 p-1 shadow-sm backdrop-blur-md"
         >
           {controlSlides.map((slide, slideIndex) => {
@@ -142,10 +164,15 @@ export function DeviceStage({
             return (
               <button
                 key={slide.id}
+                ref={(node) => {
+                  tabRefs.current[slideIndex] = node;
+                }}
+                id={tabId(slideIndex)}
                 type="button"
                 role="tab"
                 aria-selected={selected}
                 aria-controls={statusId}
+                tabIndex={selected ? 0 : -1}
                 className={cn(
                   "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]",
                   selected
@@ -166,7 +193,13 @@ export function DeviceStage({
   // The captures themselves are inert pictures, so this line is what a screen reader gets.
   // It doubles as the live status when the pager changes the screen.
   const description = activeWeb ? (
-    <p id={statusId} className="sr-only" aria-live={showControls ? "polite" : undefined}>
+    <p
+      id={statusId}
+      className="sr-only"
+      role={showControls ? "tabpanel" : undefined}
+      aria-labelledby={showControls ? tabId(controlIndex) : undefined}
+      aria-live={showControls ? "polite" : undefined}
+    >
       {`Web app screen: ${activeWeb.label}`}
       {layout === "hero" && activePhone ? `, with ${activePhone.label} on a phone` : ""}
       {showControls ? `. ${controlIndex + 1} of ${controlSlides.length}` : ""}

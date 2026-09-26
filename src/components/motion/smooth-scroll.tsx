@@ -28,7 +28,18 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       lenis.resize();
       ScrollTrigger.refresh();
     };
-    const scrollToHash = (hash: string, immediate = false) => {
+    // Anchor clicks are intercepted for smooth scrolling, which also skips the
+    // browser's own focus move. Move focus by hand so the skip link and
+    // in-page TOCs put keyboard and screen-reader users at the target.
+    const focusTarget = (target: HTMLElement) => {
+      if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+        // Sections are focus targets, not controls; globals.css drops the ring.
+        target.setAttribute("data-scroll-target", "");
+      }
+      target.focus({ preventScroll: true });
+    };
+    const scrollToHash = (hash: string, immediate = false, moveFocus = true) => {
       const id = decodeURIComponent(hash.replace(/^#/, ""));
       const target = id ? document.getElementById(id) : null;
       if (!target) return;
@@ -39,6 +50,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
         immediate,
         force: true,
       });
+      if (moveFocus) focusTarget(target);
     };
     const handleAnchorClick = (event: MouseEvent) => {
       if (
@@ -80,7 +92,8 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     const initialHashTimer = window.setTimeout(() => {
       refresh();
       if (window.location.hash) {
-        scrollToHash(window.location.hash, true);
+        // A deep link on load positions the page but leaves focus alone.
+        scrollToHash(window.location.hash, true, false);
       }
     }, 60);
 

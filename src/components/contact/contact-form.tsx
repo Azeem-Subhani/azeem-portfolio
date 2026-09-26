@@ -62,6 +62,12 @@ export function ContactForm() {
       return;
     }
 
+    // Tab leaves the list (to the phone input) instead of walking every option.
+    if (event.key === "Tab") {
+      if (isCountryMenuOpen) setIsCountryMenuOpen(false);
+      return;
+    }
+
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       const direction = event.key === "ArrowDown" ? 1 : -1;
@@ -231,7 +237,7 @@ export function ContactForm() {
             {...register("name")}
           />
           {errors.name ? (
-            <p id={`${formId}-name-error`} className="text-sm text-error">
+            <p id={`${formId}-name-error`} className="text-sm text-error-readable">
               {errors.name.message}
             </p>
           ) : null}
@@ -250,7 +256,7 @@ export function ContactForm() {
             {...register("email")}
           />
           {errors.email ? (
-            <p id={`${formId}-email-error`} className="text-sm text-error">
+            <p id={`${formId}-email-error`} className="text-sm text-error-readable">
               {errors.email.message}
             </p>
           ) : null}
@@ -262,13 +268,13 @@ export function ContactForm() {
           Phone <span className="text-muted-foreground">(optional)</span>
         </Label>
         <div
-          className={`flex min-h-12 w-full items-center rounded-2xl border bg-surface-elevated px-3 transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 ${errors.phone ? "border-error" : "border-muted-foreground/35"}`}
+          className={`flex min-h-12 w-full items-center rounded-2xl border bg-surface-elevated px-3 transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 ${errors.phone ? "border-error" : "border-muted-foreground/85"}`}
         >
           <div ref={countryMenuRef} className="relative shrink-0">
             <button
               type="button"
               ref={countryTriggerRef}
-              aria-label="Choose country"
+              aria-label={`Country code: ${selectedCountry.name} ${selectedCountry.dialCode}. Change country`}
               aria-haspopup="listbox"
               aria-expanded={isCountryMenuOpen}
               aria-controls={`${formId}-country-menu`}
@@ -305,6 +311,8 @@ export function ContactForm() {
                     }}
                     role="option"
                     aria-selected={country.code === countryCode}
+                    // Roving tab stop: arrows and typeahead move focus between options.
+                    tabIndex={country.code === highlightedCountryCode ? 0 : -1}
                     data-highlighted={country.code === highlightedCountryCode}
                     className="flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-sm transition-colors hover:bg-surface-elevated aria-[selected=true]:bg-accent/15 data-[highlighted=true]:bg-surface-elevated"
                     onClick={() => {
@@ -358,7 +366,7 @@ export function ContactForm() {
           />
         </div>
         {errors.phone ? (
-          <p id={`${formId}-phone-error`} className="text-sm text-error">
+          <p id={`${formId}-phone-error`} className="text-sm text-error-readable">
             {errors.phone.message}
           </p>
         ) : null}
@@ -375,7 +383,7 @@ export function ContactForm() {
           {...register("message")}
         />
         {errors.message ? (
-          <p id={`${formId}-message-error`} className="text-sm text-error">
+          <p id={`${formId}-message-error`} className="text-sm text-error-readable">
             {errors.message.message}
           </p>
         ) : null}
@@ -401,7 +409,7 @@ export function ContactForm() {
             </span>
           ) : null}
           {submitState === "error" ? (
-            <span className="text-error">
+            <span className="text-error-readable">
               {errorMessage}{" "}
               <a href={`mailto:${profile.email}`} className="underline">
                 {profile.email}
