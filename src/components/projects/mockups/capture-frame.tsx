@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { OXYM_PHONE_MOCK_HEIGHT } from "@/components/projects/device-frames/iphone-15-pro";
+import { SPORTS_TEAM_PHONE_MOCK_HEIGHT } from "@/components/projects/device-frames/iphone-15-pro";
 import { useBuildUp } from "@/components/projects/mockups/use-build-up";
 import { useCaptureScale } from "@/components/projects/mockups/use-capture-scale";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import "@/components/projects/mockups/capture-frame.css";
 export const WEB_CAPTURE_SIZE = { width: 1600, height: 900 } as const;
 export const PHONE_CAPTURE_SIZE = {
   width: 900,
-  height: OXYM_PHONE_MOCK_HEIGHT,
+  height: SPORTS_TEAM_PHONE_MOCK_HEIGHT,
 } as const;
 
 type CaptureFrameProps = {

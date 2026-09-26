@@ -312,8 +312,8 @@ export function MobileServiceBody({ service }: { service: ServicePageContent }) 
             </li>
           ))}
         </ol>
-        <Link href="/projects/oxym" className="mobile-toc-link">
-          See it live: Oxym <ArrowRight aria-hidden="true" />
+        <Link href="/projects/sports-team-app" className="mobile-toc-link">
+          See it live: Sports Team App <ArrowRight aria-hidden="true" />
         </Link>
       </nav>
       <div className="mobile-body-scroll overflow-x-clip">

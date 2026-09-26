@@ -66,14 +66,14 @@ function IconSettings() {
   );
 }
 
-export type TrackHeroConsoleNav =
+export type TrackBookingConsoleNav =
   | "dashboard"
   | "bookings"
   | "schedule"
   | "fleet"
   | "crm";
 
-export type TrackHeroConsoleSidebar =
+export type TrackBookingConsoleSidebar =
   | "overview"
   | "bookings"
   | "schedule"
@@ -82,26 +82,26 @@ export type TrackHeroConsoleSidebar =
   | "reports"
   | "settings";
 
-type TrackHeroWebConsoleChromeProps = {
+type TrackBookingWebConsoleChromeProps = {
   ariaLabel: string;
-  activeNav: TrackHeroConsoleNav;
-  activeSidebar: TrackHeroConsoleSidebar;
+  activeNav: TrackBookingConsoleNav;
+  activeSidebar: TrackBookingConsoleSidebar;
   children: ReactNode;
 };
 
-export function TrackHeroWebConsoleChrome({
+export function TrackBookingWebConsoleChrome({
   ariaLabel,
   activeNav,
   activeSidebar,
   children,
-}: TrackHeroWebConsoleChromeProps) {
+}: TrackBookingWebConsoleChromeProps) {
   return (
     <section className="capture capture--web" aria-label={ariaLabel}>
       <header className="topbar">
         <div className="brand">
-          <div className="logo">TH</div>
+          <div className="logo">TB</div>
           <div>
-            <div className="b-name">TRACK HERO</div>
+            <div className="b-name">TRACK BOOKING</div>
             <div className="b-sub">Ops Console</div>
           </div>
         </div>

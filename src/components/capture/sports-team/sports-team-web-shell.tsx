@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type OxymWebNavId =
+export type SportsTeamWebNavId =
   | "today"
   | "schedule"
   | "roster"
@@ -8,14 +8,14 @@ export type OxymWebNavId =
   | "invoices"
   | "emails";
 
-type OxymWebShellProps = {
-  activeNav: OxymWebNavId;
+type SportsTeamWebShellProps = {
+  activeNav: SportsTeamWebNavId;
   children: ReactNode;
   topbarTitle?: string;
   topbarSub?: string;
 };
 
-const navItems: { id: OxymWebNavId; label: string }[] = [
+const navItems: { id: SportsTeamWebNavId; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "schedule", label: "Schedule" },
   { id: "roster", label: "Roster" },
@@ -24,7 +24,7 @@ const navItems: { id: OxymWebNavId; label: string }[] = [
   { id: "emails", label: "Emails" },
 ];
 
-function NavIcon({ id }: { id: OxymWebNavId }) {
+function NavIcon({ id }: { id: SportsTeamWebNavId }) {
   switch (id) {
     case "today":
       return (
@@ -70,14 +70,14 @@ function NavIcon({ id }: { id: OxymWebNavId }) {
   }
 }
 
-export function OxymWebShell({
+export function SportsTeamWebShell({
   activeNav,
   children,
   topbarTitle = "Northside FC",
   topbarSub = "First Team, Season 2025/26",
-}: OxymWebShellProps) {
+}: SportsTeamWebShellProps) {
   return (
-    <section className="capture capture--web" aria-label="Oxym web app">
+    <section className="capture capture--web" aria-label="Sports team web app">
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">
@@ -86,7 +86,7 @@ export function OxymWebShell({
               <circle cx="12" cy="12" r="2.7" fill="currentColor" />
             </svg>
           </span>
-          <span className="brand-word">Oxym</span>
+          <span className="brand-word">Sports Team</span>
         </div>
 
         <nav className="nav">

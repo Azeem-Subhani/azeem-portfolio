@@ -12,7 +12,7 @@
 }
 
 /* Safe area from iPhone 15 Pro (59pt top, 34pt home indicator) mapped to the capture's
-   562px zoomed canvas (see .capture--phone in track-hero-capture.css). */
+   562px zoomed canvas (see .capture--phone in track-booking-capture.css). */
 .th-phone-mock-host .p-topbar {
   height: auto;
   padding-top: 84px;

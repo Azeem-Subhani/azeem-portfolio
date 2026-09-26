@@ -2,7 +2,7 @@ import type { IndustryPageContent } from "@/types/content";
 
 /*
  * Approach page: no education product has shipped. Solutions link related work
- * (Task Manager, Smart Living, Track Hero, Oxym). Never state FERPA or COPPA compliance.
+ * (Task Manager, Smart Living, Track Booking Platform, Sports Team App). Never state FERPA or COPPA compliance.
  */
 export const educationIndustry: IndustryPageContent = {
   slug: "education",
@@ -95,7 +95,7 @@ export const educationIndustry: IndustryPageContent = {
         "Waitlists",
         "Operator back office",
       ],
-      link: { kind: "related", label: "Track Hero", href: "/projects/track-hero" },
+      link: { kind: "related", label: "Track Booking Platform", href: "/projects/track-booking" },
     },
     {
       icon: "sparkles",
@@ -109,7 +109,7 @@ export const educationIndustry: IndustryPageContent = {
         "Web and mobile delivery",
         "Real-time messaging",
       ],
-      link: { kind: "related", label: "Oxym", href: "/projects/oxym" },
+      link: { kind: "related", label: "Sports Team App", href: "/projects/sports-team-app" },
     },
   ],
   stackIntro: "The tools behind the related work, ready to carry over.",

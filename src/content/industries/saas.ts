@@ -1,8 +1,8 @@
 import type { IndustryPageContent } from "@/types/content";
 
 /*
- * Sources: experience.ts (SaaS delivery at Cinnova), projects.ts (Track Hero white-label,
- * Oxym), services/cloud.ts (SaaS analytics case). Do not add figures they do not state.
+ * Sources: experience.ts (SaaS delivery at Cinnova), projects.ts (Track Booking Platform white-label,
+ * Sports Team App), services/cloud.ts (SaaS analytics case). Do not add figures they do not state.
  */
 export const saasIndustry: IndustryPageContent = {
   slug: "saas",
@@ -71,7 +71,7 @@ export const saasIndustry: IndustryPageContent = {
         "One codebase, one release",
         "Operator back office",
       ],
-      link: { kind: "shipped", label: "Track Hero", href: "/projects/track-hero" },
+      link: { kind: "shipped", label: "Track Booking Platform", href: "/projects/track-booking" },
     },
     {
       icon: "card",
@@ -85,7 +85,7 @@ export const saasIndustry: IndustryPageContent = {
         "Wallet modules",
         "Billing notifications",
       ],
-      link: { kind: "shipped", label: "Oxym", href: "/projects/oxym" },
+      link: { kind: "shipped", label: "Sports Team App", href: "/projects/sports-team-app" },
     },
     {
       icon: "gauge",

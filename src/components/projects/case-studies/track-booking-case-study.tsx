@@ -9,13 +9,13 @@
  * | phone | checkout        | Checkout           | invented | row (later)  |
  */
 
-import { TrackHeroPhoneCapture } from "@/components/capture/track-hero/phone-capture";
-import { TrackHeroPhoneCheckoutCapture } from "@/components/capture/track-hero/phone-checkout";
-import { TrackHeroPhoneSessionDetailCapture } from "@/components/capture/track-hero/phone-session-detail";
-import { TrackHeroWebCapture } from "@/components/capture/track-hero/web-capture";
-import { TrackHeroWebFleetCapture } from "@/components/capture/track-hero/web-fleet";
-import { TrackHeroWebScheduleCapture } from "@/components/capture/track-hero/web-schedule";
-import "@/components/capture/track-hero/track-hero-capture.css";
+import { TrackBookingPhoneCapture } from "@/components/capture/track-booking/phone-capture";
+import { TrackBookingPhoneCheckoutCapture } from "@/components/capture/track-booking/phone-checkout";
+import { TrackBookingPhoneSessionDetailCapture } from "@/components/capture/track-booking/phone-session-detail";
+import { TrackBookingWebCapture } from "@/components/capture/track-booking/web-capture";
+import { TrackBookingWebFleetCapture } from "@/components/capture/track-booking/web-fleet";
+import { TrackBookingWebScheduleCapture } from "@/components/capture/track-booking/web-schedule";
+import "@/components/capture/track-booking/track-booking-capture.css";
 import {
   CaseStudyBrief,
   CaseStudyNote,
@@ -25,7 +25,7 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import "@/components/projects/mockups/track-hero-phone-mock.css";
+import "@/components/projects/mockups/track-booking-phone-mock.css";
 import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
@@ -36,11 +36,11 @@ const phoneShell = {
   statusTone: "dark" as const,
 };
 
-type TrackHeroCaseStudyProps = {
+type TrackBookingCaseStudyProps = {
   project: Project;
 };
 
-export function TrackHeroCaseStudy({ project }: TrackHeroCaseStudyProps) {
+export function TrackBookingCaseStudy({ project }: TrackBookingCaseStudyProps) {
   return (
     <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
@@ -59,33 +59,33 @@ export function TrackHeroCaseStudy({ project }: TrackHeroCaseStudyProps) {
             {
               id: "ops-overview",
               label: "Group overview",
-              url: "www.trackhero.com",
+              url: "booking.example.com",
               tone: "dark",
               children: (
                 <CaptureFrame kind="web" background="#07080A">
-                  <TrackHeroWebCapture />
+                  <TrackBookingWebCapture />
                 </CaptureFrame>
               ),
             },
             {
               id: "event-schedule",
               label: "Event schedule",
-              url: "www.trackhero.com",
+              url: "booking.example.com",
               tone: "dark",
               children: (
                 <CaptureFrame kind="web" background="#07080A">
-                  <TrackHeroWebScheduleCapture />
+                  <TrackBookingWebScheduleCapture />
                 </CaptureFrame>
               ),
             },
             {
               id: "fleet",
               label: "Fleet",
-              url: "www.trackhero.com",
+              url: "booking.example.com",
               tone: "dark",
               children: (
                 <CaptureFrame kind="web" background="#07080A">
-                  <TrackHeroWebFleetCapture />
+                  <TrackBookingWebFleetCapture />
                 </CaptureFrame>
               ),
             },
@@ -97,7 +97,7 @@ export function TrackHeroCaseStudy({ project }: TrackHeroCaseStudyProps) {
               ...phoneShell,
               children: (
                 <CaptureFrame kind="phone" background="#07080A" className="th-phone-mock-host">
-                  <TrackHeroPhoneCapture />
+                  <TrackBookingPhoneCapture />
                 </CaptureFrame>
               ),
             },
@@ -110,7 +110,7 @@ export function TrackHeroCaseStudy({ project }: TrackHeroCaseStudyProps) {
           "Motorsports venues sell track time, driving experiences, and events. Each one wanted a booking site that felt like their brand, not a generic portal. They still had to share reservations, fleet assignments, CRM, and payments without five separate backends.",
         ]}
         solution={[
-          "I worked full stack on the customer booking flows and the operator back office. That meant reservations and scheduling, fleet and events, reporting, and the Stripe paths for cards, gift certificates, credits, and promo codes. White-label fronts went to Sonoma Raceway, Monticello Motor Club, The Motor Enclave, Skip Barber, and Spring Mountain, all on one Django API with typed clients, token refresh, and route guards.",
+          "I worked full stack on the customer booking flows and the operator back office. That meant reservations and scheduling, fleet and events, reporting, and the Stripe paths for cards, gift certificates, credits, and promo codes. White-label fronts went to Coastal Raceway, Ridgeline Motor Club, Harbor Motor Park, Summit Racing School, and High Desert Motorsports, all on one Django API with typed clients, token refresh, and route guards.",
         ]}
       />
 
@@ -128,7 +128,7 @@ export function TrackHeroCaseStudy({ project }: TrackHeroCaseStudyProps) {
               ...phoneShell,
               children: (
                 <CaptureFrame kind="phone" background="#07080A" className="th-phone-mock-host">
-                  <TrackHeroPhoneSessionDetailCapture />
+                  <TrackBookingPhoneSessionDetailCapture />
                 </CaptureFrame>
               ),
             },
@@ -138,7 +138,7 @@ export function TrackHeroCaseStudy({ project }: TrackHeroCaseStudyProps) {
               ...phoneShell,
               children: (
                 <CaptureFrame kind="phone" background="#07080A" className="th-phone-mock-host">
-                  <TrackHeroPhoneCheckoutCapture />
+                  <TrackBookingPhoneCheckoutCapture />
                 </CaptureFrame>
               ),
             },

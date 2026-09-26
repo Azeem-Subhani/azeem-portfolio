@@ -1,10 +1,10 @@
-import { oxymFonts } from "@/components/capture/capture-fonts";
+import { sportsTeamFonts } from "@/components/capture/capture-fonts";
 
-/** 1600×900 Oxym coach dashboard — ported from deepseek_html_20260911_c7333f.html */
-export function OxymWebCapture() {
+/** 1600×900 Sports team coach dashboard — ported from deepseek_html_20260911_c7333f.html */
+export function SportsTeamWebCapture() {
   return (
-    <div className={`oxym-capture-root ${oxymFonts}`}>
-      <section className="capture capture--web" aria-label="Oxym web app">
+    <div className={`sports-team-capture-root ${sportsTeamFonts}`}>
+      <section className="capture capture--web" aria-label="Sports team web app">
         <aside className="sidebar">
           <div className="brand">
             <span className="brand-mark" aria-hidden="true">
@@ -13,7 +13,7 @@ export function OxymWebCapture() {
                 <circle cx="12" cy="12" r="2.7" fill="currentColor" />
               </svg>
             </span>
-            <span className="brand-word">Oxym</span>
+            <span className="brand-word">Sports Team</span>
           </div>
 
           <nav className="nav">

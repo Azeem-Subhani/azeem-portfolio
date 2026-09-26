@@ -83,7 +83,7 @@ people
 can
 use
 
-Right: a rounded product window (traffic-light controls, title like `live_product` or a real project name such as Track Hero). Inside it, a dark Solarized phone or dashboard mock: booking slots, a payment confirmation, or a live ops metric. Subtle accent glow, not magenta. Primary CTA Contact, secondary View projects. No resume download. No blog.
+Right: a rounded product window (traffic-light controls, title like `live_product` or a real project name such as Track Booking Platform). Inside it, a dark Solarized phone or dashboard mock: booking slots, a payment confirmation, or a live ops metric. Subtle accent glow, not magenta. Primary CTA Contact, secondary View projects. No resume download. No blog.
 
 ### Feature cards
 
@@ -105,8 +105,8 @@ Centered. Light line, then bold accent phrase “technology stack” is allowed 
 Four full-width chapters, alternating text/visual. Headlines can stay close to the reference because they name real capabilities, rewritten to Azeem:
 
 - Cloud expertise at scale — AWS Lambda, Cognito, SAM, Amplify, DynamoDB. Memorial planning portal processing 500+ authenticated payments a day.
-- Web design & development — Next.js and React product UIs. Track Hero’s white-label booking sites for five venues.
-- Cross mobile experiences — Ionic / Angular / React Native. Oxym’s web and mobile clients on one codebase.
+- Web design & development — Next.js and React product UIs. The Track Booking Platform’s white-label booking sites for five venues.
+- Cross mobile experiences — Ionic / Angular / React Native. The Sports Team App’s web and mobile clients on one codebase.
 - Enterprise data management — PostgreSQL, DynamoDB, Firestore, RAG retrieval, Stripe and Trust Commerce transaction flows.
 
 Each visual is a small original mock (dashboard, phone, pipeline), not a stock screenshot and not a copy of Fivex art.

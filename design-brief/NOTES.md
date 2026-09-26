@@ -13,7 +13,7 @@ Header, 50/50 hero, 2x2 feature cards beside plan/build/ship, centered stack, fo
 - Solarized tokens in `src/app/globals.css`. Accent stays `#2aa198`.
 - Instrument Serif and Inter from the root layout.
 - `Button`, `Header`/`Footer` shells, theme toggle, `useReveal`, `useScrolled`.
-- Project facts from `src/content/projects.ts` (Track Hero, Oxym, memorial portal).
+- Project facts from `src/content/projects.ts` (Track Booking Platform, Sports Team App, memorial portal).
 - Stack list matches `src/content/skills.ts`. Marks are new monochrome SVGs, not the colored workflow icons.
 
 Removed `/resume`, nav links, sitemap entry, and `scripts/generate-resume-pdf.ts`. `public/azeem-subhani-resume.pdf` is still on disk. `/projects` and `/contact` are unchanged.

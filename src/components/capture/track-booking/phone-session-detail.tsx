@@ -1,11 +1,11 @@
-import { trackHeroFonts } from "@/components/capture/capture-fonts";
+import { trackBookingFonts } from "@/components/capture/capture-fonts";
 
-/** 900×1600 Track Hero session detail — mobile web. */
+/** 900×1600 Track booking session detail — mobile web. */
 
-export function TrackHeroPhoneSessionDetailCapture() {
+export function TrackBookingPhoneSessionDetailCapture() {
   return (
-    <div className={`th-capture-root ${trackHeroFonts}`}>
-      <section className="capture capture--phone" aria-label="Track Hero session detail on phone">
+    <div className={`th-capture-root ${trackBookingFonts}`}>
+      <section className="capture capture--phone" aria-label="Track booking session detail on phone">
         <div className="p-topbar">
           <button type="button" className="p-icon" aria-label="Back">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,7 +13,7 @@ export function TrackHeroPhoneSessionDetailCapture() {
             </svg>
           </button>
           <div className="p-title">
-            <span className="p-brand">TRACK HERO</span>
+            <span className="p-brand">TRACK BOOKING</span>
             Session detail
             <small>GT Sprint · Fri 18 Sep</small>
           </div>
@@ -51,7 +51,7 @@ export function TrackHeroPhoneSessionDetailCapture() {
             <div data-h="2">Driver requirements</div>
             <ul className="sd-list">
               <li>Valid driver license and signed waiver on file</li>
-              <li>Intermediate group approval or prior Track Hero event</li>
+              <li>Intermediate group approval or prior track event</li>
               <li>Closed-toe shoes and long pants required</li>
             </ul>
           </div>

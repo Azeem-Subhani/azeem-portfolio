@@ -10,11 +10,11 @@ export const IPHONE_15_PRO = {
   safeAreaTop: 59,
 } as const;
 
-/** Oxym phone capture canvas width (Playwright export size). */
-export const OXYM_PHONE_CAPTURE_WIDTH = 900;
+/** Sports team phone capture canvas width (Playwright export size). */
+export const SPORTS_TEAM_PHONE_CAPTURE_WIDTH = 900;
 
 /** Canvas height so width-scaling fills an iPhone 15 Pro screen (393×852). */
-export const OXYM_PHONE_MOCK_HEIGHT = Math.round(
-  OXYM_PHONE_CAPTURE_WIDTH *
+export const SPORTS_TEAM_PHONE_MOCK_HEIGHT = Math.round(
+  SPORTS_TEAM_PHONE_CAPTURE_WIDTH *
     (IPHONE_15_PRO.screenHeight / IPHONE_15_PRO.screenWidth),
 );

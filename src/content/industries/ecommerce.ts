@@ -1,7 +1,7 @@
 import type { IndustryPageContent } from "@/types/content";
 
 /*
- * Sources: services/cloud.ts (e-commerce migration case), projects.ts (Track Hero,
+ * Sources: services/cloud.ts (e-commerce migration case), projects.ts (Track Booking Platform,
  * Woody Shop), services/web.ts (headless Next.js). Do not add figures they do not state.
  */
 export const ecommerceIndustry: IndustryPageContent = {
@@ -99,7 +99,7 @@ export const ecommerceIndustry: IndustryPageContent = {
         "Several branded storefronts, one engine",
         "Order notifications",
       ],
-      link: { kind: "shipped", label: "Track Hero", href: "/projects/track-hero" },
+      link: { kind: "shipped", label: "Track Booking Platform", href: "/projects/track-booking" },
     },
   ],
   stackIntro: "What the store runs on, from the page a shopper sees to the database the order lands in.",

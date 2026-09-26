@@ -1,11 +1,11 @@
-import { trackHeroFonts } from "@/components/capture/capture-fonts";
+import { trackBookingFonts } from "@/components/capture/capture-fonts";
 
-/** 900×1600 Track Hero customer booking — mobile web. */
+/** 900×1600 Track booking customer flow — mobile web. */
 
-export function TrackHeroPhoneCapture() {
+export function TrackBookingPhoneCapture() {
   return (
-    <div className={`th-capture-root ${trackHeroFonts}`}>
-      <section className="capture capture--phone" aria-label="Track Hero booking on phone">
+    <div className={`th-capture-root ${trackBookingFonts}`}>
+      <section className="capture capture--phone" aria-label="Track booking on phone">
         <div className="p-topbar">
           <button type="button" className="p-icon" aria-label="Back">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,7 +13,7 @@ export function TrackHeroPhoneCapture() {
             </svg>
           </button>
           <div className="p-title">
-            <span className="p-brand">TRACK HERO</span>
+            <span className="p-brand">TRACK BOOKING</span>
             Book a session
             <small>Apex Raceway · Fri 18 Sep</small>
           </div>
@@ -31,7 +31,7 @@ export function TrackHeroPhoneCapture() {
                 <span className="tag">ROUND 04</span>
               </div>
               <div data-h="1">Apex Raceway</div>
-              <div className="sub">Sonoma, California · 3.42 mi</div>
+              <div className="sub">Northern California · 3.42 mi</div>
             </div>
             <svg className="p-map" viewBox="0 0 260 130" fill="none">
               <path

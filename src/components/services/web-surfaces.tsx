@@ -50,12 +50,12 @@ function BookingScreen() {
   return (
     <div className="web-book">
       <div className="web-book-map">
-        <VenueTrackMap trackId="monticello" reduced={reduced} compact className="h-full" />
+        <VenueTrackMap trackId="ridgeline" reduced={reduced} compact className="h-full" />
         <span className="web-book-map-meta">4.1 mi · 20 turns</span>
       </div>
       <div className="web-book-copy">
         <p className="web-book-kicker">Weekend bookings open</p>
-        <p className="web-book-name">Monticello</p>
+        <p className="web-book-name">Ridgeline</p>
         <ul>
           {slots.map((slot) => (
             <li key={slot.time}>
@@ -78,7 +78,7 @@ function CmsScreen() {
         Venues
         <span>Published</span>
       </p>
-      <p className="web-cms-title">Monticello Motor Club</p>
+      <p className="web-cms-title">Ridgeline Motor Club</p>
       <label>
         Weekend line
         <span>Weekend bookings open</span>
@@ -128,14 +128,14 @@ export function StackStage() {
     <div className="web-stack" aria-hidden="true">
       <div className="web-stack-pane is-cms">
         <div data-web-shell="cms">
-          <Browser domain="cms.trackhero.com/venues/monticello">
+          <Browser domain="cms.example.com/venues/ridgeline">
             <CmsScreen />
           </Browser>
         </div>
       </div>
       <div className="web-stack-pane is-site">
         <div data-web-shell="site">
-          <Browser domain="book.trackhero.com/monticello">
+          <Browser domain="book.example.com/ridgeline">
             <BookingScreen />
           </Browser>
         </div>
@@ -182,7 +182,7 @@ export function MigrateStage() {
       <div data-web-shell="headless" className="web-migrate-pane is-headless">
         <div className="web-migrate-bar">
           <Lights />
-          <em>preview.trackhero.com</em>
+          <em>preview.example.com</em>
           <i>auth</i>
         </div>
         <p className="web-migrate-kicker">Next.js plus a private CMS</p>
@@ -261,7 +261,7 @@ function PrototypeScreen({ kind }: { kind: (typeof prototypes)[number]["kind"] }
     return (
       <div className="web-proto-screen is-map">
         <div className="web-proto-map">
-          <VenueTrackMap trackId="monticello" reduced={reduced} compact className="h-full" />
+          <VenueTrackMap trackId="ridgeline" reduced={reduced} compact className="h-full" />
         </div>
         <ul className="web-proto-legend">
           {mapSlots.map((slot) => (
@@ -356,7 +356,7 @@ export function PrototypeStage() {
             data-proto-tab={item.id}
             aria-selected={item.id === active}
             aria-controls="web-proto-panel"
-            aria-label={`${item.tab} direction, ${item.hint}, at preview dot trackhero dot com ${item.path}`}
+            aria-label={`${item.tab} direction, ${item.hint}, at preview dot example dot com ${item.path}`}
             tabIndex={item.id === active ? 0 : -1}
             className={cn("web-proto-tab", item.id === active && "is-selected")}
             onClick={() => setActive(item.id)}
@@ -380,7 +380,7 @@ export function PrototypeStage() {
             onClick={() => setActive(item.id)}
           >
             <div data-web-shell={item.id} aria-hidden="true">
-              <Browser domain={`preview.trackhero.com${item.path}`}>
+              <Browser domain={`preview.example.com${item.path}`}>
                 <PrototypeScreen kind={item.kind} />
               </Browser>
             </div>
@@ -397,8 +397,8 @@ export function PrototypeStage() {
 
 const crawl = [
   { path: "/", state: "index" },
-  { path: "/venues/monticello", state: "index" },
-  { path: "/venues/sonoma", state: "index" },
+  { path: "/venues/ridgeline", state: "index" },
+  { path: "/venues/coastal", state: "index" },
   { path: "/book", state: "index" },
   { path: "/preview", state: "noindex" },
 ];
@@ -416,7 +416,7 @@ export function SeoStage() {
       <div className="web-seo-panel">
         <div className="web-seo-bar">
           <Lights />
-          <em>audit · Track Hero</em>
+          <em>audit · track booking</em>
         </div>
         <div className="web-seo-grid">
           <div>

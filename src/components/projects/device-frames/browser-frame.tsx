@@ -15,7 +15,7 @@ type BrowserFrameProps = {
     | "white"
     | "walnut"
     | "paper"
-    | "oxym";
+    | "sports-team";
   children: ReactNode;
 };
 
@@ -31,8 +31,8 @@ export function BrowserFrame({
   const cream = tone === "cream";
   const paper = tone === "paper";
   const white = tone === "white";
-  const oxym = tone === "oxym";
-  const darkish = dark || ink || walnut || oxym;
+  const sportsTeam = tone === "sports-team";
+  const darkish = dark || ink || walnut || sportsTeam;
 
   return (
     <div
@@ -46,7 +46,7 @@ export function BrowserFrame({
               ? "border-[#F1E5DE]"
               : white
                 ? "border-[#E8E8E8]"
-                : oxym
+                : sportsTeam
                   ? "border-[#16523F]"
                 : "border-white/10",
         className,
@@ -67,7 +67,7 @@ export function BrowserFrame({
                 ? "border-[#F1E5DE] bg-[#FBF5F1]"
                 : white
                   ? "border-[#E8E8E8] bg-white"
-                  : oxym
+                  : sportsTeam
                     ? "border-white/[0.08] bg-[#0C3B2E]"
                   : "border-border/80 bg-surface",
         )}

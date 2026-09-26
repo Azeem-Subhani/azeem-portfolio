@@ -1,10 +1,10 @@
-import { oxymFonts } from "@/components/capture/capture-fonts";
+import { sportsTeamFonts } from "@/components/capture/capture-fonts";
 
-/** 900×1600 Oxym player invoice screen */
-export function OxymPhoneInvoiceCapture() {
+/** 900×1600 Sports team player invoice screen */
+export function SportsTeamPhoneInvoiceCapture() {
   return (
-    <div className={`oxym-capture-root ${oxymFonts}`}>
-      <section className="capture capture--phone" aria-label="Oxym invoice on phone">
+    <div className={`sports-team-capture-root ${sportsTeamFonts}`}>
+      <section className="capture capture--phone" aria-label="Sports team invoice on phone">
         <div className="p-inner">
         <header className="p-head">
           <button type="button" className="icon-btn" aria-label="Back">

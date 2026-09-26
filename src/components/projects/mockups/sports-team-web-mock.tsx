@@ -1,22 +1,22 @@
 "use client";
 
-import { OxymWebCapture } from "@/components/capture/oxym/web-capture";
+import { SportsTeamWebCapture } from "@/components/capture/sports-team/web-capture";
 
 import { useCaptureScale } from "@/components/projects/mockups/use-capture-scale";
 
-import "@/components/capture/oxym/oxym-capture.css";
+import "@/components/capture/sports-team/sports-team-capture.css";
 
 const DESIGN_W = 1600;
 const DESIGN_H = 900;
 
-/** Live Oxym dashboard — scaled from 1600×900 capture for BrowserFrame. */
-export function OxymWebMock() {
+/** Live sports team dashboard — scaled from 1600×900 capture for BrowserFrame. */
+export function SportsTeamWebMock() {
   const { hostRef, scale } = useCaptureScale(DESIGN_W, DESIGN_H);
 
   return (
     <div
       ref={hostRef}
-      data-live-web-mockup="oxym"
+      data-live-web-mockup="sports-team-app"
       className="relative aspect-[16/9] w-full overflow-hidden bg-[#F4F6F2]"
       aria-hidden="true"
     >
@@ -28,7 +28,7 @@ export function OxymWebMock() {
           transform: `scale(${scale})`,
         }}
       >
-        <OxymWebCapture />
+        <SportsTeamWebCapture />
       </div>
     </div>
   );
