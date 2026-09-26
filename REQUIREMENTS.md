@@ -32,10 +32,10 @@ Reference images in `design-brief/`:
 
 Solarized. Light and dark both already exist in `src/app/globals.css`. Use those CSS variables. Do not introduce a new accent.
 
-Light: bg `#fdf6e3`, fg `#073642`, muted `#657b83`, accent `#2aa198`, border `#eee8d5`, surface `#f5efd8`, surface-elevated `#f0e9d3`, accent-secondary `#268bd2`.
+Light: bg `#fbf7ee`, fg `#073642`, muted `#586e75`, accent `#1c827a`, border `#ebe4d3`, surface `#f4efe2`, surface-elevated `#efe9da`, accent-secondary `#268bd2`. The cream is pulled slightly off Solarized yellow, and the teal is a shade deeper so headline text and white button labels meet contrast on it.
 Dark: bg `#002b36`, fg `#eee8d5`, muted `#93a1a1`, accent `#2aa198`, border `#073642`, surface `#04313d`, surface-elevated `#0a4552`.
 
-Accent for primary buttons and the outcome word is teal `#2aa198`, not lime. Dark mode stays Solarized night, not agency black.
+Accent for primary buttons and the outcome word is teal (`#1c827a` light, `#2aa198` dark), not lime. Dark mode stays Solarized night, not agency black.
 
 Fonts stay Instrument Serif (display) and Inter (UI).
 
