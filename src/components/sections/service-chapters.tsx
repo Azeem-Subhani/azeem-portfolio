@@ -9,7 +9,6 @@ import { SplitText } from "gsap/SplitText";
 import { CloudTraceWaterfallVisual } from "@/components/sections/cloud-trace-waterfall-visual";
 import { DataVisual } from "@/components/sections/data-visual";
 import { MobileVisual } from "@/components/sections/mobile-visual";
-import { webV4Mock1Chips } from "@/components/mockups/web-v4-mock-1";
 import { WebGantryStackVisual } from "@/components/sections/web-gantry-stack-visual";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { revealStart } from "@/lib/reveal-visibility";
@@ -47,7 +46,7 @@ const chapters: Chapter[] = [
     linkLabel: "How I build web",
     title: "Web design & development",
     copy: "I build product UI in Next.js and React. Track Hero's white-label booking sites run five race tracks from one codebase. Each venue gets its own brand, domain, and pages, while calendars and checkout stay shared.",
-    chips: [...webV4Mock1Chips],
+    chips: ["Product UI", "White-label surfaces", "Shared checkout"],
     visual: <WebGantryStackVisual />,
     visualFirst: true,
   },

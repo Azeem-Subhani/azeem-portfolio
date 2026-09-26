@@ -1110,14 +1110,6 @@
   font-size: 17px;
 }
 
-.mp-capture-root .authorization-copy {
-  max-width: none;
-  margin: 10px auto 12px;
-  color: #7b8680;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
 .mp-capture-root .mobile-inner .form-section {
   margin-bottom: 14px;
 }

@@ -392,11 +392,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.web-track-mark {
-  width: 88%;
-  height: auto;
-}
-
 .web-book-kicker {
   color: var(--muted);
   font-size: 0.62rem;

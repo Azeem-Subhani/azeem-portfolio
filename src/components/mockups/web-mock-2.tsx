@@ -462,34 +462,3 @@ export function VenueBrowserVisual({
     </div>
   );
 }
-
-export function WebSectionMock2() {
-  const reduced = usePrefersReducedMotion();
-
-  return (
-    <section
-      id="web-mock-2"
-      aria-labelledby="web-mock-2-title"
-      className="scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28"
-    >
-      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-20">
-        <div className="lg:order-1" aria-hidden="true">
-          <VenueBrowserVisual reduced={reduced} />
-        </div>
-        <div className="lg:order-2">
-          <h2
-            id="web-mock-2-title"
-            className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.05] tracking-tight"
-          >
-            Web design and development
-          </h2>
-          <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground sm:text-lg">
-            I ship Next.js and React product UIs. Track Hero runs five track
-            venues on one shared platform, each with its own booking site and
-            checkout flow.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}

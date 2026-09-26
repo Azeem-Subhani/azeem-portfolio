@@ -117,11 +117,3 @@ export function getLiveWebMockup(slug: string): LiveMockup | undefined {
 export function getLivePhoneMockup(slug: string): LiveMockup | undefined {
   return livePhoneMockups[slug];
 }
-
-export function hasLiveWebMockup(slug: string): boolean {
-  return slug in liveWebMockups;
-}
-
-export function hasLivePhoneMockup(slug: string): boolean {
-  return slug in livePhoneMockups;
-}

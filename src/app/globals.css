@@ -316,11 +316,6 @@ button,
   display: none;
 }
 
-.catalog-title {
-  font-family: var(--font-h1), serif;
-  font-weight: 400;
-}
-
 .projects-page,
 .service-page {
   /* Hero visuals slide in from the side; clip (not hidden) so sticky TOCs keep working. */
@@ -472,8 +467,7 @@ button,
   line-height: 0.88;
 }
 
-.projects-intro-copy,
-.service-intro-copy {
+.projects-intro-copy {
   max-width: 26rem;
   padding-bottom: 0.25rem;
   color: var(--muted);
@@ -1046,10 +1040,6 @@ button,
   border-top: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
 }
 
-.projects-outro-link {
-  align-self: flex-start;
-}
-
 .service-hero {
   display: grid;
   gap: 2.5rem 3.5rem;
@@ -1599,8 +1589,7 @@ button,
     border-radius: 1.1rem;
   }
 
-  .projects-intro-copy,
-  .service-intro-copy {
+  .projects-intro-copy {
     margin-top: 2rem;
   }
 
@@ -1827,142 +1816,6 @@ button,
   animation: systems-map-ping 1.8s ease-out infinite;
 }
 
-.project-workflow {
-  --orbit-duration: 28s;
-  --orbit-r: 32cqh;
-  container-type: size;
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: var(--font-h2), sans-serif;
-  isolation: isolate;
-}
-
-.project-workflow.is-detail {
-  --orbit-r: 28cqh;
-}
-
-.project-workflow-stage {
-  position: absolute;
-  inset: 0;
-  mask-image: radial-gradient(ellipse 88% 82% at 50% 48%, #000 42%, transparent 78%);
-}
-
-.project-workflow.is-detail .project-workflow-stage {
-  inset: 0 0 12% 0;
-  mask-image: radial-gradient(ellipse 90% 84% at 50% 46%, #000 48%, transparent 82%);
-}
-
-.project-workflow-glow {
-  position: absolute;
-  inset: 12% 18%;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 50%,
-    color-mix(in srgb, var(--accent) 32%, transparent),
-    color-mix(in srgb, var(--accent) 8%, transparent) 46%,
-    transparent 72%
-  );
-}
-
-.project-workflow-spark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 4px;
-  pointer-events: none;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 70%, transparent);
-  offset-rotate: 0deg;
-  animation: project-workflow-spark var(--spark-duration, 18s) linear infinite;
-  animation-delay: var(--spark-delay, 0s);
-}
-
-.project-workflow-spark.is-ring-a {
-  offset-path: ellipse(38% 30% at 50% 48%);
-}
-
-.project-workflow-spark.is-ring-b {
-  width: 3px;
-  height: 3px;
-  opacity: 0.7;
-  offset-path: ellipse(26% 20% at 50% 48%);
-}
-
-.project-workflow-orbit {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  animation: project-workflow-spin var(--orbit-duration) linear infinite;
-}
-
-.project-workflow-slot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  transform: rotate(var(--angle)) translateY(calc(-1 * var(--orbit-r)));
-}
-
-.project-workflow-face {
-  transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
-  animation: project-workflow-unspin var(--orbit-duration) linear infinite;
-}
-
-.project-workflow-hub {
-  position: absolute;
-  top: 48%;
-  left: 50%;
-  z-index: 2;
-  transform: translate(-50%, -50%);
-}
-
-.project-workflow-tile {
-  display: grid;
-  place-items: center;
-  width: clamp(2.15rem, 11cqw, 3.35rem);
-  height: clamp(2.15rem, 11cqw, 3.35rem);
-  border: 1px solid color-mix(in srgb, var(--fg) 14%, var(--border));
-  border-radius: 0.85rem;
-  background: color-mix(in srgb, var(--surface-elevated) 72%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent),
-    0 8px 18px rgb(var(--shadow-color) / 12%);
-  backdrop-filter: blur(10px);
-  outline: none;
-  pointer-events: auto;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.project-workflow-tile.is-hub {
-  width: clamp(3.4rem, 16cqw, 5.1rem);
-  height: clamp(3.4rem, 16cqw, 5.1rem);
-  border-radius: 1.1rem;
-  background: color-mix(in srgb, var(--surface-elevated) 82%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--fg) 14%, transparent),
-    0 0 28px color-mix(in srgb, var(--accent) 22%, transparent);
-}
-
-.project-workflow-tile:hover,
-.project-workflow-tile.is-hot,
-.project-workflow-tile.is-interactive:focus-visible {
-  z-index: 3;
-  transform: scale(1.06);
-  border-color: var(--accent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent),
-    0 0 22px color-mix(in srgb, var(--accent) 40%, transparent);
-}
-
 .project-workflow-mark {
   width: 58%;
   height: 58%;
@@ -1999,11 +1852,6 @@ html.dark .svgl-invert-dark,
   padding-bottom: 0.12em;
 }
 
-.project-workflow-tile.is-hub .project-workflow-mark {
-  width: 54%;
-  height: 54%;
-}
-
 .project-workflow-mono {
   display: grid;
   place-items: center;
@@ -2013,75 +1861,6 @@ html.dark .svgl-invert-dark,
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--fg);
-}
-
-.project-workflow-tile.is-hub .project-workflow-mono {
-  font-size: 0.85rem;
-}
-
-.project-workflow-bob {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  animation: project-workflow-float 4.8s ease-in-out infinite;
-  animation-delay: var(--float-delay, 0s);
-}
-
-.project-workflow-caption {
-  position: absolute;
-  right: 0;
-  bottom: 8%;
-  left: 0;
-  z-index: 2;
-  margin: 0;
-  text-align: center;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.group:hover .project-workflow,
-.group:focus-within .project-workflow {
-  --orbit-duration: 12s;
-}
-
-.project-workflow.is-paused .project-workflow-orbit,
-.project-workflow.is-paused .project-workflow-face,
-.project-workflow.is-paused .project-workflow-bob,
-.project-workflow.is-paused .project-workflow-spark,
-.project-workflow.is-still .project-workflow-orbit,
-.project-workflow.is-still .project-workflow-face,
-.project-workflow.is-still .project-workflow-bob {
-  animation-play-state: paused;
-}
-
-@keyframes project-workflow-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes project-workflow-unspin {
-  from {
-    transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle) - 360deg));
-  }
-}
-
-@keyframes project-workflow-float {
-  50% {
-    transform: translateY(-1.5px);
-  }
-}
-
-@keyframes project-workflow-spark {
-  to {
-    offset-distance: 100%;
-  }
 }
 
 @keyframes systems-map-ping {
@@ -2326,335 +2105,6 @@ html.dark .svgl-invert-dark,
     animation: none;
     display: none;
   }
-
-  .project-workflow-orbit,
-  .project-workflow-face,
-  .project-workflow-bob,
-  .project-workflow-spark {
-    animation: none !important;
-  }
-
-  .project-workflow-spark {
-    display: none;
-  }
-}
-
-/* Cloud service hero preview (/services/cloud/v2) */
-main:has(.cloud-v2-page) ~ footer,
-main:has(.cloud-v2-page) ~ aside[aria-label="Contact shortcut"] {
-  display: none !important;
-}
-
-main:has(.cloud-v3-page) ~ footer,
-main:has(.cloud-v3-page) ~ aside[aria-label="Contact shortcut"] {
-  display: none !important;
-}
-
-body:has(.cloud-v3-page) {
-  background: #032e32;
-}
-
-body:has(.cloud-v3-page) [data-site-header],
-html:has(.cloud-v3-page) .site-intro,
-body:has(.cloud-v3-page) nextjs-portal {
-  display: none !important;
-}
-
-html:has(.cloud-v3-page),
-html:has(.cloud-v3-page) body {
-  overflow: auto;
-}
-
-body:has(.cloud-v2-page) {
-  background: #042626;
-}
-
-body:has(.cloud-v2-page) [data-site-header] nav button[aria-current="true"] {
-  background: transparent;
-}
-
-.cloud-v2-shell {
-  --cloud-v2-bg: #042626;
-  --cloud-v2-bg-glow: rgb(56 214 194 / 14%);
-  --cloud-v2-line: rgb(56 214 194 / 34%);
-  --cloud-v2-ink: #edf7f4;
-  --cloud-v2-muted: rgb(134 166 160 / 92%);
-  --cloud-v2-line: rgb(56 214 194 / 22%);
-  --cloud-v2-accent: #38d9c4;
-  background: var(--cloud-v2-bg);
-}
-
-.cloud-v2-page {
-  position: relative;
-  width: 100%;
-  color: var(--cloud-v2-ink);
-  background: var(--cloud-v2-bg);
-}
-
-.cloud-v2-page__backdrop {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 42% 34% at 72% 27%,
-    var(--cloud-v2-bg-glow),
-    transparent 68%
-  );
-}
-
-.cloud-v2-page__inner {
-  position: relative;
-  width: min(100%, 68rem);
-  margin-inline: auto;
-  padding: clamp(4.75rem, 7vw, 5.5rem) clamp(1.35rem, 4vw, 2.25rem)
-    clamp(2rem, 4vw, 2.75rem);
-}
-
-.cloud-v2-hero {
-  display: grid;
-  gap: 2.5rem;
-}
-
-.cloud-v2-hero__main {
-  display: grid;
-  align-items: center;
-  gap: 3rem;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-}
-
-.cloud-v2-hero__copy {
-  max-width: 24rem;
-}
-
-.cloud-v2-kicker__rule {
-  flex-shrink: 0;
-  width: 2rem;
-  height: 1px;
-  background: rgb(56 214 194 / 55%);
-}
-
-.cloud-v2-kicker {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 0.95rem;
-  color: var(--cloud-v2-accent);
-  font-size: 0.55rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.cloud-v2-kicker__dash {
-  color: rgb(56 214 194 / 45%);
-  letter-spacing: 0;
-}
-
-.cloud-v2-title {
-  font-family: var(--font-h1), serif;
-  font-size: clamp(3.75rem, 5.2vw, 5rem);
-  font-weight: 400;
-  letter-spacing: -0.05em;
-  line-height: 0.94;
-}
-
-.cloud-v2-title span {
-  display: block;
-}
-
-.cloud-v2-lede {
-  max-width: 26rem;
-  margin-top: 0.9rem;
-  color: var(--cloud-v2-muted);
-  font-size: 0.78rem;
-  line-height: 1.5;
-}
-
-.cloud-v2-providers {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem 1rem;
-  margin-top: 1.35rem;
-  padding: 0;
-  list-style: none;
-}
-
-.cloud-v2-providers li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--cloud-v2-ink);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.cloud-v2-providers li + li::before {
-  content: "";
-  display: inline-block;
-  width: 1px;
-  height: 0.85rem;
-  margin-inline: 0.85rem;
-  background: rgb(56 214 194 / 28%);
-}
-
-.cloud-v2-providers__mark {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--cloud-v2-accent);
-}
-
-.cloud-v2-hero__visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 20rem;
-  padding-top: 0;
-}
-
-.cloud-v2-diagram {
-  width: min(100%, 36rem);
-  margin-inline: auto;
-  animation: cloud-v2-diagram-enter 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes cloud-v2-diagram-enter {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.cloud-v2-diagram__svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.cloud-v2-diagram__brand-icon {
-  display: block;
-  width: 2rem;
-  height: 2rem;
-  color: rgb(56 214 194 / 95%);
-}
-
-.cloud-v2-diagram__brand-label {
-  fill: rgb(236 246 243 / 92%);
-  font-family: var(--font-h2), system-ui, sans-serif;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.cloud-v2-diagram__tile-text {
-  fill: rgb(134 166 160 / 95%);
-  font-family: var(--font-h2), system-ui, sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-.cloud-v2-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin: 0;
-  padding: 2.2rem 0 2.35rem;
-  border-block: 1px solid var(--cloud-v2-line);
-}
-
-.cloud-v2-stats > div {
-  position: relative;
-  display: grid;
-  gap: 0.35rem;
-  place-items: center;
-  padding-inline: clamp(0.5rem, 2vw, 1.5rem);
-  text-align: center;
-}
-
-.cloud-v2-stats > div:not(:first-child)::before {
-  content: "";
-  position: absolute;
-  top: 1rem;
-  bottom: 1rem;
-  left: 0;
-  width: 1px;
-  background: var(--cloud-v2-line);
-}
-
-.cloud-v2-stats dt {
-  color: var(--cloud-v2-muted);
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  line-height: 1.35;
-  text-transform: uppercase;
-}
-
-.cloud-v2-stats dd {
-  display: grid;
-  gap: 0.1rem;
-  place-items: center;
-  margin: 0;
-}
-
-.cloud-v2-stats__value {
-  font-family: var(--font-h1), serif;
-  font-size: clamp(2.4rem, 3.8vw, 3rem);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 0.95;
-}
-
-.cloud-v2-stats__note {
-  color: var(--cloud-v2-muted);
-  font-size: 0.72rem;
-  font-weight: 500;
-}
-
-@media (max-width: 640px) {
-  .cloud-v2-hero__main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloud-v2-hero__visual {
-    order: -1;
-    min-height: 14rem;
-  }
-
-  .cloud-v2-title span {
-    white-space: normal;
-  }
-
-  .cloud-v2-hero__copy {
-    max-width: none;
-  }
-}
-
-@media (max-width: 540px) {
-  .cloud-v2-stats {
-    grid-template-columns: 1fr;
-    gap: 1.85rem;
-  }
-
-  .cloud-v2-stats > div:not(:first-child)::before {
-    display: none;
-  }
-
-  .cloud-v2-stats > div:not(:first-child) {
-    padding-top: 1.65rem;
-    padding-left: 0;
-    border-top: 1px solid var(--cloud-v2-line);
-  }
 }
 
 @media print {
@@ -2682,16 +2132,6 @@ body:has(.cloud-v2-page) [data-site-header] nav button[aria-current="true"] {
   .graph-field,
   .graph-field-map {
     display: none;
-  }
-
-  .project-workflow-spark {
-    display: none;
-  }
-
-  .project-workflow-orbit,
-  .project-workflow-face,
-  .project-workflow-bob {
-    animation: none !important;
   }
 
   header,
