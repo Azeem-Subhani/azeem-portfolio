@@ -25,17 +25,18 @@ function useCloudIntro<T extends HTMLElement>() {
 
     // The copy lands while the cloud is still forming beside it; the stage
     // runs its own sequence, so this only covers the words and the numbers.
+    // Title and lede stay put. They are the largest paint, and starting them
+    // off-screen waited on this effect. The rule and the numbers can still enter.
     const context = gsap.context(() => {
       gsap
         .timeline({ defaults: { ease: "expo.out" } })
-        .from("[data-cloud-intro-line]", { yPercent: 108, duration: 1.1, stagger: 0.1 })
-        .from("[data-cloud-intro-fade]", { opacity: 0, y: 12, duration: 0.9, stagger: 0.08 }, 0.3)
+        .from("[data-cloud-intro-fade]", { opacity: 0, y: 12, duration: 0.9, stagger: 0.08 }, 0)
         .from(
           "[data-cloud-intro-rule]",
           { scaleX: 0, transformOrigin: "left center", duration: 1.2, ease: "power3.inOut" },
-          0.6,
+          0.15,
         )
-        .from("[data-cloud-intro-stat]", { opacity: 0, y: 10, duration: 0.8, stagger: 0.08 }, 0.8);
+        .from("[data-cloud-intro-stat]", { opacity: 0, y: 10, duration: 0.8, stagger: 0.08 }, 0.2);
     }, root);
 
     return () => context.revert();
@@ -63,7 +64,6 @@ export function CloudServiceHero({ service }: CloudServiceHeroProps) {
               // Descender guard so "p" and "y" survive the mask at 0.9 leading.
               <span key={line} aria-hidden className="-mb-[0.12em] block overflow-hidden pb-[0.12em]">
                 <span
-                  data-cloud-intro-line
                   className={cn(
                     "block will-change-transform",
                     // The last line fades from paper into teal. w-fit ties the
@@ -79,10 +79,7 @@ export function CloudServiceHero({ service }: CloudServiceHeroProps) {
             ))}
           </h1>
 
-          <p
-            data-cloud-intro-fade
-            className="mt-7 max-w-[32rem] text-lg leading-8 text-muted-foreground"
-          >
+          <p className="mt-7 max-w-[32rem] text-lg leading-8 text-muted-foreground">
             {service.lede}
           </p>
 

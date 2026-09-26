@@ -71,12 +71,20 @@ export function Hero() {
       return;
     }
 
-    if (heroEntranceDone) {
+    // Return visits already have the headline in the HTML. Hiding it until GSAP
+    // runs made that line the LCP, seconds after first paint. The entrance still
+    // plays on a first visit, while the site intro is covering the page.
+    // SiteIntro flips a return visit from "seen" to "complete" before this effect
+    // runs, so only an actual first visit ("fresh") should hide the lines.
+    const playEntrance =
+      !heroEntranceDone && document.documentElement.dataset.introState === "fresh";
+
+    if (!playEntrance) {
       settle();
     }
 
     const context = gsap.context(() => {
-      if (!heroEntranceDone) {
+      if (playEntrance) {
         // Drop the CSS hide before GSAP records transforms, or yPercent stacks
         // on top of the pending translate and the lines stay clipped.
         if (document.documentElement.dataset.heroReveal === "pending") {

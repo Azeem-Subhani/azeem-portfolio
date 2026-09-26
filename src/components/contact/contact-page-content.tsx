@@ -29,21 +29,15 @@ export function ContactPageContent() {
     if (!page) return;
 
     const availability = page.querySelector<HTMLElement>("[data-contact-availability]");
-    const titleLines = page.querySelectorAll<HTMLElement>("[data-contact-title-line]");
-    const copy = page.querySelector<HTMLElement>("[data-contact-copy]");
     const direct = page.querySelectorAll<HTMLElement>("[data-contact-direct]");
     const socials = page.querySelectorAll<HTMLElement>("[data-contact-social]");
     const formIntro = page.querySelector<HTMLElement>("[data-contact-form-intro]");
     const form = page.querySelector<HTMLElement>("[data-contact-form]");
-    const targets = [
-      availability,
-      ...titleLines,
-      copy,
-      ...direct,
-      ...socials,
-      formIntro,
-      form,
-    ].filter((target): target is HTMLElement => Boolean(target));
+    // Title and lede are left alone so they can paint from the HTML. Hiding
+    // them until this timeline finished made the lede the largest paint.
+    const targets = [availability, ...direct, ...socials, formIntro, form].filter(
+      (target): target is HTMLElement => Boolean(target),
+    );
     let removeIntroListener = () => {};
     let alive = true;
 
@@ -58,12 +52,6 @@ export function ContactPageContent() {
     }
 
     gsap.set(availability, { opacity: 0, y: 12 });
-    gsap.set(titleLines, {
-      yPercent: 112,
-      rotate: 1.25,
-      transformOrigin: "left bottom",
-    });
-    gsap.set(copy, { opacity: 0, y: 18 });
     gsap.set(direct, { opacity: 0, y: 14 });
     gsap.set(socials, { opacity: 0, y: 14 });
     gsap.set(formIntro, { opacity: 0, y: 14 });
@@ -78,12 +66,10 @@ export function ContactPageContent() {
           onComplete: settle,
         })
         .to(availability, { opacity: 1, y: 0, duration: 0.45 }, 0)
-        .to(titleLines, { yPercent: 0, rotate: 0, duration: 0.78, stagger: 0.1 }, 0.08)
-        .to(formIntro, { opacity: 1, y: 0, duration: 0.5 }, 0.28)
-        .to(form, { opacity: 1, y: 0, duration: 0.72 }, 0.38)
-        .to(copy, { opacity: 1, y: 0, duration: 0.62 }, 0.5)
-        .to(direct, { opacity: 1, y: 0, duration: 0.48, stagger: 0.08 }, 0.72)
-        .to(socials, { opacity: 1, y: 0, duration: 0.48, stagger: 0.08 }, 0.82);
+        .to(formIntro, { opacity: 1, y: 0, duration: 0.5 }, 0.12)
+        .to(form, { opacity: 1, y: 0, duration: 0.72 }, 0.2)
+        .to(direct, { opacity: 1, y: 0, duration: 0.48, stagger: 0.08 }, 0.28)
+        .to(socials, { opacity: 1, y: 0, duration: 0.48, stagger: 0.08 }, 0.38);
     };
 
     const context = gsap.context(() => {

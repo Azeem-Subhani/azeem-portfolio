@@ -4,7 +4,8 @@ import path from "node:path";
 import sharp from "sharp";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
-const SOURCE_DIR = path.join(ROOT, "public", "assets", "work");
+// Masters live outside public/ so a deploy does not ship the multi-megabyte PNGs.
+const SOURCE_DIR = path.join(ROOT, "assets", "work");
 const OUTPUT_DIR = path.join(ROOT, "public", "images", "projects");
 
 const WIDTH = 1600;

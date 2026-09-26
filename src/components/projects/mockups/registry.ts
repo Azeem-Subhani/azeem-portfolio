@@ -91,23 +91,23 @@ function lazyMap(
 const liveWebMockups = lazyMap(webLoaders);
 const livePhoneMockups = lazyMap(phoneLoaders);
 
-let preloaded = false;
+const preloaded = new Set<string>();
 
 /**
- * Fetches every live mock chunk without rendering it. The catalog calls this once the
- * browser is idle, so first paint stays light but switching slides doesn't wait on a
- * download. Module promises are cached, so dynamic() resolves instantly afterwards.
+ * Fetches one project's web and phone captures. The catalog calls this for the
+ * next slide only, once the browser is idle. Module promises are cached, so
+ * dynamic() resolves instantly afterwards.
  */
-export function preloadLiveMockups() {
-  if (preloaded) return;
-  preloaded = true;
-  [...Object.values(webLoaders), ...Object.values(phoneLoaders)].forEach(
-    (load) => {
-      load().catch(() => {
-        // A failed prefetch is harmless: dynamic() retries when the mock is actually shown.
-      });
-    },
-  );
+export function preloadLiveMockup(slug: string) {
+  if (preloaded.has(slug)) return;
+  preloaded.add(slug);
+  for (const load of [webLoaders[slug], phoneLoaders[slug]]) {
+    if (!load) continue;
+    load().catch(() => {
+      // A failed prefetch is harmless: dynamic() retries when the mock is actually shown.
+      preloaded.delete(slug);
+    });
+  }
 }
 
 export function getLiveWebMockup(slug: string): LiveMockup | undefined {
