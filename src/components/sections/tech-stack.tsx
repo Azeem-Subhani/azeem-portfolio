@@ -129,7 +129,7 @@ export function TechStack() {
             data-stack-copy
             className="mt-5 max-w-md text-base leading-7 text-muted-foreground sm:text-lg"
           >
-            Track Hero is Next.js and React on a Django API. Oxym is Angular and Ionic
+            The Track Booking Platform is Next.js and React on a Django API. The Sports Team App is Angular and Ionic
             on NestJS and Firestore. Different answers for different products, both
             running in production.
           </p>

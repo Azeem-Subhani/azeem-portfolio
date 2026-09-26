@@ -1,11 +1,11 @@
-import { oxymFonts } from "@/components/capture/capture-fonts";
-import { OxymWebShell } from "@/components/capture/oxym/oxym-web-shell";
+import { sportsTeamFonts } from "@/components/capture/capture-fonts";
+import { SportsTeamWebShell } from "@/components/capture/sports-team/sports-team-web-shell";
 
-/** 1600×900 Oxym matchday email workflow */
-export function OxymWebEmailsCapture() {
+/** 1600×900 Sports team matchday email workflow */
+export function SportsTeamWebEmailsCapture() {
   return (
-    <div className={`oxym-capture-root ${oxymFonts}`}>
-      <OxymWebShell activeNav="emails" topbarTitle="Matchday emails" topbarSub="RAG drafts from team context">
+    <div className={`sports-team-capture-root ${sportsTeamFonts}`}>
+      <SportsTeamWebShell activeNav="emails" topbarTitle="Matchday emails" topbarSub="RAG drafts from team context">
         <div className="emails-layout">
           <article className="card panel emails-compose">
             <header className="panel-head">
@@ -71,7 +71,7 @@ export function OxymWebEmailsCapture() {
             </article>
           </aside>
         </div>
-      </OxymWebShell>
+      </SportsTeamWebShell>
     </div>
   );
 }

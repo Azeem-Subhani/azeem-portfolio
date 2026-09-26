@@ -2,13 +2,13 @@
 
 import type { ReactNode } from "react";
 
-import { OxymPhoneCapture } from "@/components/capture/oxym/phone-capture";
-import { OxymPhoneInvoiceCapture } from "@/components/capture/oxym/phone-invoice-capture";
-import { OxymPhoneScheduleCapture } from "@/components/capture/oxym/phone-schedule-capture";
-import { OxymWebCapture } from "@/components/capture/oxym/web-capture";
-import { OxymWebEmailsCapture } from "@/components/capture/oxym/web-emails-capture";
-import { OxymWebInvoicesCapture } from "@/components/capture/oxym/web-invoices-capture";
-import { OxymWebScheduleCapture } from "@/components/capture/oxym/web-schedule-capture";
+import { SportsTeamPhoneCapture } from "@/components/capture/sports-team/phone-capture";
+import { SportsTeamPhoneInvoiceCapture } from "@/components/capture/sports-team/phone-invoice-capture";
+import { SportsTeamPhoneScheduleCapture } from "@/components/capture/sports-team/phone-schedule-capture";
+import { SportsTeamWebCapture } from "@/components/capture/sports-team/web-capture";
+import { SportsTeamWebEmailsCapture } from "@/components/capture/sports-team/web-emails-capture";
+import { SportsTeamWebInvoicesCapture } from "@/components/capture/sports-team/web-invoices-capture";
+import { SportsTeamWebScheduleCapture } from "@/components/capture/sports-team/web-schedule-capture";
 import {
   CaseStudyBrief,
   CaseStudyNote,
@@ -22,8 +22,8 @@ import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
-import "@/components/capture/oxym/oxym-capture.css";
-import "@/components/projects/mockups/oxym-phone-mock.css";
+import "@/components/capture/sports-team/sports-team-capture.css";
+import "@/components/projects/mockups/sports-team-phone-mock.css";
 
 /*
  * FRAME PLAN
@@ -38,15 +38,15 @@ import "@/components/projects/mockups/oxym-phone-mock.css";
  * | web   | coach-emails    | Matchday emails    | invented  | secondary (browser)|
  */
 
-const OXYM_PRODUCT_URL = "https://app.oxym.com";
-const OXYM_SHELL = "bg-[#0C3B2E]";
-const OXYM_SCREEN = "bg-[#F4F6F2]";
+const SPORTS_TEAM_PRODUCT_URL = "https://team.example.com";
+const SPORTS_TEAM_SHELL = "bg-[#0C3B2E]";
+const SPORTS_TEAM_SCREEN = "bg-[#F4F6F2]";
 
-type OxymCaseStudyProps = {
+type SportsTeamCaseStudyProps = {
   project: Project;
 };
 
-function OxymWebFrame({ children }: { children: ReactNode }) {
+function SportsTeamWebFrame({ children }: { children: ReactNode }) {
   return (
     <CaptureFrame kind="web" background="#F4F6F2">
       {children}
@@ -54,47 +54,47 @@ function OxymWebFrame({ children }: { children: ReactNode }) {
   );
 }
 
-function OxymPhoneFrame({ children }: { children: ReactNode }) {
+function SportsTeamPhoneFrame({ children }: { children: ReactNode }) {
   return (
-    <CaptureFrame kind="phone" background="#F4F6F2" className="oxym-phone-mock-host">
+    <CaptureFrame kind="phone" background="#F4F6F2" className="sports-team-phone-mock-host">
       {children}
     </CaptureFrame>
   );
 }
 
-export function OxymCaseStudy({ project }: OxymCaseStudyProps) {
+export function SportsTeamCaseStudy({ project }: SportsTeamCaseStudyProps) {
   const heroWeb = [
     {
       id: "coach-today",
       label: "Today",
-      url: OXYM_PRODUCT_URL,
-      tone: "oxym" as const,
+      url: SPORTS_TEAM_PRODUCT_URL,
+      tone: "sports-team" as const,
       children: (
-        <OxymWebFrame>
-          <OxymWebCapture />
-        </OxymWebFrame>
+        <SportsTeamWebFrame>
+          <SportsTeamWebCapture />
+        </SportsTeamWebFrame>
       ),
     },
     {
       id: "coach-schedule",
       label: "Schedule",
-      url: `${OXYM_PRODUCT_URL}/schedule`,
-      tone: "oxym" as const,
+      url: `${SPORTS_TEAM_PRODUCT_URL}/schedule`,
+      tone: "sports-team" as const,
       children: (
-        <OxymWebFrame>
-          <OxymWebScheduleCapture />
-        </OxymWebFrame>
+        <SportsTeamWebFrame>
+          <SportsTeamWebScheduleCapture />
+        </SportsTeamWebFrame>
       ),
     },
     {
       id: "coach-invoices",
       label: "Invoices",
-      url: `${OXYM_PRODUCT_URL}/invoices`,
-      tone: "oxym" as const,
+      url: `${SPORTS_TEAM_PRODUCT_URL}/invoices`,
+      tone: "sports-team" as const,
       children: (
-        <OxymWebFrame>
-          <OxymWebInvoicesCapture />
-        </OxymWebFrame>
+        <SportsTeamWebFrame>
+          <SportsTeamWebInvoicesCapture />
+        </SportsTeamWebFrame>
       ),
     },
   ];
@@ -103,37 +103,37 @@ export function OxymCaseStudy({ project }: OxymCaseStudyProps) {
     {
       id: "team-chat",
       label: "Team chat",
-      shellClassName: OXYM_SHELL,
-      screenClassName: OXYM_SCREEN,
+      shellClassName: SPORTS_TEAM_SHELL,
+      screenClassName: SPORTS_TEAM_SCREEN,
       statusTone: "dark" as const,
       children: (
-        <OxymPhoneFrame>
-          <OxymPhoneCapture />
-        </OxymPhoneFrame>
+        <SportsTeamPhoneFrame>
+          <SportsTeamPhoneCapture />
+        </SportsTeamPhoneFrame>
       ),
     },
     {
       id: "player-schedule",
       label: "My schedule",
-      shellClassName: OXYM_SHELL,
-      screenClassName: OXYM_SCREEN,
+      shellClassName: SPORTS_TEAM_SHELL,
+      screenClassName: SPORTS_TEAM_SCREEN,
       statusTone: "dark" as const,
       children: (
-        <OxymPhoneFrame>
-          <OxymPhoneScheduleCapture />
-        </OxymPhoneFrame>
+        <SportsTeamPhoneFrame>
+          <SportsTeamPhoneScheduleCapture />
+        </SportsTeamPhoneFrame>
       ),
     },
     {
       id: "player-invoice",
       label: "Player invoice",
-      shellClassName: OXYM_SHELL,
-      screenClassName: OXYM_SCREEN,
+      shellClassName: SPORTS_TEAM_SHELL,
+      screenClassName: SPORTS_TEAM_SCREEN,
       statusTone: "dark" as const,
       children: (
-        <OxymPhoneFrame>
-          <OxymPhoneInvoiceCapture />
-        </OxymPhoneFrame>
+        <SportsTeamPhoneFrame>
+          <SportsTeamPhoneInvoiceCapture />
+        </SportsTeamPhoneFrame>
       ),
     },
   ];
@@ -142,12 +142,12 @@ export function OxymCaseStudy({ project }: OxymCaseStudyProps) {
     {
       id: "coach-emails",
       label: "Matchday emails",
-      url: `${OXYM_PRODUCT_URL}/emails`,
-      tone: "oxym" as const,
+      url: `${SPORTS_TEAM_PRODUCT_URL}/emails`,
+      tone: "sports-team" as const,
       children: (
-        <OxymWebFrame>
-          <OxymWebEmailsCapture />
-        </OxymWebFrame>
+        <SportsTeamWebFrame>
+          <SportsTeamWebEmailsCapture />
+        </SportsTeamWebFrame>
       ),
     },
   ];
@@ -173,7 +173,7 @@ export function OxymCaseStudy({ project }: OxymCaseStudyProps) {
           "Coaches were juggling spreadsheets, group texts, and separate payment links. Players missed updates because nothing stayed in sync between web and phone.",
         ]}
         solution={[
-          "Oxym puts scheduling, Stripe Connect invoicing, Firestore messaging, and Socket.IO live updates in one Angular/Ionic codebase. Coaches work on the web dashboard. Players live in team chat, invoices, and schedule on mobile.",
+          "The Sports Team App puts scheduling, Stripe Connect invoicing, Firestore messaging, and Socket.IO live updates in one Angular/Ionic codebase. Coaches work on the web dashboard. Players live in team chat, invoices, and schedule on mobile.",
         ]}
         points={project.approach}
       />

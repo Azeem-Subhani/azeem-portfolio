@@ -79,9 +79,9 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const gamingGlobalFonts = `${archivo.variable} ${jetbrainsMono.variable}`;
-export const oxymFonts = archivo.variable;
+export const sportsTeamFonts = archivo.variable;
 export const realTimeChatFonts = `${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`;
 export const smartLivingFonts = inter.variable;
 export const taskManagerFonts = `${hankenGrotesk.variable} ${instrumentSerif.variable}`;
-export const trackHeroFonts = `${inter.variable} ${jetbrainsMono.variable}`;
+export const trackBookingFonts = `${inter.variable} ${jetbrainsMono.variable}`;
 export const woodyShopFonts = `${inter.variable} ${playfairDisplay.variable}`;

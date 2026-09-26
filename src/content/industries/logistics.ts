@@ -1,7 +1,7 @@
 import type { IndustryPageContent } from "@/types/content";
 
 /*
- * Sources: projects.ts (Track Hero fleet and scheduling, Smart Living alerts),
+ * Sources: projects.ts (Track Booking Platform fleet and scheduling, Smart Living alerts),
  * experience.ts (real-time scale, device monitoring). Route optimization has not
  * shipped; that solution is marked as approach (no link). Do not add figures.
  */
@@ -72,7 +72,7 @@ export const logisticsIndustry: IndustryPageContent = {
         "Typed API clients",
         "Route guards and validation",
       ],
-      link: { kind: "shipped", label: "Track Hero", href: "/projects/track-hero" },
+      link: { kind: "shipped", label: "Track Booking Platform", href: "/projects/track-booking" },
     },
     {
       icon: "radio",

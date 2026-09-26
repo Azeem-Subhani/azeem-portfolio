@@ -268,8 +268,8 @@ export function WebServiceBody({ service }: { service: ServicePageContent }) {
             </li>
           ))}
         </ol>
-        <Link href="/projects/track-hero" className="web-toc-link">
-          See it live: Track Hero <ArrowRight aria-hidden="true" />
+        <Link href="/projects/track-booking" className="web-toc-link">
+          See it live: Track Booking Platform <ArrowRight aria-hidden="true" />
         </Link>
       </nav>
       <div className="web-body-scroll overflow-x-clip">

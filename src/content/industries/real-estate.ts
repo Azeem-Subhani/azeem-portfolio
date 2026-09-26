@@ -2,7 +2,7 @@ import type { IndustryPageContent } from "@/types/content";
 
 /*
  * Approach page: no real-estate product has shipped. Solutions link related work
- * (Smart Living, Track Hero, device monitoring) or none (listings and MLS feeds).
+ * (Smart Living, Track Booking Platform, device monitoring) or none (listings and MLS feeds).
  */
 export const realEstateIndustry: IndustryPageContent = {
   slug: "real-estate",
@@ -81,7 +81,7 @@ export const realEstateIndustry: IndustryPageContent = {
         "Several branded sites, one engine",
         "Back-office reporting",
       ],
-      link: { kind: "related", label: "Track Hero", href: "/projects/track-hero" },
+      link: { kind: "related", label: "Track Booking Platform", href: "/projects/track-booking" },
     },
     {
       icon: "home",

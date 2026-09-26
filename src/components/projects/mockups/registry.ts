@@ -8,13 +8,13 @@ type Loader = () => Promise<LiveMockup>;
 // only when the selected project actually asks for it; ProjectMockup holds the
 // frame's size empty until the chunk arrives and the capture builds itself in.
 const webLoaders: Record<string, Loader> = {
-  "track-hero": () =>
-    import("@/components/projects/mockups/track-hero-web-mock").then(
-      (module) => module.TrackHeroWebMock,
+  "track-booking": () =>
+    import("@/components/projects/mockups/track-booking-web-mock").then(
+      (module) => module.TrackBookingWebMock,
     ),
-  oxym: () =>
-    import("@/components/projects/mockups/oxym-web-mock").then(
-      (module) => module.OxymWebMock,
+  "sports-team-app": () =>
+    import("@/components/projects/mockups/sports-team-web-mock").then(
+      (module) => module.SportsTeamWebMock,
     ),
   "memorial-planning": () =>
     import("@/components/projects/mockups/memorial-planning-web-mock").then(
@@ -43,13 +43,13 @@ const webLoaders: Record<string, Loader> = {
 };
 
 const phoneLoaders: Record<string, Loader> = {
-  "track-hero": () =>
-    import("@/components/projects/mockups/track-hero-phone-mock").then(
-      (module) => module.TrackHeroPhoneMock,
+  "track-booking": () =>
+    import("@/components/projects/mockups/track-booking-phone-mock").then(
+      (module) => module.TrackBookingPhoneMock,
     ),
-  oxym: () =>
-    import("@/components/projects/mockups/oxym-phone-mock").then(
-      (module) => module.OxymPhoneMock,
+  "sports-team-app": () =>
+    import("@/components/projects/mockups/sports-team-phone-mock").then(
+      (module) => module.SportsTeamPhoneMock,
     ),
   "memorial-planning": () =>
     import("@/components/projects/mockups/memorial-planning-phone-mock").then(

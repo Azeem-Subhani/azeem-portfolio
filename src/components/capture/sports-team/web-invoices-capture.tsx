@@ -1,11 +1,11 @@
-import { oxymFonts } from "@/components/capture/capture-fonts";
-import { OxymWebShell } from "@/components/capture/oxym/oxym-web-shell";
+import { sportsTeamFonts } from "@/components/capture/capture-fonts";
+import { SportsTeamWebShell } from "@/components/capture/sports-team/sports-team-web-shell";
 
-/** 1600×900 Oxym coach invoices and wallet */
-export function OxymWebInvoicesCapture() {
+/** 1600×900 Sports team coach invoices and wallet */
+export function SportsTeamWebInvoicesCapture() {
   return (
-    <div className={`oxym-capture-root ${oxymFonts}`}>
-      <OxymWebShell activeNav="invoices" topbarTitle="Invoices" topbarSub="Stripe Connect, First Team wallet">
+    <div className={`sports-team-capture-root ${sportsTeamFonts}`}>
+      <SportsTeamWebShell activeNav="invoices" topbarTitle="Invoices" topbarSub="Stripe Connect, First Team wallet">
         <div className="invoices-layout">
           <div className="invoices-summary">
             <article className="card invoice-stat">
@@ -81,7 +81,7 @@ export function OxymWebInvoicesCapture() {
             </div>
           </article>
         </div>
-      </OxymWebShell>
+      </SportsTeamWebShell>
     </div>
   );
 }

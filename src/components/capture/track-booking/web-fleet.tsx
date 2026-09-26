@@ -1,15 +1,15 @@
-/** 1600×900 Track Hero operator console — fleet management. */
+/** 1600×900 Track booking operator console — fleet management. */
 
-import { trackHeroFonts } from "@/components/capture/capture-fonts";
-import { TrackHeroWebConsoleChrome } from "@/components/capture/track-hero/web-console-chrome";
+import { trackBookingFonts } from "@/components/capture/capture-fonts";
+import { TrackBookingWebConsoleChrome } from "@/components/capture/track-booking/web-console-chrome";
 
 const vehicles = [
   { code: "GT3", name: "Porsche 911 GT3 R", num: "#07", track: "Apex Raceway", status: "track", miles: "1,240 mi" },
   { code: "GT4", name: "BMW M4 GT4", num: "#12", track: "Apex Raceway", status: "track", miles: "890 mi" },
   { code: "F4", name: "Tatuus F4-T014", num: "#21", track: "Ridge Motorsport", status: "pit", miles: "420 mi" },
-  { code: "GT4", name: "Mercedes-AMG GT4", num: "#05", track: "Sonoma Coast", status: "serv", miles: "2,110 mi" },
+  { code: "GT4", name: "Mercedes-AMG GT4", num: "#05", track: "Coastal Loop", status: "serv", miles: "2,110 mi" },
   { code: "RAD", name: "Radical SR3 XXR", num: "#33", track: "Thunderhill", status: "ready", miles: "760 mi" },
-  { code: "GT3", name: "McLaren 720S GT3", num: "#02", track: "Spring Mountain", status: "ready", miles: "540 mi" },
+  { code: "GT3", name: "McLaren 720S GT3", num: "#02", track: "High Desert", status: "ready", miles: "540 mi" },
 ];
 
 const statusClass: Record<string, string> = {
@@ -26,11 +26,11 @@ const statusLabel: Record<string, string> = {
   ready: "Available",
 };
 
-export function TrackHeroWebFleetCapture() {
+export function TrackBookingWebFleetCapture() {
   return (
-    <div className={`th-capture-root ${trackHeroFonts}`}>
-      <TrackHeroWebConsoleChrome
-        ariaLabel="Track Hero fleet management"
+    <div className={`th-capture-root ${trackBookingFonts}`}>
+      <TrackBookingWebConsoleChrome
+        ariaLabel="Track booking fleet management"
         activeNav="fleet"
         activeSidebar="fleet"
       >
@@ -85,7 +85,7 @@ export function TrackHeroWebFleetCapture() {
             </div>
           ))}
         </div>
-      </TrackHeroWebConsoleChrome>
+      </TrackBookingWebConsoleChrome>
     </div>
   );
 }

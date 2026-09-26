@@ -50,7 +50,7 @@ const layers: Layer[] = [
   },
 ];
 
-type ProjectId = "track-hero" | "oxym" | "memorial";
+type ProjectId = "track-booking" | "sports-team-app" | "memorial";
 
 type Project = {
   label: string;
@@ -62,8 +62,8 @@ type Project = {
 };
 
 const projects: Record<ProjectId, Project> = {
-  "track-hero": {
-    label: "Track Hero",
+  "track-booking": {
+    label: "Track Booking Platform",
     picks: {
       interface: ["React", "Next.js", "TypeScript"],
       api: ["Django"],
@@ -72,8 +72,8 @@ const projects: Record<ProjectId, Project> = {
     gaps: { data: "behind the Django API" },
     metric: { value: "5", label: "white-label venues on one platform" },
   },
-  oxym: {
-    label: "Oxym",
+  "sports-team-app": {
+    label: "Sports Team App",
     picks: {
       interface: ["Angular", "Ionic"],
       api: ["NestJS", "Node.js", "Socket.IO"],
@@ -94,7 +94,7 @@ const projects: Record<ProjectId, Project> = {
   },
 };
 
-const projectOrder: ProjectId[] = ["track-hero", "oxym", "memorial"];
+const projectOrder: ProjectId[] = ["track-booking", "sports-team-app", "memorial"];
 
 /** Time for the lit thread to drop from one layer to the next. */
 const STEP_MS = 240;
@@ -105,7 +105,7 @@ const advanceAfterMs = 3400;
 
 export function StackLayers({ reduced }: { reduced: boolean }) {
   const { ref: panelRef, inView } = useInViewOnce<HTMLDivElement>();
-  const [projectId, setProjectId] = useState<ProjectId>("track-hero");
+  const [projectId, setProjectId] = useState<ProjectId>("track-booking");
   const [runKey, setRunKey] = useState(0);
   /** Deepest layer the thread has reached; -1 before it starts. */
   const [reachedState, setReached] = useState(-1);

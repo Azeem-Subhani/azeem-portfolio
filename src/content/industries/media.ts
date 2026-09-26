@@ -1,7 +1,7 @@
 import type { IndustryPageContent } from "@/types/content";
 
 /*
- * Sources: projects.ts (Gaming Global, Track Hero), experience.ts (chat scale),
+ * Sources: projects.ts (Gaming Global, Track Booking Platform), experience.ts (chat scale),
  * services/cloud.ts (CloudFront media delivery). Streaming and DRM have not shipped;
  * that solution is marked as approach (no link). Do not add figures.
  */
@@ -85,7 +85,7 @@ export const mediaIndustry: IndustryPageContent = {
         "Stripe payments",
         "Five branded venue sites",
       ],
-      link: { kind: "shipped", label: "Track Hero", href: "/projects/track-hero" },
+      link: { kind: "shipped", label: "Track Booking Platform", href: "/projects/track-booking" },
     },
     {
       icon: "globe",

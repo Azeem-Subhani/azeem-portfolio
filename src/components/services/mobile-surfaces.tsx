@@ -248,7 +248,7 @@ export function SyncStage() {
               <span />
               <span />
               <span />
-              <em>oxym.app/match</em>
+              <em>team.example.com/match</em>
             </div>
             <div className="bg-surface px-3.5 pb-4 pt-3">
               <MatchCard />
@@ -273,7 +273,7 @@ export function SyncStage() {
           <Bezel island className="w-[17rem]" screenClassName="h-[28rem]">
             <StatusBar time="5:47" />
             <div className="flex h-[calc(100%-1.75rem)] flex-col px-3 pb-2 pt-1">
-              <p className="text-[11px] font-medium text-foreground">Oxym</p>
+              <p className="text-[11px] font-medium text-foreground">Sports Team</p>
               <div className="mt-2">
                 <MatchCard />
               </div>
@@ -305,7 +305,7 @@ export function SyncStage() {
             <div className="absolute left-1/2 top-[7px] z-20 size-2.5 -translate-x-1/2 rounded-full bg-background" />
             <StatusBar time="5:47" android />
             <div className="flex h-[calc(100%-1.5rem)] flex-col px-3 pb-3 pt-1">
-              <p className="text-[11px] font-medium text-foreground">Oxym</p>
+              <p className="text-[11px] font-medium text-foreground">Sports Team</p>
               <div className="mt-2">
                 <MatchCard />
               </div>
@@ -345,7 +345,7 @@ export function IonicPhone() {
     <Bezel island className="w-[13.5rem]" screenClassName="h-[22.5rem]">
       <StatusBar time="5:47" />
       <div className="flex h-[calc(100%-1.75rem)] flex-col px-3 pb-2 pt-1">
-        <p className="text-[11px] font-medium">Oxym</p>
+        <p className="text-[11px] font-medium">Sports Team</p>
         <div className="mt-2">
           <MatchCard />
         </div>
@@ -544,7 +544,7 @@ export function CarDash() {
   );
 }
 
-/** What each bridged capability is doing in the Oxym screen, per hardware tab. */
+/** What each bridged capability is doing in the sports team screen, per hardware tab. */
 const hardwareStatus: Record<string, { label: string; status: string }[]> = {
   "Radios and identity": [
     { label: "BLE", status: "Kit tag in range" },
@@ -594,7 +594,7 @@ export function HardwarePhone({ active }: { active: string }) {
         <Bezel island className="w-[14.5rem]" screenClassName="h-[23.5rem]">
           <StatusBar time="5:47" />
           <div className="flex h-[calc(100%-1.75rem)] flex-col px-3 pb-2 pt-1">
-            <p className="text-[11px] font-medium">Oxym</p>
+            <p className="text-[11px] font-medium">Sports Team</p>
             <div className="mt-2">
               <MatchCard compact />
             </div>

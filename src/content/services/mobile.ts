@@ -9,7 +9,7 @@ export const mobileService: ServicePageContent = {
   kicker: "Services / mobile",
   titleLines: ["one codebase", "every device"],
   lede:
-    "iOS, Android, and web from one TypeScript codebase. Oxym's coaches and players see the same live schedule. That is the 60% cut. One roster, not three native teams.",
+    "iOS, Android, and web from one TypeScript codebase. The Sports Team App's coaches and players see the same live schedule. That is the 60% cut. One roster, not three native teams.",
   proof: [
     { value: "60%", label: "off building native twice" },
     { value: "3×", label: "faster to a store build" },
@@ -55,7 +55,7 @@ export const mobileService: ServicePageContent = {
         {
           title: "Ionic and Capacitor",
           meta: "15+ apps",
-          copy: "Web UI, native shells, device APIs through Capacitor. Oxym's web and mobile clients come from this family.",
+          copy: "Web UI, native shells, device APIs through Capacitor. The Sports Team App's web and mobile clients come from this family.",
         },
         {
           title: "React Native",

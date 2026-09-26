@@ -48,10 +48,10 @@ function padViewBox(viewBox: string, pad = 10): string {
 }
 
 export const venueTracks: Record<string, VenueTrack> = {
-  monticello: {
+  ridgeline: {
     viewBox: "0 0 240 160",
-    watermark: "Monticello",
-    meta: "4.1 mi, 20 turns",
+    watermark: "Ridgeline",
+    meta: "3.9 mi, 18 turns",
     featurePath:
       "M 92 96 C 108 88 128 96 132 112 C 136 128 118 140 100 136 C 82 132 78 104 92 96 Z",
     trackPath:
@@ -63,25 +63,25 @@ export const venueTracks: Record<string, VenueTrack> = {
     ],
     startFinish: { cx: 38, cy: 94, angleDeg: -55 },
   },
-  sonoma: {
+  coastal: {
     viewBox: "0 0 240 160",
-    watermark: "Sonoma",
-    meta: "2.52 mi, 12 turns",
+    watermark: "Coastal",
+    meta: "2.4 mi, 11 turns",
     featurePath:
       "M 78 78 C 96 70 112 86 108 106 C 104 124 80 128 68 114 C 56 100 60 86 78 78 Z",
     trackPath:
       "M 170 120 C 180 108 188 84 186 54 C 184 34 166 24 144 30 C 128 34 122 50 106 54 C 92 58 86 40 70 34 C 50 26 30 36 28 56 C 26 76 46 88 64 98 C 84 110 94 126 78 136 C 62 146 40 142 34 126 C 28 110 46 100 66 106 C 94 114 130 134 158 130 C 164 128 168 124 170 120 Z",
     corners: [
       { name: "Hairpin", x: 22, y: 42 },
-      { name: "Carousel", x: 18, y: 92 },
+      { name: "Sweeper", x: 18, y: 92 },
       { name: "T11", x: 22, y: 132 },
     ],
     startFinish: { cx: 170, cy: 120, angleDeg: -35 },
   },
-  enclave: {
+  harbor: {
     viewBox: "0 0 240 160",
-    watermark: "Enclave",
-    meta: "1.72 mi, 14 turns",
+    watermark: "Harbor",
+    meta: "1.8 mi, 13 turns",
     featurePath:
       "M 88 64 C 110 58 132 72 136 92 C 140 112 118 122 96 116 C 74 110 70 70 88 64 Z",
     trackPath:
@@ -93,31 +93,31 @@ export const venueTracks: Record<string, VenueTrack> = {
     ],
     startFinish: { cx: 46, cy: 34, angleDeg: 85 },
   },
-  skip: {
+  summit: {
     viewBox: "0 0 240 160",
-    watermark: "Skip",
-    meta: "1.53 mi, 7 turns",
+    watermark: "Summit",
+    meta: "1.6 mi, 8 turns",
     featurePath:
       "M 78 78 C 110 70 148 78 156 98 C 164 118 128 128 96 124 C 64 120 52 86 78 78 Z",
     trackPath:
       "M 32 124 L 178 124 C 204 124 220 108 216 86 C 212 62 188 44 158 36 C 142 32 134 18 118 24 C 104 30 112 48 96 52 C 78 56 58 38 40 32 C 20 24 10 38 14 58 C 18 84 26 108 32 124 Z",
     corners: [
-      { name: "Big Bend", x: 186, y: 70, anchor: "end" },
+      { name: "Long Bend", x: 186, y: 70, anchor: "end" },
       { name: "Downhill", x: 148, y: 12, anchor: "end" },
       { name: "West Bend", x: 8, y: 28 },
     ],
     startFinish: { cx: 32, cy: 124, angleDeg: 5 },
   },
-  spring: {
+  desert: {
     viewBox: "0 0 240 160",
-    watermark: "Spring",
-    meta: "6.1 mi, 50 configs",
+    watermark: "Desert",
+    meta: "5.8 mi, 40 configs",
     featurePath:
       "M 48 118 C 62 110 78 118 80 132 C 82 146 62 152 50 144 C 38 136 36 126 48 118 Z",
     trackPath:
       "M 30 88 C 26 56 48 28 84 26 C 110 24 126 44 152 36 C 178 28 204 16 222 36 C 238 54 230 80 206 90 C 186 98 172 90 158 104 C 144 118 162 134 184 140 C 206 146 216 158 188 158 C 156 158 140 142 118 136 C 94 130 86 150 62 148 C 38 146 20 128 22 106 C 24 94 30 92 30 88 Z",
     corners: [
-      { name: "The Bowl", x: 18, y: 128 },
+      { name: "The Basin", x: 18, y: 128 },
       { name: "The Chute", x: 168, y: 118, anchor: "end" },
       { name: "Thunder Alley", x: 118, y: 12 },
     ],
@@ -277,7 +277,7 @@ export function VenueTrackMap({
   compact?: boolean;
   className?: string;
 }) {
-  const track = venueTracks[trackId] ?? venueTracks.sonoma;
+  const track = venueTracks[trackId] ?? venueTracks.coastal;
   const viewBox = padViewBox(track.viewBox);
 
   return (

@@ -1,7 +1,7 @@
-/** 1600×900 Track Hero operator console — event schedule. */
+/** 1600×900 Track booking operator console — event schedule. */
 
-import { trackHeroFonts } from "@/components/capture/capture-fonts";
-import { TrackHeroWebConsoleChrome } from "@/components/capture/track-hero/web-console-chrome";
+import { trackBookingFonts } from "@/components/capture/capture-fonts";
+import { TrackBookingWebConsoleChrome } from "@/components/capture/track-booking/web-console-chrome";
 
 const days = [
   { label: "Mon 15", short: "MON" },
@@ -17,15 +17,15 @@ const blocks = [
   { day: 3, top: 8, height: 14, title: "GT Sprint — Open Lapping", track: "Apex Raceway", fill: "82%" },
   { day: 3, top: 24, height: 10, title: "Endurance Test — GT4 / GT3", track: "Apex Raceway", fill: "34%" },
   { day: 4, top: 12, height: 12, title: "Arrive & Drive", track: "Ridge Motorsport", fill: "88%" },
-  { day: 5, top: 6, height: 16, title: "GT4 Test Day", track: "Sonoma Coast", fill: "100%" },
-  { day: 6, top: 18, height: 11, title: "Skip Barber Formula", track: "Spring Mountain", fill: "71%" },
+  { day: 5, top: 6, height: 16, title: "GT4 Test Day", track: "Coastal Loop", fill: "100%" },
+  { day: 6, top: 18, height: 11, title: "Summit Formula", track: "High Desert", fill: "71%" },
 ];
 
-export function TrackHeroWebScheduleCapture() {
+export function TrackBookingWebScheduleCapture() {
   return (
-    <div className={`th-capture-root ${trackHeroFonts}`}>
-      <TrackHeroWebConsoleChrome
-        ariaLabel="Track Hero event schedule"
+    <div className={`th-capture-root ${trackBookingFonts}`}>
+      <TrackBookingWebConsoleChrome
+        ariaLabel="Track booking event schedule"
         activeNav="schedule"
         activeSidebar="schedule"
       >
@@ -107,7 +107,7 @@ export function TrackHeroWebScheduleCapture() {
             </div>
           </div>
         </div>
-      </TrackHeroWebConsoleChrome>
+      </TrackBookingWebConsoleChrome>
     </div>
   );
 }

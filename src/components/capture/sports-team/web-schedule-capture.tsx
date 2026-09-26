@@ -1,5 +1,5 @@
-import { oxymFonts } from "@/components/capture/capture-fonts";
-import { OxymWebShell } from "@/components/capture/oxym/oxym-web-shell";
+import { sportsTeamFonts } from "@/components/capture/capture-fonts";
+import { SportsTeamWebShell } from "@/components/capture/sports-team/sports-team-web-shell";
 
 const days = [
   {
@@ -81,11 +81,11 @@ const days = [
   },
 ];
 
-/** 1600×900 Oxym coach schedule view */
-export function OxymWebScheduleCapture() {
+/** 1600×900 Sports team coach schedule view */
+export function SportsTeamWebScheduleCapture() {
   return (
-    <div className={`oxym-capture-root ${oxymFonts}`}>
-      <OxymWebShell activeNav="schedule" topbarTitle="Schedule" topbarSub="March 2026, First Team">
+    <div className={`sports-team-capture-root ${sportsTeamFonts}`}>
+      <SportsTeamWebShell activeNav="schedule" topbarTitle="Schedule" topbarSub="March 2026, First Team">
         <div className="schedule-layout">
           <div className="schedule-toolbar">
             <div className="schedule-tabs">
@@ -165,7 +165,7 @@ export function OxymWebScheduleCapture() {
             </ul>
           </aside>
         </div>
-      </OxymWebShell>
+      </SportsTeamWebShell>
     </div>
   );
 }

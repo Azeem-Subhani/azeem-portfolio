@@ -1,11 +1,11 @@
-import { trackHeroFonts } from "@/components/capture/capture-fonts";
+import { trackBookingFonts } from "@/components/capture/capture-fonts";
 
-/** 900×1600 Track Hero customer checkout — mobile web. */
+/** 900×1600 Track booking customer checkout — mobile web. */
 
-export function TrackHeroPhoneCheckoutCapture() {
+export function TrackBookingPhoneCheckoutCapture() {
   return (
-    <div className={`th-capture-root ${trackHeroFonts}`}>
-      <section className="capture capture--phone" aria-label="Track Hero checkout on phone">
+    <div className={`th-capture-root ${trackBookingFonts}`}>
+      <section className="capture capture--phone" aria-label="Track booking checkout on phone">
         <div className="p-topbar">
           <button type="button" className="p-icon" aria-label="Back">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,7 +13,7 @@ export function TrackHeroPhoneCheckoutCapture() {
             </svg>
           </button>
           <div className="p-title">
-            <span className="p-brand">TRACK HERO</span>
+            <span className="p-brand">TRACK BOOKING</span>
             Checkout
             <small>Apex Raceway · Fri 18 Sep</small>
           </div>

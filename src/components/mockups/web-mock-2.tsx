@@ -88,10 +88,10 @@ type Venue = {
 
 const venues: Venue[] = [
   {
-    id: "monticello",
-    name: "Monticello",
-    slug: "monticello",
-    mark: "MO",
+    id: "ridgeline",
+    name: "Ridgeline",
+    slug: "ridgeline",
+    mark: "RL",
     shell: "bg-accent text-accent-foreground",
     ink: "text-accent",
     wash: "bg-accent/12",
@@ -102,24 +102,24 @@ const venues: Venue[] = [
     ],
   },
   {
-    id: "sonoma",
-    name: "Sonoma",
-    slug: "sonoma",
-    mark: "SO",
+    id: "coastal",
+    name: "Coastal",
+    slug: "coastal",
+    mark: "CO",
     shell: "bg-signal text-foreground",
     ink: "text-signal",
     wash: "bg-signal/15",
     slots: [
       { time: "8:30", label: "Open track", price: "$195" },
-      { time: "12:00", label: "Carousel laps", price: "$360" },
+      { time: "12:00", label: "Sweeper laps", price: "$360" },
       { time: "3:30", label: "Sunset session", price: "$275" },
     ],
   },
   {
-    id: "enclave",
-    name: "Motor Enclave",
-    slug: "enclave",
-    mark: "ME",
+    id: "harbor",
+    name: "Harbor",
+    slug: "harbor",
+    mark: "HM",
     shell: "bg-success text-accent-foreground",
     ink: "text-success",
     wash: "bg-success/14",
@@ -130,30 +130,30 @@ const venues: Venue[] = [
     ],
   },
   {
-    id: "skip",
-    name: "Skip Barber",
-    slug: "skip",
-    mark: "SB",
+    id: "summit",
+    name: "Summit",
+    slug: "summit",
+    mark: "SU",
     shell: "bg-accent-strong text-accent-foreground",
     ink: "text-accent-strong",
     wash: "bg-accent-strong/14",
     slots: [
       { time: "9:30", label: "School session", price: "$240" },
       { time: "1:00", label: "Intro to racing", price: "$520" },
-      { time: "4:45", label: "Big Bend laps", price: "$95" },
+      { time: "4:45", label: "Long Bend laps", price: "$95" },
     ],
   },
   {
-    id: "spring",
-    name: "Spring Mountain",
-    slug: "spring",
-    mark: "SM",
+    id: "desert",
+    name: "High Desert",
+    slug: "desert",
+    mark: "HD",
     shell: "bg-accent-secondary text-foreground",
     ink: "text-accent-secondary",
     wash: "bg-accent-secondary/14",
     slots: [
       { time: "8:00", label: "Full course", price: "$265" },
-      { time: "11:30", label: "Bowl session", price: "$445" },
+      { time: "11:30", label: "Basin session", price: "$445" },
       { time: "3:00", label: "North loop hire", price: "$1,650" },
     ],
   },
@@ -192,7 +192,7 @@ function BrowserChrome({
         <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-md bg-background px-2.5 py-1 text-[10px] text-muted-foreground">
           <Lock className="size-2.5 shrink-0" strokeWidth={2.2} />
           <span className="truncate">
-            book.trackhero.com/
+            book.example.com/
             <AnimatePresence mode="wait">
               <motion.span
                 key={venue.slug}

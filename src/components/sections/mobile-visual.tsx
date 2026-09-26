@@ -265,7 +265,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
 
           <motion.div className="flex min-h-0 flex-1 flex-col px-3.5 pb-3 pt-1" variants={pass}>
             <motion.div className="flex items-center justify-between" variants={fade}>
-              <p className="text-[11px] font-medium text-foreground">Oxym</p>
+              <p className="text-[11px] font-medium text-foreground">Sports Team</p>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
                 <span className="relative flex size-1.5">
                   <span

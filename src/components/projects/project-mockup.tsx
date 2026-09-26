@@ -60,7 +60,7 @@ type CatalogComposition = {
 };
 
 const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
-  "track-hero": {
+  "track-booking": {
     browserScale: 0.82,
     browserX: "50%",
     browserY: "50%",
@@ -69,7 +69,7 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
     phoneBottom: "32px",
     phoneScale: "0.62",
   },
-  oxym: {
+  "sports-team-app": {
     browserScale: 0.76,
     browserX: "53%",
     browserY: "46%",
@@ -140,8 +140,8 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
  * does this through its screen color) instead of a see-through hole.
  */
 const WEB_SCREEN_BG: Record<string, string> = {
-  "track-hero": "#07080A",
-  oxym: "#F4F6F2",
+  "track-booking": "#07080A",
+  "sports-team-app": "#F4F6F2",
   "memorial-planning": "#F7F7F4",
   "gaming-global": "#12110F",
   "woody-shop": "#FFFFFF",
@@ -186,7 +186,7 @@ export function ProjectMockup({
   const { screens, productPath } = project;
   const isCatalog = density === "catalog";
   const catalogComposition =
-    CATALOG_COMPOSITIONS[project.slug] ?? CATALOG_COMPOSITIONS["track-hero"];
+    CATALOG_COMPOSITIONS[project.slug] ?? CATALOG_COMPOSITIONS["track-booking"];
   const stageRef = useRef<HTMLDivElement>(null);
   const [catalogSize, setCatalogSize] = useState({ width: 0, height: 0 });
   const [liveReady, setLiveReady] = useState(false);
@@ -365,10 +365,10 @@ export function ProjectMockup({
             <BrowserFrame
               url={productPath}
               tone={
-                project.slug === "track-hero"
+                project.slug === "track-booking"
                   ? "dark"
-                  : project.slug === "oxym"
-                    ? "oxym"
+                  : project.slug === "sports-team-app"
+                    ? "sports-team"
                   : project.slug === "gaming-global"
                     ? "ink"
                     : project.slug === "real-time-chat"
@@ -414,9 +414,9 @@ export function ProjectMockup({
             >
               <PhoneFrame
                 shellClassName={
-                  project.slug === "oxym"
+                  project.slug === "sports-team-app"
                     ? "bg-[#0C3B2E]"
-                    : project.slug === "track-hero"
+                    : project.slug === "track-booking"
                       ? "bg-[#07080A]"
                       : project.slug === "gaming-global"
                         ? "bg-[#12110F]"
@@ -433,9 +433,9 @@ export function ProjectMockup({
                                   : undefined
                 }
                 screenClassName={
-                  project.slug === "oxym"
+                  project.slug === "sports-team-app"
                     ? "bg-[#F4F6F2]"
-                    : project.slug === "track-hero"
+                    : project.slug === "track-booking"
                     ? "bg-[#07080A]"
                     : project.slug === "gaming-global"
                       ? "bg-[#12110F]"

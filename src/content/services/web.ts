@@ -9,7 +9,7 @@ export const webService: ServicePageContent = {
   kicker: "Services / web",
   titleLines: ["sites that load fast", "and rank well"],
   lede:
-    "I build Next.js product sites on a headless CMS. Search engines get server-rendered HTML, editors change copy without a deploy, and pages are served from the edge. Track Hero's five booking venues run this way.",
+    "I build Next.js product sites on a headless CMS. Search engines get server-rendered HTML, editors change copy without a deploy, and pages are served from the edge. The Track Booking Platform's five venues run this way.",
   proof: [
     { value: "95+", label: "Lighthouse scores I ship to" },
     { value: "5", label: "white-label booking sites live" },

@@ -1,10 +1,10 @@
-import { oxymFonts } from "@/components/capture/capture-fonts";
+import { sportsTeamFonts } from "@/components/capture/capture-fonts";
 
-/** 900×1600 Oxym player schedule */
-export function OxymPhoneScheduleCapture() {
+/** 900×1600 Sports team player schedule */
+export function SportsTeamPhoneScheduleCapture() {
   return (
-    <div className={`oxym-capture-root ${oxymFonts}`}>
-      <section className="capture capture--phone" aria-label="Oxym schedule on phone">
+    <div className={`sports-team-capture-root ${sportsTeamFonts}`}>
+      <section className="capture capture--phone" aria-label="Sports team schedule on phone">
         <div className="p-inner">
         <header className="p-head">
           <button type="button" className="icon-btn" aria-label="Back">

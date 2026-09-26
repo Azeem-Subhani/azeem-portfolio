@@ -1,11 +1,11 @@
 "use client";
 
 export const venues = [
-  { id: "monticello", label: "Monticello", sub: "Motor Club" },
-  { id: "sonoma", label: "Sonoma", sub: "Raceway" },
-  { id: "enclave", label: "Motor Enclave", sub: "Tampa Bay" },
-  { id: "skip", label: "Skip Barber", sub: "Racing School" },
-  { id: "spring", label: "Spring Mountain", sub: "Motorsports" },
+  { id: "ridgeline", label: "Ridgeline", sub: "Motor Club" },
+  { id: "coastal", label: "Coastal", sub: "Raceway" },
+  { id: "harbor", label: "Harbor", sub: "Motor Park" },
+  { id: "summit", label: "Summit", sub: "Racing School" },
+  { id: "desert", label: "High Desert", sub: "Motorsports" },
 ] as const;
 
 export type LightState = "idle" | "red" | "green";
@@ -82,7 +82,7 @@ export function GantryLights({
   interactive = false,
 }: {
   states: LightState[];
-  /** `undefined` keeps the standalone Sonoma accent. `null` skips label highlight (flash). */
+  /** `undefined` keeps the standalone Coastal accent. `null` skips label highlight (flash). */
   activeIndex?: number | null;
   onSelect?: (index: number) => void;
   interactive?: boolean;
@@ -118,7 +118,7 @@ export function GantryLights({
           const lit = state !== "idle";
           const labelHot =
             activeIndex === undefined
-              ? venue.id === "sonoma"
+              ? venue.id === "coastal"
               : activeIndex === index;
 
           const lightOrb = (

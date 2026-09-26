@@ -1,6 +1,6 @@
-import { trackHeroFonts } from "@/components/capture/capture-fonts";
+import { trackBookingFonts } from "@/components/capture/capture-fonts";
 
-/** 1600×900 Track Hero operator console — Group Overview. */
+/** 1600×900 Track booking operator console — Group Overview. */
 
 function IconOverview() {
   return (
@@ -68,15 +68,15 @@ function IconSettings() {
   );
 }
 
-export function TrackHeroWebCapture() {
+export function TrackBookingWebCapture() {
   return (
-    <div className={`th-capture-root ${trackHeroFonts}`}>
-      <section className="capture capture--web" aria-label="Track Hero operator console">
+    <div className={`th-capture-root ${trackBookingFonts}`}>
+      <section className="capture capture--web" aria-label="Track booking operator console">
         <header className="topbar">
           <div className="brand">
-            <div className="logo">TH</div>
+            <div className="logo">TB</div>
             <div>
-              <div className="b-name">TRACK HERO</div>
+              <div className="b-name">TRACK BOOKING</div>
               <div className="b-sub">Ops Console</div>
             </div>
           </div>
@@ -330,7 +330,7 @@ export function TrackHeroWebCapture() {
                     <div className="car">GT4</div>
                     <div className="fleet-txt">
                       <b>Mercedes-AMG GT4</b>
-                      <span>#05 · Sonoma Coast</span>
+                      <span>#05 · Coastal Loop</span>
                     </div>
                     <span className="pill serv">Service</span>
                   </div>
@@ -394,7 +394,7 @@ export function TrackHeroWebCapture() {
                       <div>GT4 Test Day</div>
                       <div className="s">Advanced · 60 min</div>
                     </div>
-                    <span className="s">Sonoma Coast</span>
+                    <span className="s">Coastal Loop</span>
                     <div className="cap-bar">
                       <i style={{ width: "100%" }} />
                     </div>

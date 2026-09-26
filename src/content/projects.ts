@@ -19,16 +19,16 @@ function screens(
 
 export const projects: Project[] = [
   {
-    slug: "track-hero",
-    title: "Track Hero",
+    slug: "track-booking",
+    title: "Track Booking Platform",
     summary:
       "A motorsports booking and operations platform running white-label reservation experiences for five race tracks.",
     context:
-      "Track Hero runs the booking and back-office operations for motorsports venues that sell track time, driving experiences, and events. Each venue needed its own branded booking site backed by one shared reservation and payments engine.",
+      "The platform runs the booking and back-office operations for motorsports venues that sell track time, driving experiences, and events. Each venue needed its own branded booking site backed by one shared reservation and payments engine.",
     role: "Full-stack engineer building customer booking flows and the operator-facing back office.",
     approach: [
       "Built customer booking and operator workflows spanning reservations, CRM, fleet management, event scheduling, payments, and operational reporting.",
-      "Delivered white-label booking experiences for five venues: Sonoma Raceway, Monticello Motor Club, The Motor Enclave, Skip Barber, and Spring Mountain.",
+      "Delivered white-label booking experiences for five venues: Coastal Raceway, Ridgeline Motor Club, Harbor Motor Park, Summit Racing School, and High Desert Motorsports.",
       "Integrated Stripe for reservations, stored cards, gift certificates, credits, and promo codes.",
       "Improved reliability with typed API clients, token refresh, route guards, and request validation across the Django API.",
     ],
@@ -40,10 +40,10 @@ export const projects: Project[] = [
     stack: ["React", "Next.js", "TypeScript", "Django", "Stripe"],
     categories: ["Full-Stack", "Payments", "Cloud"],
     screens: screens(
-      "track-hero",
+      "track-booking",
       "#07080A",
-      "Track Hero operator console with group revenue, fleet, and session capacity.",
-      "Track Hero customer booking on iPhone.",
+      "Track booking operator console with group revenue, fleet, and session capacity.",
+      "Customer track booking on iPhone.",
       true,
       true,
     ),
@@ -51,17 +51,17 @@ export const projects: Project[] = [
       { value: "5", label: "white-label venues" },
       { value: "1", label: "shared payments engine" },
     ],
-    productPath: "www.trackhero.com",
+    productPath: "booking.example.com",
     featured: true,
     visibility: "anonymized",
   },
   {
-    slug: "oxym",
-    title: "Oxym",
+    slug: "sports-team-app",
+    title: "Sports Team App",
     summary:
       "A cross-platform team management app with real-time messaging, in-app invoicing, and RAG-generated game-day emails.",
     context:
-      "Oxym serves sports teams, coaches, and players who need scheduling, payments, and communication in one app across web and mobile.",
+      "The app serves sports teams, coaches, and players who need scheduling, payments, and communication in one app across web and mobile.",
     role: "Full-stack engineer across the Angular/Ionic client, NestJS backend, and the email automation workflow.",
     approach: [
       "Developed a cross-platform web and mobile client with Socket.IO live updates and Firebase/Firestore real-time messaging for teams, coaches, and players.",
@@ -84,10 +84,10 @@ export const projects: Project[] = [
     ],
     categories: ["AI & RAG", "Full-Stack", "Mobile", "Real-Time", "Payments"],
     screens: screens(
-      "oxym",
+      "sports-team-app",
       "#1a1d21",
-      "Oxym team dashboard with the next fixture, squad availability, invoices, and matchday email.",
-      "Oxym First Team chat on iPhone.",
+      "Sports team dashboard with the next fixture, squad availability, invoices, and matchday email.",
+      "First Team chat on iPhone.",
       true,
       true,
     ),
@@ -95,7 +95,7 @@ export const projects: Project[] = [
       { value: "Web + mobile", label: "one codebase" },
       { value: "RAG", label: "game-day emails" },
     ],
-    productPath: "app.oxym.com",
+    productPath: "team.example.com",
     featured: true,
     visibility: "anonymized",
   },

@@ -1,21 +1,21 @@
 "use client";
 
-import { TrackHeroWebCapture } from "@/components/capture/track-hero/web-capture";
+import { TrackBookingWebCapture } from "@/components/capture/track-booking/web-capture";
 import { useCaptureScale } from "@/components/projects/mockups/use-capture-scale";
 
-import "@/components/capture/track-hero/track-hero-capture.css";
+import "@/components/capture/track-booking/track-booking-capture.css";
 
 const DESIGN_W = 1600;
 const DESIGN_H = 900;
 
-/** Live Track Hero operator console — scaled from 1600×900 for BrowserFrame. */
-export function TrackHeroWebMock() {
+/** Live track booking operator console — scaled from 1600×900 for BrowserFrame. */
+export function TrackBookingWebMock() {
   const { hostRef, scale } = useCaptureScale(DESIGN_W, DESIGN_H);
 
   return (
     <div
       ref={hostRef}
-      data-live-web-mockup="track-hero"
+      data-live-web-mockup="track-booking"
       className="relative aspect-[16/9] w-full overflow-hidden bg-[#07080A]"
       aria-hidden="true"
     >
@@ -27,7 +27,7 @@ export function TrackHeroWebMock() {
           transform: `scale(${scale})`,
         }}
       >
-        <TrackHeroWebCapture />
+        <TrackBookingWebCapture />
       </div>
     </div>
   );

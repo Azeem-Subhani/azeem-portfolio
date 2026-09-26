@@ -72,7 +72,7 @@ export const fintechIndustry: IndustryPageContent = {
         "Wallet modules",
         "Typed API clients with token refresh",
       ],
-      link: { kind: "shipped", label: "Track Hero and Oxym", href: "/projects/track-hero" },
+      link: { kind: "shipped", label: "Track Booking Platform and Sports Team App", href: "/projects/track-booking" },
     },
     {
       icon: "lock",
