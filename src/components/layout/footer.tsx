@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { GithubIcon, LinkedinIcon } from "@/components/icons";
+import { ConsentSettingsButton } from "@/components/privacy/privacy-consent";
 import { primaryNav, serviceNav } from "@/content/nav";
 import { profile } from "@/content/profile";
 
@@ -95,6 +96,7 @@ export function Footer() {
         <Link href="/terms" className="transition-colors hover:text-foreground">
           Terms
         </Link>
+        <ConsentSettingsButton className="ml-2 before:mr-2 before:content-['·'] transition-colors hover:text-foreground" />
       </p>
     </footer>
   );

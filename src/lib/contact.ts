@@ -32,7 +32,8 @@ export async function sendContactEmail(submission: ContactSubmission) {
       "",
       submission.message,
     ]
-      .filter((line): line is string => Boolean(line))
+      // Keep the "" separator between the headers and the message body.
+      .filter((line): line is string => line !== undefined)
       .join("\n"),
   });
 

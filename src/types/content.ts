@@ -78,7 +78,6 @@ export type Profile = {
   location: string;
   summary: string;
   email: string;
-  phone: string;
   linkedinUrl: string;
   githubUrl: string;
   siteUrl: string;

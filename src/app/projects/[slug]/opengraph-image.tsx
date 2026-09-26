@@ -1,9 +1,12 @@
 import { ImageResponse } from "next/og";
+import { notFound } from "next/navigation";
 
 import { getProjectBySlug, projects } from "@/content/projects";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -16,9 +19,11 @@ export default async function Image({
 }) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
-  const title = project?.title ?? "Azeem Subhani";
-  const summary = project?.summary ?? "";
-  const stack = project?.stack.join(" · ") ?? "";
+  if (!project) notFound();
+
+  const title = project.title;
+  const summary = project.summary;
+  const stack = project.stack.join(" · ");
 
   return new ImageResponse(
     (
