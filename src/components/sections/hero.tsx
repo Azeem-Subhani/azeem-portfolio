@@ -18,7 +18,7 @@ const lines = [
   { text: "take", className: "block" },
   { text: "the idea", className: "block" },
   { text: "to", className: "block" },
-  { text: "customers", className: "block text-accent-ink" },
+  { text: "customers", className: "block text-accent" },
 ] as const;
 
 // Operated numbers from the service pages (cloud, mobile, web), so the fold carries proof.

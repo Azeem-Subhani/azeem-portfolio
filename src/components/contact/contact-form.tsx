@@ -403,7 +403,7 @@ export function ContactForm() {
 
         <p role="status" aria-live="polite" className="text-sm">
           {submitState === "success" ? (
-            <span className="flex items-center gap-2 text-accent-ink">
+            <span className="flex items-center gap-2 text-accent">
               <CheckCircle2 aria-hidden="true" className="size-4" />
               Message sent. I&apos;ll get back to you soon.
             </span>

@@ -117,7 +117,7 @@ function MatchCard({ compact }: { compact?: boolean }) {
           >
             6:00
           </p>
-          <p className="mt-0.5 text-[10px] font-medium text-accent-ink">vs</p>
+          <p className="mt-0.5 text-[10px] font-medium text-accent">vs</p>
         </div>
         <KitMark letters="NS" away compact={compact} />
       </div>
@@ -135,7 +135,7 @@ function Pitch({ dense }: { dense?: boolean }) {
     <div className={cn("relative overflow-hidden rounded-2xl bg-background", dense ? "h-full min-h-[10rem]" : "aspect-[3/4]")}>
       <svg
         viewBox="0 0 100 132"
-        className="absolute inset-0 h-full w-full text-accent-ink/45"
+        className="absolute inset-0 h-full w-full text-accent/45"
         aria-hidden="true"
         preserveAspectRatio="xMidYMid slice"
       >
@@ -171,7 +171,7 @@ function TabBar({ active }: { active: "Match" | "Squad" | "Chat" }) {
   return (
     <div className="mt-auto grid grid-cols-3 border-t border-border pt-2 text-center text-[9px] text-muted-foreground">
       {(["Match", "Squad", "Chat"] as const).map((tab) => (
-        <span key={tab} className={tab === active ? "text-accent-ink" : undefined}>
+        <span key={tab} className={tab === active ? "text-accent" : undefined}>
           {tab}
         </span>
       ))}
@@ -310,7 +310,7 @@ export function SyncStage() {
                 <MatchCard />
               </div>
               <div className="mt-3 flex items-center justify-between">
-                <p className="text-[11px] text-accent-ink">14 going</p>
+                <p className="text-[11px] text-accent">14 going</p>
                 <p className="text-[10px] text-muted-foreground">Squad</p>
               </div>
               <ul className="mt-1.5 space-y-1.5">
@@ -320,10 +320,10 @@ export function SyncStage() {
                     className="flex items-center justify-between rounded-xl bg-background px-2.5 py-1.5 text-[11px]"
                   >
                     <span>
-                      <span className="mr-1.5 text-accent-ink">{row.pos}</span>
+                      <span className="mr-1.5 text-accent">{row.pos}</span>
                       {row.name}
                     </span>
-                    <span className={row.in ? "text-[10px] text-accent-ink" : "text-[10px] text-muted-foreground"}>
+                    <span className={row.in ? "text-[10px] text-accent" : "text-[10px] text-muted-foreground"}>
                       {row.in ? "in" : "out"}
                     </span>
                   </li>
@@ -373,7 +373,7 @@ export function NativePhone() {
       <div className="flex h-[calc(100%-1.75rem)] flex-col px-3 pb-2 pt-1">
         <div className="flex items-center justify-between">
           <p className="text-[11px] font-medium">Squad</p>
-          <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent-ink">live</span>
+          <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent">live</span>
         </div>
         <ul className="mt-2 space-y-1.5">
           {squad.map((row) => (
@@ -383,12 +383,12 @@ export function NativePhone() {
               className="flex items-center justify-between rounded-xl bg-background px-2.5 py-1.5"
             >
               <span className="flex items-center gap-2">
-                <span className="flex size-6 items-center justify-center rounded-full bg-accent/20 text-[9px] font-medium text-accent-ink">
+                <span className="flex size-6 items-center justify-center rounded-full bg-accent/20 text-[9px] font-medium text-accent">
                   {row.pos}
                 </span>
                 <span className="text-[12px]">{row.name}</span>
               </span>
-              <span className={row.in ? "text-[10px] text-accent-ink" : "text-[10px] text-muted-foreground"}>
+              <span className={row.in ? "text-[10px] text-accent" : "text-[10px] text-muted-foreground"}>
                 {row.in ? "in" : "out"}
               </span>
             </li>
@@ -415,7 +415,7 @@ export function TabletBoard() {
               <p className="text-[11px] text-muted-foreground">Coach board</p>
               <p className="font-display text-2xl leading-none">4-3-3</p>
             </div>
-            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent-ink">synced</span>
+            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent">synced</span>
           </div>
           <ul className="mt-3 space-y-1.5">
             {squad.map((row) => (
@@ -425,7 +425,7 @@ export function TabletBoard() {
                 className="flex items-center justify-between gap-2 rounded-lg bg-background px-2 py-1.5 text-[11px]"
               >
                 <span>
-                  <span className="mr-1.5 text-accent-ink">{row.pos}</span>
+                  <span className="mr-1.5 text-accent">{row.pos}</span>
                   {row.name}
                 </span>
                 <span
@@ -465,7 +465,7 @@ export function SquadPhone() {
               className="flex items-center justify-between rounded-2xl bg-background px-3 py-2.5"
             >
               <span className="flex items-center gap-2.5">
-                <span className="flex size-8 items-center justify-center rounded-full bg-accent/20 text-[10px] font-medium text-accent-ink">
+                <span className="flex size-8 items-center justify-center rounded-full bg-accent/20 text-[10px] font-medium text-accent">
                   {row.pos}
                 </span>
                 <span>
@@ -496,7 +496,7 @@ export function WatchFace() {
             <p className="text-[10px] text-muted-foreground">Sat</p>
             <p className="font-display text-2xl leading-none">5:47</p>
           </div>
-          <p className="mt-3 text-[10px] text-accent-ink">Live activity</p>
+          <p className="mt-3 text-[10px] text-accent">Live activity</p>
           <p className="font-display text-[2.6rem] leading-[0.85] tracking-tight">13m</p>
           <p className="mt-1 text-[11px] text-muted-foreground">Riverside kickoff</p>
           <div className="mt-auto grid grid-cols-2 gap-1.5">
@@ -530,7 +530,7 @@ export function CarDash() {
         </div>
         <div className="mt-auto mb-5">
           <p className="font-display text-[clamp(2rem,4vw,3.1rem)] leading-[0.92]">Turn right</p>
-          <p className="mt-2 text-accent-ink">200 m · Riverside Drive</p>
+          <p className="mt-2 text-accent">200 m · Riverside Drive</p>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <span className="rounded-2xl bg-accent px-3 py-3 text-center text-[12px] font-medium text-accent-foreground">
@@ -605,7 +605,7 @@ export function HardwarePhone({ active }: { active: string }) {
                   key={row.label}
                   className="flex items-center justify-between gap-2 rounded-xl bg-background px-2.5 py-2"
                 >
-                  <span className="text-[11px] font-medium text-accent-ink">{row.label}</span>
+                  <span className="text-[11px] font-medium text-accent">{row.label}</span>
                   <span className="text-[11px] text-foreground">{row.status}</span>
                 </li>
               ))}

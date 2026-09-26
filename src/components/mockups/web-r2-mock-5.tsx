@@ -169,7 +169,7 @@ export function GantryLights({
               >
                 <p
                   className={`line-clamp-2 text-balance break-words text-[9px] leading-tight sm:text-[10px] ${
-                    labelHot ? "text-accent-ink" : "text-foreground"
+                    labelHot ? "text-accent" : "text-foreground"
                   }`}
                 >
                   {venue.label}

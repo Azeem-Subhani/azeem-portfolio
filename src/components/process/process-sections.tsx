@@ -50,7 +50,7 @@ export function ProcessHero() {
           </span>
         </span>
         <span aria-hidden="true" className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
-          <span data-process-line className="block text-accent-ink">
+          <span data-process-line className="block text-accent">
             can see into
           </span>
         </span>
@@ -95,7 +95,7 @@ export function ProcessPreProject() {
         <ol className="divide-y divide-border border-y border-border">
           {preProjectSteps.map((step, index) => (
             <li key={step.title} data-why="up" className="grid gap-3 py-8 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-6">
-              <span aria-hidden="true" className="font-display text-4xl leading-none text-accent-ink">
+              <span aria-hidden="true" className="font-display text-4xl leading-none text-accent">
                 {index + 1}
               </span>
               <div>
@@ -104,7 +104,7 @@ export function ProcessPreProject() {
                 <ul className="mt-5 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
                   {step.items.map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
-                      <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-ink" />
+                      <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" />
                       {item}
                     </li>
                   ))}
@@ -169,7 +169,7 @@ function SprintChart() {
             <span
               key={i}
               data-process-day
-              className="pb-2 pl-1 text-muted-foreground/80 transition-colors duration-200 data-active:text-accent-ink sm:pl-2"
+              className="pb-2 pl-1 text-muted-foreground/80 transition-colors duration-200 data-active:text-accent sm:pl-2"
             >
               <span className="sm:hidden">{DAYS[i % 5].charAt(0)}</span>
               <span className="hidden sm:inline">{DAYS[i % 5]}</span>
@@ -250,7 +250,7 @@ function SignOffPill({ className, ...rest }: { className?: string; "data-process
     <span
       {...rest}
       className={cn(
-        "whitespace-nowrap rounded-full border border-accent bg-background px-3 py-1 text-xs font-medium text-accent-ink",
+        "whitespace-nowrap rounded-full border border-accent bg-background px-3 py-1 text-xs font-medium text-accent",
         className,
       )}
     >
@@ -326,7 +326,7 @@ export function ProcessChanges() {
       <ol className="mt-12 grid gap-8 border-t border-border pt-8 sm:grid-cols-2 lg:grid-cols-4">
         {changeSteps.map((step, index) => (
           <li key={step.title} data-why="up">
-            <span aria-hidden="true" className="font-display text-3xl leading-none text-accent-ink">
+            <span aria-hidden="true" className="font-display text-3xl leading-none text-accent">
               {index + 1}
             </span>
             <h3 className="mt-3 font-medium text-foreground">{step.title}</h3>
@@ -350,7 +350,7 @@ export function ProcessChanges() {
               ))}
             </ul>
             <p className="mt-6 flex items-center gap-2 border-t border-border pt-5 text-sm font-medium text-foreground">
-              <Check aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
+              <Check aria-hidden="true" className="size-4 shrink-0 text-accent" />
               {path.outcome}
             </p>
           </div>

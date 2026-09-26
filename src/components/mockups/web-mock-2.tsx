@@ -93,7 +93,7 @@ const venues: Venue[] = [
     slug: "ridgeline",
     mark: "RL",
     shell: "bg-accent text-accent-foreground",
-    ink: "text-accent-ink",
+    ink: "text-accent",
     wash: "bg-accent/12",
     slots: [
       { time: "9:00", label: "North loop", price: "$220" },

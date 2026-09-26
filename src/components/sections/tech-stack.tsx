@@ -114,7 +114,7 @@ export function TechStack() {
               </span>
             </span>
             <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
-              <span data-stack-line className="block text-accent-ink will-change-transform">
+              <span data-stack-line className="block text-accent will-change-transform">
                 technology stack
               </span>
             </span>

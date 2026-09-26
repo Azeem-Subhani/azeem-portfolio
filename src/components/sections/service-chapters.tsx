@@ -308,7 +308,7 @@ export function ServiceChapters() {
               <p data-chapter-copy className="mt-8">
                 <Link
                   href={chapter.href}
-                  className="inline-flex w-fit items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                  className="inline-flex w-fit items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   {chapter.linkLabel}
                   <span aria-hidden="true">↗</span>

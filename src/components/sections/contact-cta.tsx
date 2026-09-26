@@ -132,7 +132,7 @@ export function ContactCta() {
                 // room; the negative margin keeps the lines 0.9 apart.
                 className={cn(
                   "block overflow-clip pb-[0.16em] -mb-[0.16em]",
-                  isAccent && "text-accent-ink",
+                  isAccent && "text-accent",
                 )}
                 variants={variants.lineMask}
               >

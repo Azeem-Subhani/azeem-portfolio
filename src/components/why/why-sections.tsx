@@ -28,7 +28,7 @@ export function Figure({
   return (
     <span
       className={cn(
-        "inline-block origin-left font-display font-normal leading-none text-accent-ink transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
+        "inline-block origin-left font-display font-normal leading-none text-accent transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none",
         className,
       )}
     >
@@ -117,7 +117,7 @@ export function WhyHero() {
       <h1 data-why="hero" className="mt-5 font-display text-[clamp(3.25rem,8vw,6.5rem)] font-normal leading-[0.9]">
         one builder,
         <br />
-        <span className="text-accent-ink">the whole stack</span>
+        <span className="text-accent">the whole stack</span>
       </h1>
       <p data-why="hero" className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
         Product teams hire me when they need the interface, the API, the data, and the cloud

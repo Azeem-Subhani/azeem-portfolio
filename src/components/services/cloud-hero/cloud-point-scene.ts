@@ -72,18 +72,18 @@ const POINT_SIZE = 0.022;
 
 const palettes = {
   dark: {
-    lit: new THREE.Color("#eee8d5"),
-    shade: new THREE.Color("#1f6a70"),
-    accent: new THREE.Color("#5fd8cc"),
-    opacity: 0.5,
-    haze: new THREE.Color("#3f8f92"),
-    hazeOpacity: 0.1,
+    lit: new THREE.Color("#fdf6e3"),
+    shade: new THREE.Color("#5aa8a8"),
+    accent: new THREE.Color("#6ff0e2"),
+    opacity: 0.8,
+    haze: new THREE.Color("#4fa3a3"),
+    hazeOpacity: 0.12,
     blending: THREE.AdditiveBlending,
   },
   light: {
     lit: new THREE.Color("#6f9a9a"),
     shade: new THREE.Color("#073642"),
-    accent: new THREE.Color("#2aa198"),
+    accent: new THREE.Color("#1c827a"),
     opacity: 0.46,
     // On paper the haze reads as smudges above a whisper.
     haze: new THREE.Color("#2a6f73"),
@@ -331,7 +331,7 @@ const fragmentShader = /* glsl */ `
     vec3 color = mix(mix(uShade, uLit, vLight), uAccent, vAccent);
     // Dark: lit points shine. Light: shadowed points carry more ink, like stipple.
     float lit = pow(vLight, 1.4);
-    float strength = uDark > 0.5 ? 0.1 + 0.9 * lit : 0.3 + 0.7 * (1.0 - lit * 0.75);
+    float strength = uDark > 0.5 ? 0.3 + 0.7 * lit : 0.3 + 0.7 * (1.0 - lit * 0.75);
     gl_FragColor = vec4(color, uOpacity * strength * soft * vAlpha);
   }
 `;
