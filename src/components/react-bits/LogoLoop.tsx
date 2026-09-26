@@ -304,7 +304,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
           isVertical ? 'overflow-hidden h-full inline-block' : 'overflow-x-hidden',
           '[--logoloop-gap:32px]',
           '[--logoloop-logoHeight:28px]',
-          '[--logoloop-fadeColorAuto:#fdf6e3]',
+          '[--logoloop-fadeColorAuto:var(--bg)]',
           'dark:[--logoloop-fadeColorAuto:#002b36]',
           scaleOnHover && 'py-[calc(var(--logoloop-logoHeight)*0.1)]',
           className

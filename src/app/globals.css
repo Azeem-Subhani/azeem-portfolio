@@ -4,37 +4,37 @@
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --bg: #fdf6e3;
+  --bg: #fbf7ee;
   --fg: #073642;
   --muted: #586e75;
-  --accent: #2aa198;
-  --border: #eee8d5;
+  --accent: #1c827a;
+  --border: #ebe4d3;
   --font-h1: var(--font-instrument-serif);
   --font-h2: var(--font-inter);
 
   --background: var(--bg);
   --foreground: var(--fg);
   --muted-foreground: var(--muted);
-  --surface: #f5efd8;
-  --surface-elevated: #f0e9d3;
-  --accent-strong: #21867e;
-  --accent-readable: #187c75;
+  --surface: #f4efe2;
+  --surface-elevated: #efe9da;
+  --accent-strong: #176f69;
+  --accent-readable: #176f69;
   --accent-secondary: #268bd2;
-  --accent-foreground: #002b36;
+  --accent-foreground: #ffffff;
   --signal: #268bd2;
   --signal-readable: #1c70aa;
-  --ring: #2aa198;
+  --ring: #1c827a;
   --success: #859900;
   --error: #dc322f;
-  --glass: rgb(253 246 227 / 82%);
-  --header-glass: rgb(253 246 227 / 20%);
+  --glass: rgb(251 247 238 / 82%);
+  --header-glass: rgb(251 247 238 / 20%);
   --shadow-color: 7 54 66;
   /* Product-mock chassis for the cloud / web / mobile section panels. The
      light values keep those panels reading as light consoles on a cream page
      instead of staying dark slabs; the dark values are the original slate. */
-  --panel-chassis: #f0e9d3;
-  --panel-inset: #fdf6e3;
-  --panel-well: #e3dbc0;
+  --panel-chassis: #efe9da;
+  --panel-inset: #fbf7ee;
+  --panel-well: #e1d9c5;
   --panel-ink: #073642;
   --panel-muted: #586e75;
   --panel-grid: rgb(7 54 66 / 7%);
@@ -2111,22 +2111,22 @@ html.dark .svgl-invert-dark,
   :root,
   .dark,
   [data-theme="dark"] {
-    --bg: #fdf6e3;
+    --bg: #fbf7ee;
     --fg: #073642;
     --muted: #586e75;
-    --accent: #2aa198;
-    --border: #eee8d5;
-    --background: #fdf6e3;
-    --surface: #f5efd8;
-    --surface-elevated: #f0e9d3;
+    --accent: #1c827a;
+    --border: #ebe4d3;
+    --background: #fbf7ee;
+    --surface: #f4efe2;
+    --surface-elevated: #efe9da;
     --foreground: #073642;
     --muted-foreground: #586e75;
-    --accent-strong: #21867e;
-    --accent-readable: #187c75;
+    --accent-strong: #176f69;
+    --accent-readable: #176f69;
   }
 
   body {
-    background: #fdf6e3 !important;
+    background: #fbf7ee !important;
   }
 
   .graph-field,

@@ -83,7 +83,7 @@ const palettes = {
   light: {
     lit: new THREE.Color("#6f9a9a"),
     shade: new THREE.Color("#073642"),
-    accent: new THREE.Color("#2aa198"),
+    accent: new THREE.Color("#1c827a"),
     opacity: 0.46,
     // On paper the haze reads as smudges above a whisper.
     haze: new THREE.Color("#2a6f73"),
