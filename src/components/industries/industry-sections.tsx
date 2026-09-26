@@ -1,27 +1,19 @@
-import { Fragment, type ComponentType } from "react";
+import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Compass, ShieldCheck } from "lucide-react";
 
 import { IconMark, toneColors } from "@/components/industries/industry-icons";
-import { IndustryLedger } from "@/components/industries/industry-ledger";
 import { IndustrySolutionTabs } from "@/components/industries/industry-solution-tabs";
 import { IndustryStackLoop } from "@/components/industries/industry-stack-loop";
 import { MotionPauseButton } from "@/components/motion/motion-pause-button";
 import { SolutionLink } from "@/components/industries/solution-link";
-import { IndustryCare } from "@/components/industries/visuals/industry-care";
-import { IndustryCheckout } from "@/components/industries/visuals/industry-checkout";
-import { IndustryCourse } from "@/components/industries/visuals/industry-course";
-import { IndustryListings } from "@/components/industries/visuals/industry-listings";
-import { IndustryRoutes } from "@/components/industries/visuals/industry-routes";
-import { IndustryStream } from "@/components/industries/visuals/industry-stream";
-import { IndustryTenants } from "@/components/industries/visuals/industry-tenants";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 import ClickSpark from "@/components/react-bits/ClickSpark";
 import SpotlightCard from "@/components/react-bits/SpotlightCard";
 import { Button } from "@/components/ui/button";
 import { CardGlow, Figure, ScrollCue, cardClassName } from "@/components/why/why-sections";
 import { cn } from "@/lib/utils";
-import type { IndustryHeroVisual, IndustryPageContent } from "@/types/content";
+import type { IndustryPageContent } from "@/types/content";
 
 /*
  * Section layout follows the reference industry pages (hero, challenges, solutions,
@@ -29,17 +21,6 @@ import type { IndustryHeroVisual, IndustryPageContent } from "@/types/content";
  * per section (IndustryLayout) so no two industries read as the same template. Motion
  * hooks (data-im*) are played by IndustryMotion; see that file for the map.
  */
-
-const heroVisuals: Record<IndustryHeroVisual, ComponentType> = {
-  ledger: IndustryLedger,
-  checkout: IndustryCheckout,
-  tenants: IndustryTenants,
-  routes: IndustryRoutes,
-  stream: IndustryStream,
-  care: IndustryCare,
-  course: IndustryCourse,
-  listings: IndustryListings,
-};
 
 const index2 = (index: number) => String(index + 1).padStart(2, "0");
 
@@ -161,10 +142,12 @@ function HeroHeadline({ industry, large }: { industry: IndustryPageContent; larg
   );
 }
 
-export function IndustryHero({ industry }: SectionProps) {
+export function IndustryHero({
+  industry,
+  visual,
+}: SectionProps & { visual: ReactNode }) {
   const { hero } = industry.layout;
   const centered = hero === "centered";
-  const Visual = heroVisuals[industry.heroVisual];
 
   const copy = (
     <div className={cn(centered && "mx-auto max-w-4xl text-center", hero === "split-reverse" && "lg:order-2")}>
@@ -221,7 +204,7 @@ export function IndustryHero({ industry }: SectionProps) {
           hero === "split-reverse" && "lg:order-1",
         )}
       >
-        <Visual />
+        {visual}
         <div className="mt-3 flex justify-end">
           <MotionPauseButton />
         </div>

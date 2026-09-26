@@ -1,15 +1,15 @@
 "use client";
 
-import { Fragment, useLayoutEffect, useRef, type CSSProperties } from "react";
+import { Fragment, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { MagneticButton } from "@/components/motion/magnetic-button";
-import { ServiceVisual } from "@/components/services/service-visual";
 import { Button } from "@/components/ui/button";
 import { servicePath, services } from "@/content/services";
+import { cn } from "@/lib/utils";
 import type { ServicePageContent } from "@/types/content";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -29,6 +29,7 @@ function parseStat(value: string) {
 
 type ServiceIntroProps = {
   service: ServicePageContent;
+  visual: ReactNode;
 };
 
 /** Renders text as word spans so the CSS entrance can stagger them via --i. */
@@ -44,7 +45,7 @@ function Words({ text, offset = 0 }: { text: string; offset?: number }) {
   ));
 }
 
-export function ServiceIntro({ service }: ServiceIntroProps) {
+export function ServiceIntro({ service, visual }: ServiceIntroProps) {
   const introRef = useRef<HTMLElement>(null);
   const siblings = services.filter((item) => item.slug !== service.slug);
 
@@ -184,7 +185,15 @@ export function ServiceIntro({ service }: ServiceIntroProps) {
       </div>
 
       <div data-service-visual className="service-hero-stage">
-        <ServiceVisual slug={service.slug} />
+        <div
+          className={cn(
+            "service-visual",
+            service.slug === "mobile-development" && "service-visual-mobile",
+          )}
+          aria-hidden="true"
+        >
+          {visual}
+        </div>
       </div>
 
       {lead ? (

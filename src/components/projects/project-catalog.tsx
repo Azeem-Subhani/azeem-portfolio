@@ -10,7 +10,7 @@ import {
   type FilterValue,
 } from "@/components/projects/project-filters";
 import { ProjectMockup } from "@/components/projects/project-mockup";
-import { preloadLiveMockups } from "@/components/projects/mockups/registry";
+import { preloadLiveMockup } from "@/components/projects/mockups/registry";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/content";
@@ -193,17 +193,23 @@ export function ProjectCatalog({ projects }: ProjectCatalogProps) {
   const active =
     filtered.find((project) => project.slug === activeSlug) ?? filtered[0];
 
-  // Warm the other slides' live captures once the page is idle, so rotating or picking a
-  // project never waits on a chunk download. First paint only pays for the visible one.
+  // Warm only the next slide. Prefetching every capture pulled the rest of
+  // the mock JavaScript and CSS in during the first few seconds.
   useEffect(() => {
+    if (filtered.length < 2 || !active) return;
+    const index = filtered.findIndex((project) => project.slug === active.slug);
+    const next = filtered[(index + 1) % filtered.length];
+    if (!next || next.slug === active.slug) return;
+
+    const warm = () => preloadLiveMockup(next.slug);
     const idle = window.requestIdleCallback
-      ? window.requestIdleCallback(preloadLiveMockups, { timeout: 2500 })
-      : window.setTimeout(preloadLiveMockups, 1200);
+      ? window.requestIdleCallback(warm, { timeout: 2500 })
+      : window.setTimeout(warm, 1200);
     return () => {
       if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
       else window.clearTimeout(idle);
     };
-  }, []);
+  }, [active, filtered]);
 
   const selectProject = useCallback((slug: string) => {
     setActiveSlug(slug);

@@ -6,11 +6,9 @@ import { Header } from "@/components/layout/header";
 import { MobileCta } from "@/components/layout/mobile-cta";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { SiteIntro } from "@/components/motion/site-intro";
-import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { PrivacyConsent } from "@/components/privacy/privacy-consent";
 import { profile } from "@/content/profile";
 
-import "lenis/dist/lenis.css";
 import "./globals.css";
 
 // Only the display face (hero h1) is preloaded. Inter still loads, just
@@ -85,25 +83,23 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{var s=sessionStorage.getItem("azeem:intro-seen");document.documentElement.dataset.introState=s?"seen":"fresh";document.documentElement.dataset.heroReveal="pending"}catch{document.documentElement.dataset.introState="fresh";document.documentElement.dataset.heroReveal="pending"}',
+              'try{var s=sessionStorage.getItem("azeem:intro-seen");document.documentElement.dataset.introState=s?"seen":"fresh";if(!s)document.documentElement.dataset.heroReveal="pending"}catch{document.documentElement.dataset.introState="fresh";document.documentElement.dataset.heroReveal="pending"}',
           }}
         />
       </head>
       <body className="antialiased">
         <ThemeProvider>
           <SiteIntro />
-          <SmoothScroll>
-            <a
-              href="#main-content"
-              className="sr-only z-[100] rounded-md bg-background px-4 py-2 focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
-            >
-              Skip to content
-            </a>
-            <Header />
-            <main id="main-content">{children}</main>
-            <MobileCta />
-            <Footer />
-          </SmoothScroll>
+          <a
+            href="#main-content"
+            className="sr-only z-[100] rounded-md bg-background px-4 py-2 focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+          >
+            Skip to content
+          </a>
+          <Header />
+          <main id="main-content">{children}</main>
+          <MobileCta />
+          <Footer />
           <PrivacyConsent />
         </ThemeProvider>
       </body>

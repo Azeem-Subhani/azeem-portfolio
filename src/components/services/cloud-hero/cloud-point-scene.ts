@@ -341,7 +341,7 @@ export function createCloudScene(options: CloudSceneOptions): CloudScene {
 
   // Throws when WebGL is unavailable; the caller falls back to the static stage.
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-  const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
   renderer.setPixelRatio(pixelRatio);
   renderer.setClearColor(0x000000, 0);
 
@@ -434,6 +434,7 @@ export function createCloudScene(options: CloudSceneOptions): CloudScene {
   const render = () => renderer.render(scene, camera);
 
   const tick = (now: number) => {
+    frame = requestAnimationFrame(tick);
     // Capped so a stalled tab resumes smoothly, loose enough that slow GPUs still finish the intro on time.
     const dt = Math.min(0.1, last ? (now - last) / 1000 : 0);
     last = now;
@@ -461,7 +462,6 @@ export function createCloudScene(options: CloudSceneOptions): CloudScene {
 
     updateRotation(uniforms.uTime.value);
     render();
-    frame = requestAnimationFrame(tick);
   };
 
   applyTheme(options.dark);

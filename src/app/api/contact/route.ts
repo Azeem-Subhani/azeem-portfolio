@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { flattenError } from "zod/mini";
+
 import { sendContactEmail } from "@/lib/contact";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { contactFormSchema } from "@/lib/schemas";
@@ -77,7 +79,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Please check the form and try again.",
-        issues: parsed.error.flatten().fieldErrors,
+        issues: flattenError(parsed.error).fieldErrors,
       },
       { status: 422 },
     );
