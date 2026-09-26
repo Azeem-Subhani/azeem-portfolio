@@ -10,6 +10,10 @@ type ProjectPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+// Only the slugs in the content layer exist; anything else is a 404 without
+// an on-demand render.
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }

@@ -46,3 +46,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local tooling and design scratch (may contain client names or local paths)
+/.cursor/
+/.impeccable/
+/reference-screenshots/
+/QA_FEEDBACK.md
+
+# one-off e2e probe output
+/tests/e2e/probe-*.json
+/tests/e2e/screenshots/

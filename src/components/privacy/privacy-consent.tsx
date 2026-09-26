@@ -23,24 +23,77 @@ function readConsent(): Consent {
   return value === "accepted" || value === "rejected" ? value : null;
 }
 
+function writeConsentCookie(value: string, maxAge: number) {
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${CONSENT_COOKIE}=${value}; Max-Age=${maxAge}; Path=/; SameSite=Lax${secure}`;
+}
+
+/**
+ * Stops Google Analytics for the rest of this page load and deletes the
+ * cookies it set. GA writes `_ga` and `_ga_<id>` on the current host or a
+ * parent domain, so each is expired on every domain level it could live on.
+ */
+function setAnalyticsDisabled(disabled: boolean) {
+  if (ANALYTICS_ID) {
+    (window as unknown as Record<string, boolean>)[`ga-disable-${ANALYTICS_ID}`] = disabled;
+  }
+}
+
+function disableAnalytics() {
+  setAnalyticsDisabled(true);
+
+  const hostParts = window.location.hostname.split(".");
+  const domains = [""];
+  for (let i = 0; i < hostParts.length - 1; i++) {
+    const domain = hostParts.slice(i).join(".");
+    domains.push(`; Domain=${domain}`, `; Domain=.${domain}`);
+  }
+
+  document.cookie
+    .split(";")
+    .map((part) => part.trim().split("=")[0])
+    .filter((name) => name === "_ga" || name.startsWith("_ga_"))
+    .forEach((name) => {
+      domains.forEach((domain) => {
+        document.cookie = `${name}=; Max-Age=0; Path=/${domain}`;
+      });
+    });
+}
+
 function saveConsent(value: Exclude<Consent, null>) {
-  document.cookie = `${CONSENT_COOKIE}=${value}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax`;
+  writeConsentCookie(value, COOKIE_MAX_AGE);
+  if (value === "rejected") disableAnalytics();
+  else setAnalyticsDisabled(false);
   window.dispatchEvent(new Event(CONSENT_CHANGE_EVENT));
 }
 
-export function PrivacyConsent() {
-  const consent = useSyncExternalStore(
-    (onChange) => {
-      window.addEventListener(CONSENT_CHANGE_EVENT, onChange);
-      window.addEventListener("storage", onChange);
-      return () => {
-        window.removeEventListener(CONSENT_CHANGE_EVENT, onChange);
-        window.removeEventListener("storage", onChange);
-      };
-    },
-    readConsent,
-    () => null,
+/** Forgets the stored choice so the consent banner shows again. */
+function resetConsent() {
+  writeConsentCookie("", 0);
+  window.dispatchEvent(new Event(CONSENT_CHANGE_EVENT));
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(CONSENT_CHANGE_EVENT, onChange);
+  return () => window.removeEventListener(CONSENT_CHANGE_EVENT, onChange);
+}
+
+/**
+ * Footer control that lets a visitor change or withdraw their analytics
+ * choice at any time. Renders nothing when analytics is not configured.
+ */
+export function ConsentSettingsButton({ className }: { className?: string }) {
+  if (!ANALYTICS_ID) return null;
+
+  return (
+    <button type="button" onClick={resetConsent} className={className}>
+      Cookie settings
+    </button>
   );
+}
+
+export function PrivacyConsent() {
+  const consent = useSyncExternalStore(subscribe, readConsent, () => null);
 
   // There is nothing to consent to until a measurement ID is configured.
   if (!ANALYTICS_ID) return null;
