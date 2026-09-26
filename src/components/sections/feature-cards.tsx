@@ -36,18 +36,23 @@ const stages: { id: Stage; meta: string; copy: string }[] = [
 ];
 
 // `from` is where the engagement joins the line. Every path runs to ship.
-// `steps` is what the visitor gets at each stage the engagement covers, and
-// what they bring to the ones it skips. Wording stays inside src/content/process.ts.
+// `steps` holds what the visitor leaves with at each stage the engagement
+// covers. Wording stays inside src/content/process.ts.
 const engagements: {
   title: string;
   copy: string;
   from: Stage;
-  steps: Record<Stage, string>;
+  /** Lead-in and the closing word that rolls in accent. */
+  headline: [string, string];
+  brings: string;
+  steps: Partial<Record<Stage, string>>;
 }[] = [
   {
     title: "Ship an MVP",
     copy: "Turn a proposal into software the first users can actually book, pay, or log into.",
     from: "plan",
+    headline: ["From proposal to first", "users"],
+    brings: "A proposal and the users it is for",
     steps: {
       plan: "Scope, cost, and dates signed off",
       build: "Booking, payments, and login working end to end",
@@ -58,6 +63,8 @@ const engagements: {
     title: "Custom product work",
     copy: "White-label booking, Stripe flows, and RAG workflows built for the business, not a template.",
     from: "plan",
+    headline: ["Built around the", "business"],
+    brings: "A business a template cannot fit",
     steps: {
       plan: "Business rules written down before any code",
       build: "Built to fit the business, reviewed every sprint",
@@ -68,8 +75,9 @@ const engagements: {
     title: "Add the hard parts",
     copy: "Payments, real-time, and AI features dropped into a product that already exists.",
     from: "build",
+    headline: ["Dropped into your", "codebase"],
+    brings: "A product that already exists",
     steps: {
-      plan: "You bring the product",
       build: "The feature built into your codebase",
       ship: "Approved in UAT, then released",
     },
@@ -78,63 +86,153 @@ const engagements: {
     title: "Untangle infrastructure",
     copy: "Serverless AWS, auth, and data so the product holds up past launch.",
     from: "ship",
+    headline: ["Holds up past", "launch"],
+    brings: "A built product that has to hold up past launch",
     steps: {
-      plan: "You bring the product",
-      build: "Already built",
       ship: "AWS, auth, and data that hold up past launch",
     },
   },
 ];
-
-// The stage area is a subgrid over columns 2–4, so its own lines count from
-// plan. The rail starts at the entry stage and always ends after ship.
-const railStart: Record<Stage, string> = {
-  plan: "lg:col-start-1",
-  build: "lg:col-start-2",
-  ship: "lg:col-start-3",
-};
-
-function coverageLabel(from: Stage) {
-  return from === "ship" ? "Covers ship." : `Covers ${from} through ship.`;
-}
-
-const reducedQuery = "(prefers-reduced-motion: reduce)";
 
 // Timing for the pulse's run down the line, in seconds.
 const PULSE_START = 0.45;
 const PULSE_HOP = 0.62;
 const PULSE_REST = 0.2;
 
-/** Sends a dot along an engagement bar to ship. Hover only, never on load. */
-function runBar(bar: HTMLElement | null) {
-  if (!bar || window.matchMedia(reducedQuery).matches) return;
-  const runner = bar.querySelector<HTMLElement>("[data-engagement-runner]");
-  const end = bar.querySelector<HTMLElement>("[data-engagement-end]");
-  if (!runner || !end) return;
-
-  gsap.killTweensOf([runner, end]);
-  gsap.fromTo(
-    runner,
-    { left: "0%", xPercent: -50, yPercent: -50, opacity: 1, scale: 1 },
-    {
-      left: "100%",
-      duration: 0.75,
-      ease: "power2.inOut",
-      onComplete: () => {
-        gsap.to(runner, { opacity: 0, scale: 2.4, duration: 0.35, ease: "power2.out" });
-        gsap.fromTo(end, { scale: 1.6 }, { scale: 1, duration: 0.45, ease: "back.out(3)" });
-      },
-    },
-  );
-}
+// How long each engagement shows before the tabs move on by themselves.
+const CYCLE_SECONDS = 6;
 
 export function FeatureCards() {
   const reduced = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  // The engagement under the mouse. Stages it skips and the other bars fade back.
-  const [active, setActive] = useState<string | null>(null);
-  const activeFrom = engagements.find((e) => e.title === active)?.from;
-  const activeFromIndex = activeFrom ? stageOrder.indexOf(activeFrom) : -1;
+  const panelRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [selected, setSelected] = useState(0);
+  const current = engagements[selected];
+  const currentFromIndex = stageOrder.indexOf(current.from);
+
+  const tablistRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLSpanElement>(null);
+  const glowRef = useRef<HTMLSpanElement>(null);
+  const cycleRef = useRef<gsap.core.Tween | null>(null);
+  // The tabs cycle on their own until the visitor picks one. Hover, focus,
+  // and scrolling away hold the cycle where it is.
+  const [autoplay, setAutoplay] = useState(true);
+  const [held, setHeld] = useState(false);
+  const [inView, setInView] = useState(false);
+
+  const select = (index: number, focus = false) => {
+    const next = (index + engagements.length) % engagements.length;
+    setAutoplay(false);
+    setSelected(next);
+    if (focus) tabRefs.current[next]?.focus();
+  };
+
+  // The marker slides to the selected tab, and follows it through resizes.
+  useLayoutEffect(() => {
+    const list = tablistRef.current;
+    const marker = indicatorRef.current;
+    if (!list || !marker) return;
+    const place = (animate: boolean) => {
+      const tab = tabRefs.current[selected];
+      if (!tab) return;
+      const to = { y: tab.offsetTop, height: tab.offsetHeight };
+      if (animate) gsap.to(marker, { ...to, duration: 0.55, ease: "power3.inOut" });
+      else gsap.set(marker, to);
+    };
+    place(!reduced);
+    const ro = new ResizeObserver(() => place(false));
+    ro.observe(list);
+    return () => ro.disconnect();
+  }, [selected, reduced]);
+
+  // Each switch rolls the stage word up and eases the rest in. Skipped on
+  // first paint so the scroll reveal owns the entrance.
+  const firstPanel = useRef(true);
+  useLayoutEffect(() => {
+    if (firstPanel.current) {
+      firstPanel.current = false;
+      return;
+    }
+    const panel = panelRef.current;
+    if (!panel || reduced) return;
+    const word = panel.querySelector<HTMLElement>("[data-panel-word]");
+    const parts = panel.querySelectorAll<HTMLElement>("[data-panel-part]");
+    const rows = panel.querySelectorAll<HTMLElement>("[data-panel-row]");
+    gsap.killTweensOf([word, ...parts, ...rows]);
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.fromTo(
+      word,
+      { yPercent: 110, rotate: 3 },
+      { yPercent: 0, rotate: 0, duration: 0.7, ease: "power4.out" },
+    )
+      .fromTo(parts, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06 }, 0)
+      .fromTo(rows, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.45, stagger: 0.07 }, 0.12);
+  }, [selected, reduced]);
+
+  useLayoutEffect(() => {
+    const block = sectionRef.current?.querySelector<HTMLElement>("[data-engagements]");
+    if (!block) return;
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
+      threshold: 0.45,
+    });
+    io.observe(block);
+    return () => io.disconnect();
+  }, []);
+
+  // One timed run of the selected tab's progress line, then the next tab.
+  useLayoutEffect(() => {
+    const bars = tabRefs.current.map((t) => t?.querySelector<HTMLElement>("[data-tab-progress]"));
+    gsap.set(bars, { scaleX: 0 });
+    const bar = bars[selected];
+    if (!autoplay || reduced || !bar) return;
+    const tween = gsap.to(bar, {
+      scaleX: 1,
+      duration: CYCLE_SECONDS,
+      ease: "none",
+      paused: true,
+      onComplete: () => setSelected((s) => (s + 1) % engagements.length),
+    });
+    cycleRef.current = tween;
+    return () => {
+      tween.kill();
+      cycleRef.current = null;
+    };
+  }, [selected, autoplay, reduced]);
+
+  useLayoutEffect(() => {
+    const tween = cycleRef.current;
+    if (!tween) return;
+    if (inView && !held) tween.play();
+    else tween.pause();
+  }, [inView, held, selected, autoplay, reduced]);
+
+  // The panel's glow drifts after the pointer and settles back when it leaves.
+  const glowTo = useRef<{ x: gsap.QuickToFunc; y: gsap.QuickToFunc } | null>(null);
+  useLayoutEffect(() => {
+    const glow = glowRef.current;
+    if (!glow || reduced) return;
+    glowTo.current = {
+      x: gsap.quickTo(glow, "left", { duration: 0.9, ease: "power3.out" }),
+      y: gsap.quickTo(glow, "top", { duration: 0.9, ease: "power3.out" }),
+    };
+    return () => {
+      glowTo.current = null;
+    };
+  }, [reduced]);
+
+  const moveGlow = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse" || !glowTo.current) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    glowTo.current.x(e.clientX - r.left);
+    glowTo.current.y(e.clientY - r.top);
+  };
+
+  const resetGlow = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!glowTo.current) return;
+    glowTo.current.x(e.currentTarget.offsetWidth);
+    glowTo.current.y(0);
+  };
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -159,9 +257,9 @@ export function FeatureCards() {
         const pings = q("[data-stage-ping]");
         const details = q("[data-stage-detail]");
         const intro = q("[data-stage-intro]");
-        const rows = q("[data-engagement]");
-        const bars = q("[data-engagement-bar]");
-        const tiles = q("[data-engagement-tile]");
+        const heading = q("[data-engagement-heading]");
+        const tabs = q("[data-engagement-tab]");
+        const panel = q("[data-engagement-panel]");
         const pulse = section.querySelector<HTMLElement>("[data-stage-pulse]");
         const track = section.querySelector<HTMLElement>(`[data-stage-track="${axis}"]`);
         const fill = section.querySelector<HTMLElement>(`[data-stage-fill="${axis}"]`);
@@ -198,9 +296,12 @@ export function FeatureCards() {
           [fillScale]: 0,
           transformOrigin: desktop ? "left center" : "center top",
         });
-        gsap.set(rows, { opacity: 0, y: 12 });
-        gsap.set(bars, { scaleX: 0, transformOrigin: "left center" });
-        gsap.set(tiles, { opacity: 0, y: 10 });
+        gsap.set([...heading, ...tabs], { opacity: 0, y: 12 });
+        const panelWord = q("[data-panel-word]");
+        const panelRows = q("[data-panel-row]");
+        gsap.set(panel, { clipPath: "inset(0% 0% 100% 0% round 1.5rem)", y: 32 });
+        gsap.set(panelWord, { yPercent: 110 });
+        gsap.set(panelRows, { opacity: 0, x: -14 });
 
         // The words land dim, then a pulse carries the line from stop to
         // stop. Each stage lights, pings, and shows its detail on arrival.
@@ -243,12 +344,23 @@ export function FeatureCards() {
           .to(fill, { [fillScale]: 1, duration: 0.5, ease: "power2.out" }, t - PULSE_REST)
           .to(intro, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t - PULSE_REST);
 
-        // The bars grow toward ship, so the chart reads as "everything ends there".
         const rowTl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
         rowTl
-          .to(rows, { opacity: 1, y: 0, duration: 0.5, stagger: 0.09 })
-          .to(bars, { scaleX: 1, duration: 0.8, stagger: 0.09, ease: "power2.inOut" }, 0.15)
-          .to(tiles, { opacity: 1, y: 0, duration: 0.45, stagger: 0.035 }, 0.25);
+          .to(heading, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 })
+          .to(tabs, { opacity: 1, y: 0, duration: 0.45, stagger: 0.06 }, 0.1)
+          .to(
+            panel,
+            {
+              clipPath: "inset(0% 0% 0% 0% round 1.5rem)",
+              y: 0,
+              duration: 1,
+              ease: "power4.inOut",
+              clearProps: "clipPath",
+            },
+            0.15,
+          )
+          .to(panelWord, { yPercent: 0, duration: 0.8, ease: "power4.out" }, 0.75)
+          .to(panelRows, { opacity: 1, x: 0, duration: 0.45, stagger: 0.07 }, 0.85);
 
         const triggers = (
           [
@@ -341,13 +453,7 @@ export function FeatureCards() {
 
           <ol className="relative grid gap-12 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-0">
             {stages.map((stage, i) => (
-              <li
-                key={stage.id}
-                className={cn(
-                  "relative pl-8 transition-opacity duration-300 motion-reduce:transition-none lg:pl-0",
-                  i < activeFromIndex && "opacity-30",
-                )}
-              >
+              <li key={stage.id} className="relative pl-8 lg:pl-0">
                 <h3
                   // Descender guard: "p" and "l" at 0.88 leading clip without
                   // the extra bottom room inside the mask.
@@ -397,126 +503,185 @@ export function FeatureCards() {
 
         <div
           data-engagements
-          className="mt-20 lg:col-span-4 lg:mt-28 lg:grid lg:grid-cols-subgrid"
+          className="mt-20 lg:col-span-4 lg:mt-28 lg:grid lg:grid-cols-subgrid lg:items-start"
+          onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
+          onPointerLeave={(e) => e.pointerType === "mouse" && setHeld(false)}
+          onFocus={() => setHeld(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false);
+          }}
         >
-          <div className="mb-8 lg:col-span-4 lg:mb-10">
-            <p className="font-display text-[clamp(1.9rem,3.6vw,2.75rem)] leading-none tracking-tight text-foreground">
+          <div className="lg:sticky lg:top-28">
+            <p
+              data-engagement-heading
+              className="font-display text-[clamp(1.9rem,3.6vw,2.75rem)] leading-none tracking-tight text-foreground"
+            >
               Where you come in
             </p>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            <p
+              data-engagement-heading
+              className="mt-3 max-w-xs text-sm leading-6 text-muted-foreground"
+            >
               Join at whichever stage you are at. Every path ends at ship.
             </p>
-          </div>
 
-          <ul className="lg:col-span-4 lg:grid lg:grid-cols-subgrid">
-            {engagements.map((item, index) => {
-              const fromIndex = stageOrder.indexOf(item.from);
-              return (
-                <li
-                  key={item.title}
-                  data-engagement
-                  onPointerEnter={(e) => {
-                    // Touch has no hover-out, so the highlight would stick.
-                    if (e.pointerType !== "mouse") return;
-                    setActive(item.title);
-                    runBar(e.currentTarget.querySelector<HTMLElement>("[data-engagement-bar]"));
-                  }}
-                  onPointerLeave={(e) => {
-                    if (e.pointerType === "mouse") setActive(null);
-                  }}
-                  className="group border-t border-border py-7 lg:col-span-4 lg:grid lg:grid-cols-subgrid lg:items-start"
-                >
-                  <div className="lg:pr-6">
-                    <p className="text-xs font-medium tabular-nums text-accent-readable">
-                      0{index + 1}
-                    </p>
-                    <h3 className="mt-2 font-display text-[1.65rem] font-normal leading-[1.05] tracking-tight sm:text-[1.85rem]">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-                      {item.copy}
-                    </p>
-                  </div>
-
-                  <div
+            <div
+              role="tablist"
+              aria-label="Engagements"
+              aria-orientation="vertical"
+              ref={tablistRef}
+              className="relative mt-8 border-b border-border"
+              onKeyDown={(e) => {
+                const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+                if (step) {
+                  e.preventDefault();
+                  select(selected + step, true);
+                } else if (e.key === "Home" || e.key === "End") {
+                  e.preventDefault();
+                  select(e.key === "Home" ? 0 : engagements.length - 1, true);
+                }
+              }}
+            >
+              <span
+                ref={indicatorRef}
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 left-0 w-full border-l-2 border-accent bg-linear-to-r from-accent/12 to-transparent"
+              />
+              {engagements.map((item, index) => {
+                const isSelected = index === selected;
+                return (
+                  <button
+                    key={item.title}
+                    ref={(node) => {
+                      tabRefs.current[index] = node;
+                    }}
+                    type="button"
+                    role="tab"
+                    id={`engagement-tab-${index}`}
+                    aria-selected={isSelected}
+                    aria-controls="engagement-panel"
+                    tabIndex={isSelected ? 0 : -1}
+                    data-engagement-tab
+                    onClick={() => select(index)}
                     className={cn(
-                      "relative mt-5 grid grid-cols-3 gap-1.5 transition-opacity duration-300 motion-reduce:transition-none sm:gap-2 lg:col-span-3 lg:col-start-2 lg:mt-1 lg:grid-cols-subgrid lg:gap-y-0",
-                      active && active !== item.title && "lg:opacity-35",
+                      "group relative flex w-full items-baseline gap-3 border-t border-border py-4 pr-2 pl-4 text-left transition-colors duration-200 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                      isSelected ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    <span className="sr-only">{coverageLabel(item.from)}</span>
-
-                    {/* Desktop: the rail from the entry stage out to ship. */}
                     <span
                       aria-hidden="true"
-                      data-engagement-bar
+                      data-tab-progress
+                      className="pointer-events-none absolute -top-px right-0 left-0 h-px origin-left scale-x-0 bg-accent"
+                    />
+                    <span
                       className={cn(
-                        "relative col-end-4 mb-4 hidden h-1 self-center rounded-full bg-accent/70 transition-colors group-hover:bg-accent lg:row-start-1 lg:block",
-                        railStart[item.from],
+                        "w-5 shrink-0 text-xs font-medium tabular-nums",
+                        isSelected ? "text-accent-readable" : "text-muted-foreground/70",
                       )}
                     >
-                      <span className="absolute top-1/2 left-0 size-[11px] -translate-y-1/2 rounded-full border-2 border-accent bg-background" />
-                      <span
-                        data-engagement-end
-                        className="absolute top-1/2 right-0 size-[11px] -translate-y-1/2 rounded-full bg-accent"
-                      />
-                      {/* Rides the bar to ship on hover. */}
-                      <span
-                        data-engagement-runner
-                        className="absolute top-1/2 left-0 size-[9px] rounded-full bg-accent opacity-0 shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent)_22%,transparent),0_0_16px_var(--accent)]"
-                      />
+                      0{index + 1}
                     </span>
+                    <span
+                      className={cn(
+                        "flex-1 font-display text-[1.35rem] leading-tight tracking-tight transition-transform duration-300 ease-out motion-reduce:transition-none",
+                        !isSelected && "group-hover:translate-x-1",
+                      )}
+                    >
+                      {item.title}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "text-sm text-accent transition-[opacity,translate] duration-300 motion-reduce:transition-none",
+                        isSelected ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-0",
+                      )}
+                    >
+                      →
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-                    {/* One tile per stage: what you get where the engagement
-                        covers it, what you bring where it does not. */}
-                    {stageOrder.map((stage, i) => {
-                      const covered = i >= fromIndex;
-                      const entry = i === fromIndex;
-                      return (
-                        <div
-                          key={stage}
-                          aria-hidden="true"
-                          data-engagement-tile
-                          className={cn(
-                            "relative flex min-h-[6.25rem] flex-col rounded-xl border px-2.5 pt-2.5 pb-3 transition-[border-color,background-color,box-shadow] duration-300 sm:px-3.5 lg:row-start-2 lg:min-h-[5.5rem]",
-                            covered
-                              ? "border-accent/30 bg-accent/[0.07] group-hover:border-accent/55"
-                              : "border-dashed border-foreground/15",
-                            entry &&
-                              "shadow-[0_0_28px_-12px_var(--accent)] group-hover:shadow-[0_0_32px_-8px_var(--accent)]",
-                          )}
-                        >
-                          <span className="flex items-center justify-between gap-2">
-                            <span
-                              className={cn(
-                                "text-[11px] font-medium",
-                                covered ? "text-accent-readable" : "text-muted-foreground/70",
-                              )}
-                            >
-                              {stage}
-                            </span>
-                            {entry ? (
-                              <span className="hidden rounded-full bg-accent px-1.5 py-px text-[10px] font-semibold text-accent-foreground sm:inline">
-                                starts here
-                              </span>
-                            ) : null}
-                          </span>
-                          <span
-                            className={cn(
-                              "mt-1.5 text-[11.5px] leading-[1.35] sm:text-[13px] sm:leading-5",
-                              covered ? "text-foreground" : "text-muted-foreground/70",
-                            )}
-                          >
-                            {item.steps[stage]}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+          <div
+            ref={panelRef}
+            id="engagement-panel"
+            role="tabpanel"
+            aria-labelledby={`engagement-tab-${selected}`}
+            data-engagement-panel
+            className="relative mt-8 overflow-hidden rounded-3xl border border-border bg-surface/60 p-6 sm:p-10 lg:col-span-3 lg:col-start-2 lg:mt-0 lg:p-12"
+            onPointerMove={moveGlow}
+            onPointerLeave={resetGlow}
+          >
+            <span
+              ref={glowRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute top-0 left-full size-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/12 blur-3xl"
+            />
+
+            <div className="relative">
+              <p data-panel-part className="text-xs font-medium text-muted-foreground">
+                Starts at <span className="text-accent-readable">{current.from}</span>
+              </p>
+
+              <p className="mt-4 min-h-[1.9em] max-w-[16ch] font-display text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.95] tracking-tight text-foreground">
+                {current.headline[0]}{" "}
+                <span className="-mb-[0.16em] inline-block overflow-hidden pb-[0.16em] align-bottom">
+                  <span data-panel-word className="inline-block text-accent will-change-transform">
+                    {current.headline[1]}
+                  </span>
+                </span>
+                .
+              </p>
+
+              <p
+                data-panel-part
+                className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg"
+              >
+                {current.copy}
+              </p>
+
+              <div className="mt-10 grid gap-10 border-t border-border pt-8 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-12 lg:min-h-[12.25rem]">
+                <div data-panel-part>
+                  <p className="text-xs font-medium text-muted-foreground">You bring</p>
+                  <p className="mt-3 text-base leading-7 text-foreground">{current.brings}</p>
+                </div>
+
+                <div>
+                  <p data-panel-part className="text-xs font-medium text-muted-foreground">
+                    You leave with
+                  </p>
+                  <ol className="mt-3">
+                    {stageOrder.slice(currentFromIndex).map((stage) => (
+                      <li
+                        key={stage}
+                        data-panel-row
+                        className="flex items-baseline gap-4 border-b border-border/60 py-3 first:pt-0 last:border-b-0 last:pb-0"
+                      >
+                        <span className="w-10 shrink-0 text-xs font-medium text-accent-readable">
+                          {stage}
+                        </span>
+                        <span className="text-base leading-7 text-foreground">
+                          {current.steps[stage]}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+
+              <p data-panel-part className="mt-10">
+                <Link
+                  href="/contact"
+                  className="inline-flex w-fit items-center gap-2 border-b border-accent pb-1 text-sm font-medium text-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  Talk through your project
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
