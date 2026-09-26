@@ -12,7 +12,6 @@ import {
 import { Database, Globe, ShieldCheck } from "lucide-react";
 
 import { useInViewOnce } from "@/hooks/use-in-view-once";
-import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
 const settle = [0.16, 1, 0.3, 1] as const;
 
@@ -34,8 +33,6 @@ const culprit = "#cb4b16";
 
 const hairline = (percent: number) =>
   `color-mix(in srgb, var(--foreground) ${percent}%, transparent)`;
-
-const capabilities = ["Route-level auth", "SAM deploy pipeline", "Write path metrics"] as const;
 
 type ScenarioId = "warm" | "cold";
 
@@ -515,52 +512,5 @@ export function TraceWaterfallVisual({
         </div>
       </div>
     </div>
-  );
-}
-
-export function CloudV4Mock4() {
-  const reduced = usePrefersReducedMotion();
-
-  return (
-    <section
-      id="cloud-v4-mock-4"
-      aria-labelledby="cloud-v4-mock-4-title"
-      className="scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28"
-    >
-      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-20">
-        <div>
-          <h2
-            id="cloud-v4-mock-4-title"
-            className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.05] tracking-tight"
-          >
-            Cloud expertise at scale
-          </h2>
-          <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground sm:text-lg">
-            From API routes behind Cognito to DynamoDB writes in production, I
-            architect and deploy serverless stacks on Lambda, SAM, Amplify, and
-            DynamoDB. I trace the auth gate, the compute slice, and the store
-            write so latency has a name before users hit it.
-          </p>
-          <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">
-            Five AWS services ship as one SAM deploy. Your team runs the stack
-            daily without me on call.
-          </p>
-          <ul className="mt-6 flex flex-wrap gap-2" aria-label="Cloud capabilities">
-            {capabilities.map((chip) => (
-              <li
-                key={chip}
-                className="rounded-full border border-border/80 bg-surface/60 px-3 py-1.5 text-sm text-foreground"
-              >
-                {chip}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div aria-hidden="true">
-          <TraceWaterfallVisual reduced={reduced} />
-        </div>
-      </div>
-    </section>
   );
 }

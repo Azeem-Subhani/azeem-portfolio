@@ -38,26 +38,6 @@ function Browser({
   );
 }
 
-function TrackMark() {
-  return (
-    <svg
-      viewBox="0 0 160 88"
-      className="web-track-mark"
-      aria-hidden="true"
-    >
-      <path
-        d="M22 50 C22 24 54 14 80 20 C116 28 142 30 142 50 C142 70 114 78 80 74 C48 70 22 68 22 50 Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.2"
-      />
-      <circle cx="54" cy="22" r="2.4" fill="currentColor" />
-      <circle cx="128" cy="42" r="2.4" fill="currentColor" />
-      <circle cx="72" cy="74" r="2.4" fill="currentColor" />
-    </svg>
-  );
-}
-
 const slots = [
   { time: "9:00", name: "North loop", price: "$220" },
   { time: "1:30", name: "Full course", price: "$420" },

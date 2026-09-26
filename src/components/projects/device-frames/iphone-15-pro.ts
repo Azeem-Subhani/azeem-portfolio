@@ -18,8 +18,3 @@ export const OXYM_PHONE_MOCK_HEIGHT = Math.round(
   OXYM_PHONE_CAPTURE_WIDTH *
     (IPHONE_15_PRO.screenHeight / IPHONE_15_PRO.screenWidth),
 );
-
-/** Map iOS logical pt → px on the 900px-wide Oxym capture canvas. */
-export function logicalToOxymCapturePx(logical: number): number {
-  return Math.round(logical * (OXYM_PHONE_CAPTURE_WIDTH / IPHONE_15_PRO.screenWidth));
-}

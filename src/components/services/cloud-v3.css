@@ -59,77 +59,10 @@
   display: block;
 }
 
-.cloud-hero-line-mask {
-  overflow: clip;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
-}
-
-.cloud-hero-line {
-  will-change: transform;
-}
-
-.cloud-hero-line-mask:last-child .cloud-hero-line {
-  font-style: italic;
-  background: linear-gradient(
-    100deg,
-    var(--fg) 0%,
-    var(--fg) 30%,
-    var(--accent-readable) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  padding-right: 0.08em;
-}
-
 .service-page .cloud-v3-embed .cloud-v3-lede {
   max-width: 30rem;
   font-size: 1.0625rem;
   line-height: 1.6;
-}
-
-.cloud-v3-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1.5rem;
-  margin-top: 2rem;
-}
-
-.cloud-v3-actions__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.75rem;
-  color: var(--fg);
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  text-underline-offset: 0.3em;
-  transition: text-decoration-color 0.2s ease;
-}
-
-.cloud-v3-actions__link svg {
-  width: 1rem;
-  height: 1rem;
-  color: var(--accent-readable);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cloud-v3-actions__link:hover {
-  text-decoration-color: var(--accent);
-}
-
-.cloud-v3-actions__link:hover svg {
-  transform: translateY(2px);
-}
-
-.cloud-v3-actions__link:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 4px;
-  border-radius: 0.25rem;
 }
 
 .service-page .cloud-v3-embed .cloud-v3-providers img {
@@ -139,57 +72,6 @@
 
 .service-page .cloud-v3-embed .cloud-v3-providers li:hover img {
   opacity: 1;
-}
-
-
-.cloud-hero-pulse {
-  position: relative;
-  width: 6px;
-  height: 6px;
-  flex: none;
-  border-radius: 999px;
-  background: var(--accent);
-}
-
-.cloud-hero-pulse::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--accent);
-  animation: cloud-hero-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.cloud-hero-stage {
-  position: relative;
-  isolation: isolate;
-}
-
-.cloud-hero-aura {
-  position: absolute;
-  inset: -12% -8% -4%;
-  z-index: -1;
-  background:
-    radial-gradient(40% 38% at 52% 34%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%),
-    radial-gradient(55% 50% at 48% 72%, color-mix(in srgb, var(--accent-strong) 10%, transparent), transparent 75%);
-  filter: blur(28px);
-  animation: cloud-hero-breathe 7s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.cloud-hero-orbit {
-  position: absolute;
-  inset: -6% 2% 18%;
-  z-index: -1;
-  border: 1px dashed color-mix(in srgb, var(--accent) 22%, transparent);
-  border-radius: 50%;
-  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%);
-  animation: cloud-hero-spin 60s linear infinite;
-  pointer-events: none;
-}
-
-.cloud-hero-float {
-  animation: cloud-hero-float 8s ease-in-out infinite;
 }
 
 .service-page .cloud-v3-embed .cloud-v3-diagram {
@@ -221,53 +103,6 @@
 .service-page .cloud-v3-embed .cloud-v3-proof__value {
   font-variant-numeric: tabular-nums;
   font-size: clamp(3rem, 5.5vw, 4.25rem);
-}
-
-@keyframes cloud-hero-ping {
-  75%,
-  100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
-
-@keyframes cloud-hero-breathe {
-  0%,
-  100% {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes cloud-hero-spin {
-  to {
-    rotate: 360deg;
-  }
-}
-
-@keyframes cloud-hero-float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-
-  50% {
-    translate: 0 -8px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cloud-hero-pulse::after,
-  .cloud-hero-aura,
-  .cloud-hero-orbit,
-  .cloud-hero-float {
-    animation: none;
-  }
 }
 
 /* Cloud body: pale paper in light mode, deep teal in dark mode. */
@@ -305,11 +140,6 @@ html.dark .service-page .cloud-v3-embed .cloud-v3-diagram__cloud,
 .service-page .cloud-v3-embed .cloud-v3-diagram__packet-ring {
   fill: color-mix(in srgb, var(--accent-strong) 20%, transparent);
   stroke: color-mix(in srgb, var(--accent-strong) 55%, transparent);
-}
-
-.service-page .cloud-v3-embed .cloud-v3-hero--service {
-  min-height: 0;
-  padding: 0 0 36px;
 }
 
 .service-page .cloud-v3-embed .cloud-v3-proof {

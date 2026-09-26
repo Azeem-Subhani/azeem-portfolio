@@ -53,18 +53,6 @@ export const STACK_ICON_IDS = [
 
 export type StackIconId = (typeof STACK_ICON_IDS)[number];
 
-export type WorkflowTile = {
-  id: string;
-  label: string;
-  icon: StackIconId;
-};
-
-export type ProjectWorkflow = {
-  description: string;
-  hub: WorkflowTile;
-  orbit: WorkflowTile[];
-};
-
 export type Project = {
   slug: string;
   title: string;
@@ -83,42 +71,6 @@ export type Project = {
   liveUrl?: string;
   repositoryUrl?: string;
 };
-
-export type Experience = {
-  company: string;
-  title: string;
-  location: string;
-  start: string;
-  end: string;
-  bullets: string[];
-};
-
-export type Certificate = {
-  title: string;
-  issuer: string;
-  verificationUrl: string;
-  issued?: string;
-};
-
-export type SkillGroup = {
-  label: string;
-  skills: string[];
-};
-
-export type EducationItem = {
-  institution: string;
-  degree: string;
-  location: string;
-  start: string;
-  end: string;
-};
-
-export type ContactService =
-  | "Full-Stack SaaS Development"
-  | "Payments and Stripe Integrations"
-  | "AI/LLM Integrations"
-  | "Real-Time Systems"
-  | "Technical Consultation";
 
 export type Profile = {
   name: string;
