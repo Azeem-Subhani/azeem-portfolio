@@ -7,6 +7,7 @@ import {
   areas,
   depthStats,
   differentiators,
+  heroLayers,
   results,
   steps,
   timeline,
@@ -120,38 +121,91 @@ export function ScrollCue() {
   );
 }
 
+/**
+ * The four layers the headline names, joined by one accent thread: a single owner runs
+ * through every layer. Decorative; the lede already says the same thing in words.
+ */
+function WhyStack() {
+  return (
+    <div data-service-visual aria-hidden="true" className="relative">
+      <p className="mb-5 flex items-center gap-3 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="size-1.5 rounded-full bg-accent" />
+        One owner, every layer
+      </p>
+      <ol className="relative grid gap-3">
+        {/* The thread sits over the cards but under the layer dots; the pulse travels it. */}
+        <span className="absolute inset-y-7 left-[1.95rem] z-[1] w-px bg-accent/35">
+          <span className="why-stack-pulse absolute -left-[3px] top-0 size-[7px] rounded-full bg-accent" />
+        </span>
+        {heroLayers.map((layer, index) => (
+          <li
+            key={layer.name}
+            className="relative flex items-start gap-5 rounded-[var(--shape-radius-lg)] border border-border bg-surface/60 py-4 pl-[1.6rem] pr-6"
+          >
+            <span className="relative z-[2] mt-1.5 size-[0.7rem] shrink-0 rounded-full border border-accent bg-background" />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="font-display text-2xl leading-none">{layer.name}</span>
+                <span className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--accent-readable)]">
+                  0{index + 1}
+                </span>
+              </div>
+              <p className="mt-1.5 text-sm text-muted-foreground">{layer.role}</p>
+              <p className="mt-2.5 flex flex-wrap gap-1.5">
+                {layer.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-border px-2.5 py-0.5 text-[0.7rem] text-muted-foreground"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 export function WhyHero() {
   return (
-    <header className="why-hero-copy max-w-4xl">
-      <p
-        data-service-kicker
-        className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]"
-      >
-        Why work with me
-      </p>
-      <h1
-        className="why-hero-title mt-5 font-display text-[clamp(3.25rem,8vw,6.5rem)] font-normal leading-[0.9]"
-        aria-label={WHY_TITLE.join(" ")}
-      >
-        {WHY_TITLE.map((line, lineIndex) => {
-          const accent = lineIndex === WHY_TITLE.length - 1;
-          const offset = WHY_TITLE.slice(0, lineIndex).reduce(
-            (count, prev) => count + prev.split(" ").length,
-            0,
-          );
-          return (
-            <span key={line} aria-hidden className="-mb-[0.12em] block overflow-hidden pb-[0.12em]">
-              <span className={cn("block", accent && "text-accent")}>
-                <HeroWords text={line} offset={offset} />
+    <header className="why-hero grid items-center gap-14 lg:grid-cols-12 lg:gap-x-12">
+      <div className="why-hero-copy lg:col-span-7">
+        <p
+          data-service-kicker
+          className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]"
+        >
+          Why work with me
+        </p>
+        <h1
+          className="why-hero-title mt-5 font-display text-[clamp(3.25rem,6.4vw,6rem)] font-normal leading-[0.9]"
+          aria-label={WHY_TITLE.join(" ")}
+        >
+          {WHY_TITLE.map((line, lineIndex) => {
+            const accent = lineIndex === WHY_TITLE.length - 1;
+            const offset = WHY_TITLE.slice(0, lineIndex).reduce(
+              (count, prev) => count + prev.split(" ").length,
+              0,
+            );
+            return (
+              <span key={line} aria-hidden className="-mb-[0.12em] block overflow-hidden pb-[0.12em]">
+                <span className={cn("block", accent && "text-accent")}>
+                  <HeroWords text={line} offset={offset} />
+                </span>
               </span>
-            </span>
-          );
-        })}
-      </h1>
-      <p className="why-hero-lede mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
-        <HeroWords text="Product teams hire me when they need the interface, the API, the data, and the cloud built by someone who has shipped all four together, and who stays accountable for how they hold up after launch." />
-      </p>
-      <ScrollCue />
+            );
+          })}
+        </h1>
+        <p className="why-hero-lede mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
+          <HeroWords text="Product teams hire me when they need the interface, the API, the data, and the cloud built by someone who has shipped all four together, and who stays accountable for how they hold up after launch." />
+        </p>
+        <ScrollCue />
+      </div>
+      <div className="mx-auto w-full max-w-[32rem] lg:col-span-5 lg:max-w-none">
+        <WhyStack />
+      </div>
     </header>
   );
 }

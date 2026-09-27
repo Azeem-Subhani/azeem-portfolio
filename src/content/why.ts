@@ -26,6 +26,20 @@ export type WhyArea = WhyFigure & {
 
 export type WhyResult = WhyFigure & { copy: string };
 
+export type WhyLayer = {
+  name: string;
+  role: string;
+  tags: string[];
+};
+
+// The hero stack, top to bottom in the order a request travels. Tags reuse the areas below.
+export const heroLayers: WhyLayer[] = [
+  { name: "Interface", role: "What users touch", tags: ["Next.js", "React", "Ionic"] },
+  { name: "API", role: "Rules and auth", tags: ["NestJS", "Django", "Lambda"] },
+  { name: "Data", role: "What it remembers", tags: ["PostgreSQL", "DynamoDB", "Firestore"] },
+  { name: "Cloud", role: "Where it runs", tags: ["AWS", "Cognito", "SAM"] },
+];
+
 export const differentiators: WhyDifferentiator[] = [
   {
     value: "3–4 weeks",
