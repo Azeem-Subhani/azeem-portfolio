@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 
 import { MagneticButton } from "@/components/motion/magnetic-button";
@@ -93,10 +93,25 @@ export function CardGlow() {
   );
 }
 
+/** Same word split as the service heroes, so the shared CSS entrance can stagger via --i. */
+function HeroWords({ text, offset = 0 }: { text: string; offset?: number }) {
+  const words = text.split(" ");
+  return words.map((word, index) => (
+    <Fragment key={`${word}-${index}`}>
+      <span className="service-hero-word" style={{ "--i": offset + index } as CSSProperties}>
+        {word}
+      </span>
+      {index < words.length - 1 ? " " : null}
+    </Fragment>
+  ));
+}
+
+const WHY_TITLE = ["one builder,", "the whole stack"];
+
 /** "Scroll to explore" mouse with a bouncing wheel dot, as on the reference hero. */
 export function ScrollCue() {
   return (
-    <div data-why="hero" aria-hidden="true" className="mt-14 hidden items-center gap-3 lg:flex">
+    <div data-service-actions aria-hidden="true" className="mt-14 hidden items-center gap-3 lg:flex">
       <span className="flex h-10 w-6 justify-center rounded-full border-2 border-foreground/20 pt-2">
         <span className="why-scroll-dot size-1.5 rounded-full bg-accent" />
       </span>
@@ -107,22 +122,34 @@ export function ScrollCue() {
 
 export function WhyHero() {
   return (
-    <header className="max-w-4xl">
+    <header className="why-hero-copy max-w-4xl">
       <p
-        data-why="hero"
+        data-service-kicker
         className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]"
       >
         Why work with me
       </p>
-      <h1 data-why="hero" className="mt-5 font-display text-[clamp(3.25rem,8vw,6.5rem)] font-normal leading-[0.9]">
-        one builder,
-        <br />
-        <span className="text-accent">the whole stack</span>
+      <h1
+        className="why-hero-title mt-5 font-display text-[clamp(3.25rem,8vw,6.5rem)] font-normal leading-[0.9]"
+        aria-label={WHY_TITLE.join(" ")}
+      >
+        {WHY_TITLE.map((line, lineIndex) => {
+          const accent = lineIndex === WHY_TITLE.length - 1;
+          const offset = WHY_TITLE.slice(0, lineIndex).reduce(
+            (count, prev) => count + prev.split(" ").length,
+            0,
+          );
+          return (
+            <span key={line} aria-hidden className="-mb-[0.12em] block overflow-hidden pb-[0.12em]">
+              <span className={cn("block", accent && "text-accent")}>
+                <HeroWords text={line} offset={offset} />
+              </span>
+            </span>
+          );
+        })}
       </h1>
-      <p data-why="hero" className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
-        Product teams hire me when they need the interface, the API, the data, and the cloud
-        built by someone who has shipped all four together, and who stays accountable for how
-        they hold up after launch.
+      <p className="why-hero-lede mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
+        <HeroWords text="Product teams hire me when they need the interface, the API, the data, and the cloud built by someone who has shipped all four together, and who stays accountable for how they hold up after launch." />
       </p>
       <ScrollCue />
     </header>
