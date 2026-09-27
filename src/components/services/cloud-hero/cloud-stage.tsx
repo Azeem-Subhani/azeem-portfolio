@@ -12,12 +12,14 @@ import { cn } from "@/lib/utils";
  * BASE_Y and each provider stream starts at its wire's TERMINAL_Y.
  */
 const PROVIDERS = [
-  { name: "AWS", x: 0.3 },
-  { name: "Azure", x: 0.5 },
-  { name: "GCP", x: 0.7 },
+  { name: "AWS", x: 0.3, services: ["Lambda", "ECS", "RDS", "S3"] },
+  { name: "Azure", x: 0.5, services: ["AKS", "Cosmos", "Blob", "SQL"] },
+  { name: "GCP", x: 0.7, services: ["GKE", "BigQuery", "Pub/Sub", "Spanner"] },
 ] as const;
 const BASE_Y = 0.56;
-const TERMINAL_Y = 0.86;
+const TERMINAL_Y = 0.8;
+/** Card width as a share of the stage, so neighbors never touch (wires sit 20% apart). */
+const CARD_WIDTH = 0.18;
 /** Wires tuck a little way into the cloud so they read as coming out of it. */
 const WIRE_TOP = BASE_Y - 0.03;
 
@@ -42,6 +44,10 @@ export function CloudStage({ className }: { className?: string }) {
     const terminals = Array.from(stage.querySelectorAll<HTMLElement>("[data-cloud-terminal]"));
     const packets = Array.from(stage.querySelectorAll<HTMLElement>("[data-cloud-packet]"));
     const rings = Array.from(stage.querySelectorAll<HTMLElement>("[data-cloud-ring]"));
+    const cards = Array.from(stage.querySelectorAll<HTMLElement>("[data-cloud-card]"));
+    const services = Array.from(stage.querySelectorAll<HTMLElement>("[data-cloud-service]"));
+    // Which workload each provider card is showing; a landed packet deploys the next one.
+    const serviceIndex = PROVIDERS.map(() => 0);
 
     let scene: CloudScene | null = null;
     let cancelled = false;
@@ -49,6 +55,27 @@ export function CloudStage({ className }: { className?: string }) {
     let introDue = false;
     let idleCall: gsap.core.Tween | null = null;
     const cleanups: Array<() => void> = [];
+
+    // Roll the card's service line to the provider's next workload.
+    const deploy = (index: number) => {
+      const service = services[index];
+      const card = cards[index];
+      if (!service || !card) return;
+      const list = PROVIDERS[index].services;
+      serviceIndex[index] = (serviceIndex[index] + 1) % list.length;
+      gsap
+        .timeline()
+        .to(service, { yPercent: -100, opacity: 0, duration: 0.22, ease: "power2.in" })
+        .call(() => {
+          service.textContent = list[serviceIndex[index]];
+        })
+        .fromTo(service, { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.32, ease: "power3.out" });
+      gsap.fromTo(
+        card,
+        { borderColor: "color-mix(in oklab, var(--accent) 70%, transparent)" },
+        { borderColor: "var(--border)", duration: 1.1, ease: "power2.out", clearProps: "borderColor" },
+      );
+    };
 
     // One packet down a wire, and the provider's joint answers when it lands.
     const ship = (index: number, delay = 0) => {
@@ -63,13 +90,19 @@ export function CloudStage({ className }: { className?: string }) {
           { top: pct(TERMINAL_Y), opacity: 1, duration: 0.9, ease: "power2.in" },
         )
         .to(packet, { opacity: 0, duration: 0.15 })
+        .call(() => deploy(index), [], "<")
         .fromTo(ring, { scale: 1, opacity: 0.8 }, { scale: 2.6, opacity: 0, duration: 0.7, ease: "power2.out" }, "<");
     };
 
-    // After the first deploy, an occasional packet keeps the stack visibly live.
+    // After the first deploy, an occasional packet keeps the stack visibly live,
+    // taking turns AWS -> Azure -> GCP so every provider gets the same traffic.
+    let nextProvider = 0;
     const scheduleIdle = () => {
       idleCall = gsap.delayedCall(3.5 + Math.random() * 3.5, () => {
-        if (visible && !document.hidden) ship(Math.floor(Math.random() * PROVIDERS.length));
+        if (visible && !document.hidden) {
+          ship(nextProvider);
+          nextProvider = (nextProvider + 1) % PROVIDERS.length;
+        }
         scheduleIdle();
       });
     };
@@ -164,7 +197,7 @@ export function CloudStage({ className }: { className?: string }) {
       cancelled = true;
       intro.kill();
       idleCall?.kill();
-      gsap.killTweensOf([...packets, ...rings]);
+      gsap.killTweensOf([...packets, ...rings, ...cards, ...services]);
       gsap.set([...terminals, ...wires], { clearProps: "opacity,transform" });
       cleanups.forEach((fn) => fn());
       scene?.dispose();
@@ -217,14 +250,26 @@ export function CloudStage({ className }: { className?: string }) {
         // because it folds a CSS `translate` into its own transform otherwise.
         <div
           key={provider.name}
-          className="absolute -translate-x-1/2"
-          style={{ left: pct(provider.x), top: pct(TERMINAL_Y) }}
+          className="absolute max-w-[5.75rem] -translate-x-1/2"
+          style={{ left: pct(provider.x), top: pct(TERMINAL_Y), width: pct(CARD_WIDTH) }}
         >
           <div data-cloud-terminal className="flex flex-col items-center">
             <span aria-hidden className="relative -mt-[3.5px] block size-[7px] rounded-full border border-accent bg-background">
               <span data-cloud-ring className="absolute -inset-px rounded-full border border-accent opacity-0" />
             </span>
-            <span className="mt-3 text-[13px] font-medium text-muted-foreground">{provider.name}</span>
+            {/* Service text is swapped by GSAP after mount; React only renders the first one. */}
+            <span
+              data-cloud-card
+              className="mt-2.5 flex w-full flex-col items-center rounded-[var(--shape-radius-sm)] border border-border bg-surface/70 px-1 pb-1.5 pt-2 backdrop-blur-sm sm:mt-3 sm:pb-2 sm:pt-2.5"
+            >
+              <span className="font-display text-base leading-none text-foreground sm:text-lg">{provider.name}</span>
+              <span className="mt-1.5 flex items-center gap-1.5 overflow-hidden font-mono text-[0.55rem] uppercase leading-[1.4] tracking-[0.1em] sm:text-[0.6rem] sm:tracking-[0.12em] text-[var(--accent-readable)]">
+                <span className="hidden size-1 shrink-0 rounded-full bg-accent sm:block" />
+                <span data-cloud-service className="block whitespace-nowrap">
+                  {provider.services[0]}
+                </span>
+              </span>
+            </span>
           </div>
         </div>
       ))}
