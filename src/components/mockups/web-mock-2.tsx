@@ -364,7 +364,12 @@ export function VenueBrowserVisual({
                   aria-hidden="true"
                   className={`pointer-events-none absolute -right-8 top-6 size-32 rounded-full blur-2xl transition-colors duration-500 ${venue.wash}`}
                 />
-                <VenueTrackMap trackId={venue.id} reduced={reduced} />
+                <VenueTrackMap
+                  trackId={venue.id}
+                  reduced={reduced}
+                  ink={venue.ink}
+                  className="h-48 sm:h-56"
+                />
                 <div className="relative px-3.5 pb-3.5 pt-1">
                   <div className="flex items-start justify-between gap-3">
                     <div>
