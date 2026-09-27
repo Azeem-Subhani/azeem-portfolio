@@ -17,7 +17,7 @@ const settle = [0.16, 1, 0.3, 1] as const;
 /** FiveXLabs hero-word ease (easeOutQuad). */
 const easeOutQuad = [0.25, 0.46, 0.45, 0.94] as const;
 
-const headlineLines = ["let's get it", "in front of", "customers"] as const;
+const headlineLines = ["Let's ship", "something", "real."] as const;
 
 function ctaVariants(reduced: boolean): {
   stage: Variants;
@@ -121,8 +121,8 @@ export function ContactCta() {
           className="-mb-[0.16em] font-display text-[clamp(2.75rem,9vw,6.5rem)] font-normal leading-[0.9] tracking-tight"
           variants={variants.headline}
         >
-          {headlineLines.map((line) => {
-            const isAccent = line === "customers";
+          {headlineLines.map((line, i) => {
+            const isAccent = i === headlineLines.length - 1;
 
             return (
               <motion.span

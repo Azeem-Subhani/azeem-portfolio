@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,12 +14,9 @@ import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const lines = [
-  { text: "take", className: "block" },
-  { text: "the idea", className: "block" },
-  { text: "to", className: "block" },
-  { text: "customers", className: "block text-accent" },
-] as const;
+// The accent word cycles through these; the first one is what renders on the server.
+const outcomes = ["launch.", "revenue.", "scale.", "customers."] as const;
+const OUTCOME_INTERVAL_MS = 2600;
 
 // Operated numbers from the service pages (cloud, mobile, web), so the fold carries proof.
 const proof = [
@@ -38,6 +35,66 @@ function setHeroReveal(state: "pending" | "animating" | "done") {
 function markHeroRevealed() {
   heroEntranceDone = true;
   setHeroReveal("done");
+}
+
+/**
+ * Cycles the headline's accent word. Every word sits in the same grid cell, so the
+ * line keeps the width of the longest one and nothing around it shifts.
+ */
+function RotatingOutcome() {
+  const reduced = usePrefersReducedMotion();
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root || reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const words = gsap.utils.toArray<HTMLElement>("[data-outcome]", root);
+    let index = 0;
+
+    const tick = () => {
+      // Hold until the entrance has settled, and skip hidden tabs so the cycle never runs unseen.
+      if (document.hidden || document.documentElement.dataset.heroReveal !== "done") return;
+
+      const current = words[index];
+      index = (index + 1) % words.length;
+      const next = words[index];
+
+      gsap
+        .timeline()
+        .to(current, { yPercent: -110, opacity: 0, duration: 0.45, ease: "power3.in" })
+        .fromTo(
+          next,
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+          0.3,
+        );
+    };
+
+    const id = window.setInterval(tick, OUTCOME_INTERVAL_MS);
+    return () => {
+      window.clearInterval(id);
+      gsap.killTweensOf(words);
+      // Back to the first word, matching the reset index if the effect runs again.
+      gsap.set(words, { clearProps: "all" });
+    };
+  }, [reduced]);
+
+  return (
+    <span ref={ref} aria-hidden="true" className="inline-grid text-accent">
+      {outcomes.map((word, i) => (
+        <span
+          key={word}
+          data-outcome
+          className={cn("[grid-area:1/1] will-change-transform", i > 0 && "opacity-0")}
+        >
+          {word}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 export function Hero() {
@@ -194,18 +251,23 @@ export function Hero() {
             id="hero-title"
             className="font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.88] tracking-tight"
           >
-            {lines.map((line) => (
-              <span
-                key={line.text}
-                className={cn("overflow-hidden pb-[0.08em] -mb-[0.08em]", line.className)}
-              >
-                {/* Trailing space keeps the heading's text "take the idea to customers" for
-                    search and copy; it collapses at the end of each block line. */}
-                <span data-hero-line className="block will-change-transform">
-                  {line.text}{" "}
-                </span>
+            {/* Screen readers and search get one stable sentence; the animated lines are visual only. */}
+            <span className="sr-only">I take products from idea to launch, revenue, scale, and customers.</span>
+            <span aria-hidden="true" className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+              <span data-hero-line className="block will-change-transform">
+                I take products
               </span>
-            ))}
+            </span>
+            <span aria-hidden="true" className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+              <span data-hero-line className="block will-change-transform">
+                from idea
+              </span>
+            </span>
+            <span aria-hidden="true" className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+              <span data-hero-line className="block will-change-transform">
+                to <RotatingOutcome />
+              </span>
+            </span>
           </h1>
 
           {/* Side by side at every width; stacked, the two pills sat at different widths on phones. */}

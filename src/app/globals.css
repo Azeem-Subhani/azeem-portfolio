@@ -308,7 +308,7 @@ button,
 }
 
 /* The unlayered rule above beats Tailwind's layered utilities, so an h2/h3 (or nav/button)
-   asking for font-display used to render in the sans. The serif owns headlines (DESIGN.md);
+   asking for font-display used to render in the sans. The serif owns headlines;
    400 is Instrument Serif's only weight. */
 :is(h2, h3, nav, button, .btn).font-display {
   font-family: var(--font-h1), serif;
