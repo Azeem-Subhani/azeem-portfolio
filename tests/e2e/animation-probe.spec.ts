@@ -11,7 +11,7 @@ test.describe("homepage motion surfaces", () => {
     expect(response?.status()).toBe(200);
 
     await expect(page.locator("#hero-title")).toBeVisible();
-    await expect(page.locator("#hero-title [data-hero-line]")).toHaveCount(4);
+    await expect(page.locator("#hero-title [data-hero-line]")).toHaveCount(3);
     await expect(page.locator("[data-hero-map-panel]")).toBeVisible();
     await expect(page.locator('[data-hero-actions] a[href="/contact"]')).toBeVisible();
 
@@ -49,7 +49,7 @@ test.describe("homepage motion surfaces", () => {
 
     const hero = page.locator("#hero-title");
     await expect(hero).toBeVisible();
-    await expect(hero.locator("[data-hero-line]").last()).toContainText("customers");
+    await expect(hero.locator("[data-hero-line]").last()).toContainText("to launch.");
 
     const opacities = await hero.locator("[data-hero-line]").evaluateAll((lines) =>
       lines.map((line) => getComputedStyle(line).opacity),

@@ -8,9 +8,7 @@ describe("Hero", () => {
     render(<Hero />);
 
     const title = screen.getByRole("heading", { level: 1 });
-    expect(title).toHaveTextContent(/take/i);
-    expect(title).toHaveTextContent(/the idea/i);
-    expect(title).toHaveTextContent(/customers/i);
+    expect(title).toHaveTextContent("I take products from idea to launch, revenue, scale, and customers.");
     expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute(
       "href",
       "/contact",
