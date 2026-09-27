@@ -115,15 +115,13 @@ export function FeatureCards() {
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const glowRef = useRef<HTMLSpanElement>(null);
   const cycleRef = useRef<gsap.core.Tween | null>(null);
-  // The tabs cycle on their own until the visitor picks one. Hover, focus,
-  // and scrolling away hold the cycle where it is.
-  const [autoplay, setAutoplay] = useState(true);
+  // The tabs keep cycling. They hold only while the pointer or focus is on
+  // an engagement tab, and while the block is scrolled out of view.
   const [held, setHeld] = useState(false);
   const [inView, setInView] = useState(false);
 
   const select = (index: number, focus = false) => {
     const next = (index + engagements.length) % engagements.length;
-    setAutoplay(false);
     setSelected(next);
     if (focus) tabRefs.current[next]?.focus();
   };
@@ -185,7 +183,7 @@ export function FeatureCards() {
     const bars = tabRefs.current.map((t) => t?.querySelector<HTMLElement>("[data-tab-progress]"));
     gsap.set(bars, { scaleX: 0 });
     const bar = bars[selected];
-    if (!autoplay || reduced || !bar) return;
+    if (reduced || !bar) return;
     const tween = gsap.to(bar, {
       scaleX: 1,
       duration: CYCLE_SECONDS,
@@ -198,14 +196,14 @@ export function FeatureCards() {
       tween.kill();
       cycleRef.current = null;
     };
-  }, [selected, autoplay, reduced]);
+  }, [selected, reduced]);
 
   useLayoutEffect(() => {
     const tween = cycleRef.current;
     if (!tween) return;
     if (inView && !held) tween.play();
     else tween.pause();
-  }, [inView, held, selected, autoplay, reduced]);
+  }, [inView, held, selected, reduced]);
 
   // The panel's glow drifts after the pointer and settles back when it leaves.
   const glowTo = useRef<{ x: gsap.QuickToFunc; y: gsap.QuickToFunc } | null>(null);
@@ -504,12 +502,6 @@ export function FeatureCards() {
         <div
           data-engagements
           className="mt-20 lg:col-span-4 lg:mt-28 lg:grid lg:grid-cols-subgrid lg:items-start"
-          onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
-          onPointerLeave={(e) => e.pointerType === "mouse" && setHeld(false)}
-          onFocus={() => setHeld(true)}
-          onBlur={(e) => {
-            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false);
-          }}
         >
           <div className="lg:sticky lg:top-28">
             <p
@@ -563,6 +555,22 @@ export function FeatureCards() {
                     tabIndex={isSelected ? 0 : -1}
                     data-engagement-tab
                     onClick={() => select(index)}
+                    onPointerEnter={(e) => {
+                      if (e.pointerType !== "mouse") return;
+                      setHeld(true);
+                    }}
+                    onPointerLeave={(e) => {
+                      if (e.pointerType !== "mouse") return;
+                      const next = e.relatedTarget;
+                      if (next instanceof Element && next.closest("[data-engagement-tab]")) return;
+                      setHeld(false);
+                    }}
+                    onFocus={() => setHeld(true)}
+                    onBlur={(e) => {
+                      const next = e.relatedTarget;
+                      if (next instanceof Element && next.closest("[data-engagement-tab]")) return;
+                      setHeld(false);
+                    }}
                     className={cn(
                       "group relative flex w-full items-baseline gap-3 border-t border-border py-4 pr-2 pl-4 text-left transition-colors duration-200 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                       isSelected ? "text-foreground" : "text-muted-foreground hover:text-foreground",
