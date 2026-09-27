@@ -1,11 +1,12 @@
 "use client";
 
-import { Fragment, useLayoutEffect, useRef, type CSSProperties, type RefObject } from "react";
+import { Fragment, useLayoutEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowDown } from "lucide-react";
 import { gsap } from "gsap";
 
 import { CloudStage } from "@/components/services/cloud-hero/cloud-stage";
+import { useAccentLine } from "@/components/services/hero-accent";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ServicePageContent } from "@/types/content";
@@ -28,38 +29,11 @@ function HeroWords({
   return words.map((word, index) => (
     <Fragment key={`${word}-${index}`}>
       <span className="service-hero-word" style={{ "--i": offset + index } as CSSProperties}>
-        {accent ? <span className="cloud-hero-accent-ink">{word}</span> : word}
+        {accent ? <span className="service-hero-accent-ink">{word}</span> : word}
       </span>
       {index < words.length - 1 ? " " : null}
     </Fragment>
   ));
-}
-
-// Keeps the last title line one continuous gradient after it is split into words.
-function useAccentLine(lineRef: RefObject<HTMLElement | null>) {
-  useLayoutEffect(() => {
-    const line = lineRef.current;
-    if (!line) return;
-
-    let cancelled = false;
-    const fit = () => {
-      if (cancelled) return;
-      line.style.setProperty("--line-w", `${line.getBoundingClientRect().width}px`);
-      for (const word of line.querySelectorAll<HTMLElement>(".service-hero-word")) {
-        word.style.setProperty("--word-x", `${word.offsetLeft}px`);
-      }
-    };
-
-    fit();
-    const observer = new ResizeObserver(fit);
-    observer.observe(line);
-    void document.fonts?.ready.then(fit);
-
-    return () => {
-      cancelled = true;
-      observer.disconnect();
-    };
-  }, [lineRef]);
 }
 
 // Attribute names are prefixed with "cloud-intro" on purpose: globals.css hides
@@ -121,7 +95,7 @@ export function CloudServiceHero({ service }: CloudServiceHeroProps) {
                       "block",
                       // The last line fades from paper into teal. Padding lets the
                       // clipped background reach the descenders.
-                      accent && "cloud-hero-accent -mb-[0.12em] pb-[0.12em] text-transparent",
+                      accent && "service-hero-accent -mb-[0.12em] pb-[0.12em] text-transparent",
                     )}
                   >
                     <HeroWords text={line} offset={offset} accent={accent} />

@@ -439,13 +439,13 @@ button,
   }
 }
 
-/* The last cloud title line is one gradient, split into words so each can rise. */
-.cloud-hero-accent {
+/* The last service title line is one gradient, split into words so each can rise. */
+.service-hero-accent {
   position: relative;
   width: fit-content;
 }
 
-.cloud-hero-accent-ink {
+.service-hero-accent-ink {
   background-image: linear-gradient(100deg, var(--foreground) 30%, var(--accent-readable));
   background-repeat: no-repeat;
   background-size: var(--line-w, 100%) 100%;

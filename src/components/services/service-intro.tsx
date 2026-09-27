@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { MagneticButton } from "@/components/motion/magnetic-button";
+import { useAccentLine } from "@/components/services/hero-accent";
 import { Button } from "@/components/ui/button";
 import { servicePath, services } from "@/content/services";
 import { cn } from "@/lib/utils";
@@ -33,12 +34,20 @@ type ServiceIntroProps = {
 };
 
 /** Renders text as word spans so the CSS entrance can stagger them via --i. */
-function Words({ text, offset = 0 }: { text: string; offset?: number }) {
+function Words({
+  text,
+  offset = 0,
+  accent = false,
+}: {
+  text: string;
+  offset?: number;
+  accent?: boolean;
+}) {
   const words = text.split(" ");
   return words.map((word, index) => (
     <Fragment key={`${word}-${index}`}>
       <span className="service-hero-word" style={{ "--i": offset + index } as CSSProperties}>
-        {word}
+        {accent ? <span className="service-hero-accent-ink">{word}</span> : word}
       </span>
       {index < words.length - 1 ? " " : null}
     </Fragment>
@@ -47,6 +56,8 @@ function Words({ text, offset = 0 }: { text: string; offset?: number }) {
 
 export function ServiceIntro({ service, visual }: ServiceIntroProps) {
   const introRef = useRef<HTMLElement>(null);
+  const accentRef = useRef<HTMLSpanElement>(null);
+  useAccentLine(accentRef);
   const siblings = services.filter((item) => item.slug !== service.slug);
 
   // The entrance itself is CSS (globals.css, "Service hero entrance") so it starts on
@@ -146,18 +157,33 @@ export function ServiceIntro({ service, visual }: ServiceIntroProps) {
           {service.kicker}
         </p>
         <h1 className="service-title text-balance">
-          {service.titleLines.map((line, lineIndex) => (
-            <span key={line} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
-              <span data-service-line className="block">
-                <Words
-                  text={line}
-                  offset={service.titleLines
-                    .slice(0, lineIndex)
-                    .reduce((count, prev) => count + prev.split(" ").length, 0)}
-                />
+          {service.titleLines.map((line, lineIndex) => {
+            const accent = lineIndex === service.titleLines.length - 1;
+            const offset = service.titleLines
+              .slice(0, lineIndex)
+              .reduce((count, prev) => count + prev.split(" ").length, 0);
+            return (
+              <span
+                key={line}
+                className={cn(
+                  "block overflow-hidden",
+                  // Extra room on the faded line so descenders survive the clip.
+                  accent ? "-mb-[0.12em] pb-[0.12em]" : "-mb-[0.08em] pb-[0.08em]",
+                )}
+              >
+                <span
+                  ref={accent ? accentRef : undefined}
+                  data-service-line
+                  className={cn(
+                    "block",
+                    accent && "service-hero-accent -mb-[0.12em] pb-[0.12em] text-transparent",
+                  )}
+                >
+                  <Words text={line} offset={offset} accent={accent} />
+                </span>
               </span>
-            </span>
-          ))}
+            );
+          })}
         </h1>
         <p data-service-copy className="service-hero-lede">
           <Words text={service.lede} />
