@@ -10,7 +10,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 /*
  * Scroll-in motion for the Why page, modeled on fivexlabs.com/why-us:
- *   data-why="hero"   fades up 24px on load (after the site intro on a fresh visit)
+ *   data-why="hero"   fades up 24px on load (after the site intro on a fresh visit).
+ *                     The why-me hero itself uses the service-page CSS entrance.
  *   data-why="up"     section heads and cards fade up; siblings in view together stagger
  *   data-why="side"   process steps slide in from alternating sides
  *   data-why="scale"  summary stats grow in from 80%
