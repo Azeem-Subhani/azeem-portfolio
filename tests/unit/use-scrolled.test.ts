@@ -33,6 +33,33 @@ describe("useScrolled", () => {
     expect(result.current).toBe(false);
   });
 
+  it("stays compact until scrolled back near the top", () => {
+    setScrollY(0);
+    const { result } = renderHook(() => useScrolled(24));
+
+    act(() => {
+      setScrollY(30);
+    });
+    expect(result.current).toBe(true);
+
+    // Between the release point and the threshold: no flip back.
+    act(() => {
+      setScrollY(15);
+    });
+    expect(result.current).toBe(true);
+
+    act(() => {
+      setScrollY(5);
+    });
+    expect(result.current).toBe(false);
+
+    // Re-engaging still needs to pass the full threshold.
+    act(() => {
+      setScrollY(15);
+    });
+    expect(result.current).toBe(false);
+  });
+
   it("reads the current scroll position on mount", () => {
     setScrollY(80);
     const { result } = renderHook(() => useScrolled(24));
