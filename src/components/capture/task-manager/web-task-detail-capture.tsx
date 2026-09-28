@@ -19,7 +19,7 @@ export function TaskManagerWebTaskDetailCapture() {
             <div className="brand-mark" aria-hidden="true">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="2.6" />
-                <path d="M12 9.4c0-2.6.7-4.6 2-4.6s2 2 4.6" />
+                <path d="M12 9.4c0-2.6.7-4.6 2-4.6s2 2 2 4.6" />
                 <path d="M12 14.6c0 2.6-.7 4.6-2 4.6s-2-2-2-4.6" />
                 <path d="M9.4 12c-2.6 0-4.6-.7-4.6-2s2-2 4.6-2" />
                 <path d="M14.6 12c2.6 0 4.6.7 4.6 2s-2 2-4.6 2" />
