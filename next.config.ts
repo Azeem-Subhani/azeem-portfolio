@@ -43,7 +43,23 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // Project cards and capture stills keep their filenames when re-exported
+      // (scripts/optimize-images.ts overwrites in place), so they cannot be
+      // immutable. A day fresh plus a week of stale-while-revalidate lets
+      // repeat visits skip the per-image round trip and still pick up new art
+      // within a day.
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+    ];
   },
 };
 

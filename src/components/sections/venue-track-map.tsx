@@ -3,6 +3,8 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 
+import { useNearViewport } from "@/hooks/use-near-viewport";
+
 const settle = [0.16, 1, 0.3, 1] as const;
 
 /** Racing line draw-in, shared with the bridge deck so it joins on cue. */
@@ -287,6 +289,62 @@ function findBridges(
 }
 
 /**
+ * Sampling the circuit and finding its crossings are the costly parts of the
+ * geometry (hundreds of getPointAtLength calls), and both depend only on the
+ * path data and the sizing, never on the element. Maps that draw the same
+ * track at the same size, and re-fits that land on a size already seen, reuse
+ * the result. Results are read-only, so sharing them is safe.
+ */
+const SAMPLE_COUNT = 360;
+const lapCache = new Map<string, { pts: Point[]; total: number }>();
+const bridgeCache = new Map<string, Bridge[]>();
+// Labeled maps re-fit on every frame size, so keep the size-keyed cache bounded.
+const BRIDGE_CACHE_LIMIT = 24;
+
+/** Evenly spaced points along the path, or null when it cannot be measured. */
+function sampleLap(path: SVGPathElement, d: string) {
+  const cached = lapCache.get(d);
+  if (cached) return cached;
+
+  try {
+    const total = path.getTotalLength();
+    if (total < 20) return null;
+    const pts = Array.from({ length: SAMPLE_COUNT }, (_, i) => {
+      const p = path.getPointAtLength((i / SAMPLE_COUNT) * total);
+      return { x: p.x, y: p.y };
+    });
+    const lap = { pts, total };
+    lapCache.set(d, lap);
+    return lap;
+  } catch {
+    return null;
+  }
+}
+
+function bridgesFor(
+  path: SVGPathElement,
+  d: string,
+  lap: { pts: Point[]; total: number },
+  dims: Dims,
+): Bridge[] {
+  // Every size in Dims scales from k, so the path plus k identifies the result.
+  const key = `${d}|${dims.k}`;
+  const cached = bridgeCache.get(key);
+  if (cached) return cached;
+
+  let bridges: Bridge[];
+  try {
+    bridges = findBridges(path, lap.pts, lap.total, dims);
+  } catch {
+    // Not cached: a failure may be transient, and the fallback draws no bridges.
+    return [];
+  }
+  if (bridgeCache.size >= BRIDGE_CACHE_LIMIT) bridgeCache.clear();
+  bridgeCache.set(key, bridges);
+  return bridges;
+}
+
+/**
  * Measures the rendered track so the start line sits across the tarmac, each
  * corner label hangs off its own apex, and crossovers get a proper bridge.
  */
@@ -298,19 +356,9 @@ function useTrackGeometry(track: VenueTrack, withLabels: boolean) {
     const path = pathRef.current;
     if (!path || typeof path.getTotalLength !== "function") return;
 
-    let pts: Point[];
-    let total: number;
-    try {
-      total = path.getTotalLength();
-      if (total < 20) return;
-      const steps = 360;
-      pts = Array.from({ length: steps }, (_, i) => {
-        const p = path.getPointAtLength((i / steps) * total);
-        return { x: p.x, y: p.y };
-      });
-    } catch {
-      return;
-    }
+    const lap = sampleLap(path, track.trackPath);
+    if (!lap) return;
+    const { pts, total } = lap;
 
     const centroid = pts.reduce(
       (acc, p) => ({
@@ -410,12 +458,7 @@ function useTrackGeometry(track: VenueTrack, withLabels: boolean) {
         }
       }
 
-      let bridges: Bridge[];
-      try {
-        bridges = findBridges(path, pts, total, dims);
-      } catch {
-        bridges = [];
-      }
+      const bridges = bridgesFor(path, track.trackPath, lap, dims);
 
       setGeometry({
         start,
@@ -555,27 +598,33 @@ export function VenueTrackMap({
 }) {
   const track = venueTracks[trackId] ?? venueTracks.coastal;
   const viewBox = padViewBox(track.viewBox);
+  // The drawing samples the circuit 360 times and tests every segment pair for
+  // crossings, so it waits until the map is within a few hundred pixels of the viewport. The wrapper
+  // keeps its height meanwhile, so nothing shifts when the drawing mounts.
+  const { ref, near } = useNearViewport();
 
   return (
-    <div className={`relative w-full overflow-visible ${className}`}>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={trackId}
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
-        >
-          <TrackDrawing
-            track={track}
-            viewBox={viewBox}
-            reduced={reduced}
-            compact={compact}
-            ink={ink}
-          />
-        </motion.div>
-      </AnimatePresence>
+    <div ref={ref} className={`relative w-full overflow-visible ${className}`}>
+      {near ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={trackId}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+          >
+            <TrackDrawing
+              track={track}
+              viewBox={viewBox}
+              reduced={reduced}
+              compact={compact}
+              ink={ink}
+            />
+          </motion.div>
+        </AnimatePresence>
+      ) : null}
     </div>
   );
 }
