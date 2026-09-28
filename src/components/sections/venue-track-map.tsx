@@ -3,6 +3,8 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 
+import { useNearViewport } from "@/hooks/use-near-viewport";
+
 const settle = [0.16, 1, 0.3, 1] as const;
 
 /** Racing line draw-in, shared with the bridge deck so it joins on cue. */
@@ -555,27 +557,33 @@ export function VenueTrackMap({
 }) {
   const track = venueTracks[trackId] ?? venueTracks.coastal;
   const viewBox = padViewBox(track.viewBox);
+  // The drawing samples the circuit 360 times and tests every segment pair for
+  // crossings, so it waits until the map is within a few hundred pixels of the viewport. The wrapper
+  // keeps its height meanwhile, so nothing shifts when the drawing mounts.
+  const { ref, near } = useNearViewport();
 
   return (
-    <div className={`relative w-full overflow-visible ${className}`}>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={trackId}
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
-        >
-          <TrackDrawing
-            track={track}
-            viewBox={viewBox}
-            reduced={reduced}
-            compact={compact}
-            ink={ink}
-          />
-        </motion.div>
-      </AnimatePresence>
+    <div ref={ref} className={`relative w-full overflow-visible ${className}`}>
+      {near ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={trackId}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+          >
+            <TrackDrawing
+              track={track}
+              viewBox={viewBox}
+              reduced={reduced}
+              compact={compact}
+              ink={ink}
+            />
+          </motion.div>
+        </AnimatePresence>
+      ) : null}
     </div>
   );
 }
