@@ -3,12 +3,16 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 
+import {
+  copyTimeline,
+  listTimeline,
+  splitTitle,
+} from "@/components/services/service-text-reveal";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { revealStart } from "@/lib/reveal-visibility";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
 
 const ease = "power3.out";
 
@@ -20,70 +24,8 @@ function scrollY() {
   return typeof scrollTrigger.scroll === "function" ? scrollTrigger.scroll() : window.scrollY;
 }
 
-function playIfPast(
-  trigger: ScrollTrigger,
-  timeline: gsap.core.Timeline,
-  extra?: () => void,
-) {
-  if (trigger.start <= scrollY() + 4 && !timeline.isActive() && timeline.progress() === 0) {
-    extra?.();
-    timeline.play();
-  }
-}
-
-function splitTitle(title: HTMLElement, origin: "left bottom" | "right bottom") {
-  let timeline: gsap.core.Timeline | null = null;
-  let started = false;
-
-  const split = SplitText.create(title, {
-    type: "lines",
-    mask: "lines",
-    linesClass: "mobile-title-line",
-    autoSplit: true,
-    onSplit: (self) => {
-      timeline = gsap
-        .timeline({ paused: true, defaults: { ease } })
-        .fromTo(
-          self.lines,
-          { yPercent: 112, rotate: origin === "right bottom" ? -0.7 : 0.7, transformOrigin: origin },
-          { yPercent: 0, rotate: 0, duration: 0.72, stagger: 0.085 },
-        );
-      if (started) timeline.progress(1);
-    },
-  });
-
-  return {
-    play() {
-      if (!started) {
-        started = true;
-        timeline?.play(0);
-      }
-    },
-    kill() {
-      timeline?.kill();
-      split.revert();
-    },
-  };
-}
-
-function copyTimeline(nodes: NodeListOf<HTMLElement> | HTMLElement[]) {
-  const items = Array.from(nodes);
-  if (!items.length) return gsap.timeline({ paused: true });
-
-  gsap.set(items, { opacity: 0, y: 14 });
-  return gsap
-    .timeline({ paused: true, defaults: { ease } })
-    .to(items, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06 }, 0.04);
-}
-
-function listTimeline(nodes: NodeListOf<HTMLElement> | HTMLElement[]) {
-  const items = Array.from(nodes);
-  if (!items.length) return null;
-
-  gsap.set(items, { opacity: 0, y: 10 });
-  return gsap
-    .timeline({ paused: true, defaults: { ease } })
-    .to(items, { opacity: 1, y: 0, duration: 0.45, stagger: 0.055 }, 0);
+function playIfPast(trigger: ScrollTrigger, play: () => void) {
+  if (trigger.start <= scrollY() + 4) play();
 }
 
 function deviceTimeline(visual: HTMLElement) {
@@ -167,14 +109,20 @@ function bindBlock(
   origin: "left bottom" | "right bottom",
   triggers: Array<() => void>,
 ) {
+  // Same text reveal as the web and cloud pages (service-text-reveal.ts).
   const splitHeading = Boolean(title?.classList.contains("service-band-title"));
-  const heading = splitHeading && title ? splitTitle(title, origin) : null;
+  const heading = splitHeading && title ? splitTitle(title, origin, "mobile") : null;
   const copyItems = [...copyNodes];
   if (title && !splitHeading) copyItems.unshift(title);
-  const copyTl = copyTimeline(copyItems);
+  const copyTl = copyTimeline(copyItems, "mobile");
   const visualTl = visual ? deviceTimeline(visual) : null;
   const listItems = listRoot?.querySelectorAll<HTMLElement>("[data-mobile-item]") ?? [];
-  const itemsTl = listItems.length ? listTimeline(listItems) : null;
+  const itemsTl = listItems.length ? listTimeline([...listItems]) : null;
+
+  const revealCopy = () => {
+    heading?.play();
+    copyTl.play();
+  };
 
   const copyTrigger = title ?? visual;
   if (copyTrigger) {
@@ -183,14 +131,9 @@ function bindBlock(
       start: () => revealStart(copyTrigger.offsetHeight, window.innerHeight),
       once: true,
       invalidateOnRefresh: true,
-      onEnter: () => {
-        heading?.play();
-        copyTl.play();
-      },
+      onEnter: revealCopy,
     });
-    const raf = requestAnimationFrame(() =>
-      playIfPast(copySt, copyTl, () => heading?.play()),
-    );
+    const raf = requestAnimationFrame(() => playIfPast(copySt, revealCopy));
     triggers.push(
       () => cancelAnimationFrame(raf),
       () => copySt.kill(),
@@ -207,7 +150,7 @@ function bindBlock(
       invalidateOnRefresh: true,
       onEnter: () => visualTl.play(),
     });
-    const raf = requestAnimationFrame(() => playIfPast(visualSt, visualTl));
+    const raf = requestAnimationFrame(() => playIfPast(visualSt, () => visualTl.play()));
     triggers.push(
       () => cancelAnimationFrame(raf),
       () => visualSt.kill(),
@@ -223,7 +166,7 @@ function bindBlock(
       invalidateOnRefresh: true,
       onEnter: () => itemsTl.play(),
     });
-    const raf = requestAnimationFrame(() => playIfPast(listSt, itemsTl));
+    const raf = requestAnimationFrame(() => playIfPast(listSt, () => itemsTl.play()));
     triggers.push(
       () => cancelAnimationFrame(raf),
       () => listSt.kill(),

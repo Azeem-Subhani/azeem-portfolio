@@ -841,3 +841,18 @@
     animation: none;
   }
 }
+
+/* ---------- Text-animation support (SplitText words; see service-text-reveal.ts) ---------- */
+
+.mobile-title-word,
+.mobile-copy-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-title-word,
+  .mobile-copy-word {
+    will-change: auto;
+  }
+}

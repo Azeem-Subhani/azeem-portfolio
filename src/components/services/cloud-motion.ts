@@ -3,11 +3,16 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 
+import {
+  copyTimeline,
+  listTimeline,
+  splitTitle,
+  type Playable,
+} from "@/components/services/service-text-reveal";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
 
 const ease = "power3.out";
 
@@ -24,82 +29,6 @@ function scrollY() {
 
 function playIfPast(trigger: ScrollTrigger, play: () => void) {
   if (trigger.start <= scrollY() + 4) play();
-}
-
-function splitTitle(title: HTMLElement, origin: "left bottom" | "right bottom") {
-  let timeline: gsap.core.Timeline | null = null;
-  let started = false;
-
-  const split = SplitText.create(title, {
-    type: "lines,words",
-    mask: "lines",
-    linesClass: "cloud-title-line",
-    wordsClass: "cloud-title-word",
-    autoSplit: true,
-    onSplit: (self) => {
-      timeline = gsap
-        .timeline({ paused: true, defaults: { ease } })
-        .fromTo(
-          self.lines,
-          { yPercent: 112, rotate: origin === "right bottom" ? -0.7 : 0.7, transformOrigin: origin },
-          { yPercent: 0, rotate: 0, duration: 0.72, stagger: 0.085 },
-        )
-        .fromTo(
-          self.words,
-          { opacity: 0.12, y: 6 },
-          { opacity: 1, y: 0, duration: 0.45, stagger: 0.02 },
-          0.18,
-        );
-      if (started) timeline.progress(1);
-    },
-  });
-
-  return {
-    play() {
-      if (!started) {
-        started = true;
-        timeline?.play(0);
-      }
-    },
-    kill() {
-      timeline?.kill();
-      split.revert();
-    },
-  };
-}
-
-function splitItemTitle(node: HTMLElement) {
-  let timeline: gsap.core.Timeline | null = null;
-  let started = false;
-
-  const split = SplitText.create(node, {
-    type: "words",
-    wordsClass: "cloud-item-word",
-    autoSplit: true,
-    onSplit: (self) => {
-      timeline = gsap
-        .timeline({ paused: true, defaults: { ease } })
-        .fromTo(
-          self.words,
-          { yPercent: 60, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.035 },
-        );
-      if (started) timeline.progress(1);
-    },
-  });
-
-  return {
-    play() {
-      if (!started) {
-        started = true;
-        timeline?.play(0);
-      }
-    },
-    kill() {
-      timeline?.kill();
-      split.revert();
-    },
-  };
 }
 
 function kickerTimeline(kicker: HTMLElement) {
@@ -124,87 +53,6 @@ function kickerTimeline(kicker: HTMLElement) {
   }
 
   return tl;
-}
-
-function copyTimeline(nodes: NodeListOf<HTMLElement> | HTMLElement[]): Playable {
-  const items = Array.from(nodes);
-  let started = false;
-
-  const anims = items.map((node) => {
-    let timeline: gsap.core.Timeline | null = null;
-    const split = SplitText.create(node, {
-      type: "words",
-      wordsClass: "cloud-copy-word",
-      autoSplit: true,
-      onSplit: (self) => {
-        timeline = gsap.timeline({ paused: true, defaults: { ease } }).fromTo(
-          self.words,
-          { opacity: 0, yPercent: 40, filter: "blur(4px)" },
-          {
-            opacity: 1,
-            yPercent: 0,
-            filter: "blur(0px)",
-            duration: 0.6,
-            stagger: Math.min(0.022, 0.5 / Math.max(self.words.length, 1)),
-            clearProps: "filter",
-          },
-        );
-        if (started) timeline.progress(1);
-      },
-    });
-    return {
-      play: () => timeline?.play(0),
-      kill: () => {
-        timeline?.kill();
-        split.revert();
-      },
-    };
-  });
-
-  return {
-    play() {
-      if (started) return;
-      started = true;
-      anims.forEach((anim, index) => gsap.delayedCall(0.12 + index * 0.08, anim.play));
-    },
-    kill() {
-      anims.forEach((anim) => anim.kill());
-    },
-  };
-}
-
-function listTimeline(nodes: NodeListOf<HTMLElement> | HTMLElement[], splitTitles = false) {
-  const items = Array.from(nodes);
-  if (!items.length) return null;
-
-  const titleAnims = splitTitles
-    ? items.map((item) => {
-        const title = item.querySelector<HTMLElement>("[data-cloud-item-title]");
-        return title ? splitItemTitle(title) : null;
-      })
-    : [];
-
-  const tl = gsap
-    .timeline({ paused: true, defaults: { ease } })
-    .from(
-      items,
-      { opacity: 0, y: 14, duration: 0.5, stagger: 0.09 },
-      0,
-    );
-
-  return {
-    play() {
-      tl.play();
-      titleAnims.forEach((anim, index) => {
-        if (!anim) return;
-        gsap.delayedCall(0.12 + index * 0.09, () => anim.play());
-      });
-    },
-    kill() {
-      tl.kill();
-      titleAnims.forEach((anim) => anim?.kill());
-    },
-  };
 }
 
 function stageTimeline(visual: HTMLElement) {
@@ -263,7 +111,6 @@ function stageTimeline(visual: HTMLElement) {
   return tl;
 }
 
-type Playable = { play(): void; kill(): void };
 type ListPlayable = Playable | gsap.core.Timeline | null;
 
 function playList(target: ListPlayable) {
@@ -285,15 +132,15 @@ function bindBlock(
   triggers: Array<() => void>,
 ) {
   const splitHeading = Boolean(title?.classList.contains("service-band-title"));
-  const heading = splitHeading && title ? splitTitle(title, "left bottom") : null;
+  const heading = splitHeading && title ? splitTitle(title, "left bottom", "cloud") : null;
   const copyItems = [...copyNodes];
   if (title && !splitHeading) copyItems.unshift(title);
-  const copyTl = copyTimeline(copyItems);
+  const copyTl = copyTimeline(copyItems, "cloud");
   const kickerTl = kicker ? kickerTimeline(kicker) : null;
   const visualTl = visual ? stageTimeline(visual) : null;
 
   const cards = listRoot?.querySelectorAll<HTMLElement>("[data-cloud-card]") ?? [];
-  const cardsTl = cards.length ? listTimeline([...cards], true) : null;
+  const cardsTl = cards.length ? listTimeline([...cards]) : null;
 
   const revealCopy = () => {
     kickerTl?.play();
