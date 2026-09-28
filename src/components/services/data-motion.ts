@@ -369,7 +369,7 @@ function bindBlock(
 
   const cards = listRoot?.querySelectorAll<HTMLElement>("[data-data-card]") ?? [];
   const steps = listRoot?.querySelectorAll<HTMLElement>("[data-data-step]") ?? [];
-  const cardsTl = cards.length ? listTimeline([...cards], true) : null;
+  const cardsTl = cards.length ? listTimeline([...cards]) : null;
   const stepsTl = steps.length ? railTimeline([...steps]) : null;
 
   const copyTrigger = kicker ?? title ?? visual;

@@ -83,13 +83,6 @@ function BuildChapter({
       <ChapterHead chapter={CHAPTERS[0]} title={section.title} copy={section.copy} />
       <figure data-web-stage data-device="stack" className="web-stage">
         <StackStage />
-        <figcaption className="web-stage-caption">
-          <span>CMS</span>
-          <span aria-hidden="true">→</span>
-          <span>Next.js</span>
-          <span aria-hidden="true">→</span>
-          <span>Edge</span>
-        </figcaption>
       </figure>
       <div data-web-list className="web-build-grid">
         {section.items.map((item, index) => {
