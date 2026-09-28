@@ -19,6 +19,7 @@ import {
   venues,
   type LightState,
 } from "@/components/mockups/web-r2-mock-5";
+import { warmVenueTracks } from "@/components/sections/venue-track-map";
 import { useInViewOnce } from "@/hooks/use-in-view-once";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
@@ -36,6 +37,10 @@ export function WebGantryStackVisual() {
   const [cyclePaused, setCyclePaused] = useState(false);
   /** Flips on once the green has been read; until then every light stays green. */
   const [cycleLive, setCycleLive] = useState(reduced);
+
+  // The venue maps mount only near the viewport, so sample their circuits now,
+  // while idle, instead of in the middle of the scroll that brings them in.
+  useEffect(() => warmVenueTracks(), []);
 
   useEffect(() => {
     if (!inView || reduced) return;

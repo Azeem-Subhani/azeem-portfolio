@@ -321,6 +321,51 @@ function sampleLap(path: SVGPathElement, d: string) {
   }
 }
 
+/**
+ * Samples a track ahead of time on a detached path, so the drawing that mounts
+ * as the map nears the viewport finds the lap already cached instead of doing
+ * the sampling in the middle of a scroll. Geometry does not need the path to
+ * be rendered.
+ */
+function warmLap(d: string) {
+  if (lapCache.has(d) || typeof document === "undefined") return;
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d);
+  sampleLap(path, d);
+}
+
+/**
+ * Warms every track, one per idle slice, so no single task is long enough to
+ * drop a frame. Call from something that is mounted well before the maps are
+ * (they mount only near the viewport, and the venue mockup cycles through all
+ * of them). Returns a cancel function.
+ */
+export function warmVenueTracks() {
+  const queue = Object.values(venueTracks).map((track) => track.trackPath);
+  let handle = 0;
+  let cancelled = false;
+  const idle = typeof window.requestIdleCallback === "function";
+
+  const schedule = () => {
+    handle = idle
+      ? window.requestIdleCallback(step, { timeout: 4000 })
+      : window.setTimeout(step, 400);
+  };
+  const step = () => {
+    if (cancelled) return;
+    const d = queue.shift();
+    if (d) warmLap(d);
+    if (queue.length) schedule();
+  };
+  schedule();
+
+  return () => {
+    cancelled = true;
+    if (idle) window.cancelIdleCallback(handle);
+    else window.clearTimeout(handle);
+  };
+}
+
 function bridgesFor(
   path: SVGPathElement,
   d: string,
