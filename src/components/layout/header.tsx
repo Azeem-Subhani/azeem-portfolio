@@ -61,14 +61,14 @@ export function Header() {
       data-site-header
       data-scrolled={scrolled ? "true" : "false"}
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-4 transition-all duration-300 sm:px-6",
+        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-4 transition-[top] duration-300 sm:px-6",
         scrolled ? "top-4" : "top-6",
       )}
     >
       <div
         ref={barRef}
         className={cn(
-          "pointer-events-auto relative flex w-full items-center justify-between overflow-visible border transition-all duration-300",
+          "pointer-events-auto relative flex w-full items-center justify-between overflow-visible border transition-[max-width,padding,border-radius] duration-300",
           "animate-header-enter motion-reduce:animate-none",
           scrolled
             ? "max-w-6xl rounded-full border-transparent px-3 py-2 sm:px-4"

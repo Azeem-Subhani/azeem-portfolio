@@ -9,20 +9,24 @@ const useIsomorphicLayoutEffect =
  * True once the document has been scrolled past `threshold` pixels.
  * Reads scroll position after hydration so a mid-page refresh still
  * lands in the compact header state.
+ *
+ * The state only releases below `releaseAt`, so hovering around the
+ * threshold does not flip it (and restart the header transition) on every
+ * scroll event.
  */
-export function useScrolled(threshold = 24) {
+export function useScrolled(threshold = 24, releaseAt = threshold / 3) {
   const [scrolled, setScrolled] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
     const onScroll = () => {
-      const next = window.scrollY > threshold;
-      setScrolled((prev) => (prev === next ? prev : next));
+      const y = window.scrollY;
+      setScrolled((prev) => (prev ? y > releaseAt : y > threshold));
     };
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [threshold]);
+  }, [threshold, releaseAt]);
 
   return scrolled;
 }
