@@ -10,6 +10,7 @@ import { MagneticButton } from "@/components/motion/magnetic-button";
 import { useAccentLine } from "@/components/services/hero-accent";
 import { Button } from "@/components/ui/button";
 import { servicePath, services } from "@/content/services";
+import { afterRouteScroll } from "@/lib/reveal-visibility";
 import { cn } from "@/lib/utils";
 import type { ServicePageContent } from "@/types/content";
 
@@ -62,7 +63,7 @@ export function ServiceIntro({ service, visual }: ServiceIntroProps) {
 
   // The entrance itself is CSS (globals.css, "Service hero entrance") so it starts on
   // first paint instead of waiting for hydration. JS only drives the stat counters.
-  useLayoutEffect(() => {
+  useLayoutEffect(() => afterRouteScroll(() => {
     const intro = introRef.current;
     if (!intro) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -145,7 +146,7 @@ export function ServiceIntro({ service, visual }: ServiceIntroProps) {
         if (node.dataset.value) node.textContent = node.dataset.value;
       });
     };
-  }, [service.slug]);
+  }), [service.slug]);
 
   const [lead, ...rest] = service.proof;
 

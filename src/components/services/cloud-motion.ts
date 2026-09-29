@@ -11,6 +11,7 @@ import {
   type Playable,
 } from "@/components/services/service-text-reveal";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { afterRouteScroll } from "@/lib/reveal-visibility";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -204,7 +205,7 @@ export function useCloudBodyMotion<T extends HTMLElement>() {
   const rootRef = useRef<T>(null);
   const reduced = usePrefersReducedMotion();
 
-  useLayoutEffect(() => {
+  useLayoutEffect(() => afterRouteScroll(() => {
     const root = rootRef.current;
     if (!root) return;
 
@@ -248,7 +249,7 @@ export function useCloudBodyMotion<T extends HTMLElement>() {
       clear();
       triggers.forEach((kill) => kill());
     };
-  }, [reduced]);
+  }), [reduced]);
 
   return rootRef;
 }
