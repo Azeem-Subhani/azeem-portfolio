@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
-import { revealStart } from "@/lib/reveal-visibility";
+import { afterRouteScroll, revealStart } from "@/lib/reveal-visibility";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -443,7 +443,7 @@ export function useDataBodyMotion<T extends HTMLElement>() {
   const rootRef = useRef<T>(null);
   const reduced = usePrefersReducedMotion();
 
-  useLayoutEffect(() => {
+  useLayoutEffect(() => afterRouteScroll(() => {
     const root = rootRef.current;
     if (!root) return;
 
@@ -514,7 +514,7 @@ export function useDataBodyMotion<T extends HTMLElement>() {
       clear();
       triggers.forEach((kill) => kill());
     };
-  }, [reduced]);
+  }), [reduced]);
 
   return rootRef;
 }

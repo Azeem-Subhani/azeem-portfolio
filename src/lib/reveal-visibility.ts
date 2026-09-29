@@ -35,3 +35,25 @@ export function revealStart(height: number, viewportHeight: number) {
 
   return `top ${Math.min(94, Math.max(20, percent))}%`;
 }
+
+/**
+ * Runs a reveal setup one frame after mount and returns its cleanup.
+ *
+ * On a client-side route change, the new page's layout effects run before the
+ * App Router scrolls the window back to the top. A ScrollTrigger created then
+ * measures against the previous page's scroll position, so every reveal above
+ * that point fires at once, off-screen, and has already finished by the time
+ * the visitor scrolls down to it. By the next frame the router has reset the
+ * scroll, and the frame is still painted before any hidden state shows.
+ */
+export function afterRouteScroll(setup: () => void | (() => void)) {
+  let cleanup: void | (() => void);
+  const frame = requestAnimationFrame(() => {
+    cleanup = setup();
+  });
+
+  return () => {
+    cancelAnimationFrame(frame);
+    cleanup?.();
+  };
+}

@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { parseCount } from "@/components/why/why-motion";
-import { revealStart } from "@/lib/reveal-visibility";
+import { afterRouteScroll, revealStart } from "@/lib/reveal-visibility";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -35,7 +35,7 @@ const CARD_AFTER_HEAD = 0.46;
 export function IndustryMotion({ children }: { children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(() => afterRouteScroll(() => {
     const root = rootRef.current;
     if (!root) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -252,7 +252,7 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
         if (el.dataset.whyCount) el.textContent = el.dataset.whyCount;
       });
     };
-  }, []);
+  }), []);
 
   return <div ref={rootRef}>{children}</div>;
 }
