@@ -16,7 +16,8 @@ description: Verify portfolio UI changes (service heroes, motion, layout) by dri
    needed, show the failing capture and the passing one. No proof, no PASS.
 
 ## Handle
-1. Start the app in the background: `PORT=3417 npm run dev` (Next.js 16, Turbopack). No launch config exists.
+1. Start the app in the background: `PORT=3417 npm run dev` (Next.js 16, Turbopack). `.claude/launch.json` defines a `dev` config
+   (port 3000) for the Claude preview pane via `preview_start`; the scripted flow below uses 3417 so the two never collide.
 2. Drive it with a Node script that imports the repo's own Playwright by absolute path
    (`/<repo>/node_modules/@playwright/test/index.mjs`) and runs headless chromium. Keep scripts in the scratchpad.
 3. Prefer element screenshots (`page.locator("h1").screenshot(...)`) plus `page.evaluate` measurements over the Claude browser pane,
