@@ -784,38 +784,56 @@
     padding: 3.4rem 0;
   }
 
-  /* Fits the phone pane at scale(0.92) (~27rem) with a little headroom; the
-     gutter bleed matches .mobile-body's 1.25rem padding at this width. */
+  /* The fan hangs the web and Android screens off the stage. On a phone
+     that clips them, so stack the three devices inside the column. */
   .mobile-sync {
-    height: 28rem;
-    margin-inline: -1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.35rem;
+    height: auto;
+    margin-inline: 0;
+    overflow: visible;
   }
 
   .mobile-body-scroll {
-    margin-inline: -1.25rem;
-    padding-inline: 1.25rem;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 
-  .mobile-sync-pane.is-web {
-    display: flex;
-    left: -28%;
-    top: 22%;
-    transform: rotate(-10deg) scale(0.78);
-  }
-
+  .mobile-sync-pane.is-web,
+  .mobile-sync-pane.is-phone,
   .mobile-sync-pane.is-android {
-    display: flex;
-    right: -24%;
-    left: auto;
-    top: 14%;
-    transform: rotate(10deg) scale(0.78);
+    position: relative;
+    inset: auto;
+    justify-content: center;
+    width: 100%;
+    transform: none;
   }
 
-  .mobile-sync-pane.is-phone {
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%) scale(0.92);
-    transform-origin: bottom center;
+  /* A definite width on the shell, so the device's max-width is the column
+     and not a shrink-wrapped percentage. */
+  .mobile-sync-pane.is-web > div,
+  .mobile-sync-pane.is-phone > div,
+  .mobile-sync-pane.is-android > div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .mobile-browser {
+    width: 20rem;
+    max-width: 100%;
+  }
+
+  .mobile-sync-pane.is-phone .mobile-bezel {
+    width: 17rem;
+    max-width: 100%;
+  }
+
+  .mobile-sync-pane.is-android .mobile-bezel {
+    width: 15.5rem;
+    max-width: 100%;
   }
 
   .mobile-why-grid,

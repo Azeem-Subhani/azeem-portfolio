@@ -341,6 +341,18 @@
   pointer-events: none;
 }
 
+/* On cream, the accent bloom reads as a gray slab detached from the cards.
+   Drop it and let each card cast its own shadow, which follows its tilt. */
+html[data-theme="light"] .cloud-sam::before {
+  display: none;
+}
+
+html[data-theme="light"] .cloud-sam .cloud-panel {
+  box-shadow:
+    0 1px 2px rgb(var(--shadow-color) / 0.06),
+    0 16px 34px -16px rgb(var(--shadow-color) / 0.3);
+}
+
 .cloud-sam-pane {
   position: absolute;
   z-index: 1;
@@ -351,30 +363,39 @@
 .cloud-sam-pane.is-auth {
   left: 3%;
   top: 16%;
-  transform: rotate(-8deg) scale(0.86);
 }
 
 .cloud-sam-pane.is-site {
   left: 50%;
   top: 10%;
   z-index: 3;
-  transform: translateX(-50%);
 }
 
 .cloud-sam-pane.is-ledger {
   right: 3%;
   top: 12%;
   z-index: 2;
-  transform: rotate(8deg) scale(0.86);
 }
 
+/* The fan transforms live on the inner panel. The entrance tween writes an
+   inline transform on each pane, which would otherwise wipe the rotate,
+   scale, and centering offset and stack the live pane over the ledger. */
 .cloud-sam-pane.is-auth .cloud-panel,
 .cloud-sam-pane.is-ledger .cloud-panel {
   width: 16.75rem;
 }
 
+.cloud-sam-pane.is-auth .cloud-panel {
+  transform: rotate(-8deg) scale(0.86);
+}
+
+.cloud-sam-pane.is-ledger .cloud-panel {
+  transform: rotate(8deg) scale(0.86);
+}
+
 .cloud-sam-pane.is-site .cloud-panel {
   width: 26rem;
+  transform: translateX(-50%);
 }
 
 .cloud-sam-pane.is-site .cloud-panel.is-live {
@@ -1021,11 +1042,17 @@
 
   .cloud-sam-pane.is-auth {
     left: 0;
-    transform: rotate(-8deg) scale(0.72);
   }
 
   .cloud-sam-pane.is-ledger {
     right: 0;
+  }
+
+  .cloud-sam-pane.is-auth .cloud-panel {
+    transform: rotate(-8deg) scale(0.72);
+  }
+
+  .cloud-sam-pane.is-ledger .cloud-panel {
     transform: rotate(8deg) scale(0.72);
   }
 
@@ -1085,31 +1112,29 @@
     grid-template-columns: 1fr;
   }
 
+  /* The desktop fan hangs off the stage. On a phone that clips the side
+     windows mid-word, so stack the three cards inside the column instead. */
   .cloud-sam {
-    height: 19rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    height: auto;
+    overflow: visible;
   }
 
-  .cloud-sam-pane.is-auth {
-    left: -28%;
-    top: 22%;
-    transform: rotate(-10deg) scale(0.62);
-  }
-
+  .cloud-sam-pane.is-auth,
+  .cloud-sam-pane.is-site,
   .cloud-sam-pane.is-ledger {
-    right: -26%;
-    top: 14%;
-    transform: rotate(10deg) scale(0.62);
+    position: relative;
+    inset: auto;
+    width: 100%;
   }
 
-  /* Fit the live pane to the stage so its copy is not clipped on phones. */
-  .cloud-sam-pane.is-site {
-    top: 8%;
-    width: 88%;
-    transform: translateX(-50%);
-  }
-
+  .cloud-sam-pane.is-auth .cloud-panel,
+  .cloud-sam-pane.is-ledger .cloud-panel,
   .cloud-sam-pane.is-site .cloud-panel {
     width: 100%;
+    transform: none;
   }
 
   .cloud-card {
