@@ -32,13 +32,24 @@ test.describe("navigation", () => {
     ).toHaveAttribute("aria-current", "page");
   });
 
-  test("mobile nav sheet opens and links to every route", async ({ page }) => {
+  test("mobile nav panel opens and links to every route", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
 
-    await page.getByRole("button", { name: "Open navigation" }).click();
+    const toggle = page.getByRole("button", { name: "Open navigation" });
+    await toggle.click();
+    await expect(page.getByRole("button", { name: "Close navigation" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
     const sheet = page.getByRole("navigation", { name: "Mobile navigation" });
     await expect(sheet).toBeVisible();
+
+    // Services start folded; open them so their links are reachable.
+    const services = sheet.getByRole("button", { name: "Services" });
+    await expect(services).toHaveAttribute("aria-expanded", "false");
+    await services.click();
+    await expect(services).toHaveAttribute("aria-expanded", "true");
 
     const expected = [
       { href: "/projects", name: "Portfolio" },
@@ -56,6 +67,10 @@ test.describe("navigation", () => {
       ).toBeVisible();
     }
     await expect(sheet.getByRole("link", { name: "Home" })).toHaveCount(0);
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await expect(toggle).toBeFocused();
   });
 
   test("every primary route responds with 200 and a real title", async ({ page }) => {

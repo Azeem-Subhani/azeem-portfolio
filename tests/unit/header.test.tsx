@@ -10,7 +10,9 @@ vi.mock("@/components/layout/theme-toggle", () => ({
 }));
 
 vi.mock("@/components/layout/mobile-nav", () => ({
-  MobileNav: () => <button type="button" aria-label="Open navigation" />,
+  useMobileNav: () => ({ open: false, setOpen: () => {} }),
+  MobileNavToggle: () => <button type="button" aria-label="Open navigation" />,
+  MobileNavPanel: () => null,
 }));
 
 import { Header } from "@/components/layout/header";

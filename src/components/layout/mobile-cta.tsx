@@ -48,6 +48,8 @@ export function MobileCta() {
       className={cn(
         "fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 transition-[opacity,translate] duration-300 ease-out motion-reduce:transition-none md:hidden",
         hidden && "pointer-events-none translate-y-4 opacity-0",
+        // The header menu has its own Contact button, so this one steps aside while it is open.
+        "in-data-[mobile-nav=open]:pointer-events-none in-data-[mobile-nav=open]:translate-y-4 in-data-[mobile-nav=open]:opacity-0",
       )}
     >
       <Button asChild size="lg" className="w-full shadow-xl shadow-black/15">
