@@ -189,7 +189,9 @@ export function IndustryHero({
   return (
     <header
       className={cn(
-        "grid items-center gap-14",
+        // minmax(0, 1fr) keeps the mobile track at the gutter width; an implicit auto track
+        // grows to the hero mockup's min-content and pushes the whole hero past the gutter.
+        "grid grid-cols-[minmax(0,1fr)] items-center gap-14",
         hero === "split" && "lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-12",
         hero === "split-reverse" && "lg:grid-cols-[25rem_minmax(0,1fr)] lg:gap-16",
       )}
