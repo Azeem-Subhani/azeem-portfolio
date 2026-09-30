@@ -1116,6 +1116,37 @@ button,
   color: var(--fg);
 }
 
+/* On a phone three bare words under the CTA read as stray text. Label the row and draw the links
+   as chips with a 44px hit area so they look like navigation. Desktop keeps the quiet text row. */
+@media (max-width: 639px) {
+  .service-hero-also::before {
+    content: "Other services";
+    display: block;
+    margin-top: 2rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .service-hero-also ul {
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .service-hero-also a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin: 0;
+    padding: 0 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--fg) 26%, transparent);
+    border-radius: 999px;
+    color: var(--fg);
+  }
+}
+
 .service-hero-stage {
   display: flex;
   align-items: center;
