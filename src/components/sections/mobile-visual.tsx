@@ -418,7 +418,7 @@ export function MobileVisual() {
         className="pointer-events-none absolute left-1/2 top-[58%] h-72 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/30 blur-3xl"
       />
 
-      <div className="relative">
+      <div className="relative" aria-hidden="true">
         <motion.div
           ref={stageRef}
           className="relative flex min-h-[36rem] items-center justify-center overflow-visible md:min-h-[38rem]"

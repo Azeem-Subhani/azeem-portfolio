@@ -186,7 +186,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
           </div>
 
           <div
-            className="flex rounded-full border p-0.5"
+            className="flex w-full rounded-full border p-0.5 sm:w-auto"
             style={{ borderColor: hairline(14), backgroundColor: tone.well }}
             role="group"
             aria-label="Project"
@@ -199,7 +199,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => pick(id)}
-                  className="relative h-8 whitespace-nowrap rounded-full px-2.5 text-[11px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal sm:px-3 sm:text-[12px]"
+                  className="relative min-h-8 flex-1 rounded-full px-2.5 py-1 text-[11px] leading-tight sm:flex-none sm:whitespace-nowrap font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal sm:px-3 sm:text-[12px]"
                   style={{ color: selected ? tone.ink : tone.muted }}
                 >
                   {selected ? (
@@ -279,7 +279,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                     }}
                   >
                     <p className="flex items-baseline gap-2 pb-2 sm:pb-0 sm:pt-[0.3rem]">
-                      <span className="text-[10px] tabular-nums" style={{ color: tone.muted }}>
+                      <span className="text-[11px] tabular-nums" style={{ color: tone.muted }}>
                         0{index + 1}
                       </span>
                       <span className="text-[12px] font-medium leading-4" style={{ color: tone.ink }}>
@@ -294,7 +294,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                           <li
                             key={tool}
                             aria-current={on ? "true" : undefined}
-                            className="inline-flex h-6 items-center gap-1.5 rounded-full border px-2 text-[10.5px] font-medium leading-none transition-[color,border-color,background-color,box-shadow,opacity] duration-300 sm:text-[11px]"
+                            className="inline-flex h-6 items-center gap-1.5 rounded-full border px-2 text-[11px] font-medium leading-none transition-[color,border-color,background-color,box-shadow,opacity] duration-300 sm:text-[11px]"
                             style={{
                               borderColor: on ? layer.color : hairline(12),
                               backgroundColor: on ? tone.panel : "transparent",
@@ -318,7 +318,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                       })}
                       {gap && lit ? (
                         <li
-                          className="inline-flex h-6 items-center px-1 text-[10.5px] italic sm:text-[11px]"
+                          className="inline-flex h-6 items-center px-1 text-[11px] italic sm:text-[11px]"
                           style={{ color: tone.muted }}
                         >
                           {gap}

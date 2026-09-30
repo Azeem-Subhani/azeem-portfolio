@@ -106,14 +106,14 @@ export function ContactPageContent() {
           <div>
             <p
               data-contact-availability
-              className="flex items-center gap-3 font-mono text-xs tracking-[0.12em] text-accent-readable"
+              className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.16em] text-accent-readable"
             >
               <span className="size-2 rounded-full bg-accent" aria-hidden="true" />
               Available for select projects
             </p>
             <h1
               id="contact-title"
-              className="mt-6 max-w-xl text-balance font-display text-[clamp(3.5rem,7vw,7rem)] font-normal leading-[0.86] tracking-[-0.045em]"
+              className="mt-6 max-w-xl text-balance font-display text-[clamp(3.5rem,7vw,7rem)] font-normal leading-[0.95] tracking-[-0.045em] sm:leading-[0.86]"
             >
               {titleLines.map((line, index) => (
                 <span

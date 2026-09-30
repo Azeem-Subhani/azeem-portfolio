@@ -6,7 +6,7 @@
 :root {
   --bg: #fbf7ee;
   --fg: #073642;
-  --muted: #586e75;
+  --muted: #536970;
   --accent: #1c827a;
   --border: #ebe4d3;
   --font-h1: var(--font-instrument-serif);
@@ -37,7 +37,7 @@
   --panel-inset: #fbf7ee;
   --panel-well: #e1d9c5;
   --panel-ink: #073642;
-  --panel-muted: #586e75;
+  --panel-muted: #485d64;
   --panel-grid: rgb(7 54 66 / 7%);
   --shape-radius-sm: 0.5rem;
   --shape-radius-md: 0.875rem;
@@ -49,7 +49,7 @@
 [data-theme="dark"] {
   --bg: #002b36;
   --fg: #eee8d5;
-  --muted: #93a1a1;
+  --muted: #a0adad;
   --accent: #2aa198;
   --border: #073642;
 
@@ -59,7 +59,7 @@
   --surface: #04313d;
   --surface-elevated: #0a4552;
   --accent-strong: #32b5ab;
-  --accent-readable: #32b5ab;
+  --accent-readable: #3fbfb4;
   --accent-secondary: #268bd2;
   --accent-foreground: #002b36;
   --signal: #268bd2;
@@ -179,7 +179,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1.5rem;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.11em;
     color: var(--muted);
@@ -380,10 +380,10 @@ button,
 .projects-title {
   max-width: 11ch;
   font-family: var(--font-h1), serif;
-  font-size: clamp(3.7rem, 8vw, 7.5rem);
+  font-size: clamp(3rem, 11vw, 7.5rem);
   font-weight: 400;
   letter-spacing: -0.055em;
-  line-height: 0.88;
+  line-height: 0.95;
 }
 
 /*
@@ -912,7 +912,7 @@ button,
 .catalog-path {
   margin-bottom: 0.65rem;
   font-family: var(--font-inter), sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
 }
 
 .catalog-stage-title {
@@ -971,7 +971,7 @@ button,
   max-width: 7rem;
   margin-top: 0.45rem;
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   line-height: 1.35;
 }
 
@@ -1058,7 +1058,7 @@ button,
   align-items: center;
   gap: 0.45rem;
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   white-space: nowrap;
 }
 
@@ -2145,14 +2145,14 @@ html.dark .svgl-invert-dark,
   [data-theme="dark"] {
     --bg: #fbf7ee;
     --fg: #073642;
-    --muted: #586e75;
+    --muted: #536970;
     --accent: #1c827a;
     --border: #ebe4d3;
     --background: #fbf7ee;
     --surface: #f4efe2;
     --surface-elevated: #efe9da;
     --foreground: #073642;
-    --muted-foreground: #586e75;
+    --muted-foreground: #536970;
     --accent-strong: #176f69;
     --accent-readable: #176f69;
   }

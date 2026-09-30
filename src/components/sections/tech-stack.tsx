@@ -106,7 +106,7 @@ export function TechStack() {
             id="stack-title"
             // -mb cancels the descender-guard padding on the last line so the
             // copy below keeps its original gap.
-            className="-mb-[0.16em] font-display text-[clamp(2.75rem,6.4vw,5rem)] leading-[0.9] tracking-tight"
+            className="-mb-[0.16em] font-display text-[clamp(2.5rem,6.4vw,5rem)] leading-[0.98] tracking-tight"
           >
             <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
               <span data-stack-line className="block will-change-transform">

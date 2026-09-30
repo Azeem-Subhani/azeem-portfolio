@@ -66,10 +66,10 @@ export function SectionHead({
 }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]">
+      <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]">
         {kicker}
       </p>
-      <h2 className="mt-4 text-balance font-display text-[clamp(2.25rem,4.5vw,3.75rem)] font-normal leading-[0.95]">
+      <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
         {title}
       </h2>
       {intro ? <p className="mt-5 text-lg leading-8 text-muted-foreground">{intro}</p> : null}
@@ -128,7 +128,7 @@ export function ScrollCue() {
 function WhyStack() {
   return (
     <div data-service-visual aria-hidden="true" className="relative">
-      <p className="mb-5 flex items-center gap-3 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground">
+      <p className="mb-5 flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted-foreground">
         <span className="size-1.5 rounded-full bg-accent" />
         One owner, every layer
       </p>
@@ -146,7 +146,7 @@ function WhyStack() {
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-3">
                 <span className="font-display text-2xl leading-none">{layer.name}</span>
-                <span className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--accent-readable)]">
+                <span className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-[var(--accent-readable)]">
                   0{index + 1}
                 </span>
               </div>
@@ -175,7 +175,7 @@ export function WhyHero() {
       <div className="why-hero-copy lg:col-span-7">
         <p
           data-service-kicker
-          className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]"
+          className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]"
         >
           Why work with me
         </p>
@@ -225,7 +225,7 @@ export function WhyDifferentiators() {
             <Figure value={item.value} lowerIsBetter={item.lowerIsBetter}
               countFrom={item.countFrom}
               className="text-[2.4rem]" />
-            <p className="mt-3 font-medium text-foreground">{item.label}</p>
+            <p className="mt-3 text-lg font-semibold leading-snug text-foreground">{item.label}</p>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.copy}</p>
           </li>
         ))}
@@ -336,7 +336,7 @@ export function WhyResults() {
               <Figure value={result.value} lowerIsBetter={result.lowerIsBetter}
                 countFrom={result.countFrom}
                 className="text-[2.6rem]" />
-            <p className="mt-3 font-medium text-foreground">{result.label}</p>
+            <p className="mt-3 text-lg font-semibold leading-snug text-foreground">{result.label}</p>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{result.copy}</p>
           </li>
         ))}
@@ -351,7 +351,7 @@ export function WhyCta() {
       className="mt-28 flex flex-col gap-8 lg:mt-36 lg:flex-row lg:items-end lg:justify-between"
     >
       <div data-why="up" className="max-w-2xl">
-        <h2 className="text-balance font-display text-[clamp(2rem,4vw,3.75rem)] font-normal leading-[0.98]">
+        <h2 className="text-balance font-display text-[clamp(2.5rem,4vw,3.75rem)] font-normal leading-[0.98]">
           Skip the pitch deck. Let&apos;s look at your product.
         </h2>
         <p className="mt-5 leading-7 text-muted-foreground">

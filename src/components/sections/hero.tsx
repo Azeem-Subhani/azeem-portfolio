@@ -249,7 +249,7 @@ export function Hero() {
         <div data-hero-title>
           <h1
             id="hero-title"
-            className="font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.88] tracking-tight"
+            className="font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.95] sm:leading-[0.88] tracking-tight"
           >
             {/* Screen readers and search get one stable sentence; the animated lines are visual only. */}
             <span className="sr-only">I take products from idea to launch, revenue, scale, and customers.</span>
