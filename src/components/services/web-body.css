@@ -300,7 +300,8 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 3.5rem minmax(0, 1.5fr) 3.5rem minmax(0, 1fr);
+  /* Link columns fit the "WEBHOOK" label (about 60px with its tracking) so the cards never cover it. */
+  grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 1.5fr) 4.5rem minmax(0, 1fr);
   align-items: center;
 }
 
@@ -1803,15 +1804,19 @@
     padding: 1rem;
   }
 
+  /* The wrapped grid replaces the scroller from the 1023px block, so undo its clip, fade and nowrap. */
   .web-toc ol {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.25rem;
+    overflow: visible;
+    mask-image: none;
   }
 
   .web-toc ol a {
     width: 100%;
     min-height: 3rem;
+    white-space: normal;
   }
 
   .web-card {
