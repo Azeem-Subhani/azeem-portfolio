@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useId, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { MobileNav } from "@/components/layout/mobile-nav";
+import {
+  MobileNavPanel,
+  MobileNavToggle,
+  useMobileNav,
+} from "@/components/layout/mobile-nav";
 import {
   IndustriesNav,
   ServicesNav,
@@ -28,6 +32,16 @@ export function Header() {
   const scrolled = useScrolled();
   const headerRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
+  const menuId = useId();
+  const { open: menuOpen, setOpen: setMenuOpen } = useMobileNav();
+  const closeMenu = useCallback(
+    ({ restoreFocus = false }: { restoreFocus?: boolean } = {}) => {
+      setMenuOpen(false);
+      if (restoreFocus) menuToggleRef.current?.focus();
+    },
+    [setMenuOpen],
+  );
 
   // Publish the bar's resting bottom edge so sticky page chrome can sit below it.
   // Uses layout offsets, not the bar's rect, so the enter animation's transform is ignored.
@@ -125,8 +139,19 @@ export function Header() {
           <Button asChild className="hidden sm:inline-flex">
             <Link href="/contact">Contact</Link>
           </Button>
-          <MobileNav />
+          <MobileNavToggle
+            ref={menuToggleRef}
+            open={menuOpen}
+            controls={menuId}
+            onToggle={() => setMenuOpen((open) => !open)}
+          />
         </div>
+        <MobileNavPanel
+          id={menuId}
+          open={menuOpen}
+          onClose={closeMenu}
+          toggleRef={menuToggleRef}
+        />
       </div>
     </header>
   );
