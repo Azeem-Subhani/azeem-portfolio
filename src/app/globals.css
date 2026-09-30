@@ -1145,6 +1145,20 @@ button,
     border-radius: 999px;
     color: var(--fg);
   }
+
+  .service-hero [data-service-actions] {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Only the hero row is centered; the closing section's row sits under left-aligned copy. */
+  .service-hero-also[data-service-siblings] {
+    text-align: center;
+  }
+
+  .service-hero-also[data-service-siblings] ul {
+    justify-content: center;
+  }
 }
 
 .service-hero-stage {
