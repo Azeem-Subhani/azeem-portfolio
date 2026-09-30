@@ -31,7 +31,7 @@
   gap: 0.7rem;
   margin-bottom: 1.1rem;
   color: var(--accent-readable);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -83,7 +83,7 @@
 .web-toc-label {
   flex-shrink: 0;
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -270,7 +270,7 @@
   background: var(--surface);
   color: var(--muted);
   font-style: normal;
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -290,7 +290,7 @@
 
 .web-stack-eyebrow {
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -349,7 +349,7 @@
   left: 50%;
   transform: translateX(-50%);
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -424,7 +424,7 @@
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 18%, var(--surface));
   color: var(--accent-readable);
-  font-size: 0.58rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -505,7 +505,7 @@
   content: "0" counter(stack-step);
   display: block;
   margin-bottom: 0.25rem;
-  font-size: 0.66rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   font-variant-numeric: tabular-nums;
@@ -540,7 +540,7 @@
 .web-stack-note {
   margin-top: 1.1rem;
   color: var(--muted);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -580,7 +580,7 @@
 .web-book-map-meta {
   margin-top: 0.35rem;
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -589,7 +589,7 @@
 
 .web-book-kicker {
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
 }
 
 .web-book-name {
@@ -611,7 +611,7 @@
   grid-template-columns: 1fr auto auto;
   gap: 0.45rem;
   align-items: baseline;
-  font-size: 0.68rem;
+  font-size: 0.6875rem;
 }
 
 .web-book-copy em {
@@ -632,7 +632,7 @@
   border-radius: 999px;
   background: var(--accent);
   color: var(--accent-foreground);
-  font-size: 0.68rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   text-align: center;
 }
@@ -651,7 +651,7 @@
   align-items: center;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
 }
 
 .web-cms-nav span {
@@ -671,7 +671,7 @@
 .web-cms-field {
   margin-top: 0.75rem;
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
 }
 
 .web-cms-options {
@@ -702,7 +702,7 @@
 .web-cms-option em {
   flex-shrink: 0;
   color: var(--accent-readable);
-  font-size: 0.56rem;
+  font-size: 0.6875rem;
   font-style: normal;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -731,7 +731,7 @@
   background: var(--accent);
   color: var(--accent-foreground);
   cursor: pointer;
-  font-size: 0.68rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   transition: opacity 0.25s ease;
 }
@@ -756,7 +756,7 @@
 .web-edge-note {
   margin-top: 0.25rem;
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.6875rem;
 }
 
 .web-edge ul,
@@ -780,7 +780,7 @@
   color: var(--muted);
   font-style: normal;
   font-weight: 500;
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
 }
 
 .web-edge li span {
@@ -885,7 +885,7 @@
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--accent-readable);
   font-style: normal;
-  font-size: 0.58rem;
+  font-size: 0.6875rem;
   font-weight: 500;
 }
 
@@ -1043,7 +1043,7 @@
 
 .web-proto-eyebrow {
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1101,7 +1101,7 @@
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
   background: color-mix(in srgb, var(--fg) 8%, transparent);
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1475,7 +1475,7 @@
 }
 
 .web-proto-checks li span {
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1790,7 +1790,7 @@
   }
 
   .web-chapter-kicker {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
   }
 
   .web-toc {
@@ -1894,7 +1894,7 @@
   .web-ledger-cell-label {
     display: block;
     margin-bottom: 0.25rem;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;

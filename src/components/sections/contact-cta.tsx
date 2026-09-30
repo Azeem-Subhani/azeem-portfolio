@@ -76,7 +76,7 @@ export function ContactCta() {
   const variants = useMemo(() => ctaVariants(reduced), [reduced]);
 
   const conversation = (
-    <MagneticButton>
+    <MagneticButton className="w-full sm:w-auto">
       <Button asChild size="lg">
         <Link href="/contact">Start a conversation</Link>
       </Button>
@@ -118,7 +118,7 @@ export function ContactCta() {
           // -mb cancels the descender-guard padding on the last line so the
           // block below keeps its original gap (the negative margin collapses
           // with the paragraph's mt-7).
-          className="-mb-[0.16em] font-display text-[clamp(2.75rem,9vw,6.5rem)] font-normal leading-[0.9] tracking-tight"
+          className="-mb-[0.16em] font-display text-[clamp(2.5rem,9vw,6.5rem)] font-normal leading-[0.98] tracking-tight"
           variants={variants.headline}
         >
           {headlineLines.map((line, i) => {
@@ -154,7 +154,7 @@ export function ContactCta() {
 
         <motion.div
           data-inline-cta
-          className="mx-auto mt-10 flex w-fit max-w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+          className="mx-auto mt-10 flex w-full max-w-sm flex-col items-stretch gap-3 sm:w-fit sm:max-w-full sm:flex-row sm:items-center [&_a]:w-full sm:[&_a]:w-auto"
           variants={variants.fadeUp}
         >
           {reduced ? (
@@ -164,12 +164,12 @@ export function ContactCta() {
               sparkColor="#2aa198"
               sparkRadius={28}
               sparkCount={10}
-              className="relative inline-flex"
+              className="relative flex w-full sm:inline-flex sm:w-auto"
             >
               {conversation}
             </ClickSpark>
           )}
-          <Button asChild size="lg" variant="outline" className="shrink-0">
+          <Button asChild size="lg" variant="outline" className="shrink-0 text-sm sm:text-base">
             <a href={`mailto:${profile.email}`}>{profile.email}</a>
           </Button>
         </motion.div>

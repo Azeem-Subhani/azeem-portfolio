@@ -50,13 +50,13 @@ function LedgerRow({ row, fresh }: { row: Row; fresh: boolean }) {
       <div className="flex items-center justify-between gap-3">
         <span className="flex min-w-0 items-baseline gap-2.5">
           <span className="font-display text-xl leading-none">{sample.amount}</span>
-          <span className="truncate font-mono text-[0.62rem] uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="truncate font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted-foreground">
             {sample.method} <span className="text-foreground/40">{sample.ref}</span>
           </span>
         </span>
         <span
           className={cn(
-            "flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] transition-all duration-500",
+            "flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[0.6875rem] uppercase tracking-[0.1em] transition-all duration-500",
             matched
               ? "border-accent/50 text-[var(--accent-readable)] opacity-100"
               : "border-border text-muted-foreground opacity-60",
@@ -73,7 +73,7 @@ function LedgerRow({ row, fresh }: { row: Row; fresh: boolean }) {
             <div key={step} className="flex flex-1 items-center last:flex-none">
               <span
                 className={cn(
-                  "flex items-center gap-1.5 text-[0.68rem] transition-colors duration-300",
+                  "flex items-center gap-1.5 text-[0.6875rem] transition-colors duration-300",
                   lit ? "text-foreground" : "text-muted-foreground/70",
                 )}
               >
@@ -162,7 +162,7 @@ export function IndustryLedger() {
             </span>
             Reconciliation
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
             Sample data
           </span>
         </div>
@@ -173,7 +173,7 @@ export function IndustryLedger() {
         </ul>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span>Charge = Ledger = Audit</span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+          <span className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
             0 drift
           </span>
         </div>

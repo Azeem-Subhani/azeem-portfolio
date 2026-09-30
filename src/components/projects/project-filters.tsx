@@ -37,7 +37,7 @@ export function ProjectFilters({ active, onChange }: ProjectFiltersProps) {
             aria-pressed={isActive}
             onClick={() => onChange(value)}
             className={cn(
-              "shrink-0 rounded-full border px-3.5 py-2 text-[0.78rem] font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+              "shrink-0 rounded-full border min-h-11 px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
               isActive
                 ? "border-accent bg-accent text-accent-foreground"
                 : "border-border bg-background/40 text-muted-foreground hover:border-foreground/30 hover:text-foreground",

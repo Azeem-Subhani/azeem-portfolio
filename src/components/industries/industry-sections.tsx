@@ -52,11 +52,11 @@ function SectionHead({
     <div data-im-head className={cn("max-w-2xl", centered && "mx-auto text-center")}>
       <p
         data-im-kicker
-        className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]"
+        className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]"
       >
         {kicker}
       </p>
-      <h2 className="mt-4 text-balance font-display text-[clamp(2.25rem,4.5vw,3.75rem)] font-normal leading-[0.95]">
+      <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
         <Words text={title} />
       </h2>
       <p data-im-intro className="mt-5 text-lg leading-8 text-muted-foreground">
@@ -153,7 +153,7 @@ export function IndustryHero({
     <div className={cn(centered && "mx-auto max-w-4xl text-center", hero === "split-reverse" && "lg:order-2")}>
       <p
         data-im="hero-fade"
-        className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[var(--accent-readable)]"
+        className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]"
       >
         {industry.kicker}
       </p>
@@ -231,7 +231,7 @@ export function IndustryProof({ industry }: SectionProps) {
           <Compass className="size-5" strokeWidth={1.6} />
         </span>
         <div>
-          <p className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--accent-readable)]">
+          <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]">
             Approach page
           </p>
           <p className="mt-2 max-w-3xl leading-7 text-foreground/85">{industry.approachNote}</p>
@@ -277,7 +277,7 @@ export function IndustryChallenges({ industry }: SectionProps) {
               <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "h-full")}>
                 <CardGlow />
                 <IconMark icon={challenge.icon} />
-                <h3 className="mt-6 font-display text-2xl font-normal">{challenge.title}</h3>
+                <h3 className="mt-6 font-display text-2xl font-normal leading-tight sm:text-[1.75rem]">{challenge.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{challenge.copy}</p>
               </SpotlightCard>
             </li>
@@ -301,7 +301,7 @@ export function IndustryChallenges({ industry }: SectionProps) {
                 {index2(index)}
               </span>
               <div>
-                <h3 className="font-display text-2xl font-normal sm:text-[1.75rem]">{challenge.title}</h3>
+                <h3 className="font-display text-2xl font-normal leading-tight sm:text-[1.75rem]">{challenge.title}</h3>
                 <p className="mt-2 max-w-2xl leading-7 text-muted-foreground">{challenge.copy}</p>
               </div>
               <IconMark icon={challenge.icon} className="hidden sm:grid" />
@@ -321,7 +321,7 @@ export function IndustryChallenges({ industry }: SectionProps) {
                 className="absolute left-0 top-0 h-0.5 w-10 bg-accent transition-[width] duration-500 ease-out group-hover:w-full motion-reduce:transition-none"
               />
               <IconMark icon={challenge.icon} />
-              <h3 className="mt-5 font-display text-[1.6rem] font-normal leading-tight">{challenge.title}</h3>
+              <h3 className="mt-5 font-display text-2xl font-normal leading-tight sm:text-[1.75rem]">{challenge.title}</h3>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">{challenge.copy}</p>
             </li>
           ))}
@@ -363,10 +363,10 @@ export function IndustrySolutions({ industry }: SectionProps) {
                   <div className="flex items-start gap-4 lg:flex-col">
                     <IconMark icon={solution.icon} />
                     <div>
-                      <p className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
                         {index2(index)}
                       </p>
-                      <h3 className="mt-1 font-display text-[1.75rem] font-normal leading-tight">
+                      <h3 className="mt-1 font-display text-2xl font-normal leading-tight sm:text-[1.75rem]">
                         {solution.title}
                       </h3>
                     </div>
@@ -397,7 +397,7 @@ export function IndustrySolutions({ industry }: SectionProps) {
                     </span>
                     <IconMark icon={solution.icon} />
                   </div>
-                  <h3 className="mt-6 font-display text-[clamp(1.9rem,3vw,2.4rem)] font-normal leading-tight">
+                  <h3 className="mt-6 font-display text-2xl font-normal leading-tight sm:text-[clamp(1.9rem,3vw,2.4rem)]">
                     {solution.title}
                   </h3>
                   <p className="mt-4 max-w-xl leading-7 text-muted-foreground">{solution.copy}</p>
@@ -406,7 +406,7 @@ export function IndustrySolutions({ industry }: SectionProps) {
                 <div data-im-card className={cn(flip && "lg:order-1")}>
                   <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "lg:p-8")}>
                     <CardGlow />
-                    <p className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+                    <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
                       What it includes
                     </p>
                     <FeatureChecks title={solution.title} features={solution.features} />
@@ -539,9 +539,9 @@ export function IndustryPractices({ industry }: SectionProps) {
                       <Check className="size-4" strokeWidth={2.5} />
                     </span>
                     <div>
-                      <h3 className="font-medium text-foreground">{practice.title}</h3>
+                      <h3 className="text-lg font-medium leading-snug text-foreground">{practice.title}</h3>
                       <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{practice.copy}</p>
-                      <p className="mt-2.5 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+                      <p className="mt-2.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
                         {practice.supports}
                       </p>
                     </div>
@@ -567,11 +567,11 @@ export function IndustryPractices({ industry }: SectionProps) {
               <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "h-full")}>
                 <CardGlow />
                 <IconMark icon={practice.icon} />
-                <h3 className="mt-6 font-medium text-foreground">{practice.title}</h3>
+                <h3 className="mt-6 text-lg font-medium leading-snug text-foreground">{practice.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{practice.copy}</p>
                 <p
                   data-im-after
-                  className="mt-5 flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]"
+                  className="mt-5 flex items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]"
                 >
                   <ShieldCheck aria-hidden="true" className="size-3.5" strokeWidth={2} />
                   {practice.supports}
@@ -601,7 +601,7 @@ export function IndustryCta({ industry }: SectionProps) {
         className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
       >
         <div className="max-w-2xl">
-          <h2 className="text-balance font-display text-[clamp(2rem,4vw,3.75rem)] font-normal leading-[0.98]">
+          <h2 className="text-balance font-display text-[clamp(2.5rem,4vw,3.75rem)] font-normal leading-[0.98]">
             <Words text={industry.ctaTitle} />
           </h2>
           <p data-im-intro className="mt-5 leading-7 text-muted-foreground">

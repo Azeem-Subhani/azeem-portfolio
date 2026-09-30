@@ -28,7 +28,7 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
 function Head({ title, intro }: { title: ReactNode; intro?: string }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <h2 className="text-balance font-display text-[clamp(2.25rem,4.5vw,3.75rem)] font-normal leading-[0.95]">
+      <h2 className="text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
         {title}
       </h2>
       {intro ? <p className="mt-5 text-lg leading-8 text-muted-foreground">{intro}</p> : null}
@@ -210,7 +210,7 @@ function SprintChart() {
         <ul className="grid gap-5 sm:grid-cols-3">
           {closureDeliverables.map((item) => (
             <li key={item.title}>
-              <p className="font-medium text-foreground">{item.title}</p>
+              <p className="text-lg font-semibold leading-snug text-foreground">{item.title}</p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">{item.copy}</p>
             </li>
           ))}
@@ -329,7 +329,7 @@ export function ProcessChanges() {
             <span aria-hidden="true" className="font-display text-3xl leading-none text-accent">
               {index + 1}
             </span>
-            <h3 className="mt-3 font-medium text-foreground">{step.title}</h3>
+            <h3 className="mt-3 text-lg font-semibold leading-snug text-foreground">{step.title}</h3>
             <p className="mt-1 leading-7 text-muted-foreground">{step.copy}</p>
           </li>
         ))}
@@ -364,7 +364,7 @@ export function ProcessCta() {
   return (
     <section className="mt-28 flex flex-col gap-8 lg:mt-36 lg:flex-row lg:items-end lg:justify-between">
       <div data-why="up" className="max-w-2xl">
-        <h2 className="text-balance font-display text-[clamp(2rem,4vw,3.75rem)] font-normal leading-[0.98]">
+        <h2 className="text-balance font-display text-[clamp(2.5rem,4vw,3.75rem)] font-normal leading-[0.98]">
           Tell me what you want to build.
         </h2>
         <p className="mt-5 leading-7 text-muted-foreground">

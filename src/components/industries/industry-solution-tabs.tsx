@@ -86,7 +86,7 @@ export function IndustrySolutionTabs({
               />
               <IconMark icon={item.icon} className="size-9" />
               <span className="min-w-0">
-                <span className="block font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted-foreground">
+                <span className="block font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
                   {String(index + 1).padStart(2, "0")}
                   {item.link ? null : " · Approach"}
                 </span>

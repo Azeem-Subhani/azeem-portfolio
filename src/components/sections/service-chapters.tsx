@@ -269,7 +269,7 @@ export function ServiceChapters() {
             >
               <h2
                 id={`${chapter.id}-title`}
-                className="overflow-hidden pb-[0.08em] -mb-[0.08em] font-display text-[clamp(2.25rem,5.5vw,4.25rem)] font-normal leading-[1.05] tracking-tight"
+                className="overflow-hidden pb-[0.08em] -mb-[0.08em] font-display text-[clamp(2.5rem,5.5vw,4.25rem)] font-normal leading-[0.98] tracking-tight"
               >
                 <span data-chapter-title className="block will-change-transform">
                   {chapter.title}
