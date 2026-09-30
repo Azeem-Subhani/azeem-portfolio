@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
   <title id="title">Azeem Subhani</title>
   <rect width="64" height="64" rx="14" fill="#002b36"/>
-  <path d="M32 12 50 50h-8l-3.8-8.5H25.7L22 50h-8zm0 12.2-3.8 9h7.6z" fill="#2aa198"/>
+  <!-- Serif "A": thick right stem, hairline left stem, crossbar, bracketed foot serifs -->
+  <g fill="#fdf6e3">
+    <path d="M25.6 12.5h6L44.4 47h-7.8z"/>
+    <path d="M25.6 12.5l2.7 4.1L18.6 47h-3.8z"/>
+    <path d="M19.4 33.4h14.8v2.8H18.5z"/>
+    <path d="M10.5 47h11.8v2.6H10.5zM33.2 47h14.3v2.6H33.2z"/>
+  </g>
+  <!-- Teal full stop, echoing the site accent -->
+  <circle cx="53" cy="46.2" r="4" fill="#2aa198"/>
 </svg>
