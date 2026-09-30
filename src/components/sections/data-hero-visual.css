@@ -372,6 +372,12 @@
     min-height: 0;
   }
 
+  /* The art is centered on CORE.x (393) in a 700-wide viewBox, not on 350, so on a phone it sat
+     about 21px right of the text column. Shift the SVG and the WebGL scene together by the difference. */
+  .data-hero-scene {
+    transform: translateX(calc(-43 / 700 * 100%));
+  }
+
   .data-hero-label {
     font-size: 13px;
     letter-spacing: 0.12em;
