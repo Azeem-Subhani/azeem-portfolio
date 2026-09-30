@@ -16,9 +16,9 @@ export function attachSmoothScroll() {
     autoRaf: false,
     duration: 1.05,
     easing: (time) => 1 - Math.pow(1 - time, 4),
-    smoothWheel: true,
+    // Wheel and trackpad scroll natively; Lenis only eases in-page anchor jumps.
+    smoothWheel: false,
     syncTouch: false,
-    wheelMultiplier: 0.9,
     touchMultiplier: 1,
     anchors: false,
     stopInertiaOnNavigate: true,
