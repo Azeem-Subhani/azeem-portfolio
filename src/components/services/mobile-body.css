@@ -705,8 +705,18 @@
     white-space: nowrap;
   }
 
+  /* Fits the unscaled phone pane (~29rem) so its top isn't clipped, and bleeds
+     through .mobile-body's 2rem gutter so side panes crop at the screen edge. */
   .mobile-sync {
-    height: 28rem;
+    height: 30rem;
+    margin-inline: -2rem;
+  }
+
+  /* Move the horizontal clip box out to the screen edge so the bleeding sync
+     stage isn't cut at the gutter; the padding keeps chapters in the column. */
+  .mobile-body-scroll {
+    margin-inline: -2rem;
+    padding-inline: 2rem;
   }
 
   .mobile-sync-pane.is-web {
@@ -774,8 +784,16 @@
     padding: 3.4rem 0;
   }
 
+  /* Fits the phone pane at scale(0.92) (~27rem) with a little headroom; the
+     gutter bleed matches .mobile-body's 1.25rem padding at this width. */
   .mobile-sync {
-    height: 24rem;
+    height: 28rem;
+    margin-inline: -1.25rem;
+  }
+
+  .mobile-body-scroll {
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
   }
 
   .mobile-sync-pane.is-web {
@@ -797,6 +815,7 @@
     left: 50%;
     bottom: 0;
     transform: translateX(-50%) scale(0.92);
+    transform-origin: bottom center;
   }
 
   .mobile-why-grid,
