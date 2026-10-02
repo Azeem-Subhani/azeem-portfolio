@@ -85,3 +85,4 @@ export const smartLivingFonts = inter.variable;
 export const taskManagerFonts = `${hankenGrotesk.variable} ${instrumentSerif.variable}`;
 export const trackBookingFonts = `${inter.variable} ${jetbrainsMono.variable}`;
 export const woodyShopFonts = `${inter.variable} ${playfairDisplay.variable}`;
+export const bookingAgentFonts = `${inter.variable} ${instrumentSerif.variable}`;

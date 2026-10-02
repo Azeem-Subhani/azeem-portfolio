@@ -132,6 +132,15 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
     phoneBottom: "32px",
     phoneScale: "0.58",
   },
+  meridian: {
+    browserScale: 0.78,
+    browserX: "50%",
+    browserY: "48%",
+    phoneSide: "right",
+    phoneOffset: "12px",
+    phoneBottom: "32px",
+    phoneScale: "0.58",
+  },
 };
 
 /**
@@ -148,6 +157,7 @@ const WEB_SCREEN_BG: Record<string, string> = {
   "real-time-chat": "#14110E",
   "task-manager": "#FBF5F1",
   "smart-living": "#F7F9FC",
+  meridian: "#F6F5F1",
 };
 
 /** Holds a lazy live capture and plays the build-up when its chunk arrives. */
@@ -375,7 +385,8 @@ export function ProjectMockup({
                       ? "walnut"
                       : project.slug === "memorial-planning"
                         ? "cream"
-                        : project.slug === "task-manager"
+                        : project.slug === "task-manager" ||
+                          project.slug === "meridian"
                           ? "paper"
                           : project.slug === "woody-shop" ||
                             project.slug === "smart-living"
@@ -430,7 +441,9 @@ export function ProjectMockup({
                                 ? "bg-[#0F141B]"
                                 : project.slug === "task-manager"
                                   ? "bg-[#35222F]"
-                                  : undefined
+                                  : project.slug === "meridian"
+                                    ? "bg-[#10281F]"
+                                    : undefined
                 }
                 screenClassName={
                   project.slug === "sports-team-app"
@@ -448,13 +461,16 @@ export function ProjectMockup({
                             ? "bg-white"
                             : project.slug === "task-manager"
                               ? "bg-[#FBF5F1]"
-                              : undefined
+                              : project.slug === "meridian"
+                                ? "bg-[#F6F5F1]"
+                                : undefined
                 }
                 statusTone={
                   project.slug === "memorial-planning" ||
                   project.slug === "woody-shop" ||
                   project.slug === "smart-living" ||
-                  project.slug === "task-manager"
+                  project.slug === "task-manager" ||
+                  project.slug === "meridian"
                     ? "light"
                     : "dark"
                 }

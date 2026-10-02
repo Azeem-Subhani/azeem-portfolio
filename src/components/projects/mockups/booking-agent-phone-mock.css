@@ -1,0 +1,14 @@
+/* The capture draws its own status bar. PhoneFrame already has one,
+   so this spacer only clears the island. */
+.ba-phone-mock-host .sb {
+  height: 68px;
+  visibility: hidden;
+}
+
+.ba-phone-mock-host .p-thread {
+  top: 124px;
+}
+
+.ba-phone-mock-host .home-ind {
+  display: none;
+}

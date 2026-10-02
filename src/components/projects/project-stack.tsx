@@ -46,6 +46,12 @@ const MARKS: Record<string, StackMark> = {
   handlebars: { id: "text", ink: "#f0772b" },
   momentjs: { id: "text", ink: "#118c4e" },
   sendgrid: { id: "text", ink: "#1a82e2" },
+  tailwindcss: { id: "text", ink: "#06b6d4" },
+  redis: { id: "text", ink: "#dc382d" },
+  temporal: { id: "text", ink: "#a78bfa" },
+  openai: { id: "text", ink: "#10a37f" },
+  twilio: { id: "text", ink: "#f22f46" },
+  zod: { id: "text", ink: "#3e67b1" },
 };
 
 function markFor(label: string): StackMark {
