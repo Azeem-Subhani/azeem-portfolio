@@ -182,7 +182,7 @@ function Pitch() {
         className="absolute inset-0 h-full w-full text-accent/45"
         aria-hidden="true"
       >
-        <rect x="5" y="5" width="90" height="122" rx="3" fill="rgb(42 161 152 / 0.08)" stroke="currentColor" strokeWidth="0.9" />
+        <rect x="5" y="5" width="90" height="122" rx="3" className="fill-accent/8" stroke="currentColor" strokeWidth="0.9" />
         <line x1="5" y1="66" x2="95" y2="66" stroke="currentColor" strokeWidth="0.7" />
         <circle cx="50" cy="66" r="11" fill="none" stroke="currentColor" strokeWidth="0.7" />
         <circle cx="50" cy="66" r="1.2" fill="currentColor" />
@@ -192,7 +192,7 @@ function Pitch() {
       {spots.map((spot, index) => (
         <motion.span
           key={index}
-          className="absolute size-2.5 rounded-full bg-accent shadow-[0_0_10px_rgb(42_161_152/0.75)]"
+          className="absolute size-2.5 rounded-full bg-accent shadow-[0_0_10px_color-mix(in_oklab,var(--accent)_75%,transparent)]"
           style={{ left: `${spot.x}%`, top: `${spot.y}%`, marginLeft: -5, marginTop: -5 }}
           variants={pop}
         />
@@ -209,7 +209,7 @@ function CoachTablet() {
       variants={tabletIn}
     >
       <motion.div
-        className="rounded-[2.2rem] bg-background p-[9px] shadow-[0_0_0_1px_rgb(42_161_152/0.18),0_28px_50px_-24px_rgb(7_54_66/0.45)]"
+        className="rounded-[2.2rem] bg-background p-[9px] shadow-[0_0_0_1px_color-mix(in_oklab,var(--accent)_18%,transparent),0_28px_50px_-24px_rgb(var(--shadow-color)/0.45)]"
         variants={pass}
       >
         <motion.div
@@ -248,7 +248,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
       variants={phoneIn}
     >
       <motion.div
-        className="relative rounded-[2.75rem] bg-background p-[10px] shadow-[0_0_0_1px_rgb(42_161_152/0.28),0_36px_70px_-28px_rgb(7_54_66/0.55)]"
+        className="relative rounded-[2.75rem] bg-background p-[10px] shadow-[0_0_0_1px_color-mix(in_oklab,var(--accent)_28%,transparent),0_36px_70px_-28px_rgb(var(--shadow-color)/0.55)]"
         variants={pass}
       >
         <div className="pointer-events-none absolute inset-0 rounded-[2.75rem] ring-1 ring-inset ring-foreground/12" />
@@ -257,7 +257,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
           variants={screen}
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-linear-to-b from-accent/15 to-transparent" />
-          <div className="absolute left-1/2 top-[7px] z-20 h-[1.35rem] w-[5.15rem] -translate-x-1/2 rounded-full bg-background shadow-[inset_0_1px_2px_rgb(0_43_54/0.85)]" />
+          <div className="absolute left-1/2 top-[7px] z-20 h-[1.35rem] w-[5.15rem] -translate-x-1/2 rounded-full bg-background shadow-[inset_0_1px_2px_rgb(var(--shadow-color)/0.3)] dark:shadow-[inset_0_1px_2px_rgb(var(--shadow-color)/0.85)]" />
 
           <motion.div variants={fade}>
             <StatusBar time="5:47" />

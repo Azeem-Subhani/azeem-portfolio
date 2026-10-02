@@ -98,9 +98,9 @@ export function TechStack() {
     <section
       ref={sectionRef}
       aria-labelledby="stack-title"
-      className="home-band-stack relative overflow-x-clip px-4 py-20 text-foreground sm:px-6 sm:py-28"
+      className="home-band-stack relative overflow-x-clip py-20 text-foreground sm:py-28"
     >
-      <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
         <div ref={textRef}>
           <h2
             id="stack-title"
@@ -121,7 +121,7 @@ export function TechStack() {
           </h2>
           <p
             data-stack-copy
-            className="mt-8 max-w-md text-xl font-semibold leading-snug text-foreground/90"
+            className="mt-8 max-w-md text-base leading-7 text-muted-foreground sm:text-lg"
           >
             I choose the stack for the project, not out of habit.
           </p>

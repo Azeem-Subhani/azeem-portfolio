@@ -144,6 +144,19 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runKey, reduced]);
 
+  // The tour moves the selection on by itself, so keep the selected tab in
+  // view when the row scrolls. scrollIntoView would also scroll the page.
+  const tabRowRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const row = tabRowRef.current;
+    const tab = row?.querySelector<HTMLElement>(`[data-project="${projectId}"]`);
+    if (!row || !tab || row.scrollWidth <= row.clientWidth) return;
+    // Center the tab in the row, measured against the row rather than offsetParent.
+    const offset = tab.getBoundingClientRect().left - row.getBoundingClientRect().left;
+    const left = Math.max(0, row.scrollLeft + offset - (row.clientWidth - tab.offsetWidth) / 2);
+    row.scrollTo({ left, behavior: reduced ? "auto" : "smooth" });
+  }, [projectId, reduced]);
+
   const pick = (id: ProjectId) => {
     userPicked.current = true;
     if (id === projectId) return;
@@ -165,7 +178,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
         ref={panelRef}
         role="region"
         aria-label="Technology stack"
-        className="relative overflow-hidden rounded-[1.65rem] border border-border/80 px-4 pb-5 pt-4 shadow-[0_28px_56px_-30px_rgb(21_40_48/0.85)] sm:px-6 sm:pb-6 sm:pt-5"
+        className="relative overflow-hidden rounded-[1.65rem] border border-border/80 px-4 pb-5 pt-4 shadow-[0_28px_56px_-30px_rgb(var(--shadow-color)/0.3)] dark:shadow-[0_28px_56px_-30px_rgb(var(--shadow-color)/0.85)] sm:px-6 sm:pb-6 sm:pt-5"
         style={{
           backgroundColor: tone.chassis,
           backgroundImage: `linear-gradient(to bottom, ${hairline(4)}, transparent 38%, color-mix(in srgb, var(--background) 60%, transparent))`,
@@ -185,35 +198,46 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
             </p>
           </div>
 
+          {/* On phones the three labels don't fit on one line, so the row scrolls
+              sideways instead of wrapping. The padding keeps focus rings inside the
+              clip, and the right fade hints that there is more. */}
           <div
-            className="flex w-full rounded-full border p-0.5 sm:w-auto"
-            style={{ borderColor: hairline(14), backgroundColor: tone.well }}
-            role="group"
-            aria-label="Project"
+            ref={tabRowRef}
+            className="-m-1 flex w-[calc(100%+0.5rem)] overflow-x-auto p-1 [scrollbar-width:none] [mask-image:linear-gradient(to_right,#000_calc(100%-1.5rem),transparent)] sm:w-auto sm:overflow-visible sm:[mask-image:none] [&::-webkit-scrollbar]:hidden"
           >
-            {projectOrder.map((id) => {
-              const selected = id === projectId;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() => pick(id)}
-                  className="relative min-h-8 flex-1 rounded-full px-2.5 py-1 text-[11px] leading-tight sm:flex-none sm:whitespace-nowrap font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal sm:px-3 sm:text-[12px]"
-                  style={{ color: selected ? tone.ink : tone.muted }}
-                >
-                  {selected ? (
-                    <motion.span
-                      layoutId="stack-project-pill"
-                      className="absolute inset-0 rounded-full"
-                      style={{ backgroundColor: tone.panel }}
-                      transition={morph}
-                    />
-                  ) : null}
-                  <span className="relative">{projects[id].label}</span>
-                </button>
-              );
-            })}
+            <div
+              className="flex shrink-0 rounded-full border p-0.5"
+              style={{ borderColor: hairline(14), backgroundColor: tone.well }}
+              role="group"
+              aria-label="Project"
+            >
+              {projectOrder.map((id) => {
+                const selected = id === projectId;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={selected}
+                    data-project={id}
+                    onClick={() => pick(id)}
+                    className="relative min-h-8 flex-none whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] leading-tight font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal sm:px-3"
+                    style={{ color: selected ? tone.ink : tone.muted }}
+                  >
+                    {selected ? (
+                      <motion.span
+                        layoutId="stack-project-pill"
+                        className="absolute inset-0 rounded-full"
+                        style={{ backgroundColor: tone.panel }}
+                        transition={morph}
+                      />
+                    ) : null}
+                    <span className="relative">{projects[id].label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {/* Room to scroll the last tab clear of the fade. */}
+            <span aria-hidden="true" className="w-6 shrink-0 sm:hidden" />
           </div>
         </div>
 
@@ -294,12 +318,15 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                           <li
                             key={tool}
                             aria-current={on ? "true" : undefined}
-                            className="inline-flex h-6 items-center gap-1.5 rounded-full border px-2 text-[11px] font-medium leading-none transition-[color,border-color,background-color,box-shadow,opacity] duration-300 sm:text-[11px]"
+                            // Idle chips stay at full strength in light mode, where muted
+                            // text on cream only passes contrast undimmed.
+                            className={`inline-flex h-6 items-center gap-1.5 rounded-full border px-2 text-[12px] font-medium leading-none transition-[color,border-color,background-color,box-shadow,opacity] duration-300${
+                              on ? "" : " dark:opacity-55"
+                            }`}
                             style={{
                               borderColor: on ? layer.color : hairline(12),
                               backgroundColor: on ? tone.panel : "transparent",
                               color: on ? tone.ink : tone.muted,
-                              opacity: on ? 1 : 0.55,
                               boxShadow: on
                                 ? `0 0 14px -2px color-mix(in srgb, ${layer.color} 55%, transparent)`
                                 : "none",
@@ -318,7 +345,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                       })}
                       {gap && lit ? (
                         <li
-                          className="inline-flex h-6 items-center px-1 text-[11px] italic sm:text-[11px]"
+                          className="inline-flex h-6 items-center px-1 text-[12px] italic"
                           style={{ color: tone.muted }}
                         >
                           {gap}
@@ -332,7 +359,8 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
           </ol>
         </div>
 
-        <div className="mt-5 flex min-h-[3.5rem] items-end justify-between gap-x-6 gap-y-2">
+        {/* Stacked and left-aligned on phones, where the note had no room beside the metric. */}
+        <div className="mt-5 flex min-h-[3.5rem] flex-col items-start gap-x-6 gap-y-2 sm:flex-row sm:items-end sm:justify-between">
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
               key={projectId}
@@ -351,7 +379,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
               </span>
             </motion.p>
           </AnimatePresence>
-          <p className="max-w-[12rem] pb-0.5 text-right text-[11px] leading-4" style={{ color: tone.muted }}>
+          <p className="max-w-[12rem] pb-0.5 text-left text-[11px] sm:text-right leading-4" style={{ color: tone.muted }}>
             Four layers, one engineer.
             <br />
             No handoffs between them.
