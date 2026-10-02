@@ -56,6 +56,53 @@ export const projects: Project[] = [
     visibility: "anonymized",
   },
   {
+    slug: "booking-mcp",
+    title: "Booking MCP Server",
+    summary:
+      "A booking API and Model Context Protocol server that lets an AI assistant book appointments safely, live on Cloudflare's free tier.",
+    context:
+      "Letting a language model take bookings goes wrong in predictable ways: it confirms before the customer agrees, invents cancellation rules, double-books under concurrent requests, and gets time zones wrong. I wanted a booking backend whose tools make those mistakes hard, for a fictional fitness studio called Northside Studio.",
+    role: "Designed and built the API, MCP server, database, CI, and deployment independently.",
+    approach: [
+      "Designed nine MCP tools around a two-step hold and confirm, so the model has to read the service, time, and price back to the customer before anything is final.",
+      "Let Postgres prevent double-booking with an exclusion constraint, proven by deterministic two-session concurrency tests rather than application-level checks.",
+      "Scoped every API key to one tenant and to read or write; a read key is never served write tools, because the MCP server is rebuilt per request from the caller's key.",
+      "Added per-key rate limits with a daily cap, an audit log of every tool call with customer details redacted, and a nightly sandbox reset on a Cron Trigger.",
+      "Converted all times in Postgres with the tenant's IANA zone, and ran the full suite on a real Postgres 18 in CI under a non-UTC session time zone to catch time zone bugs.",
+    ],
+    outcomes: [
+      "Live on Cloudflare Workers and Neon free tiers at no running cost, usable from Claude Code over HTTP, or from Claude Desktop over stdio against your own database.",
+      "Double-booking is rejected by the database however many requests or Worker instances race.",
+      "Merging authentication and rate limiting into one query brought warm requests to 1 to 2 ms (REST) and 3 to 6 ms (MCP) of Worker CPU, inside the free plan's 10 ms limit.",
+    ],
+    stack: [
+      "TypeScript",
+      "MCP SDK",
+      "Hono",
+      "Zod",
+      "PostgreSQL",
+      "Cloudflare Workers",
+      "Vitest",
+      "GitHub Actions",
+    ],
+    categories: ["AI & RAG", "Cloud"],
+    screens: screens(
+      "booking-mcp",
+      "#08090B",
+      "booking-mcp session trace: a customer conversation beside the MCP tool calls that held and confirmed a private yoga session.",
+      undefined,
+      true,
+    ),
+    metrics: [
+      { value: "9", label: "MCP tools, scoped per key" },
+      { value: "$0", label: "running cost on free tiers" },
+    ],
+    productPath: "booking-mcp.azeemsubhani.workers.dev",
+    featured: true,
+    visibility: "public",
+    repositoryUrl: "https://github.com/Azeem-Subhani/booking-mcp",
+  },
+  {
     slug: "sports-team-app",
     title: "Sports Team App",
     summary:

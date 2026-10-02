@@ -78,6 +78,7 @@ const instrumentSerif = Instrument_Serif({
   preload: false,
 });
 
+export const bookingMcpFonts = `${inter.variable} ${jetbrainsMono.variable}`;
 export const gamingGlobalFonts = `${archivo.variable} ${jetbrainsMono.variable}`;
 export const sportsTeamFonts = archivo.variable;
 export const realTimeChatFonts = `${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`;
