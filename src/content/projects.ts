@@ -88,8 +88,8 @@ export const projects: Project[] = [
     categories: ["AI & RAG", "Cloud"],
     screens: screens(
       "booking-mcp",
-      "#08090B",
-      "booking-mcp session trace: a customer conversation beside the MCP tool calls that held and confirmed a private yoga session.",
+      "#FFFFFF",
+      "booking-mcp session: a customer conversation and the MCP tool calls that held and confirmed a private yoga session, beside the hold_slot response.",
       undefined,
       true,
     ),
