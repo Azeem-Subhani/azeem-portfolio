@@ -75,8 +75,10 @@ export function Header() {
       data-site-header
       data-scrolled={scrolled ? "true" : "false"}
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-4 transition-[top] duration-300 sm:px-6",
-        scrolled ? "top-4" : "top-6",
+        "pointer-events-none fixed inset-x-0 z-50 flex justify-center transition-[top,padding] duration-300",
+        // At rest the bar is the page container itself (max-w-7xl px-6), so the wordmark lines
+        // up with page content. Scrolled, the outer padding keeps the pill off the screen edges.
+        scrolled ? "top-4 px-4 sm:px-6" : "top-6 px-0",
       )}
     >
       <div
@@ -86,7 +88,7 @@ export function Header() {
           "animate-header-enter motion-reduce:animate-none",
           scrolled
             ? "max-w-6xl rounded-full border-transparent px-3 py-2 sm:px-4"
-            : "max-w-7xl rounded-none border-transparent bg-transparent px-0 py-4",
+            : "max-w-7xl rounded-none border-transparent bg-transparent px-6 py-4",
         )}
       >
         {scrolled ? (
@@ -136,8 +138,20 @@ export function Header() {
             </ul>
           </nav>
           <ThemeToggle />
-          <Button asChild className="hidden sm:inline-flex">
-            <Link href="/contact">Contact</Link>
+          <Button
+            asChild
+            className={cn(
+              "hidden sm:inline-flex",
+              isCurrentPath(pathname, "/contact") &&
+                "ring-2 ring-accent/45 ring-offset-2 ring-offset-background",
+            )}
+          >
+            <Link
+              href="/contact"
+              aria-current={isCurrentPath(pathname, "/contact") ? "page" : undefined}
+            >
+              Contact
+            </Link>
           </Button>
           <MobileNavToggle
             ref={menuToggleRef}

@@ -17,8 +17,10 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="px-4 py-16 sm:px-6">
-      <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    // data-inline-cta: the mobile contact bar steps aside here instead of covering the legal row.
+    // max-w-7xl px-6 is the shared page container, so footer columns align with page content.
+    <footer data-inline-cta className="py-16">
+      <div className="mx-auto grid max-w-7xl gap-10 px-6 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="font-display text-lg font-normal tracking-tight">
             {profile.name}
@@ -86,7 +88,7 @@ export function Footer() {
         </nav>
       </div>
 
-      <p className="mx-auto mt-12 max-w-7xl text-xs text-muted-foreground">
+      <p className="mx-auto mt-12 max-w-7xl px-6 text-xs text-muted-foreground">
         <span>© {year} {profile.name}</span>
         <span className="mx-2" aria-hidden="true">·</span>
         <Link href="/privacy" className="transition-colors hover:text-foreground">
