@@ -1,139 +1,124 @@
-/** 1600×900 booking-mcp session trace: a customer conversation beside the MCP tool calls it made. */
+/** 1600×900 booking-mcp session: the conversation and its tool calls on one timeline, plus the hold_slot response. */
 
 import { bookingMcpFonts } from "@/components/capture/capture-fonts";
 
-export function BookingMcpMark() {
+type Line =
+  | { kind: "say"; t: string; who: "Customer" | "Assistant"; text: string }
+  | { kind: "call"; t: string; name: string; args: string; ms: number; selected?: boolean };
+
+// A fictional session. Durations are illustrative, inside the 3 to 6 ms measured on the Worker.
+const LINES: Line[] = [
+  { kind: "say", t: "09:41:02", who: "Customer", text: "Can I get private yoga with Maya next Tuesday morning?" },
+  { kind: "call", t: "09:41:03", name: "get_policies", args: "", ms: 3 },
+  { kind: "call", t: "09:41:03", name: "search_availability", args: "2026-10-06 → 2026-10-06", ms: 5 },
+  { kind: "say", t: "09:41:04", who: "Assistant", text: "Maya has 8:00, 9:00 and 10:30 open on Tuesday, October 6, New York time." },
+  { kind: "say", t: "09:41:19", who: "Customer", text: "9 works. It's for Sam Rivera." },
+  { kind: "call", t: "09:41:20", name: "hold_slot", args: "13:00Z, key 6f1e…", ms: 6, selected: true },
+  { kind: "say", t: "09:41:21", who: "Assistant", text: "Holding private yoga with Maya, Tuesday 9 to 10 am, $75, for ten minutes. Shall I confirm?" },
+  { kind: "say", t: "09:41:33", who: "Customer", text: "Yes, please." },
+  { kind: "call", t: "09:41:34", name: "confirm_booking", args: "7f3c…", ms: 4 },
+  { kind: "say", t: "09:41:34", who: "Assistant", text: "You're booked. Free cancellation until Monday at 9 am." },
+];
+
+// result.structuredContent for the selected hold_slot call, in the shape the server returns.
+const RESPONSE: [indent: number, key: string | null, value: string][] = [
+  [0, null, "{"],
+  [1, "booking", "{"],
+  [2, "id", "\"7f3c9a2e-…\","],
+  [2, "status", "\"held\","],
+  [2, "start", "\"2026-10-06T13:00:00.000Z\","],
+  [2, "end", "\"2026-10-06T14:00:00.000Z\","],
+  [2, "holdExpiresAt", "\"2026-10-02T13:51:20.000Z\","],
+  [2, "details", "{"],
+  [3, "serviceName", "\"Private yoga\","],
+  [3, "priceCents", "7500,"],
+  [3, "weekday", "\"Tuesday\","],
+  [3, "localStart", "\"2026-10-06T09:00:00-04:00\","],
+  [3, "localEnd", "\"2026-10-06T10:00:00-04:00\","],
+  [3, "timeZone", "\"America/New_York\""],
+  [2, null, "}"],
+  [1, null, "}"],
+  [0, null, "}"],
+];
+
+// Values the assistant reads back to the customer.
+const READ_BACK = new Set(["serviceName", "priceCents", "weekday", "localStart", "localEnd"]);
+
+export function BookingMcpHead({ sub, meta }: { sub: string; meta: string[] }) {
   return (
-    <div className="mark">
-      <span className="mark-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="5" width="18" height="16" rx="2.5" />
-          <path d="M8 3v4M16 3v4M3 11h18M9 16l2 2 4-4" />
-        </svg>
+    <header className="head">
+      <span className="tenant">Northside Studio</span>
+      <span className="sub">{sub}</span>
+      <span className="head-meta">
+        {meta.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
       </span>
-      booking-mcp
-    </div>
+    </header>
   );
 }
-
-type CallRow = {
-  step: number;
-  name: string;
-  args: string;
-  tag: string;
-  tone: "ok" | "warn";
-  ms: string;
-};
-
-// Durations are illustrative, in line with the 3 to 6 ms warm MCP requests measured on the Worker.
-const CALLS: CallRow[] = [
-  { step: 1, name: "get_policies", args: "{}", tag: "read-only", tone: "ok", ms: "3 ms" },
-  { step: 2, name: "search_availability", args: "{ from: 2026-10-06, to: 2026-10-06 }", tag: "read-only", tone: "ok", ms: "5 ms" },
-  { step: 3, name: "hold_slot", args: "{ start: 13:00Z, idempotencyKey }", tag: "held · 10 min", tone: "warn", ms: "6 ms" },
-  { step: 4, name: "confirm_booking", args: "{ bookingId }", tag: "confirmed", tone: "ok", ms: "4 ms" },
-];
 
 export function BookingMcpWebCapture() {
   return (
     <div className={`bm-capture-root ${bookingMcpFonts}`}>
-      <section className="capture capture--web" aria-label="booking-mcp session trace">
-        <header className="topbar">
-          <BookingMcpMark />
-          <span className="divider" aria-hidden="true" />
-          <span className="crumb">
-            <strong>Northside Studio</strong> · America/New_York
-          </span>
-          <span className="spacer" />
-          <span className="chip">POST /mcp</span>
-          <span className="chip">write key · 60/min</span>
-          <span className="chip chip--acc">
-            <span className="dot" aria-hidden="true" />
-            9 tools registered
-          </span>
-        </header>
+      <section className="capture capture--web" aria-label="booking-mcp session">
+        <BookingMcpHead
+          sub="Session 3f2a · Tuesday booking"
+          meta={["POST /mcp", "write key", "4 calls", "18 ms"]}
+        />
 
-        <div className="body body--session">
-          <div className="panel">
-            <div className="panel-head">
-              <span className="panel-title">Conversation</span>
-              <span className="panel-meta">assistant ↔ customer</span>
-            </div>
-            <div className="thread">
-              <p className="msg msg--customer">
-                <span className="msg-who">Customer</span>
-                Can I get private yoga with Maya next Tuesday morning?
-              </p>
-              <div className="msg msg--assistant">
-                <span className="msg-who">Assistant</span>
-                Maya has 8:00, 9:00, and 10:30 AM open on Tuesday, October 6 (New York time).
-                <div className="used">
-                  <span>get_policies</span>
-                  <span>search_availability</span>
+        <div className="split split--session">
+          <div className="col">
+            <p className="label">Transcript</p>
+            {LINES.map((line, index) =>
+              line.kind === "say" ? (
+                <div key={index} className="line">
+                  <span className="t">{line.t}</span>
+                  <span className={line.who === "Assistant" ? "who who--assistant" : "who"}>
+                    {line.who}
+                  </span>
+                  <span className="say">{line.text}</span>
+                  <span />
                 </div>
-              </div>
-              <p className="msg msg--customer">
-                <span className="msg-who">Customer</span>
-                9 works. Book it for Sam Rivera.
-              </p>
-              <div className="msg msg--assistant">
-                <span className="msg-who">Assistant</span>
-                I&apos;m holding this for 10 minutes. Shall I confirm?
-                <dl className="readback">
-                  <dt>Service</dt>
-                  <dd>Private yoga · $75.00</dd>
-                  <dt>When</dt>
-                  <dd>Tuesday, 9:00 to 10:00 AM EDT</dd>
-                  <dt>Cancel</dt>
-                  <dd>Free up to 24 hours before</dd>
-                </dl>
-                <div className="used">
-                  <span>hold_slot</span>
+              ) : (
+                <div
+                  key={index}
+                  className={line.selected ? "line line--call line--selected" : "line line--call"}
+                >
+                  <span className="t">{line.t}</span>
+                  <span />
+                  <span className="say">
+                    <b>{line.name}</b>
+                    {line.args ? <i>{`  ${line.args}`}</i> : null}
+                  </span>
+                  <span className="ms">{line.ms} ms</span>
                 </div>
-              </div>
-              <p className="msg msg--customer">
-                <span className="msg-who">Customer</span>
-                Yes, confirm it.
-              </p>
-            </div>
+              ),
+            )}
           </div>
 
-          <div className="panel">
-            <div className="panel-head">
-              <span className="panel-title">Tool calls</span>
-              <span className="panel-meta">stateless server, built per request</span>
+          <div className="col">
+            <div className="call-title">
+              <h3>hold_slot</h3>
+              <span>id 7 · 6 ms · ok</span>
             </div>
-            <div className="trace">
-              {CALLS.map((call) => (
-                <div key={call.name} className="call">
-                  <span className="call-step">{call.step}</span>
-                  <span>
-                    <span className="call-name">{call.name}</span>
-                    <span className="call-args">{call.args}</span>
-                  </span>
-                  <span className={`tag tag--${call.tone}`}>{call.tag}</span>
-                  <span className="call-ms">{call.ms}</span>
+            <div className="tabs">
+              <span>Request</span>
+              <span className="on">Response</span>
+            </div>
+            <div className="code">
+              {RESPONSE.map(([indent, key, value], index) => (
+                <div key={index}>
+                  {"  ".repeat(indent)}
+                  {key ? (
+                    <>
+                      <span className="k">&quot;{key}&quot;</span>
+                      {": "}
+                    </>
+                  ) : null}
+                  <span className={key && READ_BACK.has(key) ? "v" : undefined}>{value}</span>
                 </div>
               ))}
-            </div>
-            <div className="json">
-              <span className="json-label">hold_slot → details for the read-back</span>
-              {"{\n  "}
-              <span className="k">&quot;status&quot;</span>: <span className="s">&quot;held&quot;</span>
-              {",\n  "}
-              <span className="k">&quot;details&quot;</span>
-              {": {\n    "}
-              <span className="k">&quot;serviceName&quot;</span>: <span className="s">&quot;Private yoga&quot;</span>
-              {",\n    "}
-              <span className="k">&quot;priceCents&quot;</span>: <span className="n">7500</span>
-              {",\n    "}
-              <span className="k">&quot;weekday&quot;</span>: <span className="s">&quot;Tuesday&quot;</span>
-              {",\n    "}
-              <span className="k">&quot;localStart&quot;</span>: <span className="s">&quot;2026-10-06T09:00:00-04:00&quot;</span>
-              {",\n    "}
-              <span className="k">&quot;localEnd&quot;</span>: <span className="s">&quot;2026-10-06T10:00:00-04:00&quot;</span>
-              {",\n    "}
-              <span className="k">&quot;timeZone&quot;</span>: <span className="s">&quot;America/New_York&quot;</span>
-              {"\n  }\n}"}
             </div>
           </div>
         </div>

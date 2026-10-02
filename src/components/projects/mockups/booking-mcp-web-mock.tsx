@@ -8,7 +8,7 @@ import "@/components/capture/booking-mcp/booking-mcp-capture.css";
 const DESIGN_W = 1600;
 const DESIGN_H = 900;
 
-/** Live booking-mcp session trace, scaled from 1600×900 for BrowserFrame. */
+/** Live booking-mcp session, scaled from 1600×900 for BrowserFrame. */
 export function BookingMcpWebMock() {
   const { hostRef, scale } = useCaptureScale(DESIGN_W, DESIGN_H);
 
@@ -16,7 +16,7 @@ export function BookingMcpWebMock() {
     <div
       ref={hostRef}
       data-live-web-mockup="booking-mcp"
-      className="relative aspect-[16/9] w-full overflow-hidden bg-[#08090B]"
+      className="relative aspect-[16/9] w-full overflow-hidden bg-white"
       aria-hidden="true"
     >
       <div

@@ -150,7 +150,7 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
  * does this through its screen color) instead of a see-through hole.
  */
 const WEB_SCREEN_BG: Record<string, string> = {
-  "booking-mcp": "#08090B",
+  "booking-mcp": "#FFFFFF",
   "track-booking": "#07080A",
   "sports-team-app": "#F4F6F2",
   "memorial-planning": "#F7F7F4",
@@ -376,8 +376,7 @@ export function ProjectMockup({
             <BrowserFrame
               url={productPath}
               tone={
-                project.slug === "track-booking" ||
-                project.slug === "booking-mcp"
+                project.slug === "track-booking"
                   ? "dark"
                   : project.slug === "sports-team-app"
                     ? "sports-team"
@@ -390,7 +389,8 @@ export function ProjectMockup({
                         : project.slug === "task-manager"
                           ? "paper"
                           : project.slug === "woody-shop" ||
-                            project.slug === "smart-living"
+                            project.slug === "smart-living" ||
+                            project.slug === "booking-mcp"
                             ? "white"
                             : "site"
               }
