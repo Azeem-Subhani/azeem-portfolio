@@ -189,6 +189,57 @@ export const projects: Project[] = [
     visibility: "anonymized",
   },
   {
+    slug: "meridian",
+    title: "Meridian",
+    summary:
+      "A booking concierge that compares options in conversation, holds a reservation, and charges only after an explicit confirm.",
+    context:
+      "Guests were repeating the same constraints across search, a checkout form, and a confirmation email. Meridian keeps the request in one thread and shows what it understood before it books anything.",
+    role: "Full-stack work across the Next.js guest app and admin console, the NestJS API, and the Temporal workflows that hold, charge, and hand off a booking.",
+    approach: [
+      "Built the guest app and admin console in Next.js 16, TypeScript, and Tailwind. TanStack Query holds server state. Zustand only covers local UI.",
+      "The API is NestJS 11 on Fastify: REST with OpenAPI, Zod on every boundary, and RBAC around bookings, payments, and handoffs.",
+      "PostgreSQL 18 stores the booking model. PostGIS handles radius search, pgvector stays in the same database, and Redis caches availability and rate limits.",
+      "Temporal runs the hold, the payment, and the human approval, with retries and compensation when a provider or a charge fails.",
+      "The assistant uses the OpenAI Agents SDK with structured outputs, so a tool call cannot fire on a malformed intent. Stripe takes the deposit only after the guest confirms.",
+      "Twilio covers SMS and WhatsApp. Confirmed bookings sync to Google Calendar and Outlook, receipts go to S3, and OpenTelemetry plus Sentry trace the path from the model call through payment.",
+    ],
+    outcomes: [
+      "A guest can go from one sentence to a held table without leaving the thread, on web or phone, including by voice.",
+      "Nothing is booked or charged until the guest confirms the final price and the cancellation terms.",
+      "A failed provider call or a dropped worker resumes from the Temporal workflow instead of a half-finished booking.",
+    ],
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "NestJS",
+      "PostgreSQL",
+      "Redis",
+      "Temporal",
+      "OpenAI",
+      "Stripe",
+      "Twilio",
+      "AWS",
+    ],
+    categories: ["Full-Stack", "Payments", "Real-Time", "Cloud"],
+    screens: screens(
+      "meridian",
+      "#F6F5F1",
+      "Meridian concierge comparing dinner options for six, with the request details updating live.",
+      "Meridian chat on iPhone, with swipeable restaurant options.",
+      true,
+      true,
+    ),
+    metrics: [
+      { value: "Hold first", label: "charge only on confirm" },
+      { value: "Web + phone", label: "including voice" },
+    ],
+    productPath: "meridian.app",
+    featured: true,
+    visibility: "public",
+  },
+  {
     slug: "gaming-global",
     title: "Gaming Global",
     summary:
