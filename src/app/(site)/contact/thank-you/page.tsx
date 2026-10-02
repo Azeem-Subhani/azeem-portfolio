@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { profile } from "@/content/profile";
@@ -23,10 +23,11 @@ export default function ThankYouPage() {
       <div className="flex size-12 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent">
         <CheckCircle2 aria-hidden="true" className="size-6" />
       </div>
-      <p className="mt-6 font-mono text-xs tracking-[0.12em] text-accent-readable">
+      <p className="mt-6 font-mono text-xs uppercase tracking-[0.16em] text-accent-readable">
         Message received
       </p>
-      <h1 className="mt-4 font-display text-[clamp(3.5rem,8vw,6.5rem)] font-normal leading-[0.88] tracking-[-0.045em]">
+      {/* Balanced and capped so the line breaks after "Thanks for" rather than orphaning "out." */}
+      <h1 className="mt-4 max-w-[14ch] text-balance font-display text-[clamp(3.5rem,8vw,6.5rem)] font-normal leading-[0.95] tracking-[-0.03em]">
         Thanks for reaching out.
       </h1>
       <p role="status" className="mt-6 max-w-md text-base leading-7 text-muted-foreground">
@@ -45,8 +46,8 @@ export default function ThankYouPage() {
           href="/"
           className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-medium transition-colors hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
+          <ArrowLeft aria-hidden="true" className="size-4" />
           Back home
-          <ArrowUpRight aria-hidden="true" className="size-4" />
         </Link>
       </div>
     </section>

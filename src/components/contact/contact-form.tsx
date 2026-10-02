@@ -24,6 +24,10 @@ type SubmitState = "idle" | "success" | "error";
 
 const sortedCountries = [...countries].sort((a, b) => a.name.localeCompare(b.name));
 
+// Dark mode: fields sit close to the card surface and lean on the border and focus ring,
+// instead of the brighter teal-tinted elevated fill. Light mode keeps the default fill.
+const fieldDarkFill = "dark:bg-background/50";
+
 export function ContactForm() {
   const router = useRouter();
   const formId = useId();
@@ -229,6 +233,7 @@ export function ContactForm() {
           <Label htmlFor={`${formId}-name`}>Name</Label>
           <Input
             id={`${formId}-name`}
+            className={fieldDarkFill}
             required
             placeholder="Your name"
             autoComplete="name"
@@ -247,6 +252,7 @@ export function ContactForm() {
           <Label htmlFor={`${formId}-email`}>Email</Label>
           <Input
             id={`${formId}-email`}
+            className={fieldDarkFill}
             required
             placeholder="you@example.com"
             type="email"
@@ -268,7 +274,7 @@ export function ContactForm() {
           Phone <span className="text-muted-foreground">(optional)</span>
         </Label>
         <div
-          className={`flex min-h-12 w-full items-center rounded-2xl border bg-surface-elevated px-3 transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 ${errors.phone ? "border-error" : "border-muted-foreground/85"}`}
+          className={`flex min-h-12 w-full items-center rounded-2xl border bg-surface-elevated px-3 ${fieldDarkFill} transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 ${errors.phone ? "border-error" : "border-muted-foreground/85"}`}
         >
           <div ref={countryMenuRef} className="relative shrink-0">
             <button
@@ -376,6 +382,7 @@ export function ContactForm() {
         <Label htmlFor={`${formId}-message`}>Message</Label>
         <Textarea
           id={`${formId}-message`}
+          className={fieldDarkFill}
           required
           placeholder="What are you hoping to build?"
           aria-invalid={Boolean(errors.message)}

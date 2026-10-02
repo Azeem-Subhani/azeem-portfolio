@@ -2351,8 +2351,8 @@ html.dark .svgl-invert-dark,
   background: linear-gradient(
     to bottom,
     transparent,
-    color-mix(in srgb, var(--accent) 14%, transparent) 85%,
-    color-mix(in srgb, var(--accent) 70%, transparent) 99%,
+    color-mix(in srgb, var(--accent) 12%, transparent) 85%,
+    color-mix(in srgb, var(--accent) 35%, transparent) 99%,
     transparent
   );
 }
@@ -2418,6 +2418,23 @@ html.dark .svgl-invert-dark,
   --accent-strong: #b32d6e;
   --accent-readable: #ad2667;
   --accent-foreground: #fdf6e3;
+}
+
+/*
+ * Brand teal is the one primary color site-wide. The scope sits outside the tone
+ * element, so these resolve to the site accent for the current theme and inherit down;
+ * [data-brand-cta] then points a primary button's accent tokens back at them.
+ */
+.industry-brand-scope {
+  --brand-accent: var(--accent);
+  --brand-accent-strong: var(--accent-strong);
+  --brand-accent-foreground: var(--accent-foreground);
+}
+
+[data-industry-tone] [data-brand-cta] {
+  --accent: var(--brand-accent);
+  --accent-strong: var(--brand-accent-strong);
+  --accent-foreground: var(--brand-accent-foreground);
 }
 
 .dark [data-industry-tone="green"],
