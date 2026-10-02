@@ -1,129 +1,79 @@
-/** 1600×900 booking-mcp guardrails: tools per key scope, the overlap race, and the redacted audit log. */
+/** 1600×900 booking-mcp guardrails: tools listed per key scope, the overlap race, and the audit log. */
 
 import { bookingMcpFonts } from "@/components/capture/capture-fonts";
-import { BookingMcpMark } from "@/components/capture/booking-mcp/web-capture";
+import { BookingMcpHead } from "@/components/capture/booking-mcp/web-capture";
 
-const READ_TOOLS = ["get_policies", "list_services", "search_availability", "get_booking"];
-const WRITE_TOOLS = [
-  "find_bookings_by_email",
-  "hold_slot",
-  "confirm_booking",
-  "reschedule_booking",
-  "cancel_booking",
+const TOOLS: [name: string, read: boolean][] = [
+  ["get_policies", true],
+  ["list_services", true],
+  ["search_availability", true],
+  ["get_booking", true],
+  ["find_bookings_by_email", false],
+  ["hold_slot", false],
+  ["confirm_booking", false],
+  ["reschedule_booking", false],
+  ["cancel_booking", false],
 ];
 
-type AuditRow = {
-  time: string;
-  scope: string;
-  tool: string;
-  inputs: string;
-  code: string;
-  tone: "ok" | "warn" | "err";
-  ms: string;
-};
+type AuditRow = [time: string, key: string, tool: string, inputs: string, result: string, ms: string];
 
-// Illustrative rows in the shape the audit log stores: customer fields are redacted before insert.
+// Illustrative rows in the shape audit_log stores. Customer fields are redacted before insert.
 const AUDIT: AuditRow[] = [
-  { time: "11:04:12", scope: "write", tool: "confirm_booking", inputs: "bookingId: 7f3c…", code: "ok", tone: "ok", ms: "4" },
-  { time: "11:03:58", scope: "write", tool: "hold_slot", inputs: "customerEmail: [redacted]", code: "ok", tone: "ok", ms: "6" },
-  { time: "11:03:57", scope: "write", tool: "hold_slot", inputs: "customerEmail: [redacted]", code: "slot_unavailable", tone: "warn", ms: "5" },
-  { time: "11:02:40", scope: "read", tool: "hold_slot", inputs: "argument names only", code: "scope_denied", tone: "err", ms: "0" },
-  { time: "11:02:31", scope: "read", tool: "search_availability", inputs: "from: 2026-10-06", code: "ok", tone: "ok", ms: "5" },
-  { time: "11:01:09", scope: "write", tool: "confirm_booking", inputs: "bookingId: 2a91…", code: "hold_expired", tone: "warn", ms: "3" },
-  { time: "11:00:44", scope: "read", tool: "get_policies", inputs: "{}", code: "ok", tone: "ok", ms: "3" },
+  ["09:41:34", "write", "confirm_booking", "bookingId 7f3c…", "ok", "4"],
+  ["09:41:20", "write", "hold_slot", "customerEmail [redacted]", "ok", "6"],
+  ["09:41:20", "write", "hold_slot", "customerEmail [redacted]", "slot_unavailable", "5"],
+  ["09:41:03", "write", "search_availability", "from 2026-10-06", "ok", "5"],
+  ["09:38:51", "read", "hold_slot", "customerEmail [redacted]", "scope_denied", "0"],
+  ["09:36:12", "write", "confirm_booking", "bookingId 2a91…", "hold_expired", "3"],
+  ["09:35:40", "read", "list_services", "", "ok", "3"],
+  ["09:35:39", "read", "get_policies", "", "ok", "3"],
 ];
-
-function Inputs({ value }: { value: string }) {
-  if (!value.includes("[redacted]")) return <>{value}</>;
-  const [name] = value.split(":");
-  return (
-    <>
-      {name}: <span className="redacted">[redacted]</span>
-    </>
-  );
-}
 
 export function BookingMcpWebGuardrailsCapture() {
   return (
     <div className={`bm-capture-root ${bookingMcpFonts}`}>
       <section className="capture capture--web" aria-label="booking-mcp guardrails">
-        <header className="topbar">
-          <BookingMcpMark />
-          <span className="divider" aria-hidden="true" />
-          <span className="crumb">
-            <strong>Guardrails</strong> · scopes, overlap, audit
-          </span>
-          <span className="spacer" />
-          <span className="chip">audit kept 30 days</span>
-          <span className="chip chip--acc">
-            <span className="dot" aria-hidden="true" />
-            sandbox resets 08:00 UTC
-          </span>
-        </header>
+        <BookingMcpHead
+          sub="Guardrails"
+          meta={["audit kept 30 days", "sandbox resets 08:00 UTC"]}
+        />
 
-        <div className="body body--guard">
-          <div className="keys">
-            <div className="key-card">
-              <div className="key-head">
-                <span className="key-name">Read key</span>
-                <span className="key-limit">30/min · 1,000/day</span>
-              </div>
-              <div className="tools">
-                {READ_TOOLS.map((tool) => (
-                  <span key={tool} className="tool">
-                    {tool}
-                  </span>
+        <div className="split split--guard">
+          <div className="col">
+            <p className="label">tools/list by key</p>
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Tool</th>
+                  <th className="c">Read</th>
+                  <th className="c">Write</th>
+                </tr>
+              </thead>
+              <tbody>
+                {TOOLS.map(([name, read]) => (
+                  <tr key={name}>
+                    <td className={read ? undefined : "dim"}>{name}</td>
+                    <td className={read ? "c" : "c dim"}>{read ? "✓" : "—"}</td>
+                    <td className="c">✓</td>
+                  </tr>
                 ))}
-                {WRITE_TOOLS.map((tool) => (
-                  <span key={tool} className="tool tool--off">
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
 
-            <div className="key-card">
-              <div className="key-head">
-                <span className="key-name">Write key</span>
-                <span className="key-limit">60/min · no daily cap</span>
-              </div>
-              <div className="tools">
-                {[...READ_TOOLS, ...WRITE_TOOLS].map((tool) => (
-                  <span key={tool} className="tool">
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="key-card">
-              <div className="key-head">
-                <span className="key-name">Same slot, two sessions</span>
-                <span className="key-limit">bookings_no_overlap</span>
-              </div>
-              <div className="race">
-                <div className="race-lane">
-                  <b>Session A</b>
-                  hold_slot 13:00Z
-                  <br />
-                  <span className="tag tag--ok">held</span>
-                </div>
-                <div className="race-lane">
-                  <b>Session B</b>
-                  hold_slot 13:00Z
-                  <br />
-                  <span className="tag tag--warn">slot_unavailable</span>
-                </div>
-              </div>
+            <div className="race">
+              <p className="label">Two sessions, one slot</p>
+              <pre className="log">
+                <b>A</b>  hold_slot 13:00Z      held{"\n"}
+                <b>B</b>  hold_slot 13:00Z      waiting on lock{"\n"}
+                <b>A</b>  COMMIT{"\n"}
+                <b>B</b>  <span className="bad">23P01 bookings_no_overlap → slot_unavailable</span>
+              </pre>
             </div>
           </div>
 
-          <div className="panel">
-            <div className="panel-head">
-              <span className="panel-title">Audit log</span>
-              <span className="panel-meta">every MCP tool call</span>
-            </div>
-            <table className="audit">
+          <div className="col">
+            <p className="label">audit_log, today</p>
+            <table className="tbl">
               <thead>
                 <tr>
                   <th>Time</th>
@@ -131,26 +81,23 @@ export function BookingMcpWebGuardrailsCapture() {
                   <th>Tool</th>
                   <th>Inputs</th>
                   <th>Result</th>
-                  <th>ms</th>
+                  <th className="r">ms</th>
                 </tr>
               </thead>
               <tbody>
-                {AUDIT.map((row) => (
-                  <tr key={`${row.time}-${row.tool}`}>
-                    <td>{row.time}</td>
-                    <td>{row.scope}</td>
-                    <td className="tool-cell">{row.tool}</td>
-                    <td className="inputs">
-                      <Inputs value={row.inputs} />
-                    </td>
-                    <td>
-                      <span className={`tag tag--${row.tone}`}>{row.code}</span>
-                    </td>
-                    <td>{row.ms}</td>
+                {AUDIT.map(([time, key, tool, inputs, result, ms], index) => (
+                  <tr key={index}>
+                    <td className="dim">{time}</td>
+                    <td>{key}</td>
+                    <td>{tool}</td>
+                    <td className="dim">{inputs}</td>
+                    <td className={result === "ok" ? undefined : "bad"}>{result}</td>
+                    <td className="r dim">{ms}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <p className="rows">({AUDIT.length} rows)</p>
           </div>
         </div>
       </section>

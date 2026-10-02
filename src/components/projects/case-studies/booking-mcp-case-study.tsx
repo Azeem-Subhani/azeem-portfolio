@@ -1,9 +1,9 @@
 /*
  * FRAME PLAN
  * Primary DeviceStage (layout browser, web only; booking-mcp has no UI of its own):
- *   Web 1: Session trace — BookingMcpWebCapture @ booking-mcp.azeemsubhani.workers.dev/mcp
+ *   Web 1: Session — BookingMcpWebCapture @ booking-mcp.azeemsubhani.workers.dev/mcp
  *   Web 2: Guardrails — BookingMcpWebGuardrailsCapture @ booking-mcp.azeemsubhani.workers.dev/mcp
- * All captures: CaptureFrame #08090B; browser tone dark.
+ * All captures: CaptureFrame #FFFFFF; browser tone white.
  */
 
 "use client";
@@ -24,7 +24,7 @@ import type { Project } from "@/types/content";
 
 import "@/components/capture/booking-mcp/booking-mcp-capture.css";
 
-const SCREEN = "#08090B";
+const SCREEN = "#FFFFFF";
 const MCP_URL = "https://booking-mcp.azeemsubhani.workers.dev/mcp";
 
 type BookingMcpCaseStudyProps = {
@@ -46,9 +46,9 @@ export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyPro
           web={[
             {
               id: "session",
-              label: "Session trace",
+              label: "Session",
               url: "booking-mcp.azeemsubhani.workers.dev/mcp",
-              tone: "dark",
+              tone: "white",
               children: (
                 <CaptureFrame kind="web" background={SCREEN}>
                   <BookingMcpWebCapture />
@@ -59,7 +59,7 @@ export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyPro
               id: "guardrails",
               label: "Guardrails",
               url: "booking-mcp.azeemsubhani.workers.dev/mcp",
-              tone: "dark",
+              tone: "white",
               children: (
                 <CaptureFrame kind="web" background={SCREEN}>
                   <BookingMcpWebGuardrailsCapture />
