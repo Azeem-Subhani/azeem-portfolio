@@ -8,6 +8,8 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import { BookingMcpWebCapture } from "@/components/capture/booking-mcp/web-capture";
 import { BookingMcpWebGuardrailsCapture } from "@/components/capture/booking-mcp/web-guardrails-capture";
 import {
@@ -20,6 +22,7 @@ import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
 import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import type { Project } from "@/types/content";
 
 import "@/components/capture/booking-mcp/booking-mcp-capture.css";
@@ -32,6 +35,49 @@ type BookingMcpCaseStudyProps = {
   /** Public read-only demo key, injected at build time. Absent until the env var is set. */
   demoKey?: string;
 };
+
+/**
+ * The edited demo, played like a GIF: muted, looping, inline. Playback starts from an effect
+ * instead of `autoPlay` so reduced-motion visitors get the poster and controls, never motion.
+ */
+function DemoVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+  const reduced = usePrefersReducedMotion();
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    // The hook reports false on its first render, so ask the media query directly; otherwise
+    // the first effect would start playback and drop the poster before `reduced` catches up.
+    if (reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      video.pause();
+      return;
+    }
+    // Chrome rejects play() in a hidden tab (opened in the background), so retry on show.
+    // If the browser blocks autoplay outright, the poster stays up, which is fine.
+    const play = () => {
+      if (document.visibilityState === "visible") video.play().catch(() => {});
+    };
+    play();
+    document.addEventListener("visibilitychange", play);
+    return () => document.removeEventListener("visibilitychange", play);
+  }, [reduced]);
+
+  return (
+    <video
+      ref={ref}
+      className="aspect-video w-full rounded-2xl border border-border bg-surface"
+      src="/videos/booking-mcp-demo.mp4"
+      poster="/videos/booking-mcp-demo-poster.jpg"
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      controls={reduced}
+      aria-label="Claude booking a private yoga session through the booking MCP server: it reads the policies, searches availability, holds a slot, and confirms after the customer agrees."
+    />
+  );
+}
 
 export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyProps) {
   const command = `claude mcp add --transport http booking ${MCP_URL} --header "Authorization: Bearer ${demoKey ?? "<demo key>"}"`;
@@ -77,6 +123,13 @@ export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyPro
         ]}
         points={project.approach}
       />
+
+      <CaseStudySection
+        title="Watch it work"
+        intro="A real session against the live server, shown at 3x speed: Claude reads the policies, finds a slot, holds it, and confirms only after the customer says yes."
+      >
+        <DemoVideo />
+      </CaseStudySection>
 
       {/* The live server is the demo: a read-only key lets visitors try it from their own client. */}
       <CaseStudySection
