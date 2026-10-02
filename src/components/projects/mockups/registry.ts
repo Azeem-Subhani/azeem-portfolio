@@ -8,6 +8,10 @@ type Loader = () => Promise<LiveMockup>;
 // only when the selected project actually asks for it; ProjectMockup holds the
 // frame's size empty until the chunk arrives and the capture builds itself in.
 const webLoaders: Record<string, Loader> = {
+  "booking-mcp": () =>
+    import("@/components/projects/mockups/booking-mcp-web-mock").then(
+      (module) => module.BookingMcpWebMock,
+    ),
   "track-booking": () =>
     import("@/components/projects/mockups/track-booking-web-mock").then(
       (module) => module.TrackBookingWebMock,

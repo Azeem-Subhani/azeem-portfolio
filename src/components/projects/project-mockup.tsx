@@ -60,6 +60,16 @@ type CatalogComposition = {
 };
 
 const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
+  // Web only: the phone fields are unused because booking-mcp has no phone screen.
+  "booking-mcp": {
+    browserScale: 0.82,
+    browserX: "50%",
+    browserY: "50%",
+    phoneSide: "right",
+    phoneOffset: "12px",
+    phoneBottom: "32px",
+    phoneScale: "0.6",
+  },
   "track-booking": {
     browserScale: 0.82,
     browserX: "50%",
@@ -140,6 +150,7 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
  * does this through its screen color) instead of a see-through hole.
  */
 const WEB_SCREEN_BG: Record<string, string> = {
+  "booking-mcp": "#08090B",
   "track-booking": "#07080A",
   "sports-team-app": "#F4F6F2",
   "memorial-planning": "#F7F7F4",
@@ -365,7 +376,8 @@ export function ProjectMockup({
             <BrowserFrame
               url={productPath}
               tone={
-                project.slug === "track-booking"
+                project.slug === "track-booking" ||
+                project.slug === "booking-mcp"
                   ? "dark"
                   : project.slug === "sports-team-app"
                     ? "sports-team"
