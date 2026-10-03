@@ -219,6 +219,21 @@ function inViewport(el: HTMLElement) {
   return rect.width > 0 && rect.bottom > 0 && rect.top < window.innerHeight;
 }
 
+/** Share of the element's height on screen, matching the observer's 0.25 threshold. */
+function visibleShare(el: HTMLElement) {
+  const rect = el.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return 0;
+  const visible =
+    Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+  return Math.max(0, visible) / rect.height;
+}
+
+const START_THRESHOLD = 0.25;
+/** How often a hidden capture checks that it has not been left blank. */
+const WATCHDOG_MS = 1000;
+/** Extra time a started build gets past its own length before it is forced to finish. */
+const FINISH_GRACE_S = 1.5;
+
 function outermostCapture(host: HTMLElement) {
   return host.querySelector<HTMLElement>(".capture");
 }
@@ -249,8 +264,11 @@ export function useBuildUp(
     let plan: BuildPlan | null = null;
     let timeline: gsap.core.Timeline | null = null;
     let observer: IntersectionObserver | null = null;
+    let watchdog: number | undefined;
 
     const reset = () => {
+      window.clearInterval(watchdog);
+      watchdog = undefined;
       observer?.disconnect();
       observer = null;
       timeline?.kill();
@@ -270,19 +288,40 @@ export function useBuildUp(
       host.dataset.building = "";
       hideForBuild(plan);
       const start = () => {
-        if (plan) timeline = playBuild(plan);
+        if (!plan || timeline) return;
+        observer?.disconnect();
+        observer = null;
+        timeline = playBuild(plan);
       };
+      // Fail open: the capture is hidden until the build runs, so a missed observer
+      // callback or a stalled animation frame would leave a blank screen. Start the build
+      // if the observer has not, and jump a started build to its end if it overruns.
+      let startedAt = 0;
+      watchdog = window.setInterval(() => {
+        if (!plan) return;
+        if (!timeline) {
+          if (visibleShare(host) >= START_THRESHOLD) start();
+          return;
+        }
+        startedAt ||= performance.now();
+        const limit = (timeline.totalDuration() + FINISH_GRACE_S) * 1000;
+        if (timeline.progress() < 1 && performance.now() - startedAt > limit) {
+          timeline.progress(1);
+        }
+        if (timeline.progress() >= 1) {
+          window.clearInterval(watchdog);
+          watchdog = undefined;
+        }
+      }, WATCHDOG_MS);
       if (inViewport(host)) {
         start();
       } else {
         observer = new IntersectionObserver(
-          ([entry]) => {
-            if (!entry?.isIntersecting) return;
-            observer?.disconnect();
-            observer = null;
-            start();
+          (entries) => {
+            // One callback can carry several entries for the same target; act on any hit.
+            if (entries.some((entry) => entry.isIntersecting)) start();
           },
-          { threshold: 0.25 },
+          { threshold: START_THRESHOLD },
         );
         observer.observe(host);
       }
