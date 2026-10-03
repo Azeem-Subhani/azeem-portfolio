@@ -1,19 +1,13 @@
 "use client";
 
+import { FILTER_CATEGORIES } from "@/components/projects/project-tag";
+import { useOverflowFade } from "@/components/projects/use-overflow-fade";
 import { cn } from "@/lib/utils";
 import type { ProjectCategory } from "@/types/content";
 
 export type FilterValue = "All" | ProjectCategory;
 
-export const filterValues: FilterValue[] = [
-  "All",
-  "AI & RAG",
-  // No "Full-Stack": every project carries it, so the filter never narrowed anything.
-  "Payments",
-  "Real-Time",
-  "Mobile",
-  "Cloud",
-];
+export const filterValues: FilterValue[] = ["All", ...FILTER_CATEGORIES];
 
 type ProjectFiltersProps = {
   active: FilterValue;
@@ -21,8 +15,13 @@ type ProjectFiltersProps = {
 };
 
 export function ProjectFilters({ active, onChange }: ProjectFiltersProps) {
+  // Phones scroll the chip row sideways (it wraps from 640px up); fade whichever edge clips.
+  const { ref: fadeRef, style: fadeStyle } = useOverflowFade<HTMLDivElement>();
+
   return (
     <div
+      ref={fadeRef}
+      style={fadeStyle}
       role="group"
       aria-label="Filter projects by category"
       className="catalog-filters flex min-w-0 gap-1 overflow-x-auto"

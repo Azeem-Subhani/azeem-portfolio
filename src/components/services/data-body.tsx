@@ -11,6 +11,7 @@ import {
 } from "@/components/services/data-surfaces";
 import { useDataBodyMotion } from "@/components/services/data-motion";
 import { ServiceTocGlass } from "@/components/services/service-toc-glass";
+import { useActiveChapter } from "@/components/services/toc-spy";
 import { cn } from "@/lib/utils";
 import type { ServicePageContent, ServiceSection } from "@/types/content";
 
@@ -28,6 +29,8 @@ const CHAPTERS = [
   { id: "data-warehouse", index: "03", kicker: "Warehouse", label: "Analytical copy" },
   { id: "data-sources", index: "04", kicker: "Sources", label: "What I connect" },
 ] as const;
+
+const CHAPTER_IDS = CHAPTERS.map((chapter) => chapter.id);
 
 function ofKind<K extends ServiceSection["kind"]>(
   sections: ServiceSection[],
@@ -206,6 +209,7 @@ export function DataServiceBody({ service }: { service: ServicePageContent }) {
   const [steps] = ofKind(service.sections, "steps");
   const [warehouses, sources] = ofKind(service.sections, "platforms");
   const rootRef = useDataBodyMotion<HTMLDivElement>();
+  const activeChapter = useActiveChapter(CHAPTER_IDS);
 
   return (
     <div ref={rootRef} className="data-body">
@@ -217,15 +221,21 @@ export function DataServiceBody({ service }: { service: ServicePageContent }) {
         <ol>
           {CHAPTERS.map((chapter) => (
             <li key={chapter.id}>
-              <a href={`#${chapter.id}`}>
+              <a
+                href={`#${chapter.id}`}
+                aria-current={activeChapter === chapter.id ? "location" : undefined}
+              >
                 <span aria-hidden="true">{chapter.index}</span> {chapter.label}
               </a>
             </li>
           ))}
         </ol>
-        <Link href="/projects/memorial-planning" className="data-toc-link">
-          See the data: payment portal <ArrowRight aria-hidden="true" />
-        </Link>
+        {/* A project link, not a contact CTA; the mobile contact bar still steps aside for it. */}
+        <div className="data-toc-cta" data-inline-cta>
+          <Link href="/projects/memorial-planning" className="data-toc-link">
+            See the data: payment portal <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
       </nav>
       <div className="data-body-scroll overflow-x-clip">
         {capabilities ? <JobsChapter section={capabilities} /> : null}

@@ -93,9 +93,9 @@ export function BookingAgentWebBookingsCapture() {
         <div className="bk-main">
           <div className="bk-top">
             <div>
-              <h1>
+              <div data-h="1">
                 {"Your bookings"}
-              </h1>
+              </div>
               <p>
                 {"Wednesday, Oct 7 · 3 upcoming · Meridian is watching 1 price"}
               </p>

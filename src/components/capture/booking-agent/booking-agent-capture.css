@@ -78,7 +78,7 @@
 .ba-capture-root .chat-main{display:grid;grid-template-columns:1fr 372px;height:100%;min-width:0}
 .ba-capture-root .chat-col{display:flex;flex-direction:column;min-width:0;height:900px}
 .ba-capture-root .top{height:64px;flex:none;display:flex;align-items:center;gap:14px;padding:0 32px;border-bottom:1px solid var(--line);background:rgba(246,245,241,.85)}
-.ba-capture-root .top h1{font:600 15px var(--sans);letter-spacing:-.01em}
+.ba-capture-root .top [data-h="1"]{font:600 15px var(--sans);letter-spacing:-.01em}
 .ba-capture-root .top .sub{font:13px var(--sans);color:var(--ink-3)}
 .ba-capture-root .top .right{margin-left:auto;display:flex;gap:8px;align-items:center}
 .ba-capture-root .thread{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px}
@@ -233,7 +233,7 @@
 .ba-capture-root .secure .i{width:13px;height:13px}
 .ba-capture-root .bk-main{display:flex;flex-direction:column;height:900px;min-width:0}
 .ba-capture-root .bk-top{padding:30px 40px 0;display:flex;align-items:flex-end;gap:24px}
-.ba-capture-root .bk-top h1{font:400 38px/1 var(--serif);letter-spacing:-.01em}
+.ba-capture-root .bk-top [data-h="1"]{font:400 38px/1 var(--serif);letter-spacing:-.01em}
 .ba-capture-root .bk-top p{font:13.5px var(--sans);color:var(--ink-3);margin-top:8px}
 .ba-capture-root .tabs{display:flex;gap:4px;padding:4px;background:#EDEBE5;border-radius:11px;margin-left:auto}
 .ba-capture-root .tabs button{height:32px;padding:0 14px;border-radius:8px;font:500 13px/32px var(--sans);color:var(--ink-2);text-decoration:none}
@@ -332,7 +332,7 @@
 .ba-capture-root .ad-main{display:grid;grid-template-columns:minmax(0,1fr) 460px;height:900px;min-width:0}
 .ba-capture-root .ad-col{display:flex;flex-direction:column;min-width:0;padding:26px 32px 28px;gap:20px}
 .ba-capture-root .ad-top{display:flex;align-items:center;gap:12px}
-.ba-capture-root .ad-top h1{font:400 34px/1 var(--serif);letter-spacing:-.01em}
+.ba-capture-root .ad-top [data-h="1"]{font:400 34px/1 var(--serif);letter-spacing:-.01em}
 .ba-capture-root .ad-top .tag{height:24px}
 .ba-capture-root .ad-top .right{margin-left:auto;display:flex;gap:8px;align-items:center}
 .ba-capture-root .seg{display:flex;padding:3px;background:#EDEBE5;border-radius:9px}

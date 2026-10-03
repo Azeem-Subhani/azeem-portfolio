@@ -1116,70 +1116,42 @@ button,
   line-height: 1.7;
 }
 
+/* Three bare words under the CTA read as stray text. Label the row and draw the links as chips
+   with a 44px hit area so they look like navigation, at every width, under the hero and the outro.
+   Both rows stay left-aligned with the copy above them. */
+.service-hero-also::before {
+  content: "Other services";
+  display: block;
+  margin-top: 2rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .service-hero-also ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem 1.15rem;
-  margin-top: 1.5rem;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .service-hero-also a {
-  /* Pad the hit area to ~44px tall; the negative margin keeps the visual spacing unchanged. */
-  display: inline-block;
-  margin: -0.75rem -0.4rem;
-  padding: 0.75rem 0.4rem;
-  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--fg) 26%, transparent);
+  border-radius: 999px;
+  color: var(--fg);
   font-size: 0.92rem;
+  transition: border-color 0.2s ease;
 }
 
 .service-hero-also a:hover,
 .service-hero-also a:focus-visible {
-  color: var(--fg);
-}
-
-/* On a phone three bare words under the CTA read as stray text. Label the row and draw the links
-   as chips with a 44px hit area so they look like navigation. Desktop keeps the quiet text row. */
-@media (max-width: 639px) {
-  .service-hero-also::before {
-    content: "Other services";
-    display: block;
-    margin-top: 2rem;
-    color: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  .service-hero-also ul {
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-  }
-
-  .service-hero-also a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.75rem;
-    margin: 0;
-    padding: 0 1.1rem;
-    border: 1px solid color-mix(in srgb, var(--fg) 26%, transparent);
-    border-radius: 999px;
-    color: var(--fg);
-  }
-
-  .service-hero [data-service-actions] {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* Only the hero row is centered; the closing section's row sits under left-aligned copy. */
-  .service-hero-also[data-service-siblings] {
-    text-align: center;
-  }
-
-  .service-hero-also[data-service-siblings] ul {
-    justify-content: center;
-  }
+  border-color: var(--accent);
 }
 
 .service-hero-stage {
@@ -1639,8 +1611,10 @@ button,
     display: block;
   }
 
+  /* The title lines are authored breaks; a 9ch cap split "in the real world." and left
+     "in the" alone on a line. */
   .projects-title {
-    max-width: 9ch;
+    max-width: none;
   }
 
   .service-title {
@@ -2351,8 +2325,8 @@ html.dark .svgl-invert-dark,
   background: linear-gradient(
     to bottom,
     transparent,
-    color-mix(in srgb, var(--accent) 14%, transparent) 85%,
-    color-mix(in srgb, var(--accent) 70%, transparent) 99%,
+    color-mix(in srgb, var(--accent) 12%, transparent) 85%,
+    color-mix(in srgb, var(--accent) 35%, transparent) 99%,
     transparent
   );
 }
@@ -2418,6 +2392,23 @@ html.dark .svgl-invert-dark,
   --accent-strong: #b32d6e;
   --accent-readable: #ad2667;
   --accent-foreground: #fdf6e3;
+}
+
+/*
+ * Brand teal is the one primary color site-wide. The scope sits outside the tone
+ * element, so these resolve to the site accent for the current theme and inherit down;
+ * [data-brand-cta] then points a primary button's accent tokens back at them.
+ */
+.industry-brand-scope {
+  --brand-accent: var(--accent);
+  --brand-accent-strong: var(--accent-strong);
+  --brand-accent-foreground: var(--accent-foreground);
+}
+
+[data-industry-tone] [data-brand-cta] {
+  --accent: var(--brand-accent);
+  --accent-strong: var(--brand-accent-strong);
+  --accent-foreground: var(--brand-accent-foreground);
 }
 
 .dark [data-industry-tone="green"],

@@ -99,9 +99,9 @@ export function BookingAgentWebAdminCapture() {
         <div className="ad-main">
           <div className="ad-col">
             <div className="ad-top">
-              <h1>
+              <div data-h="1">
                 {"Conversations"}
-              </h1>
+              </div>
               <span className="tag w">
                 {"Sample data"}
               </span>

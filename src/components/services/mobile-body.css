@@ -1,7 +1,7 @@
 .mobile-body {
   max-width: var(--container-7xl); /* site container; see globals.css */
   margin: 0 auto;
-  padding: 0 1.25rem 2.5rem;
+  padding: 0 1.5rem 2.5rem;
 }
 
 /* ---------- Sticky on-page nav ---------- */
@@ -71,6 +71,21 @@
   color: var(--fg);
 }
 
+/* Scroll-spy: the chapter under the reading line (see toc-spy.ts). */
+.mobile-toc ol a[aria-current="location"] {
+  color: var(--accent-readable);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.45em;
+}
+
+/* Wraps the project link so it can carry data-inline-cta. */
+.mobile-toc-cta {
+  display: flex;
+  flex-shrink: 0;
+}
+
 .mobile-toc-link {
   display: inline-flex;
   flex-shrink: 0;
@@ -78,14 +93,17 @@
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0 1.1rem;
+  /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: transparent;
+  color: var(--fg);
   font-size: 0.86rem;
   font-weight: 600;
   text-decoration: none;
   transition:
     background 0.2s ease,
+    border-color 0.2s ease,
     transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -96,7 +114,8 @@
 }
 
 .mobile-toc-link:hover {
-  background: var(--accent-strong);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
 }
 
 .mobile-toc-link:hover svg {
@@ -119,10 +138,33 @@
   scroll-margin-top: calc(var(--site-header-bottom, 5rem) + 5rem);
 }
 
+/* Numbered chapter kicker, matching the web, cloud, and data pages. */
+.mobile-chapter-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+  color: var(--accent-readable);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.mobile-chapter-index {
+  font-variant-numeric: tabular-nums;
+}
+
+.mobile-chapter-rule {
+  width: 2.25rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
 .mobile-bezel {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 28px 50px -24px rgb(7 54 66 / 0.45);
+    0 28px 50px -24px rgb(var(--shadow-color) / 0.45);
 }
 
 .mobile-sync {
@@ -183,7 +225,7 @@
   background: var(--bg);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
-    0 24px 40px -24px rgb(7 54 66 / 0.4);
+    0 24px 40px -24px rgb(var(--shadow-color) / 0.4);
 }
 
 .mobile-browser-bar {
@@ -371,7 +413,7 @@
   background: var(--bg);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 28px 50px -24px rgb(7 54 66 / 0.45);
+    0 28px 50px -24px rgb(var(--shadow-color) / 0.45);
 }
 
 .mobile-car-road {
@@ -706,17 +748,17 @@
   }
 
   /* Fits the unscaled phone pane (~29rem) so its top isn't clipped, and bleeds
-     through .mobile-body's 2rem gutter so side panes crop at the screen edge. */
+     through .mobile-body's 1.5rem gutter so side panes crop at the screen edge. */
   .mobile-sync {
     height: 30rem;
-    margin-inline: -2rem;
+    margin-inline: -1.5rem;
   }
 
   /* Move the horizontal clip box out to the screen edge so the bleeding sync
      stage isn't cut at the gutter; the padding keeps chapters in the column. */
   .mobile-body-scroll {
-    margin-inline: -2rem;
-    padding-inline: 2rem;
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
   }
 
   .mobile-sync-pane.is-web {
@@ -751,7 +793,7 @@
   }
 
   .mobile-body {
-    padding: 0 1.25rem 2rem;
+    padding-bottom: 2rem;
   }
 
   .mobile-toc {
@@ -854,13 +896,6 @@
 
   .mobile-hw-stage {
     padding: 1rem 1.5rem;
-  }
-}
-
-@media (min-width: 640px) {
-  .mobile-body {
-    padding-left: 2rem;
-    padding-right: 2rem;
   }
 }
 

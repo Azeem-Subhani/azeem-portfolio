@@ -206,9 +206,9 @@ function collectCopy(column: HTMLElement, title: HTMLElement) {
 }
 
 function gatherBlocks(root: HTMLElement) {
+  // The closer's heading is an h2.font-display too, so this also covers it.
   const titles = [
     ...root.querySelectorAll<HTMLElement>("h2.font-display"),
-    ...root.querySelectorAll<HTMLElement>("[data-project-closer] > p.font-display"),
   ].filter((el) => !inSkip(el) && !el.classList.contains("sr-only"));
 
   const blocks = titles.flatMap((title) => {

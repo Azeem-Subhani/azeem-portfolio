@@ -91,19 +91,23 @@ export function ContactPageContent() {
   }, []);
 
   return (
-    <section
-      ref={pageRef}
-      aria-labelledby="contact-title"
-      className="relative mx-auto max-w-7xl overflow-hidden px-6 pb-24 pt-32 sm:pt-40"
-    >
-      <div
-        className="pointer-events-none absolute -right-24 top-20 size-80 rounded-full bg-accent/10 blur-3xl"
-        aria-hidden="true"
-      />
+    // Full-bleed clip: the glow can spill past the content column and fade out at the
+    // viewport edge instead of being cut by the section, without adding a horizontal scroll.
+    <div className="relative overflow-x-clip">
+      <section
+        ref={pageRef}
+        aria-labelledby="contact-title"
+        className="relative mx-auto max-w-7xl px-6 pb-24 pt-32 sm:pt-40"
+      >
+        <div
+          className="pointer-events-none absolute -right-24 top-20 size-80 rounded-full bg-accent/10 blur-3xl"
+          aria-hidden="true"
+        />
 
-      <div className="relative grid gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(32rem,1.2fr)] lg:gap-20">
-        <div className="flex flex-col justify-between gap-12">
-          <div>
+        {/* DOM order is intro, form, direct line, so phones reach the form first; from lg the
+            grid places the direct line under the intro and the form beside both. */}
+        <div className="relative grid gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(32rem,1.2fr)] lg:grid-rows-[auto_1fr] lg:gap-x-20 lg:gap-y-12">
+          <div className="lg:col-start-1 lg:row-start-1">
             <p
               data-contact-availability
               className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.16em] text-accent-readable"
@@ -113,7 +117,7 @@ export function ContactPageContent() {
             </p>
             <h1
               id="contact-title"
-              className="mt-6 max-w-xl text-balance font-display text-[clamp(3.5rem,7vw,7rem)] font-normal leading-[0.95] tracking-[-0.045em] sm:leading-[0.86]"
+              className="mt-6 max-w-xl text-balance font-display text-[clamp(3.5rem,7vw,7rem)] font-normal leading-[0.95] tracking-[-0.03em]"
             >
               {titleLines.map((line, index) => (
                 <span
@@ -136,7 +140,29 @@ export function ContactPageContent() {
             </p>
           </div>
 
-          <div className="border-t border-border pt-6">
+          <div className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1">
+            <div data-contact-form-intro className="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-medium">Start a conversation</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  A few details are enough to get started.
+                </p>
+              </div>
+              <div className="hidden items-center gap-2 text-right text-xs text-muted-foreground sm:flex">
+                <Clock3 aria-hidden="true" className="size-4 text-accent" />
+                Usually replies within 2 days
+              </div>
+            </div>
+            <div data-contact-form>
+              <ContactForm />
+            </div>
+            <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground sm:hidden">
+              <Clock3 aria-hidden="true" className="size-3.5 text-accent" />
+              Usually replies within 2 days
+            </p>
+          </div>
+
+          <div className="border-t border-border pt-6 lg:col-start-1 lg:row-start-2 lg:self-end">
             <p className="text-sm font-medium">Prefer a direct line?</p>
             <ul className="mt-5 flex flex-col gap-4">
               {directLinks.map((item) => (
@@ -180,29 +206,7 @@ export function ContactPageContent() {
             </div>
           </div>
         </div>
-
-        <div className="relative">
-          <div data-contact-form-intro className="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-medium">Start a conversation</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                A few details are enough to get started.
-              </p>
-            </div>
-            <div className="hidden items-center gap-2 text-right text-xs text-muted-foreground sm:flex">
-              <Clock3 aria-hidden="true" className="size-4 text-accent" />
-              Usually replies within 2 days
-            </div>
-          </div>
-          <div data-contact-form>
-            <ContactForm />
-          </div>
-          <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground sm:hidden">
-            <Clock3 aria-hidden="true" className="size-3.5 text-accent" />
-            Usually replies within 2 days
-          </p>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

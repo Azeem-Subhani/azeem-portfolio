@@ -8,7 +8,7 @@
   --data-hero-core-ink: var(--fg);
   --data-hero-cyan: color-mix(in srgb, var(--accent-secondary) 78%, var(--accent));
   --data-hero-teal: var(--accent);
-  --data-hero-violet: #9b7bea;
+  --data-hero-violet: var(--violet);
   position: relative;
   width: 100%;
   max-width: 46rem;
@@ -378,9 +378,16 @@
     transform: translateX(calc(-43 / 700 * 100%));
   }
 
+  /* The 700-unit viewBox renders at about 0.49x in a 390px phone column, so these sizes land the
+     node labels and captions near 11px on screen. The caption drops to clear the larger label. */
   .data-hero-label {
-    font-size: 13px;
-    letter-spacing: 0.12em;
+    font-size: 23px;
+    letter-spacing: 0.08em;
+  }
+
+  .data-hero-caption {
+    font-size: 23px;
+    transform: translateY(10px);
   }
 }
 

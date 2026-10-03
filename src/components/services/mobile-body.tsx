@@ -17,6 +17,7 @@ import {
 } from "@/components/services/mobile-surfaces";
 import { useMobileBodyMotion } from "@/components/services/mobile-motion";
 import { ServiceTocGlass } from "@/components/services/service-toc-glass";
+import { useActiveChapter } from "@/components/services/toc-spy";
 import { cn } from "@/lib/utils";
 import type { ServicePageContent, ServiceSection } from "@/types/content";
 
@@ -30,6 +31,8 @@ const CHAPTERS = [
   { id: "mobile-platforms", index: "05", label: "Where it runs" },
 ] as const;
 
+const CHAPTER_IDS = CHAPTERS.map((chapter) => chapter.id);
+
 function ofKind<K extends ServiceSection["kind"]>(
   sections: ServiceSection[],
   kind: K,
@@ -40,17 +43,23 @@ function ofKind<K extends ServiceSection["kind"]>(
 }
 
 function ChapterHead({
-  id,
+  chapter,
   title,
   copy,
 }: {
-  id: string;
+  chapter: (typeof CHAPTERS)[number];
   title: string;
   copy?: string;
 }) {
   return (
-    <header className="service-band-head">
-      <h2 id={id} data-mobile-title className="service-band-title">
+    <header className="service-band-head mobile-chapter-head">
+      {/* Same numbered kicker as the web, cloud, and data chapters, labelled to match the TOC. */}
+      <p className="mobile-chapter-kicker" aria-hidden="true">
+        <span className="mobile-chapter-index">{chapter.index}</span>
+        <span className="mobile-chapter-rule" />
+        <span>{chapter.label}</span>
+      </p>
+      <h2 id={chapter.id} data-mobile-title className="service-band-title">
         {title}
       </h2>
       {copy ? (
@@ -69,7 +78,7 @@ function WhyChapter({
 }) {
   return (
     <section aria-labelledby="mobile-why" data-mobile-chapter className="mobile-chapter">
-      <ChapterHead id="mobile-why" title={section.title} copy={section.copy} />
+      <ChapterHead chapter={CHAPTERS[0]} title={section.title} copy={section.copy} />
       <div data-mobile-stage data-device="sync">
         <SyncStage />
       </div>
@@ -92,7 +101,7 @@ function StacksChapter({
 }) {
   return (
     <section aria-labelledby="mobile-stacks" data-mobile-chapter className="mobile-chapter">
-      <ChapterHead id="mobile-stacks" title={section.title} copy={section.copy} />
+      <ChapterHead chapter={CHAPTERS[1]} title={section.title} copy={section.copy} />
       <div data-mobile-stage data-device="stacks" className="mobile-stack-pair">
         {section.items.map((item, index) => (
           <article key={item.title} className="mobile-stack">
@@ -123,7 +132,7 @@ function GlassChapter({
 
   return (
     <section aria-labelledby="mobile-glass" data-mobile-chapter className="mobile-chapter">
-      <ChapterHead id="mobile-glass" title={section.title} copy={section.copy} />
+      <ChapterHead chapter={CHAPTERS[2]} title={section.title} copy={section.copy} />
       <div className="mobile-glass-list">
         {section.groups.map((group, index) => {
           const Visual = visuals[index];
@@ -185,7 +194,7 @@ function HardwareChapter({
 
   return (
     <section aria-labelledby="mobile-hardware" data-mobile-chapter className="mobile-chapter">
-      <ChapterHead id="mobile-hardware" title={section.title} copy={section.copy} />
+      <ChapterHead chapter={CHAPTERS[3]} title={section.title} copy={section.copy} />
       <div className="mobile-hw">
         <div data-mobile-stage data-device="hardware">
           <HardwarePhone active={active} />
@@ -273,7 +282,7 @@ function PlatformsChapter({
 
   return (
     <section aria-labelledby="mobile-platforms" data-mobile-chapter className="mobile-chapter">
-      <ChapterHead id="mobile-platforms" title={section.title} copy={section.copy} />
+      <ChapterHead chapter={CHAPTERS[4]} title={section.title} copy={section.copy} />
       <div data-mobile-list className="mobile-os-grid">
         {section.groups.map((group, index) => (
           <OsShelf
@@ -294,6 +303,7 @@ export function MobileServiceBody({ service }: { service: ServicePageContent }) 
   const [platforms] = ofKind(service.sections, "platforms");
   const coverage = ofKind(service.sections, "coverage");
   const rootRef = useMobileBodyMotion<HTMLDivElement>();
+  const activeChapter = useActiveChapter(CHAPTER_IDS);
 
   return (
     <div ref={rootRef} className="mobile-body">
@@ -305,15 +315,21 @@ export function MobileServiceBody({ service }: { service: ServicePageContent }) 
         <ol>
           {CHAPTERS.map((chapter) => (
             <li key={chapter.id}>
-              <a href={`#${chapter.id}`}>
+              <a
+                href={`#${chapter.id}`}
+                aria-current={activeChapter === chapter.id ? "location" : undefined}
+              >
                 <span aria-hidden="true">{chapter.index}</span> {chapter.label}
               </a>
             </li>
           ))}
         </ol>
-        <Link href="/projects/sports-team-app" className="mobile-toc-link">
-          See it live: Sports Team App <ArrowRight aria-hidden="true" />
-        </Link>
+        {/* A project link, not a contact CTA; the mobile contact bar still steps aside for it. */}
+        <div className="mobile-toc-cta" data-inline-cta>
+          <Link href="/projects/sports-team-app" className="mobile-toc-link">
+            See it live: Sports Team App <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
       </nav>
       <div className="mobile-body-scroll overflow-x-clip">
         {capabilities ? <WhyChapter section={capabilities} /> : null}

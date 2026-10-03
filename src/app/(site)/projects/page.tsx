@@ -31,7 +31,7 @@ export default function ProjectsPage() {
           className="projects-grid-backdrop pointer-events-none absolute inset-x-0 top-0 h-[30rem] overflow-hidden"
         />
 
-        <div className="relative mx-auto max-w-[calc(var(--container-7xl)+2.5rem)] px-5 pb-24 pt-32 sm:px-8 lg:pb-32 lg:pt-40">
+        <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-32 lg:pb-32 lg:pt-40">
           <ProjectsIntro />
 
           <dl className="projects-proof mt-14 lg:mt-20">
@@ -57,7 +57,7 @@ export default function ProjectsPage() {
       </section>
 
       <div data-catalog-outro className="projects-outro relative z-10">
-        <div className="mx-auto flex max-w-[calc(var(--container-7xl)+2.5rem)] flex-col gap-6 px-5 py-20 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:py-28">
+        <div className="mx-auto flex max-w-7xl flex-col items-start gap-8 px-6 py-20 lg:py-28">
           <p className="max-w-xl text-balance font-display text-[clamp(2rem,4vw,3.75rem)] leading-[0.98]">
             Have a product that needs to work harder?
           </p>
