@@ -76,7 +76,7 @@
   gap: 1.25rem;
   margin: 2.5rem 0 -1rem;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: transparent;
 }
 
@@ -104,7 +104,7 @@
   gap: 0.45rem;
   min-height: 2.5rem;
   padding: 0.55rem 0.85rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 500;
@@ -155,7 +155,7 @@
   padding: 0 1.1rem;
   /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
   border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: transparent;
   color: var(--fg);
   font-size: 0.86rem;
@@ -275,7 +275,7 @@
 .web-seo-bar > span {
   width: 0.48rem;
   height: 0.48rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 22%, transparent);
 }
 
@@ -335,7 +335,7 @@
   width: min(36rem, 72%);
   height: 16rem;
   transform: translate(-50%, -50%);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--accent) 24%, transparent);
   filter: blur(72px);
   pointer-events: none;
@@ -385,7 +385,7 @@
   width: 0.6rem;
   height: 0.6rem;
   margin-top: -0.3rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 80%, transparent);
   opacity: 0;
@@ -443,7 +443,7 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--accent) 18%, var(--surface));
   color: var(--accent-readable);
   font-size: 0.6875rem;
@@ -459,7 +459,7 @@
   content: "";
   width: 0.35rem;
   height: 0.35rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: currentColor;
 }
 
@@ -651,7 +651,7 @@
   display: block;
   margin-top: 0.7rem;
   padding: 0.45rem 0.6rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   color: var(--accent-foreground);
   font-size: 0.6875rem;
@@ -749,7 +749,7 @@
   display: inline-block;
   margin-top: 0.85rem;
   padding: 0.4rem 0.85rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   color: var(--accent-foreground);
   cursor: pointer;
@@ -808,7 +808,7 @@
 .web-edge li span {
   width: 0.45rem;
   height: 0.45rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   transition: background 0.25s ease;
 }
@@ -881,7 +881,7 @@
 
 .web-migrate-pane {
   overflow: hidden;
-  border-radius: 1.25rem;
+  border-radius: var(--shape-radius-lg);
   background: var(--surface);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 10%, transparent);
 }
@@ -903,7 +903,7 @@
 
 .web-migrate-bar i {
   padding: 0.12rem 0.4rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--accent-readable);
   font-style: normal;
@@ -943,7 +943,7 @@
 .web-migrate-dot {
   width: 0.42rem;
   height: 0.42rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--muted);
 }
 
@@ -1109,7 +1109,7 @@
 }
 
 .web-proto-tab-path {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.76rem;
   opacity: 0.8;
 }
@@ -1121,7 +1121,7 @@
 
 .web-proto-tab-status {
   padding: 0.15rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 8%, transparent);
   font-size: 0.72rem;
   font-weight: 600;
@@ -1196,7 +1196,7 @@
   gap: 0.6rem;
   min-height: 2.9rem;
   padding: 0 1.4rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   color: var(--accent-foreground);
   cursor: pointer;
@@ -1323,7 +1323,7 @@
   height: 3px;
   margin: 0.3em 0 0.2em;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 10%, transparent);
 }
 
@@ -1342,7 +1342,7 @@
 .web-proto-row strong {
   padding: 0.3em 0.55em;
   border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--accent-readable);
   font-size: 0.9em;
   font-weight: 600;
@@ -1386,7 +1386,7 @@
   display: inline-block;
   margin-top: 0.45em;
   padding: 0.15em 0.5em;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--signal) 16%, transparent);
   color: color-mix(in srgb, var(--signal) 80%, var(--fg));
   font-size: 0.64em;
@@ -1399,7 +1399,7 @@
   justify-content: space-between;
   gap: 0.75em;
   padding: 0.3em 0.3em 0.3em 0.8em;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   color: var(--accent-foreground);
   font-size: 0.85em;
@@ -1413,7 +1413,7 @@
 
 .web-proto-cta strong {
   padding: 0.45em 0.9em;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--accent-foreground) 14%, transparent);
   font-size: 0.85em;
   font-weight: 600;
@@ -1456,7 +1456,7 @@
 .web-proto-legend i {
   width: 0.9rem;
   height: 3px;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
 }
 
 .web-proto-legend .is-a i {
@@ -1643,7 +1643,7 @@
 
 .web-seo-grid code {
   color: var(--fg);
-  font-family: var(--font-h2), sans-serif;
+  font-family: var(--font-code);
   font-size: 0.88rem;
 }
 
@@ -1821,7 +1821,7 @@
     align-items: stretch;
     gap: 0.6rem;
     margin: 1.75rem 0 0;
-    border-radius: 1.25rem;
+    border-radius: var(--shape-radius-lg);
     padding: 1rem;
   }
 

@@ -62,7 +62,7 @@ function MonoLabel({ children, className }: { children: ReactNode; className?: s
   return (
     <span
       className={cn(
-        "font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground",
+        "font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground",
         className,
       )}
     >
@@ -118,7 +118,7 @@ export function IndustryCourse() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: a learner dashboard where four course modules unlock and complete in
@@ -133,21 +133,21 @@ export function IndustryCourse() {
             </span>
             Course progress
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
 
         {/* Course header: overall ring fills as each module's bar does. */}
-        <div className="mt-4 flex items-center gap-4 rounded-xl border border-border bg-background/70 p-3">
+        <div className="mt-4 flex items-center gap-4 rounded-md border border-border bg-background/70 p-3">
           <div className="relative size-[4.5rem] shrink-0">
             <svg viewBox="0 0 80 80" className="size-full -rotate-90">
-              <circle cx="40" cy="40" r={RING_RADIUS} className="fill-none stroke-[var(--border)]" strokeWidth="6" />
+              <circle cx="40" cy="40" r={RING_RADIUS} className="fill-none stroke-border" strokeWidth="6" />
               <circle
                 cx="40"
                 cy="40"
                 r={RING_RADIUS}
-                className="fill-none stroke-[var(--accent)] transition-[stroke-dashoffset] duration-700 ease-out"
+                className="fill-none stroke-accent transition-[stroke-dashoffset] duration-700 ease-out"
                 strokeWidth="6"
                 strokeLinecap="round"
                 strokeDasharray={RING_CIRCUMFERENCE}
@@ -165,7 +165,7 @@ export function IndustryCourse() {
               {done ? (
                 <span
                   className={cn(
-                    "flex items-center gap-1 rounded-full border border-accent/50 px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.1em] text-[var(--accent-readable)]",
+                    "flex items-center gap-1 rounded-full border border-accent/50 px-2 py-0.5 font-label text-3xs uppercase tracking-[0.12em] text-accent-readable",
                     certIn && "industry-course-in",
                   )}
                 >
@@ -182,7 +182,7 @@ export function IndustryCourse() {
         </div>
 
         {/* Modules: locked, then in progress, then done, strictly in order. */}
-        <ul className="mt-3 divide-y divide-border rounded-xl border border-border bg-background/70">
+        <ul className="mt-3 divide-y divide-border rounded-md border border-border bg-background/70">
           {MODULES.map((module, index) => {
             const { status, progress } = modules[index];
             return (
@@ -217,7 +217,7 @@ export function IndustryCourse() {
                     style={{ width: `${progress}%` }}
                   />
                 </span>
-                <span className="w-8 shrink-0 text-right font-mono text-[0.6rem] tabular-nums text-muted-foreground">
+                <span className="w-8 shrink-0 text-right font-label text-3xs tabular-nums text-muted-foreground">
                   {progress}%
                 </span>
               </li>
@@ -226,13 +226,13 @@ export function IndustryCourse() {
         </ul>
 
         {/* Quick check for the current module: an option is picked, then marked correct. */}
-        <div className="mt-3 rounded-xl border border-border bg-background/70 p-3">
+        <div className="mt-3 rounded-md border border-border bg-background/70 p-3">
           <div className="flex items-center justify-between gap-3">
             <MonoLabel className="truncate">Quick check</MonoLabel>
             <MonoLabel
               className={cn(
                 "shrink-0 transition-colors duration-300",
-                quiz === "correct" && "text-[var(--accent-readable)]",
+                quiz === "correct" && "text-accent-readable",
               )}
             >
               {quiz === "correct" ? "Correct" : quiz === "selected" ? "Checking" : "Answering"}
@@ -252,7 +252,7 @@ export function IndustryCourse() {
                   className={cn(
                     "flex min-w-0 items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-xs transition-colors duration-300",
                     correct
-                      ? "border-accent bg-accent/15 text-[var(--accent-readable)]"
+                      ? "border-accent bg-accent/15 text-accent-readable"
                       : picked
                         ? "border-accent/40 bg-accent/5"
                         : "border-border text-muted-foreground",

@@ -110,7 +110,7 @@ export function ContactPageContent() {
           <div className="lg:col-start-1 lg:row-start-1">
             <p
               data-contact-availability
-              className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.16em] text-accent-readable"
+              className="flex items-center gap-3 label-eyebrow text-accent-readable"
             >
               <span className="size-2 rounded-full bg-accent" aria-hidden="true" />
               Available for select projects

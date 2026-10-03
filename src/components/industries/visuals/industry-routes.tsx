@@ -229,7 +229,7 @@ export function IndustryRoutes() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: three delivery vehicles looping routes from a depot on a schematic map,
@@ -244,12 +244,12 @@ export function IndustryRoutes() {
             </span>
             Fleet
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-xl border border-border bg-background/70">
+        <div className="mt-4 overflow-hidden rounded-md border border-border bg-background/70">
           <svg viewBox={`0 0 ${MAP_W} ${MAP_H}`} className="block h-auto w-full">
             {/* Faint survey grid. */}
             <g className="stroke-foreground/[0.06]" strokeWidth={1}>
@@ -276,7 +276,7 @@ export function IndustryRoutes() {
               ))}
             </g>
             <g
-              className="fill-none stroke-[var(--accent)] opacity-40"
+              className="fill-none stroke-accent opacity-40"
               strokeWidth={1}
               strokeDasharray="3 4"
               strokeLinejoin="round"
@@ -293,13 +293,13 @@ export function IndustryRoutes() {
               width={14}
               height={14}
               rx={3}
-              className="fill-[color-mix(in_srgb,var(--accent)_22%,var(--background))] stroke-[var(--accent)]"
+              className="fill-[color-mix(in_srgb,var(--accent)_22%,var(--background))] stroke-accent"
               strokeWidth={1.5}
             />
             <text
               x={DEPOT[0] + 10}
               y={DEPOT[1] - 8}
-              className="fill-[var(--muted-foreground)] font-mono uppercase"
+              className="fill-muted-foreground font-label uppercase"
               fontSize={7}
               letterSpacing={1}
             >
@@ -319,7 +319,7 @@ export function IndustryRoutes() {
                         cx={stop.at[0]}
                         cy={stop.at[1]}
                         r={5}
-                        className="industry-routes-pulse fill-none stroke-[var(--accent)]"
+                        className="industry-routes-pulse fill-none stroke-accent"
                         strokeWidth={1.5}
                       />
                     ) : null}
@@ -329,8 +329,8 @@ export function IndustryRoutes() {
                       r={4.5}
                       strokeWidth={1.5}
                       className={cn(
-                        "stroke-[var(--accent)] transition-[fill] duration-500",
-                        done ? "fill-[var(--accent)]" : "fill-[var(--background)]",
+                        "stroke-accent transition-[fill] duration-500",
+                        done ? "fill-accent" : "fill-background",
                       )}
                     />
                     <text
@@ -338,8 +338,8 @@ export function IndustryRoutes() {
                       y={stop.label[1]}
                       textAnchor={stop.label[0] > stop.at[0] ? "start" : "middle"}
                       className={cn(
-                        "font-mono transition-[fill] duration-500",
-                        done ? "fill-[var(--accent-readable)]" : "fill-[var(--muted-foreground)]",
+                        "font-label transition-[fill] duration-500",
+                        done ? "fill-accent-readable" : "fill-muted-foreground",
                       )}
                       fontSize={8}
                     >
@@ -357,8 +357,8 @@ export function IndustryRoutes() {
                 data-route-vehicle=""
                 transform={vehicleTransform(i, baseDist[i])}
               >
-                <circle r={12} className="fill-[var(--accent)] opacity-10" />
-                <circle r={7.5} className="fill-[var(--accent)] opacity-20" />
+                <circle r={12} className="fill-accent opacity-10" />
+                <circle r={7.5} className="fill-accent opacity-20" />
                 <g data-route-body="" transform={bodyTransform(i, baseDist[i])}>
                   <rect
                     x={vehicle.truck ? -6.5 : -5}
@@ -366,14 +366,14 @@ export function IndustryRoutes() {
                     width={vehicle.truck ? 13 : 10}
                     height={vehicle.truck ? 7 : 6}
                     rx={2}
-                    className="fill-[var(--accent)] stroke-[var(--background)]"
+                    className="fill-accent stroke-background"
                     strokeWidth={1}
                   />
                 </g>
                 <text
                   y={-10}
                   textAnchor="middle"
-                  className="fill-[var(--foreground)] font-mono"
+                  className="fill-foreground font-label"
                   fontSize={7}
                 >
                   {vehicle.tag}
@@ -388,7 +388,7 @@ export function IndustryRoutes() {
             const s = shown[i];
             const nextStop = s.passed < vehicle.stops.length ? `Stop ${vehicle.stops[s.passed]}` : "Depot";
             return (
-              <li key={vehicle.tag} className="rounded-xl border border-border bg-background/70 px-3 py-2">
+              <li key={vehicle.tag} className="rounded-md border border-border bg-background/70 px-3 py-2">
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center gap-2.5">
                     <span
@@ -398,13 +398,13 @@ export function IndustryRoutes() {
                       )}
                     />
                     <span className="text-sm leading-none">{vehicle.name}</span>
-                    <span className="truncate font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="truncate font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
                       Next <span className="text-foreground/70">{nextStop}</span>
                     </span>
                   </span>
                   <span className="flex shrink-0 items-baseline gap-1">
                     <span className="font-display text-lg leading-none tabular-nums">{s.eta}</span>
-                    <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
                       min
                     </span>
                   </span>
@@ -423,7 +423,7 @@ export function IndustryRoutes() {
 
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span>Depot to stop to depot</span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-accent-readable">
             {delivered}/{totalStops} delivered
           </span>
         </div>

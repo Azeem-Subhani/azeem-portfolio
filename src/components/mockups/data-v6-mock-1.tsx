@@ -463,7 +463,7 @@ export function StoreOfRecordVisual({
 
           {/* The record itself. Payment status changes on this row, not a copy. */}
           <div
-            className="overflow-hidden rounded-2xl border"
+            className="overflow-hidden rounded-[1rem] border"
             style={{ borderColor: hairline(12), backgroundColor: tone.well }}
           >
             <div

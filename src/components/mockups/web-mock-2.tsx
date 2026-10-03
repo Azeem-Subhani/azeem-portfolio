@@ -172,16 +172,16 @@ function BrowserChrome({
     <div
       className={
         embedded
-          ? "relative overflow-hidden rounded-xl bg-background ring-1 ring-inset ring-border/70"
-          : "relative overflow-visible rounded-xl border border-border bg-background shadow-[0_0_0_1px_rgb(42_161_152/0.18),0_28px_56px_-26px_rgb(7_54_66/0.48)]"
+          ? "relative overflow-hidden rounded-[0.75rem] bg-background ring-1 ring-inset ring-border/70"
+          : "relative overflow-visible rounded-[0.75rem] border border-border bg-background shadow-[0_0_0_1px_rgb(42_161_152/0.18),0_28px_56px_-26px_rgb(7_54_66/0.48)]"
       }
     >
       {!embedded ? (
-        <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-foreground/6" />
+        <div className="pointer-events-none absolute inset-0 rounded-[0.75rem] ring-1 ring-inset ring-foreground/6" />
       ) : null}
       <div
         className={`flex items-center gap-2 border-b border-border/80 bg-surface px-3 py-2.5 ${
-          embedded ? "rounded-t-xl" : ""
+          embedded ? "rounded-t-[0.75rem]" : ""
         }`}
       >
         <div className="flex gap-1.5">
@@ -307,7 +307,7 @@ export function VenueBrowserVisual({
                 custom={i}
                 variants={ghostIn}
               >
-                <div className="overflow-hidden rounded-xl border border-border/50 bg-surface/70 shadow-[0_16px_40px_-24px_rgb(7_54_66/0.35)]">
+                <div className="overflow-hidden rounded-[0.75rem] border border-border/50 bg-surface/70 shadow-[0_16px_40px_-24px_rgb(7_54_66/0.35)]">
                   <div className="flex gap-1.5 border-b border-border/40 px-3 py-2">
                     <span className="size-2 rounded-full bg-muted-foreground/25" />
                     <span className="size-2 rounded-full bg-muted-foreground/20" />
@@ -326,7 +326,7 @@ export function VenueBrowserVisual({
         >
           <BrowserChrome venue={venue} embedded={embedded}>
             <motion.div
-              className={`overflow-hidden bg-surface ${embedded ? "p-3 sm:p-3.5" : "rounded-b-xl p-3 sm:p-3.5"}`}
+              className={`overflow-hidden bg-surface ${embedded ? "p-3 sm:p-3.5" : "rounded-b-[0.75rem] p-3 sm:p-3.5"}`}
               variants={screen}
             >
               {!embedded ? (
@@ -357,7 +357,7 @@ export function VenueBrowserVisual({
               ) : null}
 
               <motion.div
-                className={`relative rounded-2xl bg-background ${embedded ? "overflow-visible" : "mt-3 overflow-hidden"}`}
+                className={`relative rounded-[1rem] bg-background ${embedded ? "overflow-visible" : "mt-3 overflow-hidden"}`}
                 variants={pop}
               >
                 <div
@@ -395,7 +395,7 @@ export function VenueBrowserVisual({
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: "spring", stiffness: 420, damping: 20 }}
-                      className={`flex size-10 items-center justify-center rounded-xl text-xs font-semibold ${venue.shell}`}
+                      className={`flex size-10 items-center justify-center rounded-[0.75rem] text-xs font-semibold ${venue.shell}`}
                     >
                       {venue.mark}
                     </motion.span>
@@ -420,7 +420,7 @@ export function VenueBrowserVisual({
                             ease: settle,
                             delay: slotIndex * 0.06,
                           }}
-                          className="flex items-center justify-between rounded-xl border border-border bg-surface px-3 py-2"
+                          className="flex items-center justify-between rounded-[0.75rem] border border-border bg-surface px-3 py-2"
                         >
                           <div className="flex items-center gap-2.5">
                             <span
@@ -446,7 +446,7 @@ export function VenueBrowserVisual({
                   </AnimatePresence>
 
                   <motion.div
-                    className={`mt-3 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12px] font-medium transition-colors duration-500 ${venue.shell}`}
+                    className={`mt-3 flex items-center justify-center gap-1.5 rounded-[0.75rem] py-2.5 text-[12px] font-medium transition-colors duration-500 ${venue.shell}`}
                     variants={fade}
                   >
                     Pick a session

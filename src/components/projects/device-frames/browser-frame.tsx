@@ -37,7 +37,7 @@ export function BrowserFrame({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-t-xl border border-b-0 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]",
+        "overflow-hidden rounded-t-[0.75rem] border border-b-0 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]",
         darkish
           ? "border-white/[0.08]"
           : cream

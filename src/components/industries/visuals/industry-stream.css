@@ -7,7 +7,7 @@
 
 .industry-stream-blob {
   position: absolute;
-  border-radius: 9999px;
+  border-radius: var(--shape-radius-pill);
   filter: blur(22px);
   will-change: transform;
 }
@@ -45,7 +45,7 @@
   top: 46%;
   width: 34%;
   aspect-ratio: 1;
-  border-radius: 9999px;
+  border-radius: var(--shape-radius-pill);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
   box-shadow: 0 0 40px -6px color-mix(in srgb, var(--accent) 50%, transparent);
   transform: translate(-50%, -50%);

@@ -14,7 +14,7 @@ export function SolutionLink({ link, className }: { link: IndustrySolution["link
       <p
         data-im-after
         className={cn(
-          "inline-flex items-center gap-2 rounded-full border border-dashed border-border px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted-foreground",
+          "inline-flex items-center gap-2 rounded-full border border-dashed border-border px-3 py-1 meta-label text-muted-foreground",
           className,
         )}
       >
@@ -28,7 +28,7 @@ export function SolutionLink({ link, className }: { link: IndustrySolution["link
       data-im-after
       href={link.href}
       className={cn(
-        "group/proof inline-flex items-center gap-2 text-sm font-medium text-[var(--accent-readable)] underline-offset-4 hover:underline",
+        "group/proof inline-flex items-center gap-2 text-sm font-medium text-accent-readable underline-offset-4 hover:underline",
         className,
       )}
     >

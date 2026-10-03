@@ -51,7 +51,7 @@ function SectionHead({
     <div data-im-head className={cn("max-w-2xl", centered && "mx-auto text-center")}>
       <p
         data-im-kicker
-        className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]"
+        className="label-eyebrow text-accent-readable"
       >
         {kicker}
       </p>
@@ -72,7 +72,7 @@ function FeatureChecks({ title, features }: { title: string; features: string[] 
         <li key={feature} data-im-check className="flex items-start gap-2.5 text-sm text-foreground/85">
           <Check
             aria-hidden="true"
-            className="mt-0.5 size-4 shrink-0 text-[var(--accent-readable)]"
+            className="mt-0.5 size-4 shrink-0 text-accent-readable"
             strokeWidth={2}
           />
           {feature}
@@ -152,7 +152,7 @@ export function IndustryHero({
     <div className={cn(centered && "mx-auto max-w-4xl text-center", hero === "split-reverse" && "lg:order-2")}>
       <p
         data-im="hero-fade"
-        className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]"
+        className="label-eyebrow text-accent-readable"
       >
         {industry.kicker}
       </p>
@@ -227,17 +227,17 @@ export function IndustryProof({ industry }: SectionProps) {
       <aside
         data-im-card
         aria-label="About this page"
-        className="mt-20 flex flex-col gap-4 rounded-[var(--shape-radius-lg)] border border-dashed border-accent/50 bg-surface/50 p-6 sm:flex-row sm:items-start sm:gap-5 lg:mt-28"
+        className="mt-20 flex flex-col gap-4 rounded-lg border border-dashed border-accent/50 bg-surface/50 p-6 sm:flex-row sm:items-start sm:gap-5 lg:mt-28"
       >
         <span
           data-im-icon
           aria-hidden="true"
-          className="grid size-11 shrink-0 place-items-center rounded-xl bg-accent/15 text-[var(--accent-readable)]"
+          className="grid size-11 shrink-0 place-items-center rounded-md bg-accent/15 text-accent-readable"
         >
           <Compass className="size-5" strokeWidth={1.6} />
         </span>
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]">
+          <p className="label-eyebrow text-accent-readable">
             Approach page
           </p>
           <p className="mt-2 max-w-3xl leading-7 text-foreground/85">{industry.approachNote}</p>
@@ -369,7 +369,7 @@ export function IndustrySolutions({ industry }: SectionProps) {
                   <div className="flex items-start gap-4 lg:flex-col">
                     <IconMark icon={solution.icon} />
                     <div>
-                      <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="meta-label text-muted-foreground">
                         {index2(index)}
                       </p>
                       <h3 className="mt-1 font-display text-2xl font-normal leading-tight sm:text-[1.75rem]">
@@ -412,7 +412,7 @@ export function IndustrySolutions({ industry }: SectionProps) {
                 <div data-im-card className={cn(flip && "lg:order-1")}>
                   <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "lg:p-8")}>
                     <CardGlow />
-                    <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
+                    <p className="meta-label text-muted-foreground">
                       What it includes
                     </p>
                     <FeatureChecks title={solution.title} features={solution.features} />
@@ -507,7 +507,7 @@ export function IndustryPractices({ industry }: SectionProps) {
 
   const note = (
     <p data-im-head className="mt-8 flex max-w-3xl items-start gap-3 text-sm leading-6 text-muted-foreground">
-      <ShieldCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[var(--accent-readable)]" />
+      <ShieldCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-readable" />
       <span data-im-intro>{industry.practicesNote}</span>
     </p>
   );
@@ -518,7 +518,7 @@ export function IndustryPractices({ industry }: SectionProps) {
     // while the cards themselves stay unclipped for their hover lift and focus rings.
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[var(--shape-radius-lg)]"
+      className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-lg"
     >
       <span
         data-im-scan
@@ -532,7 +532,7 @@ export function IndustryPractices({ industry }: SectionProps) {
     return (
       <section data-im-section className="mt-28 lg:mt-36">
         <SectionHead kicker={kicker} title={industry.practicesTitle} intro={industry.practicesIntro} />
-        <div data-im-scan-zone className="relative mt-12 overflow-hidden rounded-[var(--shape-radius-lg)]">
+        <div data-im-scan-zone className="relative mt-12 overflow-hidden rounded-lg">
           <div data-im-card>
             <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "p-2 hover:translate-y-0 sm:p-4")}>
               <ul className="grid md:grid-cols-2">
@@ -540,18 +540,18 @@ export function IndustryPractices({ industry }: SectionProps) {
                   <li
                     key={practice.title}
                     data-im-check
-                    className="flex gap-4 rounded-xl p-4 transition-colors duration-300 hover:bg-background/60"
+                    className="flex gap-4 rounded-md p-4 transition-colors duration-300 hover:bg-background/60"
                   >
                     <span
                       aria-hidden="true"
-                      className="grid size-8 shrink-0 place-items-center rounded-full bg-accent/15 text-[var(--accent-readable)]"
+                      className="grid size-8 shrink-0 place-items-center rounded-full bg-accent/15 text-accent-readable"
                     >
                       <Check className="size-4" strokeWidth={2.5} />
                     </span>
                     <div>
                       <h3 className="font-display text-2xl font-normal leading-tight">{practice.title}</h3>
                       <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{practice.copy}</p>
-                      <p className="mt-2.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+                      <p className="mt-2.5 meta-label text-accent-readable">
                         {practice.supports}
                       </p>
                     </div>
@@ -583,7 +583,7 @@ export function IndustryPractices({ industry }: SectionProps) {
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{practice.copy}</p>
                 <p
                   data-im-after
-                  className="mt-5 flex items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]"
+                  className="mt-5 flex items-center gap-2 meta-label text-accent-readable"
                 >
                   <ShieldCheck aria-hidden="true" className="size-3.5" strokeWidth={2} />
                   {practice.supports}

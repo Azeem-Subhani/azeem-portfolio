@@ -195,10 +195,13 @@ function bindBlock(
   );
 }
 
+const STATIC_LABEL_CLASSES = ["font-mono", "font-label", "label-eyebrow", "meta-label"];
+
 function collectCopy(column: HTMLElement, title: HTMLElement) {
   return [...column.querySelectorAll<HTMLElement>("p, li, dd, dt")].filter((el) => {
     if (el === title || inSkip(el)) return false;
-    if (el.classList.contains("font-mono")) return false;
+    // Labels and code strings (font-mono, font-label and the label utilities) stay static.
+    if (STATIC_LABEL_CLASSES.some((name) => el.classList.contains(name))) return false;
     if (el.classList.contains("font-display") && el.tagName === "P") return false;
     if (el.tagName === "DT" && !el.classList.contains("font-display")) return false;
     return true;

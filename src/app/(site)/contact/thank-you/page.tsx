@@ -23,7 +23,7 @@ export default function ThankYouPage() {
       <div className="flex size-12 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent">
         <CheckCircle2 aria-hidden="true" className="size-6" />
       </div>
-      <p className="mt-6 font-mono text-xs uppercase tracking-[0.16em] text-accent-readable">
+      <p className="mt-6 label-eyebrow text-accent-readable">
         Message received
       </p>
       {/* Balanced and capped so the line breaks after "Thanks for" rather than orphaning "out." */}

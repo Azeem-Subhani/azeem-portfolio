@@ -125,7 +125,7 @@ export function PrivacyConsent() {
         <aside
           role="dialog"
           aria-labelledby="analytics-consent-title"
-          className="fixed inset-x-3 bottom-3 z-[60] rounded-2xl border border-border bg-background/95 p-5 shadow-2xl shadow-black/15 backdrop-blur-xl sm:inset-x-auto sm:right-6 sm:max-w-sm"
+          className="fixed inset-x-3 bottom-3 z-[60] rounded-md border border-border bg-background/95 p-5 shadow-2xl shadow-black/15 backdrop-blur-xl sm:inset-x-auto sm:right-6 sm:max-w-sm"
         >
           <h2 id="analytics-consent-title" className="text-sm font-medium">
             A small privacy choice

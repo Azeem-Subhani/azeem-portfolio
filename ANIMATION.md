@@ -71,12 +71,17 @@ Nothing in a section should start at the same instant as its heading.
 
 - Service chapters (`service-chapters.tsx`) split the chapter title into lines
   with `SplitText` (`type: "lines"`, `mask: "lines"`, `autoSplit: true`) and
-  rise each line on an 85ms stagger. Body copy starts at 0.45s, chips at 1.0s,
-  and the visual carries a 0.24s delay so it answers the copy instead of racing
-  it. `onSplit` re-applies `progress(1)` when the reveal already ran, because a
+  rise each line on an 85ms stagger. Body copy shares the heading's trigger and
+  starts at 0.2s with a 0.05s stagger, chips at 0.5s, and the visual (own
+  trigger) carries a 0.24s delay so it answers the copy instead of racing it.
+  `onSplit` re-applies `progress(1)` when the reveal already ran, because a
   resize creates new line elements.
-- Feature cards: heading lines first, cards from 0.46s, icons from 0.74s, the
-  sub-line last.
+- Feature cards (`feature-cards.tsx`, the process section): the intro copy
+  reveals first, on its own trigger, so on phones it does not wait for the
+  stage line below it. The stage line then lands its words on a 0.12s stagger
+  and a pulse hops stop to stop, lighting each dot and its detail on arrival.
+  The engagement block runs on a third trigger: heading, tabs from 0.1s, the
+  panel unclips from 0.15s, its word at 0.75s and its rows from 0.85s.
 - Tech stack: headline lines first, body copy from 0.5s, logo loop from its own
   trigger with a 0.15s delay.
 - Contrast with the reference site (fivexlabs), measured for calibration:

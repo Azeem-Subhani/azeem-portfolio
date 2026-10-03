@@ -155,7 +155,7 @@ function KitMark({
 }) {
   return (
     <div
-      className={`relative flex h-[3.6rem] w-[2.85rem] items-center justify-center overflow-hidden rounded-xl ${
+      className={`relative flex h-[3.6rem] w-[2.85rem] items-center justify-center overflow-hidden rounded-[0.75rem] ${
         away ? "bg-signal text-foreground" : "bg-accent text-accent-foreground"
       }`}
     >
@@ -176,7 +176,7 @@ function KitMark({
 
 function Pitch() {
   return (
-    <motion.div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-background" variants={pass}>
+    <motion.div className="relative aspect-[3/4] overflow-hidden rounded-[1rem] bg-background" variants={pass}>
       <svg
         viewBox="0 0 100 132"
         className="absolute inset-0 h-full w-full text-accent/45"
@@ -326,12 +326,12 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-signal text-[9px] font-medium text-foreground">
                   AK
                 </span>
-                <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-signal/20 px-3 py-2">
+                <div className="max-w-[85%] rounded-[1rem] rounded-bl-sm bg-signal/20 px-3 py-2">
                   <p className="text-[12px] leading-4 text-foreground">Bus just pulled up.</p>
                 </div>
               </motion.div>
               <motion.div className="flex items-end justify-end gap-2" variants={bubble}>
-                <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-accent px-3 py-2">
+                <div className="max-w-[85%] rounded-[1rem] rounded-br-sm bg-accent px-3 py-2">
                   <p className="text-[12px] leading-4 text-accent-foreground">
                     Got both. Two minutes out.
                   </p>
@@ -341,7 +341,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-[9px] font-medium text-accent-foreground">
                   MR
                 </span>
-                <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-background px-3 py-2">
+                <div className="max-w-[85%] rounded-[1rem] rounded-bl-sm bg-background px-3 py-2">
                   <p className="text-[12px] leading-4 text-foreground">Warm-up 5:30 on pitch 2.</p>
                 </div>
               </motion.div>
@@ -350,7 +350,7 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-signal/40 text-[9px] font-medium text-foreground">
                   NS
                 </span>
-                <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm bg-background px-3 py-2.5">
+                <div className="flex items-center gap-1 rounded-[1rem] rounded-bl-sm bg-background px-3 py-2.5">
                   {[0, 1, 2].map((dot) => (
                     <span
                       key={dot}
@@ -364,14 +364,14 @@ function PlayerPhone({ reduced }: { reduced: boolean }) {
 
             <motion.div className="mt-auto flex items-center gap-2" variants={fade}>
               <motion.div
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-accent py-2.5 text-[13px] font-medium text-accent-foreground"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-[1rem] bg-accent py-2.5 text-[13px] font-medium text-accent-foreground"
                 variants={pop}
               >
                 <Check className="size-3.5" strokeWidth={2.5} />
                 I&apos;m in
               </motion.div>
               <motion.span
-                className="flex size-11 items-center justify-center rounded-2xl bg-background text-foreground"
+                className="flex size-11 items-center justify-center rounded-[1rem] bg-background text-foreground"
                 variants={pop}
               >
                 <Send className="size-4" strokeWidth={2} />

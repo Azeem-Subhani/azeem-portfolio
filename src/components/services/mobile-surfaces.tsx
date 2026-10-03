@@ -74,7 +74,7 @@ function KitMark({
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center overflow-hidden rounded-xl",
+        "relative flex items-center justify-center overflow-hidden rounded-[0.75rem]",
         compact ? "h-9 w-7" : "h-[3.4rem] w-[2.7rem]",
         away ? "bg-signal text-foreground" : "bg-accent text-accent-foreground",
       )}
@@ -100,7 +100,7 @@ function KitMark({
 
 function MatchCard({ compact }: { compact?: boolean }) {
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl bg-background", compact ? "px-2.5 py-2.5" : "px-3 py-3")}>
+    <div className={cn("relative overflow-hidden rounded-[1rem] bg-background", compact ? "px-2.5 py-2.5" : "px-3 py-3")}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-6 -top-8 size-20 rounded-full bg-accent/25 blur-2xl"
@@ -132,7 +132,7 @@ function MatchCard({ compact }: { compact?: boolean }) {
 
 function Pitch({ dense }: { dense?: boolean }) {
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl bg-background", dense ? "h-full min-h-[10rem]" : "aspect-[3/4]")}>
+    <div className={cn("relative overflow-hidden rounded-[1rem] bg-background", dense ? "h-full min-h-[10rem]" : "aspect-[3/4]")}>
       <svg
         viewBox="0 0 100 132"
         className="absolute inset-0 h-full w-full text-accent/45"
@@ -188,12 +188,12 @@ function ChatPreview() {
         <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-signal text-[8px] font-medium text-foreground">
           AK
         </span>
-        <span className="rounded-xl rounded-bl-sm bg-signal/20 px-2.5 py-1.5 text-[11px] leading-4">
+        <span className="rounded-[0.75rem] rounded-bl-sm bg-signal/20 px-2.5 py-1.5 text-[11px] leading-4">
           Bus just pulled up.
         </span>
       </div>
       <div className="flex justify-end">
-        <span className="rounded-xl rounded-br-sm bg-accent px-2.5 py-1.5 text-[11px] leading-4 text-accent-foreground">
+        <span className="rounded-[0.75rem] rounded-br-sm bg-accent px-2.5 py-1.5 text-[11px] leading-4 text-accent-foreground">
           Two minutes out.
         </span>
       </div>
@@ -253,11 +253,11 @@ export function SyncStage() {
             <div className="bg-surface px-3.5 pb-4 pt-3">
               <MatchCard />
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className="rounded-2xl bg-background px-2.5 py-2">
+                <div className="rounded-[1rem] bg-background px-2.5 py-2">
                   <p className="font-display text-xl leading-none">14</p>
                   <p className="mt-1 text-[10px] text-muted-foreground">going</p>
                 </div>
-                <div className="rounded-2xl bg-background px-2.5 py-2">
+                <div className="rounded-[1rem] bg-background px-2.5 py-2">
                   <p className="font-display text-xl leading-none">4-3-3</p>
                   <p className="mt-1 text-[10px] text-muted-foreground">board</p>
                 </div>
@@ -278,11 +278,11 @@ export function SyncStage() {
                 <MatchCard />
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className="rounded-2xl bg-background px-2.5 py-2">
+                <div className="rounded-[1rem] bg-background px-2.5 py-2">
                   <p className="font-display text-xl leading-none">14</p>
                   <p className="mt-1 text-[10px] text-muted-foreground">going</p>
                 </div>
-                <div className="rounded-2xl bg-background px-2.5 py-2">
+                <div className="rounded-[1rem] bg-background px-2.5 py-2">
                   <p className="font-display text-xl leading-none">4-3-3</p>
                   <p className="mt-1 text-[10px] text-muted-foreground">board</p>
                 </div>
@@ -317,7 +317,7 @@ export function SyncStage() {
                 {squad.slice(0, 4).map((row) => (
                   <li
                     key={row.name}
-                    className="flex items-center justify-between rounded-xl bg-background px-2.5 py-1.5 text-[11px]"
+                    className="flex items-center justify-between rounded-[0.75rem] bg-background px-2.5 py-1.5 text-[11px]"
                   >
                     <span>
                       <span className="mr-1.5 text-accent">{row.pos}</span>
@@ -350,11 +350,11 @@ export function IonicPhone() {
           <MatchCard />
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="rounded-2xl bg-background px-2.5 py-2">
+          <div className="rounded-[1rem] bg-background px-2.5 py-2">
             <p className="font-display text-xl leading-none">14</p>
             <p className="mt-1 text-[10px] text-muted-foreground">going</p>
           </div>
-          <div className="rounded-2xl bg-background px-2.5 py-2">
+          <div className="rounded-[1rem] bg-background px-2.5 py-2">
             <p className="font-display text-xl leading-none">4-3-3</p>
             <p className="mt-1 text-[10px] text-muted-foreground">board</p>
           </div>
@@ -380,7 +380,7 @@ export function NativePhone() {
             <li
               key={row.name}
               data-mobile-row
-              className="flex items-center justify-between rounded-xl bg-background px-2.5 py-1.5"
+              className="flex items-center justify-between rounded-[0.75rem] bg-background px-2.5 py-1.5"
             >
               <span className="flex items-center gap-2">
                 <span className="flex size-6 items-center justify-center rounded-full bg-accent/20 text-[9px] font-medium text-accent">
@@ -394,7 +394,7 @@ export function NativePhone() {
             </li>
           ))}
         </ul>
-        <div className="mt-2 rounded-xl bg-accent/12 px-2.5 py-1.5">
+        <div className="mt-2 rounded-[0.75rem] bg-accent/12 px-2.5 py-1.5">
           <p className="text-[10px] text-muted-foreground">Riverside · Sat 6:00</p>
           <p className="text-[12px] text-foreground">4 of 5 starters in</p>
         </div>
@@ -462,7 +462,7 @@ export function SquadPhone() {
             <li
               key={row.name}
               data-mobile-row
-              className="flex items-center justify-between rounded-2xl bg-background px-3 py-2.5"
+              className="flex items-center justify-between rounded-[1rem] bg-background px-3 py-2.5"
             >
               <span className="flex items-center gap-2.5">
                 <span className="flex size-8 items-center justify-center rounded-full bg-accent/20 text-[10px] font-medium text-accent">
@@ -476,7 +476,7 @@ export function SquadPhone() {
             </li>
           ))}
         </ul>
-        <div data-mobile-toast className="mt-auto rounded-2xl bg-signal/20 px-3 py-2.5">
+        <div data-mobile-toast className="mt-auto rounded-[1rem] bg-signal/20 px-3 py-2.5">
           <p className="text-[10px] text-muted-foreground">APNs · just now</p>
           <p className="text-[13px] leading-5">Maya confirmed. 14 going.</p>
         </div>
@@ -500,10 +500,10 @@ export function WatchFace() {
           <p className="font-display text-[2.6rem] leading-[0.85] tracking-tight">13m</p>
           <p className="mt-1 text-[11px] text-muted-foreground">Riverside kickoff</p>
           <div className="mt-auto grid grid-cols-2 gap-1.5">
-            <span className="rounded-xl bg-accent py-1.5 text-center text-[11px] font-medium text-accent-foreground">
+            <span className="rounded-[0.75rem] bg-accent py-1.5 text-center text-[11px] font-medium text-accent-foreground">
               In
             </span>
-            <span className="rounded-xl bg-background py-1.5 text-center text-[11px]">Skip</span>
+            <span className="rounded-[0.75rem] bg-background py-1.5 text-center text-[11px]">Skip</span>
           </div>
         </div>
       </Bezel>
@@ -533,11 +533,11 @@ export function CarDash() {
           <p className="mt-2 text-accent">200 m · Riverside Drive</p>
         </div>
         <div className="grid grid-cols-3 gap-2">
-          <span className="rounded-2xl bg-accent px-3 py-3 text-center text-[12px] font-medium text-accent-foreground">
+          <span className="rounded-[1rem] bg-accent px-3 py-3 text-center text-[12px] font-medium text-accent-foreground">
             Nav
           </span>
-          <span className="rounded-2xl bg-surface px-3 py-3 text-center text-[12px]">Audio</span>
-          <span className="rounded-2xl bg-surface px-3 py-3 text-center text-[12px]">Call</span>
+          <span className="rounded-[1rem] bg-surface px-3 py-3 text-center text-[12px]">Audio</span>
+          <span className="rounded-[1rem] bg-surface px-3 py-3 text-center text-[12px]">Call</span>
         </div>
       </div>
     </div>
@@ -603,7 +603,7 @@ export function HardwarePhone({ active }: { active: string }) {
               {status.map((row) => (
                 <li
                   key={row.label}
-                  className="flex items-center justify-between gap-2 rounded-xl bg-background px-2.5 py-2"
+                  className="flex items-center justify-between gap-2 rounded-[0.75rem] bg-background px-2.5 py-2"
                 >
                   <span className="text-[11px] font-medium text-accent">{row.label}</span>
                   <span className="text-[11px] text-foreground">{row.status}</span>

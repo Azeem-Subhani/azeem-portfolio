@@ -63,7 +63,7 @@ function MonoLabel({ children, className }: { children: ReactNode; className?: s
   return (
     <span
       className={cn(
-        "font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground",
+        "font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground",
         className,
       )}
     >
@@ -118,7 +118,7 @@ export function IndustryCare() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: a patient portal showing an upcoming video visit, a secure message
@@ -134,13 +134,13 @@ export function IndustryCare() {
             </span>
             Patient portal
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
 
         {/* Next appointment: countdown on the left, visit type and Join on the right. */}
-        <div className="mt-4 flex items-stretch justify-between gap-3 rounded-xl border border-border bg-background/70 p-3">
+        <div className="mt-4 flex items-stretch justify-between gap-3 rounded-md border border-border bg-background/70 p-3">
           <div className="min-w-0">
             <MonoLabel>Next appointment</MonoLabel>
             <p className="mt-1 truncate font-display text-xl leading-tight">Follow-up visit</p>
@@ -149,7 +149,7 @@ export function IndustryCare() {
             </p>
           </div>
           <div className="flex shrink-0 flex-col items-end justify-between gap-2">
-            <span className="flex items-center gap-1 rounded-full border border-border px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.1em] text-muted-foreground">
+            <span className="flex items-center gap-1 rounded-full border border-border px-2 py-0.5 font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
               <Video aria-hidden="true" className="size-3" strokeWidth={2} />
               Video visit
             </span>
@@ -167,7 +167,7 @@ export function IndustryCare() {
         </div>
 
         {/* Secure thread: patient asks, care team types, reply lands. */}
-        <div className="mt-3 rounded-xl border border-border bg-background/70 p-3">
+        <div className="mt-3 rounded-md border border-border bg-background/70 p-3">
           <div className="flex items-center justify-between">
             <MonoLabel className="flex items-center gap-1.5">
               <Lock aria-hidden="true" className="size-3" strokeWidth={2} />
@@ -178,7 +178,7 @@ export function IndustryCare() {
           <div key={cycle} className="mt-2.5 grid h-[5.75rem] content-start gap-2">
             <p
               className={cn(
-                "ml-auto max-w-[80%] truncate rounded-2xl rounded-br-md bg-accent/15 px-3 py-1.5 text-xs",
+                "ml-auto max-w-[80%] truncate rounded-[1rem] rounded-br-md bg-accent/15 px-3 py-1.5 text-xs",
                 animateThread && "industry-care-in",
               )}
             >
@@ -187,14 +187,14 @@ export function IndustryCare() {
             {replied ? (
               <p
                 className={cn(
-                  "max-w-[88%] rounded-2xl rounded-bl-md border border-border bg-surface px-3 py-1.5 text-xs leading-relaxed",
+                  "max-w-[88%] rounded-[1rem] rounded-bl-md border border-border bg-surface px-3 py-1.5 text-xs leading-relaxed",
                   animateThread && "industry-care-in",
                 )}
               >
                 {thread.reply}
               </p>
             ) : typing ? (
-              <span className="industry-care-in flex w-fit items-center gap-1 rounded-2xl rounded-bl-md border border-border bg-surface px-3 py-2.5">
+              <span className="industry-care-in flex w-fit items-center gap-1 rounded-[1rem] rounded-bl-md border border-border bg-surface px-3 py-2.5">
                 {[0, 1, 2].map((dot) => (
                   <span
                     key={dot}
@@ -225,7 +225,7 @@ export function IndustryCare() {
                     index === 0 && row.key > 2 ? "industry-care-in border-accent/40" : "border-border",
                   )}
                 >
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/40 text-[var(--accent-readable)]">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/40 text-accent-readable">
                     <Glyph aria-hidden="true" className="size-3" strokeWidth={2.5} />
                   </span>
                   <span className="min-w-0 flex-1 truncate text-xs">{entry.action}</span>
