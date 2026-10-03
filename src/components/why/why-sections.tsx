@@ -66,7 +66,7 @@ export function SectionHead({
 }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="eyebrow text-[var(--accent-readable)]">
+      <p className="eyebrow text-accent-readable">
         {kicker}
       </p>
       <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
@@ -146,7 +146,7 @@ function WhyStack() {
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-3">
                 <span className="font-display text-2xl leading-none">{layer.name}</span>
-                <span className="meta-label text-[var(--accent-readable)]">
+                <span className="meta-label text-accent-readable">
                   0{index + 1}
                 </span>
               </div>
@@ -175,7 +175,7 @@ export function WhyHero() {
       <div className="why-hero-copy lg:col-span-7">
         <p
           data-service-kicker
-          className="eyebrow text-[var(--accent-readable)]"
+          className="eyebrow text-accent-readable"
         >
           Why work with me
         </p>
@@ -242,7 +242,7 @@ export function WhyDifferentiators() {
                 countFrom={item.countFrom}
                 className="text-[1.6rem] sm:text-[2.4rem]" />
             ) : (
-              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 eyebrow text-[var(--accent-readable)]">
+              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 eyebrow text-accent-readable">
                 {item.value}
               </span>
             )}
@@ -275,7 +275,7 @@ export function WhyProcess() {
               </span>
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <h3 className="font-display text-2xl font-normal">{step.title}</h3>
-                <span className="font-label text-[0.72rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+                <span className="font-label text-[0.72rem] uppercase tracking-[0.12em] text-accent-readable">
                   {step.timing}
                 </span>
               </div>

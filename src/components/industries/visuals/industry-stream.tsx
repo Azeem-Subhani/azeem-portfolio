@@ -151,7 +151,7 @@ export function IndustryStream() {
 
           <div className="absolute inset-x-2.5 top-2.5 flex items-center justify-between gap-2">
             <span className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 rounded-md border border-accent/40 bg-background/75 px-1.5 py-0.5 font-label text-3xs font-medium uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+              <span className="flex items-center gap-1.5 rounded-md border border-accent/40 bg-background/75 px-1.5 py-0.5 font-label text-3xs font-medium uppercase tracking-[0.12em] text-accent-readable">
                 <span className="size-1.5 rounded-full bg-accent" />
                 Live
               </span>
@@ -164,7 +164,7 @@ export function IndustryStream() {
               key={active.label}
               className={cn(
                 "rounded-md border bg-background/75 px-1.5 py-0.5 font-label text-3xs uppercase tracking-[0.12em]",
-                hd ? "border-accent/40 text-[var(--accent-readable)]" : "border-border text-muted-foreground",
+                hd ? "border-accent/40 text-accent-readable" : "border-border text-muted-foreground",
                 !reduced && tick > INITIAL_TICK && "industry-stream-chip-in",
               )}
             >
@@ -211,7 +211,7 @@ export function IndustryStream() {
                 <span
                   className={cn(
                     "font-label text-[0.52rem] tabular-nums transition-colors duration-500",
-                    index === frame.rung ? "text-[var(--accent-readable)]" : "text-muted-foreground/70",
+                    index === frame.rung ? "text-accent-readable" : "text-muted-foreground/70",
                   )}
                 >
                   {step.label}
@@ -235,7 +235,7 @@ export function IndustryStream() {
                   !reduced && index > INITIAL_MESSAGE && "industry-stream-chat-in",
                 )}
               >
-                <span className="shrink-0 font-mono text-[0.66rem] text-[var(--accent-readable)]">
+                <span className="shrink-0 font-mono text-[0.66rem] text-accent-readable">
                   {message.handle}
                 </span>
                 <span className="truncate text-foreground/85">{message.text}</span>

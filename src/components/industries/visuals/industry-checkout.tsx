@@ -160,7 +160,7 @@ export function IndustryCheckout() {
                 )}
                 style={leaving ? { transitionDelay: `${index * 60}ms` } : undefined}
               >
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-accent/40 bg-accent/10 font-display text-sm text-[var(--accent-readable)]">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-accent/40 bg-accent/10 font-display text-sm text-accent-readable">
                   {item.name.charAt(0)}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-sm">{item.name}</span>
@@ -195,7 +195,7 @@ export function IndustryCheckout() {
               paid ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
             )}
           >
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent/15 text-[var(--accent-readable)]">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-readable">
               <Check className="size-3.5" strokeWidth={2.5} />
             </span>
             <span className="min-w-0 flex-1 truncate text-sm font-medium">
@@ -238,7 +238,7 @@ export function IndustryCheckout() {
           <span
             className={cn(
               "relative flex items-center gap-1.5 transition-colors duration-300",
-              paid ? "text-[var(--accent-readable)]" : "text-foreground",
+              paid ? "text-accent-readable" : "text-foreground",
             )}
           >
             {paid ? (
@@ -261,7 +261,7 @@ export function IndustryCheckout() {
               <span
                 className={cn(
                   "flex items-center gap-1.5 transition-colors duration-300",
-                  index === flowIndex ? "text-[var(--accent-readable)]" : "text-muted-foreground",
+                  index === flowIndex ? "text-accent-readable" : "text-muted-foreground",
                 )}
               >
                 <span

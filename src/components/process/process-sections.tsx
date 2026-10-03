@@ -28,7 +28,7 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
 function Head({ kicker, title, intro }: { kicker: string; title: ReactNode; intro?: string }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="eyebrow text-[var(--accent-readable)]">
+      <p className="eyebrow text-accent-readable">
         {kicker}
       </p>
       <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
@@ -308,7 +308,7 @@ export function ProcessPipeline() {
               <h3 data-process-text className="font-display text-3xl font-normal leading-none">
                 {env.name}
               </h3>
-              <p data-process-text className="mt-2 text-sm text-[var(--accent-readable)]">
+              <p data-process-text className="mt-2 text-sm text-accent-readable">
                 {env.role}
               </p>
               <p data-process-text className="mt-3 leading-7 text-muted-foreground">

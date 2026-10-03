@@ -263,7 +263,7 @@ export function CloudStage({ className }: { className?: string }) {
               className="mt-2.5 flex w-full flex-col items-center rounded-sm border border-border bg-surface/70 px-1 pb-1.5 pt-2 backdrop-blur-sm sm:mt-3 sm:pb-2 sm:pt-2.5"
             >
               <span className="font-display text-base leading-none text-foreground sm:text-lg">{provider.name}</span>
-              <span className="mt-1.5 flex items-center gap-1.5 overflow-hidden font-label text-[0.55rem] uppercase leading-[1.4] tracking-[0.1em] sm:text-3xs sm:tracking-[0.12em] text-[var(--accent-readable)]">
+              <span className="mt-1.5 flex items-center gap-1.5 overflow-hidden font-label text-[0.55rem] uppercase leading-[1.4] tracking-[0.1em] sm:text-3xs sm:tracking-[0.12em] text-accent-readable">
                 <span className="hidden size-1 shrink-0 rounded-full bg-accent sm:block" />
                 <span data-cloud-service className="block whitespace-nowrap">
                   {provider.services[0]}

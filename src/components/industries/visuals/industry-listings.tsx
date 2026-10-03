@@ -84,10 +84,10 @@ function BlockMap() {
         );
       })}
       {/* A diagonal avenue cut through the grid, with a dashed centerline. */}
-      <path d="M -10 160 L 410 40" className="fill-none stroke-[var(--background)]" strokeWidth="12" />
+      <path d="M -10 160 L 410 40" className="fill-none stroke-background" strokeWidth="12" />
       <path
         d="M -10 160 L 410 40"
-        className="fill-none stroke-[var(--border)]"
+        className="fill-none stroke-border"
         strokeWidth="1"
         strokeDasharray="6 6"
       />
@@ -219,7 +219,7 @@ export function IndustryListings() {
                 className={cn(
                   "flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 font-label text-3xs uppercase tracking-[0.08em] transition-colors duration-500",
                   booked
-                    ? "border-accent/50 text-[var(--accent-readable)]"
+                    ? "border-accent/50 text-accent-readable"
                     : "border-border text-muted-foreground",
                 )}
               >
@@ -238,7 +238,7 @@ export function IndustryListings() {
         <div className="mt-3">
           <div className="flex items-center justify-between">
             <MonoLabel>Tour slots</MonoLabel>
-            <MonoLabel className={cn(booked && "text-[var(--accent-readable)]")}>
+            <MonoLabel className={cn(booked && "text-accent-readable")}>
               {booked ? "1 booked" : `${TOUR_SLOTS.length} open`}
             </MonoLabel>
           </div>

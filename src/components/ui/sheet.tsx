@@ -60,7 +60,7 @@ function SheetContent({ className, children, side = "right", ...props }: SheetCo
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="absolute right-4 top-4 rounded-full p-1.5 opacity-70 transition-opacity hover:bg-surface-elevated hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]">
+        <SheetPrimitive.Close className="absolute right-4 top-4 rounded-full p-1.5 opacity-70 transition-opacity hover:bg-surface-elevated hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
           <X className="size-4" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>

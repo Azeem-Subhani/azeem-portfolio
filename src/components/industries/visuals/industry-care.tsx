@@ -225,7 +225,7 @@ export function IndustryCare() {
                     index === 0 && row.key > 2 ? "industry-care-in border-accent/40" : "border-border",
                   )}
                 >
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/40 text-[var(--accent-readable)]">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/40 text-accent-readable">
                     <Glyph aria-hidden="true" className="size-3" strokeWidth={2.5} />
                   </span>
                   <span className="min-w-0 flex-1 truncate text-xs">{entry.action}</span>

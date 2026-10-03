@@ -28,7 +28,7 @@ export function SolutionLink({ link, className }: { link: IndustrySolution["link
       data-im-after
       href={link.href}
       className={cn(
-        "group/proof inline-flex items-center gap-2 text-sm font-medium text-[var(--accent-readable)] underline-offset-4 hover:underline",
+        "group/proof inline-flex items-center gap-2 text-sm font-medium text-accent-readable underline-offset-4 hover:underline",
         className,
       )}
     >

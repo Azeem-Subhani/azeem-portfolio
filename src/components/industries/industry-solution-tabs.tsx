@@ -70,7 +70,7 @@ export function IndustrySolutionTabs({
               onKeyDown={onKeyDown}
               className={cn(
                 "group relative flex items-center gap-3 overflow-hidden rounded-lg border px-4 py-3 text-left transition-[border-color,background-color] duration-300",
-                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]",
+                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                 selected
                   ? "border-accent/50 bg-surface"
                   : "border-border bg-transparent hover:border-foreground/25 hover:bg-surface/50",
@@ -118,7 +118,7 @@ export function IndustrySolutionTabs({
                 className="industry-tab-item flex items-start gap-2.5 text-sm text-foreground/85"
                 style={{ animationDelay: `${120 + index * 45}ms` }}
               >
-                <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[var(--accent-readable)]" strokeWidth={2} />
+                <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-readable" strokeWidth={2} />
                 {feature}
               </li>
             ))}

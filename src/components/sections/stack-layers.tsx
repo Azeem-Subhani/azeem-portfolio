@@ -39,7 +39,7 @@ const layers: Layer[] = [
   {
     id: "data",
     label: "Data",
-    color: "#b58900",
+    color: "var(--warning)",
     tools: ["PostgreSQL", "MySQL", "MongoDB", "DynamoDB", "Firestore"],
   },
   {

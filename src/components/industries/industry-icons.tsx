@@ -102,7 +102,7 @@ export function IconMark({ icon, className }: { icon: IndustryIcon; className?: 
       aria-hidden="true"
       data-im-icon
       className={cn(
-        "grid size-11 shrink-0 place-items-center rounded-md border border-border bg-background/60 text-[var(--accent-readable)] transition-colors duration-300 group-hover:border-accent/50",
+        "grid size-11 shrink-0 place-items-center rounded-md border border-border bg-background/60 text-accent-readable transition-colors duration-300 group-hover:border-accent/50",
         className,
       )}
     >

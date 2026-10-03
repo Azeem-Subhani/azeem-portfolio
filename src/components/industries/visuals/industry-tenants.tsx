@@ -85,8 +85,8 @@ function tenantsAt(tick: number) {
 
 const PLAN_STYLES: Record<Plan, string> = {
   Free: "border-border text-muted-foreground",
-  Pro: "border-accent/40 text-[var(--accent-readable)]",
-  Team: "border-accent/60 bg-accent/10 text-[var(--accent-readable)]",
+  Pro: "border-accent/40 text-accent-readable",
+  Team: "border-accent/60 bg-accent/10 text-accent-readable",
 };
 
 export function IndustryTenants() {
@@ -220,7 +220,7 @@ export function IndustryTenants() {
                 <Icon
                   className={cn(
                     "size-3.5 shrink-0",
-                    newest ? "text-[var(--accent-readable)]" : "text-muted-foreground",
+                    newest ? "text-accent-readable" : "text-muted-foreground",
                   )}
                   strokeWidth={2.25}
                 />

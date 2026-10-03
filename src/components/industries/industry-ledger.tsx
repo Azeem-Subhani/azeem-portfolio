@@ -58,7 +58,7 @@ function LedgerRow({ row, fresh }: { row: Row; fresh: boolean }) {
           className={cn(
             "flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 meta-label transition-all duration-500",
             matched
-              ? "border-accent/50 text-[var(--accent-readable)] opacity-100"
+              ? "border-accent/50 text-accent-readable opacity-100"
               : "border-border text-muted-foreground opacity-60",
           )}
         >
@@ -173,7 +173,7 @@ export function IndustryLedger() {
         </ul>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span>Charge = Ledger = Audit</span>
-          <span className="meta-label text-[var(--accent-readable)]">
+          <span className="meta-label text-accent-readable">
             0 drift
           </span>
         </div>

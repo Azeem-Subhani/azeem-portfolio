@@ -11,13 +11,13 @@ interface Position {
 
 interface SpotlightCardProps extends React.PropsWithChildren {
   className?: string;
-  spotlightColor?: `rgba(${number}, ${number}, ${number}, ${number})`;
+  spotlightColor?: string;
 }
 
 const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = '',
-  spotlightColor = 'rgba(42, 161, 152, 0.18)'
+  spotlightColor = 'color-mix(in srgb, var(--accent) 18%, transparent)'
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);

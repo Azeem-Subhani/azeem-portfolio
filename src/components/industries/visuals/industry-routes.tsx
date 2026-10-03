@@ -276,7 +276,7 @@ export function IndustryRoutes() {
               ))}
             </g>
             <g
-              className="fill-none stroke-[var(--accent)] opacity-40"
+              className="fill-none stroke-accent opacity-40"
               strokeWidth={1}
               strokeDasharray="3 4"
               strokeLinejoin="round"
@@ -293,13 +293,13 @@ export function IndustryRoutes() {
               width={14}
               height={14}
               rx={3}
-              className="fill-[color-mix(in_srgb,var(--accent)_22%,var(--background))] stroke-[var(--accent)]"
+              className="fill-[color-mix(in_srgb,var(--accent)_22%,var(--background))] stroke-accent"
               strokeWidth={1.5}
             />
             <text
               x={DEPOT[0] + 10}
               y={DEPOT[1] - 8}
-              className="fill-[var(--muted-foreground)] font-label uppercase"
+              className="fill-muted-foreground font-label uppercase"
               fontSize={7}
               letterSpacing={1}
             >
@@ -319,7 +319,7 @@ export function IndustryRoutes() {
                         cx={stop.at[0]}
                         cy={stop.at[1]}
                         r={5}
-                        className="industry-routes-pulse fill-none stroke-[var(--accent)]"
+                        className="industry-routes-pulse fill-none stroke-accent"
                         strokeWidth={1.5}
                       />
                     ) : null}
@@ -329,8 +329,8 @@ export function IndustryRoutes() {
                       r={4.5}
                       strokeWidth={1.5}
                       className={cn(
-                        "stroke-[var(--accent)] transition-[fill] duration-500",
-                        done ? "fill-[var(--accent)]" : "fill-[var(--background)]",
+                        "stroke-accent transition-[fill] duration-500",
+                        done ? "fill-accent" : "fill-background",
                       )}
                     />
                     <text
@@ -339,7 +339,7 @@ export function IndustryRoutes() {
                       textAnchor={stop.label[0] > stop.at[0] ? "start" : "middle"}
                       className={cn(
                         "font-label transition-[fill] duration-500",
-                        done ? "fill-[var(--accent-readable)]" : "fill-[var(--muted-foreground)]",
+                        done ? "fill-accent-readable" : "fill-muted-foreground",
                       )}
                       fontSize={8}
                     >
@@ -357,8 +357,8 @@ export function IndustryRoutes() {
                 data-route-vehicle=""
                 transform={vehicleTransform(i, baseDist[i])}
               >
-                <circle r={12} className="fill-[var(--accent)] opacity-10" />
-                <circle r={7.5} className="fill-[var(--accent)] opacity-20" />
+                <circle r={12} className="fill-accent opacity-10" />
+                <circle r={7.5} className="fill-accent opacity-20" />
                 <g data-route-body="" transform={bodyTransform(i, baseDist[i])}>
                   <rect
                     x={vehicle.truck ? -6.5 : -5}
@@ -366,14 +366,14 @@ export function IndustryRoutes() {
                     width={vehicle.truck ? 13 : 10}
                     height={vehicle.truck ? 7 : 6}
                     rx={2}
-                    className="fill-[var(--accent)] stroke-[var(--background)]"
+                    className="fill-accent stroke-background"
                     strokeWidth={1}
                   />
                 </g>
                 <text
                   y={-10}
                   textAnchor="middle"
-                  className="fill-[var(--foreground)] font-label"
+                  className="fill-foreground font-label"
                   fontSize={7}
                 >
                   {vehicle.tag}
@@ -423,7 +423,7 @@ export function IndustryRoutes() {
 
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span>Depot to stop to depot</span>
-          <span className="font-label text-3xs uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-accent-readable">
             {delivered}/{totalStops} delivered
           </span>
         </div>
