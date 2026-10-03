@@ -182,7 +182,7 @@ export function SystemsMap() {
         } as React.CSSProperties
       }
     >
-      <p className="eyebrow text-muted-foreground">
+      <p className="label-eyebrow text-muted-foreground">
         How the work connects
       </p>
 

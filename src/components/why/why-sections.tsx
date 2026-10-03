@@ -66,7 +66,7 @@ export function SectionHead({
 }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="eyebrow text-accent-readable">
+      <p className="label-eyebrow text-accent-readable">
         {kicker}
       </p>
       <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
@@ -175,7 +175,7 @@ export function WhyHero() {
       <div className="why-hero-copy lg:col-span-7">
         <p
           data-service-kicker
-          className="eyebrow text-accent-readable"
+          className="label-eyebrow text-accent-readable"
         >
           Why work with me
         </p>
@@ -242,7 +242,7 @@ export function WhyDifferentiators() {
                 countFrom={item.countFrom}
                 className="text-[1.6rem] sm:text-[2.4rem]" />
             ) : (
-              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 eyebrow text-accent-readable">
+              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 label-eyebrow text-accent-readable">
                 {item.value}
               </span>
             )}

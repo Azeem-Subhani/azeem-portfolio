@@ -150,7 +150,7 @@
 }
 
 /* Section eyebrow: small uppercase kicker above a heading. */
-@utility eyebrow {
+@utility label-eyebrow {
   @apply font-label text-xs tracking-[0.16em] uppercase;
 }
 

@@ -51,7 +51,7 @@ function SectionHead({
     <div data-im-head className={cn("max-w-2xl", centered && "mx-auto text-center")}>
       <p
         data-im-kicker
-        className="eyebrow text-accent-readable"
+        className="label-eyebrow text-accent-readable"
       >
         {kicker}
       </p>
@@ -152,7 +152,7 @@ export function IndustryHero({
     <div className={cn(centered && "mx-auto max-w-4xl text-center", hero === "split-reverse" && "lg:order-2")}>
       <p
         data-im="hero-fade"
-        className="eyebrow text-accent-readable"
+        className="label-eyebrow text-accent-readable"
       >
         {industry.kicker}
       </p>
@@ -237,7 +237,7 @@ export function IndustryProof({ industry }: SectionProps) {
           <Compass className="size-5" strokeWidth={1.6} />
         </span>
         <div>
-          <p className="eyebrow text-accent-readable">
+          <p className="label-eyebrow text-accent-readable">
             Approach page
           </p>
           <p className="mt-2 max-w-3xl leading-7 text-foreground/85">{industry.approachNote}</p>

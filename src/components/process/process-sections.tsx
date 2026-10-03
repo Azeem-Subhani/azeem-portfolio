@@ -28,7 +28,7 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
 function Head({ kicker, title, intro }: { kicker: string; title: ReactNode; intro?: string }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="eyebrow text-accent-readable">
+      <p className="label-eyebrow text-accent-readable">
         {kicker}
       </p>
       <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">

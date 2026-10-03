@@ -195,7 +195,7 @@ function bindBlock(
   );
 }
 
-const STATIC_LABEL_CLASSES = ["font-mono", "font-label", "eyebrow", "meta-label"];
+const STATIC_LABEL_CLASSES = ["font-mono", "font-label", "label-eyebrow", "meta-label"];
 
 function collectCopy(column: HTMLElement, title: HTMLElement) {
   return [...column.querySelectorAll<HTMLElement>("p, li, dd, dt")].filter((el) => {

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <article className="mx-auto max-w-3xl px-6 pb-24 pt-32 sm:pt-40">
-      <p className="eyebrow text-accent-readable">
+      <p className="label-eyebrow text-accent-readable">
         Privacy
       </p>
       <h1 className="mt-5 font-display text-[clamp(3.5rem,8vw,6.5rem)] font-normal leading-[0.95] tracking-[-0.03em]">
