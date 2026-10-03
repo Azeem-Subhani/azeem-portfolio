@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { BrowserFrame } from "@/components/projects/device-frames/browser-frame";
 import { PhoneFrame } from "@/components/projects/device-frames/phone-frame";
+import { useOverflowFade } from "@/components/projects/use-overflow-fade";
 import { cn } from "@/lib/utils";
 
 export type DeviceStageWebSlide = {
@@ -95,6 +96,7 @@ export function DeviceStage({
     if (phoneAt >= 0) setPhoneIndex(phoneAt);
   };
 
+  const { ref: tabFadeRef, style: tabFadeStyle } = useOverflowFade<HTMLDivElement>();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const tabId = (index: number) => `${statusId}-tab-${index}`;
 
@@ -126,38 +128,56 @@ export function DeviceStage({
     }
   };
 
-  const renderArrows = () =>
+  const prevButton = (className?: string) => (
+    <button
+      type="button"
+      className={cn(arrowClassName, className)}
+      aria-label="Previous screen"
+      aria-controls={statusId}
+      onClick={() => go(-1)}
+    >
+      <ChevronLeft className="size-5" />
+    </button>
+  );
+  const nextButton = (className?: string) => (
+    <button
+      type="button"
+      className={cn(arrowClassName, className)}
+      aria-label="Next screen"
+      aria-controls={statusId}
+      onClick={() => go(1)}
+    >
+      <ChevronRight className="size-5" />
+    </button>
+  );
+
+  // Overlay arrows sit on the frame from 640px up; on phones they covered the capture, so
+  // they move beside the tab pill instead (see `tabs`). `frameClassName` overrides the
+  // default inset box when the frame is smaller than the stage (the desktop hero).
+  const renderArrows = (frameClassName?: string) =>
     showControls ? (
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-between px-1 sm:px-2">
-        <button
-          type="button"
-          className={cn("pointer-events-auto", arrowClassName)}
-          aria-label="Previous screen"
-          aria-controls={statusId}
-          onClick={() => go(-1)}
-        >
-          <ChevronLeft className="size-5" />
-        </button>
-        <button
-          type="button"
-          className={cn("pointer-events-auto", arrowClassName)}
-          aria-label="Next screen"
-          aria-controls={statusId}
-          onClick={() => go(1)}
-        >
-          <ChevronRight className="size-5" />
-        </button>
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 z-10 hidden items-center justify-between sm:flex sm:px-3",
+          frameClassName,
+        )}
+      >
+        {prevButton("pointer-events-auto")}
+        {nextButton("pointer-events-auto")}
       </div>
     ) : null;
 
   const tabs = showControls ? (
     <>
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex items-center justify-center gap-2">
+        {prevButton("shrink-0 sm:hidden")}
         <div
+          ref={tabFadeRef}
+          style={tabFadeStyle}
           role="tablist"
           aria-label="Choose a screen"
           onKeyDown={onTabKeyDown}
-          className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-border/70 bg-surface/70 p-1 shadow-sm backdrop-blur-md"
+          className="flex min-w-0 max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-border/70 bg-surface/70 p-1 shadow-sm backdrop-blur-md"
         >
           {controlSlides.map((slide, slideIndex) => {
             const selected = slideIndex === controlIndex;
@@ -186,6 +206,7 @@ export function DeviceStage({
             );
           })}
         </div>
+        {nextButton("shrink-0 sm:hidden")}
       </div>
     </>
   ) : null;
@@ -249,9 +270,12 @@ export function DeviceStage({
               </div>
             </div>
 
-            <div className="relative hidden min-h-[640px] lg:block">
+            {/* Sized to the rendered frame (1000px browser at 0.78, from 12px down, ~500px)
+                plus room for its shadow, so the tabs sit right under it instead of ~170px
+                lower. The aspect box is top-aligned so the shorter stage cannot clip it. */}
+            <div className="relative hidden h-[548px] lg:block">
               <div className="absolute inset-0 overflow-hidden">
-                <div className="flex h-full items-center justify-center">
+                <div className="flex h-full items-start justify-center">
                   <div className="relative aspect-[16/10] w-full max-h-[640px] max-w-[1100px]">
                     <div
                       className="pointer-events-none absolute left-1/2 top-[12px] w-[1000px] origin-top"
@@ -286,7 +310,10 @@ export function DeviceStage({
                   </div>
                 </div>
               </div>
-              {renderArrows()}
+              {/* Anchored to the 780px-wide frame, 20px outside each edge. */}
+              {renderArrows(
+                "inset-auto left-1/2 top-[12px] h-[486px] w-[908px] -translate-x-1/2 sm:px-0",
+              )}
             </div>
             {tabs}
           </>

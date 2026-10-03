@@ -1639,8 +1639,10 @@ button,
     display: block;
   }
 
+  /* The title lines are authored breaks; a 9ch cap split "in the real world." and left
+     "in the" alone on a line. */
   .projects-title {
-    max-width: 9ch;
+    max-width: none;
   }
 
   .service-title {
