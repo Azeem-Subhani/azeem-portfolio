@@ -93,9 +93,9 @@ export function BookingAgentWebChatCapture() {
         <div className="chat-main">
           <div className="chat-col">
             <div className="top">
-              <h1>
+              <div data-h="1">
                 {"Dinner Saturday for 6"}
-              </h1>
+              </div>
               <span className="sub">
                 {"Restaurant reservation"}
               </span>
