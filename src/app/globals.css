@@ -27,8 +27,18 @@
   --success: #859900;
   --error: #dc322f;
   --error-readable: #b8231f;
+  /* Text-safe variants (AA on --bg and --surface) of the Solarized accents that only
+     pass as fills on cream. Dark values are the base accents, which already pass. */
+  --success-readable: #5c6a00;
+  --amber: #e3a74f;
+  --amber-readable: #8a5a00;
+  --violet: #9b7bea;
+  --violet-readable: #5156a8;
+  --warning: #b58900;
+  --warning-readable: #7f6000;
   --glass: rgb(251 247 238 / 82%);
-  --header-glass: rgb(251 247 238 / 20%);
+  /* Opaque enough that nav text stays legible when the pill passes over dark mockups. */
+  --header-glass: rgb(251 247 238 / 82%);
   --shadow-color: 7 54 66;
   /* Product-mock chassis for the cloud / web / mobile section panels. The
      light values keep those panels reading as light consoles on a cream page
@@ -68,6 +78,10 @@
   --success: #859900;
   --error: #dc322f;
   --error-readable: #ff8a80;
+  --success-readable: #a3b82e;
+  --amber-readable: #e3a74f;
+  --violet-readable: #9b7bea;
+  --warning-readable: #d9a82a;
   --glass: rgb(0 43 54 / 82%);
   --header-glass: rgb(0 43 54 / 20%);
   --shadow-color: 0 0 0;
@@ -103,6 +117,13 @@
   --color-success: var(--success);
   --color-error: var(--error);
   --color-error-readable: var(--error-readable);
+  --color-success-readable: var(--success-readable);
+  --color-amber: var(--amber);
+  --color-amber-readable: var(--amber-readable);
+  --color-violet: var(--violet);
+  --color-violet-readable: var(--violet-readable);
+  --color-warning: var(--warning);
+  --color-warning-readable: var(--warning-readable);
   --color-glass: var(--glass);
   --color-header-glass: var(--header-glass);
   --font-display: var(--font-h1);
@@ -2047,8 +2068,8 @@ html.dark .svgl-invert-dark,
 }
 
 .services-menu-icon[data-tone="cloud"] {
-  color: #b58900;
-  background: color-mix(in srgb, #b58900 16%, transparent);
+  color: var(--warning-readable);
+  background: color-mix(in srgb, var(--warning) 16%, transparent);
 }
 
 .services-menu-icon[data-tone="web"] {
@@ -2057,7 +2078,7 @@ html.dark .svgl-invert-dark,
 }
 
 .services-menu-icon[data-tone="mobile"] {
-  color: #6c71c4;
+  color: var(--violet-readable);
   background: color-mix(in srgb, #6c71c4 18%, transparent);
 }
 
@@ -2067,8 +2088,8 @@ html.dark .svgl-invert-dark,
 }
 
 .services-menu-icon[data-tone="fintech"] {
-  color: #859900;
-  background: color-mix(in srgb, #859900 18%, transparent);
+  color: var(--success-readable);
+  background: color-mix(in srgb, var(--success) 18%, transparent);
 }
 
 .services-menu-icon[data-tone="healthtech"] {
@@ -2077,17 +2098,17 @@ html.dark .svgl-invert-dark,
 }
 
 .services-menu-icon[data-tone="ecommerce"] {
-  color: #b58900;
-  background: color-mix(in srgb, #b58900 16%, transparent);
+  color: var(--warning-readable);
+  background: color-mix(in srgb, var(--warning) 16%, transparent);
 }
 
 .services-menu-icon[data-tone="saas"] {
   color: var(--accent-readable);
-  background: color-mix(in srgb, #2aa198 18%, transparent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .services-menu-icon[data-tone="education"] {
-  color: #6c71c4;
+  color: var(--violet-readable);
   background: color-mix(in srgb, #6c71c4 18%, transparent);
 }
 

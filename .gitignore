@@ -56,3 +56,6 @@ next-env.d.ts
 # one-off e2e probe output
 /tests/e2e/probe-*.json
 /tests/e2e/screenshots/
+
+# Playwright MCP console logs
+/.playwright-mcp/
