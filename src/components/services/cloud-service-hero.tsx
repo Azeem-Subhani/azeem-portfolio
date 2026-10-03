@@ -73,12 +73,12 @@ export function CloudServiceHero({ service }: CloudServiceHeroProps) {
     <div ref={rootRef}>
       <header className="grid items-center gap-12 lg:grid-cols-12 lg:gap-x-10">
         <div className="cloud-hero-copy lg:col-span-6">
-          <p data-service-kicker className="text-sm font-medium text-muted-foreground">
-            {service.metaTitle}
+          <p data-service-kicker className="projects-kicker">
+            {service.kicker}
           </p>
 
           <h1
-            className="cloud-hero-title mt-5 font-display text-[clamp(3.25rem,6.4vw,6rem)] leading-[0.9] font-normal tracking-[-0.03em] text-foreground"
+            className="cloud-hero-title font-display text-[clamp(3.25rem,6.4vw,6rem)] leading-[0.9] font-normal tracking-[-0.03em] text-foreground"
             aria-label={service.titleLines.join(" ")}
           >
             {service.titleLines.map((line, lineIndex) => {
@@ -139,7 +139,8 @@ export function CloudServiceHero({ service }: CloudServiceHeroProps) {
           />
           <dl className="grid gap-y-8 py-8 sm:grid-cols-3 sm:gap-x-10">
             {service.proof.map((item) => (
-              <div key={item.label} data-cloud-intro-stat className="flex flex-col-reverse gap-2">
+              // Label above the number, the same order as the other service heroes.
+              <div key={item.label} data-cloud-intro-stat className="flex flex-col gap-2">
                 <dt className="text-sm leading-6 text-muted-foreground">{item.label}</dt>
                 <dd className="font-display text-[clamp(2.75rem,4.6vw,4rem)] leading-none tracking-[-0.02em] text-foreground tabular-nums">
                   {item.value}

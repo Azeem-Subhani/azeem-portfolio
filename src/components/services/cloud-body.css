@@ -1,7 +1,7 @@
 .cloud-body {
   max-width: var(--container-7xl); /* site container; see globals.css */
   margin: 0 auto;
-  padding: 0 1.25rem 2.5rem;
+  padding: 0 1.5rem 2.5rem;
 }
 
 .cloud-chapter {
@@ -125,6 +125,21 @@
   color: var(--fg);
 }
 
+/* Scroll-spy: the chapter under the reading line (see toc-spy.ts). */
+.cloud-toc ol a[aria-current="location"] {
+  color: var(--accent-readable);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.45em;
+}
+
+/* Wraps the project link so it can carry data-inline-cta. */
+.cloud-toc-cta {
+  display: flex;
+  flex-shrink: 0;
+}
+
 .cloud-toc-link {
   display: inline-flex;
   flex-shrink: 0;
@@ -132,14 +147,17 @@
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0 1.1rem;
+  /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: transparent;
+  color: var(--fg);
   font-size: 0.86rem;
   font-weight: 600;
   text-decoration: none;
   transition:
     background 0.2s ease,
+    border-color 0.2s ease,
     transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -150,7 +168,8 @@
 }
 
 .cloud-toc-link:hover {
-  background: var(--accent-strong);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
 }
 
 .cloud-toc-link:hover svg {
@@ -776,7 +795,7 @@ html[data-theme="light"] .cloud-sam .cloud-panel {
 .cloud-code-pane.is-repo {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent),
-    0 24px 40px -28px rgb(7 54 66 / 0.4);
+    0 24px 40px -28px rgb(var(--shadow-color) / 0.4);
 }
 
 .cloud-code-pane ul {
@@ -858,7 +877,7 @@ html[data-theme="light"] .cloud-sam .cloud-panel {
 }
 
 .cloud-code-ok {
-  color: var(--success);
+  color: var(--success-readable);
 }
 
 .cloud-burst {
@@ -1069,7 +1088,7 @@ html[data-theme="light"] .cloud-sam .cloud-panel {
   }
 
   .cloud-body {
-    padding: 0 1.25rem 2rem;
+    padding-bottom: 2rem;
   }
 
   .cloud-chapter {
@@ -1144,13 +1163,6 @@ html[data-theme="light"] .cloud-sam .cloud-panel {
   /* Stacked host cards size to content; the fixed height only aligns side-by-side cards. */
   .cloud-hosts .is-host {
     min-height: 0;
-  }
-}
-
-@media (min-width: 640px) {
-  .cloud-body {
-    padding-left: 2rem;
-    padding-right: 2rem;
   }
 }
 

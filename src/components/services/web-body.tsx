@@ -24,6 +24,7 @@ import { useWebBodyMotion } from "@/components/services/web-motion";
 import type { ServicePageContent, ServiceSection } from "@/types/content";
 
 import { ServiceTocGlass } from "@/components/services/service-toc-glass";
+import { useActiveChapter } from "@/components/services/toc-spy";
 import "@/components/services/web-body.css";
 
 const BUILD_ICONS: LucideIcon[] = [Code2, Palette, FileSearch, Database, Zap, ShieldCheck];
@@ -35,6 +36,8 @@ const CHAPTERS = [
   { id: "web-process", index: "03", kicker: "Process", label: "Prototype, then production" },
   { id: "web-seo", index: "04", kicker: "Search", label: "SEO + speed" },
 ] as const;
+
+const CHAPTER_IDS = CHAPTERS.map((chapter) => chapter.id);
 
 function ofKind<K extends ServiceSection["kind"]>(
   sections: ServiceSection[],
@@ -244,6 +247,7 @@ export function WebServiceBody({ service }: { service: ServicePageContent }) {
   const [process] = ofKind(service.sections, "process");
   const [features] = ofKind(service.sections, "features");
   const rootRef = useWebBodyMotion<HTMLDivElement>();
+  const activeChapter = useActiveChapter(CHAPTER_IDS);
 
   return (
     <div ref={rootRef} className="web-body">
@@ -255,15 +259,21 @@ export function WebServiceBody({ service }: { service: ServicePageContent }) {
         <ol>
           {CHAPTERS.map((chapter) => (
             <li key={chapter.id}>
-              <a href={`#${chapter.id}`}>
+              <a
+                href={`#${chapter.id}`}
+                aria-current={activeChapter === chapter.id ? "location" : undefined}
+              >
                 <span aria-hidden="true">{chapter.index}</span> {chapter.label}
               </a>
             </li>
           ))}
         </ol>
-        <Link href="/projects/track-booking" className="web-toc-link">
-          See it live: Track Booking Platform <ArrowRight aria-hidden="true" />
-        </Link>
+        {/* A project link, not a contact CTA; the mobile contact bar still steps aside for it. */}
+        <div className="web-toc-cta" data-inline-cta>
+          <Link href="/projects/track-booking" className="web-toc-link">
+            See it live: Track Booking Platform <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
       </nav>
       <div className="web-body-scroll overflow-x-clip">
         {capabilities ? <BuildChapter section={capabilities} /> : null}
