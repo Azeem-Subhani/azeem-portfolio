@@ -143,7 +143,7 @@ export function MobileNavPanel({ id, open, onClose, toggleRef }: PanelProps) {
       hidden={!open}
       data-lenis-prevent
       className={cn(
-        "absolute inset-x-0 top-[calc(100%+0.5rem)] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-background p-2 shadow-2xl shadow-black/20 md:hidden",
+        "absolute inset-x-0 top-[calc(100%+0.5rem)] overflow-y-auto overscroll-contain rounded-[1rem] border border-border bg-background p-2 shadow-2xl shadow-black/20 md:hidden",
         "max-h-[calc(100dvh-var(--site-header-bottom,6rem)-1.5rem)]",
         "animate-in fade-in-0 slide-in-from-top-2 duration-200 motion-reduce:animate-none",
       )}
@@ -192,7 +192,7 @@ export function MobileNavPanel({ id, open, onClose, toggleRef }: PanelProps) {
                           href={item.href}
                           onClick={closeFromLink}
                           aria-current={isCurrentPath(pathname, item.href) ? "page" : undefined}
-                          className="flex items-start gap-3 rounded-xl border border-border/60 bg-surface/60 px-3 py-3 transition-colors hover:bg-surface-elevated aria-[current]:border-accent/50"
+                          className="flex items-start gap-3 rounded-md border border-border/60 bg-surface/60 px-3 py-3 transition-colors hover:bg-surface-elevated aria-[current]:border-accent/50"
                         >
                           <span className="services-menu-icon shrink-0" data-tone={item.tone}>
                             <Icon aria-hidden="true" className="size-4" />

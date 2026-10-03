@@ -187,7 +187,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
       >
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <div>
-            <p className="text-[11px]" style={{ color: tone.muted }}>
+            <p className="text-2xs" style={{ color: tone.muted }}>
               Stack by project
             </p>
             <p
@@ -294,7 +294,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                   </div>
 
                   <div
-                    className="rounded-2xl border px-3 py-2.5 transition-[border-color,background-color] duration-500 sm:grid sm:grid-cols-[6.25rem_minmax(0,1fr)] sm:items-start sm:gap-x-3 sm:px-3.5"
+                    className="rounded-md border px-3 py-2.5 transition-[border-color,background-color] duration-500 sm:grid sm:grid-cols-[6.25rem_minmax(0,1fr)] sm:items-start sm:gap-x-3 sm:px-3.5"
                     style={{
                       borderColor: lit && (picks.length || gap)
                         ? `color-mix(in srgb, ${layer.color} 34%, transparent)`
@@ -303,7 +303,7 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
                     }}
                   >
                     <p className="flex items-baseline gap-2 pb-2 sm:pb-0 sm:pt-[0.3rem]">
-                      <span className="text-[11px] tabular-nums" style={{ color: tone.muted }}>
+                      <span className="text-2xs tabular-nums" style={{ color: tone.muted }}>
                         0{index + 1}
                       </span>
                       <span className="text-[12px] font-medium leading-4" style={{ color: tone.ink }}>
@@ -374,12 +374,12 @@ export function StackLayers({ reduced }: { reduced: boolean }) {
               <span className="font-display text-[2.5rem] tabular-nums sm:text-[2.9rem]">
                 {project.metric.value}
               </span>
-              <span className="mt-1.5 block text-[11px]" style={{ color: tone.muted }}>
+              <span className="mt-1.5 block text-2xs" style={{ color: tone.muted }}>
                 {project.metric.label}
               </span>
             </motion.p>
           </AnimatePresence>
-          <p className="max-w-[12rem] pb-0.5 text-left text-[11px] sm:text-right leading-4" style={{ color: tone.muted }}>
+          <p className="max-w-[12rem] pb-0.5 text-left text-2xs sm:text-right leading-4" style={{ color: tone.muted }}>
             Four layers, one engineer.
             <br />
             No handoffs between them.

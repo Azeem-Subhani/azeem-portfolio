@@ -66,7 +66,7 @@ function DemoVideo() {
   return (
     <video
       ref={ref}
-      className="aspect-video w-full rounded-2xl border border-border bg-surface"
+      className="aspect-video w-full rounded-md border border-border bg-surface"
       src="/videos/booking-mcp-demo.mp4"
       poster="/videos/booking-mcp-demo-poster.jpg"
       muted
@@ -140,7 +140,7 @@ export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyPro
             : "The live server takes a read-only demo key, limited to the four read tools and shared rate limits. Get in touch for a key, or run it locally from the repository."
         }
       >
-        <pre className="overflow-x-auto rounded-2xl border border-border bg-surface p-5 font-mono text-[0.8125rem] leading-6 text-foreground">
+        <pre className="overflow-x-auto rounded-md border border-border bg-surface p-5 font-mono text-[0.8125rem] leading-6 text-foreground">
           <code>{command}</code>
         </pre>
         <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium">

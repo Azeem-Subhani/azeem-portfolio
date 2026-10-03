@@ -28,7 +28,7 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
 function Head({ kicker, title, intro }: { kicker: string; title: ReactNode; intro?: string }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]">
+      <p className="eyebrow text-[var(--accent-readable)]">
         {kicker}
       </p>
       <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
@@ -159,7 +159,7 @@ const trackRow = "grid gap-x-6 sm:grid-cols-[9rem_minmax(0,1fr)]";
 
 function SprintChart() {
   return (
-    <figure data-why="up" data-process-sprint className="mt-12 rounded-[var(--shape-radius-lg)] border border-border bg-surface/40 p-5 sm:p-8">
+    <figure data-why="up" data-process-sprint className="mt-12 rounded-lg border border-border bg-surface/40 p-5 sm:p-8">
       <figcaption className="sr-only">
         A typical two-week sprint: planning on Monday of week 1, development through Tuesday of
         week 2, then code review, testing, and a UAT deploy on the final Friday.
@@ -345,7 +345,7 @@ export function ProcessChanges() {
       {/* One split panel: the 1px gap over the border color draws the divider. */}
       <div
         data-why="up"
-        className="mt-14 grid gap-px overflow-hidden rounded-[var(--shape-radius-lg)] border border-border bg-border md:grid-cols-2"
+        className="mt-14 grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2"
       >
         {changePaths.map((path) => (
           <div key={path.title} className={cn("p-6 sm:p-8", path.formal ? "bg-surface" : "bg-background")}>

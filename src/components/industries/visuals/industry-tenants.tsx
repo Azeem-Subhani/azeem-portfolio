@@ -137,7 +137,7 @@ export function IndustryTenants() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: an admin view of four sample workspaces, each isolated with its own
@@ -152,7 +152,7 @@ export function IndustryTenants() {
             </span>
             Workspaces
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
@@ -164,14 +164,14 @@ export function IndustryTenants() {
               <li
                 key={tenant.id}
                 className={cn(
-                  "rounded-xl border p-2.5 transition-colors duration-500",
+                  "rounded-md border p-2.5 transition-colors duration-500",
                   lit ? "border-accent/40 bg-accent/5" : "border-border bg-background/70",
                 )}
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-baseline gap-2">
                     <span className="truncate text-sm font-medium leading-5">{tenant.name}</span>
-                    <span className="flex shrink-0 items-center gap-1 font-mono text-[0.6rem] text-muted-foreground">
+                    <span className="flex shrink-0 items-center gap-1 font-mono text-3xs text-muted-foreground">
                       <Lock className="size-2.5" strokeWidth={2.25} />
                       {tenant.id}
                     </span>
@@ -180,7 +180,7 @@ export function IndustryTenants() {
                     // Keyed by plan so a plan change remounts the badge and pops it in.
                     key={tenant.plan}
                     className={cn(
-                      "shrink-0 rounded-full border px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.1em]",
+                      "shrink-0 rounded-full border px-2 py-0.5 font-label text-3xs uppercase tracking-[0.12em]",
                       PLAN_STYLES[tenant.plan],
                       lit && latest.plan && "industry-tenants-badge-in",
                     )}
@@ -195,7 +195,7 @@ export function IndustryTenants() {
                       style={{ width: `${(tenant.seats / tenant.limit) * 100}%` }}
                     />
                   </span>
-                  <span className="w-[3.25rem] shrink-0 text-right font-mono text-[0.6rem] leading-3 tabular-nums text-muted-foreground">
+                  <span className="w-[3.25rem] shrink-0 text-right font-label text-3xs leading-3 tabular-nums text-muted-foreground">
                     {tenant.seats}/{tenant.limit}
                   </span>
                 </div>
@@ -225,7 +225,7 @@ export function IndustryTenants() {
                   strokeWidth={2.25}
                 />
                 <span className="min-w-0 flex-1 truncate">{event.text}</span>
-                <span className="shrink-0 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+                <span className="shrink-0 font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
                   {FEED_AGES[position]}
                 </span>
               </li>

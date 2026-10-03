@@ -66,7 +66,7 @@ export function SectionHead({
 }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]">
+      <p className="eyebrow text-[var(--accent-readable)]">
         {kicker}
       </p>
       <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
@@ -78,7 +78,7 @@ export function SectionHead({
 }
 
 export const cardClassName =
-  "group relative isolate overflow-hidden rounded-[var(--shape-radius-lg)] border border-border bg-surface/60 p-6 transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-foreground/25 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+  "group relative isolate overflow-hidden rounded-lg border border-border bg-surface/60 p-6 transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-foreground/25 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
 
 /** Soft accent glow that fades in behind a card on hover. */
 export function CardGlow() {
@@ -128,7 +128,7 @@ export function ScrollCue() {
 function WhyStack() {
   return (
     <div data-service-visual aria-hidden="true" className="relative">
-      <p className="mb-5 flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted-foreground">
+      <p className="mb-5 flex items-center gap-3 font-label text-2xs uppercase tracking-[0.16em] text-muted-foreground">
         <span className="size-1.5 rounded-full bg-accent" />
         One owner, every layer
       </p>
@@ -140,13 +140,13 @@ function WhyStack() {
         {heroLayers.map((layer, index) => (
           <li
             key={layer.name}
-            className="relative flex items-start gap-5 rounded-[var(--shape-radius-lg)] border border-border bg-surface/60 py-4 pl-[1.6rem] pr-6"
+            className="relative flex items-start gap-5 rounded-lg border border-border bg-surface/60 py-4 pl-[1.6rem] pr-6"
           >
             <span className="relative z-[2] mt-1.5 size-[0.7rem] shrink-0 rounded-full border border-accent bg-background" />
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-3">
                 <span className="font-display text-2xl leading-none">{layer.name}</span>
-                <span className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-[var(--accent-readable)]">
+                <span className="meta-label text-[var(--accent-readable)]">
                   0{index + 1}
                 </span>
               </div>
@@ -175,7 +175,7 @@ export function WhyHero() {
       <div className="why-hero-copy lg:col-span-7">
         <p
           data-service-kicker
-          className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]"
+          className="eyebrow text-[var(--accent-readable)]"
         >
           Why work with me
         </p>
@@ -242,7 +242,7 @@ export function WhyDifferentiators() {
                 countFrom={item.countFrom}
                 className="text-[1.6rem] sm:text-[2.4rem]" />
             ) : (
-              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-readable)]">
+              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 eyebrow text-[var(--accent-readable)]">
                 {item.value}
               </span>
             )}
@@ -269,13 +269,13 @@ export function WhyProcess() {
             <li key={step.title} data-why="side" className="relative pb-10 pl-8 last:pb-0">
               <span
                 aria-hidden="true"
-                className="absolute -left-[0.8rem] top-0 grid size-6 place-items-center rounded-full border border-border bg-background font-mono text-[0.7rem] text-muted-foreground"
+                className="absolute -left-[0.8rem] top-0 grid size-6 place-items-center rounded-full border border-border bg-background font-label text-[0.7rem] text-muted-foreground"
               >
                 {index + 1}
               </span>
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <h3 className="font-display text-2xl font-normal">{step.title}</h3>
-                <span className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+                <span className="font-label text-[0.72rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
                   {step.timing}
                 </span>
               </div>

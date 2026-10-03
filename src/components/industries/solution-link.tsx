@@ -14,7 +14,7 @@ export function SolutionLink({ link, className }: { link: IndustrySolution["link
       <p
         data-im-after
         className={cn(
-          "inline-flex items-center gap-2 rounded-full border border-dashed border-border px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted-foreground",
+          "inline-flex items-center gap-2 rounded-full border border-dashed border-border px-3 py-1 meta-label text-muted-foreground",
           className,
         )}
       >

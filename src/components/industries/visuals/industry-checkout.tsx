@@ -126,7 +126,7 @@ export function IndustryCheckout() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: sample products are added to a shopping cart, the subtotal adds up,
@@ -141,7 +141,7 @@ export function IndustryCheckout() {
             </span>
             Live checkout
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
@@ -153,7 +153,7 @@ export function IndustryCheckout() {
                 // Keys change per loop so each new cart's rows mount and animate in.
                 key={`${cycle}-${index}`}
                 className={cn(
-                  "flex h-[2.875rem] items-center gap-3 rounded-xl border border-border bg-background/70 px-3 transition-all duration-500",
+                  "flex h-[2.875rem] items-center gap-3 rounded-md border border-border bg-background/70 px-3 transition-all duration-500",
                   cycle > 0 && "industry-checkout-row-in",
                   paid && "opacity-60",
                   leaving && "translate-x-4 opacity-0",
@@ -166,13 +166,13 @@ export function IndustryCheckout() {
                 <span className="min-w-0 flex-1 truncate text-sm">{item.name}</span>
                 <span
                   className={cn(
-                    "shrink-0 rounded-full border border-border px-1.5 py-0.5 font-mono text-[0.6rem] text-muted-foreground",
+                    "shrink-0 rounded-full border border-border px-1.5 py-0.5 font-label text-3xs text-muted-foreground",
                     cycle > 0 && "industry-checkout-qty-in",
                   )}
                 >
                   ×{item.qty}
                 </span>
-                <span className="w-[4.25rem] shrink-0 text-right font-mono text-xs tabular-nums">
+                <span className="w-[4.25rem] shrink-0 text-right font-label text-xs tabular-nums">
                   {currency.format(item.price * item.qty)}
                 </span>
               </li>
@@ -181,7 +181,7 @@ export function IndustryCheckout() {
 
           <p
             className={cn(
-              "absolute inset-0 flex items-center justify-center font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground transition-opacity duration-500",
+              "absolute inset-0 flex items-center justify-center font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground transition-opacity duration-500",
               leaving ? "opacity-100 delay-300" : "opacity-0",
             )}
           >
@@ -191,7 +191,7 @@ export function IndustryCheckout() {
           {/* Order toast rises over the dimmed cart once payment lands. */}
           <div
             className={cn(
-              "absolute inset-x-2 bottom-2 flex items-center gap-3 rounded-xl border border-accent/40 bg-surface px-3 py-2.5 shadow-[0_18px_40px_-24px_color-mix(in_srgb,var(--accent)_60%,transparent)] transition-all duration-500 ease-out",
+              "absolute inset-x-2 bottom-2 flex items-center gap-3 rounded-md border border-accent/40 bg-surface px-3 py-2.5 shadow-[0_18px_40px_-24px_color-mix(in_srgb,var(--accent)_60%,transparent)] transition-all duration-500 ease-out",
               paid ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
             )}
           >
@@ -201,14 +201,14 @@ export function IndustryCheckout() {
             <span className="min-w-0 flex-1 truncate text-sm font-medium">
               Order #{FIRST_ORDER + cycle} paid
             </span>
-            <span className="shrink-0 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+            <span className="shrink-0 font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
               Just now
             </span>
           </div>
         </div>
 
         <div className="mt-4 flex items-end justify-between gap-3">
-          <span className="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="min-w-0 truncate font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Subtotal <span className="text-foreground/40">· {itemCount} items</span>
           </span>
           <span className="font-display text-3xl leading-none tabular-nums">

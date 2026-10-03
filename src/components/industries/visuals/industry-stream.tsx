@@ -121,7 +121,7 @@ export function IndustryStream() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: a live video player with a viewer count, buffer bar, and adaptive
@@ -136,13 +136,13 @@ export function IndustryStream() {
             </span>
             Live stream
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
 
         {/* Player frame: abstract picture, overlays on top, scrub bar along the bottom. */}
-        <div className="industry-stream-picture relative mt-4 aspect-video overflow-hidden rounded-xl border border-border">
+        <div className="industry-stream-picture relative mt-4 aspect-video overflow-hidden rounded-md border border-border">
           <span className="industry-stream-blob industry-stream-blob-a" />
           <span className="industry-stream-blob industry-stream-blob-b" />
           <span className="industry-stream-blob industry-stream-blob-c" />
@@ -151,11 +151,11 @@ export function IndustryStream() {
 
           <div className="absolute inset-x-2.5 top-2.5 flex items-center justify-between gap-2">
             <span className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 rounded-md border border-accent/40 bg-background/75 px-1.5 py-0.5 font-mono text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[var(--accent-readable)]">
+              <span className="flex items-center gap-1.5 rounded-md border border-accent/40 bg-background/75 px-1.5 py-0.5 font-label text-3xs font-medium uppercase tracking-[0.12em] text-[var(--accent-readable)]">
                 <span className="size-1.5 rounded-full bg-accent" />
                 Live
               </span>
-              <span className="flex items-center gap-1 rounded-md bg-background/75 px-1.5 py-0.5 font-mono text-[0.6rem] tabular-nums text-foreground/85">
+              <span className="flex items-center gap-1 rounded-md bg-background/75 px-1.5 py-0.5 font-label text-3xs tabular-nums text-foreground/85">
                 <Eye aria-hidden="true" className="size-3" strokeWidth={2} />
                 {groupDigits(frame.viewers)}
               </span>
@@ -163,7 +163,7 @@ export function IndustryStream() {
             <span
               key={active.label}
               className={cn(
-                "rounded-md border bg-background/75 px-1.5 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.1em]",
+                "rounded-md border bg-background/75 px-1.5 py-0.5 font-label text-3xs uppercase tracking-[0.12em]",
                 hd ? "border-accent/40 text-[var(--accent-readable)]" : "border-border text-muted-foreground",
                 !reduced && tick > INITIAL_TICK && "industry-stream-chip-in",
               )}
@@ -173,7 +173,7 @@ export function IndustryStream() {
           </div>
 
           <div className="absolute inset-x-2.5 bottom-2 flex items-center gap-2.5">
-            <span className="font-mono text-[0.58rem] tabular-nums text-foreground/80">{frame.elapsed}</span>
+            <span className="font-label text-3xs tabular-nums text-foreground/80">{frame.elapsed}</span>
             <span className="relative h-1 flex-1 overflow-hidden rounded-full bg-foreground/15">
               <span
                 className="absolute inset-y-0 bg-foreground/30 transition-[width] duration-700 ease-out"
@@ -188,12 +188,12 @@ export function IndustryStream() {
         {/* Adaptive bitrate ladder: the active rung is solid, rungs below it are tinted. */}
         <div className="mt-3 flex items-end justify-between gap-3">
           <span className="min-w-0">
-            <span className="block font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+            <span className="block font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
               Adaptive bitrate
             </span>
             <span className="mt-1 flex items-baseline gap-1">
               <span className="font-display text-xl leading-none tabular-nums">{active.mbps}</span>
-              <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+              <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
                 Mbps
               </span>
             </span>
@@ -210,7 +210,7 @@ export function IndustryStream() {
                 />
                 <span
                   className={cn(
-                    "font-mono text-[0.52rem] tabular-nums transition-colors duration-500",
+                    "font-label text-[0.52rem] tabular-nums transition-colors duration-500",
                     index === frame.rung ? "text-[var(--accent-readable)]" : "text-muted-foreground/70",
                   )}
                 >
@@ -222,7 +222,7 @@ export function IndustryStream() {
         </div>
 
         {/* Chat: newest line at the bottom, older lines dim before they leave. */}
-        <ul className="industry-stream-chat mt-3 flex h-[7.25rem] flex-col justify-end gap-1.5 overflow-hidden rounded-xl border border-border bg-background/70 px-3 py-2.5">
+        <ul className="industry-stream-chat mt-3 flex h-[7.25rem] flex-col justify-end gap-1.5 overflow-hidden rounded-md border border-border bg-background/70 px-3 py-2.5">
           {frame.messages.map((index, position) => {
             const message = CHAT[index % CHAT.length];
             const age = frame.messages.length - 1 - position;

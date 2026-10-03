@@ -45,7 +45,7 @@ function MonoLabel({ children, className }: { children: ReactNode; className?: s
   return (
     <span
       className={cn(
-        "font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground",
+        "font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground",
         className,
       )}
     >
@@ -142,7 +142,7 @@ export function IndustryListings() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: a schematic map with five sample price pins. Each pin activates in
@@ -157,13 +157,13 @@ export function IndustryListings() {
             </span>
             Listings
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
 
         {/* Map: pins sit on top of the SVG grid as HTML so their text stays crisp. */}
-        <div className="relative mt-4 h-40 overflow-hidden rounded-xl border border-border bg-background/70 sm:h-44">
+        <div className="relative mt-4 h-40 overflow-hidden rounded-md border border-border bg-background/70 sm:h-44">
           <BlockMap />
           {LISTINGS.map((item, index) => {
             const on = index === active;
@@ -184,7 +184,7 @@ export function IndustryListings() {
                 />
                 <span
                   className={cn(
-                    "absolute bottom-1.5 left-0 origin-bottom -translate-x-1/2 whitespace-nowrap rounded-full border px-1.5 py-0.5 font-mono text-[0.6rem] tabular-nums shadow-sm transition-all duration-300",
+                    "absolute bottom-1.5 left-0 origin-bottom -translate-x-1/2 whitespace-nowrap rounded-full border px-1.5 py-0.5 font-label text-3xs tabular-nums shadow-sm transition-all duration-300",
                     on
                       ? "scale-125 border-accent bg-accent text-accent-foreground"
                       : "scale-100 border-border bg-surface text-foreground/80",
@@ -198,7 +198,7 @@ export function IndustryListings() {
         </div>
 
         {/* Listing card follows the active pin. */}
-        <div className="mt-3 grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-xl border border-border bg-background/70 p-3">
+        <div className="mt-3 grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-md border border-border bg-background/70 p-3">
           <div
             key={`photo-${active}`}
             className={cn("relative h-[5.5rem] overflow-hidden rounded-lg", cardIn && "industry-listings-card-in")}
@@ -217,7 +217,7 @@ export function IndustryListings() {
               <MonoLabel className="truncate">{listing.ref}</MonoLabel>
               <span
                 className={cn(
-                  "flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.08em] transition-colors duration-500",
+                  "flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 font-label text-3xs uppercase tracking-[0.08em] transition-colors duration-500",
                   booked
                     ? "border-accent/50 text-[var(--accent-readable)]"
                     : "border-border text-muted-foreground",
@@ -249,7 +249,7 @@ export function IndustryListings() {
                 <span
                   key={slot}
                   className={cn(
-                    "flex min-w-0 items-center justify-center gap-1 rounded-lg border px-1.5 py-1.5 font-mono text-[0.62rem] tabular-nums transition-colors duration-500",
+                    "flex min-w-0 items-center justify-center gap-1 rounded-lg border px-1.5 py-1.5 font-label text-3xs tabular-nums transition-colors duration-500",
                     filled
                       ? "border-accent bg-accent text-accent-foreground"
                       : "border-border text-muted-foreground",

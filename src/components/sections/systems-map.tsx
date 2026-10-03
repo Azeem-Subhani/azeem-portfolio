@@ -182,11 +182,11 @@ export function SystemsMap() {
         } as React.CSSProperties
       }
     >
-      <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="eyebrow text-muted-foreground">
         How the work connects
       </p>
 
-      <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted-foreground">
+      <p className="mt-2 meta-label text-muted-foreground">
         {nodes.map((node, index) => (
           <span key={node.id}>
             {index > 0 ? " → " : null}
@@ -243,7 +243,7 @@ export function SystemsMap() {
                       isActive ? "text-accent-readable" : "text-foreground",
                     )}
                   >
-                    <span className="font-mono text-[0.6875rem] tracking-[0.14em] text-muted-foreground">
+                    <span className="font-label text-2xs tracking-[0.14em] text-muted-foreground">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     {node.label}

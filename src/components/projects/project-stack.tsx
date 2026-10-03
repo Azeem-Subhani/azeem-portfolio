@@ -67,14 +67,14 @@ export function ProjectStack({ items }: ProjectStackProps) {
         return (
           <li
             key={tech}
-            className="flex items-center gap-3 rounded-2xl border px-3 py-2.5"
+            className="flex items-center gap-3 rounded-[1rem] border px-3 py-2.5"
             style={{
               borderColor: `color-mix(in srgb, ${mark.ink} 34%, var(--border))`,
               background: `color-mix(in srgb, ${mark.ink} 12%, var(--surface))`,
             }}
           >
             <span
-              className="grid size-11 shrink-0 place-items-center rounded-xl"
+              className="grid size-11 shrink-0 place-items-center rounded-md"
               style={{
                 background: `color-mix(in srgb, ${mark.ink} 18%, transparent)`,
               }}

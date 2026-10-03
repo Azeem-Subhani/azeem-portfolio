@@ -11,6 +11,8 @@
   --border: #ebe4d3;
   --font-h1: var(--font-instrument-serif);
   --font-h2: var(--font-inter);
+  /* System monospace for code, paths and IDs. No webfont download. */
+  --font-code: ui-monospace, "SF Mono", Menlo, monospace;
 
   --background: var(--bg);
   --foreground: var(--fg);
@@ -128,12 +130,33 @@
   --color-header-glass: var(--header-glass);
   --font-display: var(--font-h1);
   --font-sans: var(--font-h2);
-  --font-mono: var(--font-h2);
+  /* Uppercase eyebrows, meta labels and tabular figures use Inter via font-label;
+     font-mono is real monospace for code, paths and IDs. */
+  --font-label: var(--font-h2);
+  --font-mono: var(--font-code);
+  /* Small label sizes. No line-height pair, so like text-[0.6875rem] they only set
+     font-size and inherit line-height. */
+  --text-2xs: 0.6875rem;
+  --text-3xs: 0.625rem;
+  /* xl and 2xl continue the overridden sm/md/lg scale so it stays monotonic
+     (the stock 0.75rem / 1rem sat below rounded-lg). */
   --radius-sm: var(--shape-radius-sm);
   --radius-md: var(--shape-radius-md);
   --radius-lg: var(--shape-radius-lg);
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
   --animate-header-enter: header-enter 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-hero-enter: hero-enter 0.65s ease-out both;
+}
+
+/* Section eyebrow: small uppercase kicker above a heading. */
+@utility eyebrow {
+  @apply font-label text-xs tracking-[0.16em] uppercase;
+}
+
+/* Meta label: card captions, ledger labels, tag pills. */
+@utility meta-label {
+  @apply font-label text-2xs tracking-[0.12em] uppercase;
 }
 
 @layer base {
@@ -883,7 +906,7 @@ button,
   min-height: 2rem;
   padding: 0 0.75rem;
   border: 1px solid color-mix(in srgb, var(--fg) 16%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--fg);
   font-size: 0.72rem;
   font-weight: 500;
@@ -1008,7 +1031,7 @@ button,
   width: 2.35rem;
   height: 2.35rem;
   border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
   transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
 }
@@ -1143,7 +1166,7 @@ button,
   min-height: 2.75rem;
   padding: 0 1.1rem;
   border: 1px solid color-mix(in srgb, var(--fg) 26%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--fg);
   font-size: 0.92rem;
   transition: border-color 0.2s ease;
@@ -1257,7 +1280,7 @@ button,
   padding: 0.28rem;
   overflow-x: auto;
   border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--surface) 72%, transparent);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -1271,7 +1294,7 @@ button,
   flex: 0 0 auto;
   min-height: 2.75rem;
   padding: 0 1rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
   cursor: pointer;
   font-size: 0.92rem;
@@ -1369,7 +1392,7 @@ button,
 
 .service-compare-stage article {
   padding: 1.4rem 1.5rem 1.6rem;
-  border-radius: 1.25rem;
+  border-radius: var(--shape-radius-lg);
   background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
@@ -1539,7 +1562,7 @@ button,
   width: 0.42rem;
   height: 0.42rem;
   flex-shrink: 0;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   translate: 0 0.28em;
 }
@@ -1883,7 +1906,7 @@ button,
   content: "";
   position: absolute;
   inset: -3px;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   border: 1px solid var(--accent);
   animation: systems-map-ping 1.8s ease-out infinite;
 }
@@ -1983,7 +2006,7 @@ html.dark .svgl-invert-dark,
   padding: 0.55rem;
   list-style: none;
   border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
-  border-radius: 1.25rem;
+  border-radius: var(--shape-radius-lg);
   background: var(--surface);
   box-shadow: 0 22px 48px -24px rgb(var(--shadow-color) / 0.6);
   opacity: 0;

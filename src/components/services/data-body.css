@@ -81,7 +81,7 @@
   gap: 1.25rem;
   margin: 2.5rem 0 -1rem;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: transparent;
 }
 
@@ -109,7 +109,7 @@
   gap: 0.45rem;
   min-height: 2.5rem;
   padding: 0.55rem 0.85rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 500;
@@ -160,7 +160,7 @@
   padding: 0 1.1rem;
   /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
   border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: transparent;
   color: var(--fg);
   font-size: 0.86rem;
@@ -214,7 +214,7 @@
 .data-panel-bar > span {
   width: 0.46rem;
   height: 0.46rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 20%, transparent);
 }
 
@@ -224,7 +224,7 @@
   margin-left: 0.3rem;
   overflow: hidden;
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   font-style: normal;
   letter-spacing: 0.04em;
@@ -267,7 +267,7 @@
 
 .data-flow-list span {
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.7rem;
 }
 
@@ -297,7 +297,7 @@
   width: 0.4rem;
   height: 0.4rem;
   margin-left: -0.2rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
   animation: data-rail-run 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
@@ -313,10 +313,10 @@
   left: calc(50% + 0.7rem);
   translate: 0 -50%;
   padding: 0.1rem 0.35rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--surface);
   color: var(--accent-readable);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   white-space: nowrap;
 }
@@ -340,7 +340,7 @@
 
 .data-store-label {
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
 }
@@ -381,7 +381,7 @@
 
 .data-store-row code {
   color: var(--fg);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.78rem;
 }
 
@@ -409,7 +409,7 @@
 
 .data-store-meta span {
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
 }
 
@@ -438,7 +438,7 @@
 .data-warehouse-list code {
   overflow: hidden;
   color: var(--fg);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.74rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -562,7 +562,7 @@
   gap: 0.55rem;
   margin-bottom: 0.9rem;
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
 }
@@ -571,7 +571,7 @@
   overflow: hidden;
   padding: 0.18rem 0.55rem;
   border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--accent-readable);
   font-weight: 600;
@@ -725,9 +725,9 @@
 .data-mig-app {
   padding: 0.15rem 0.4rem;
   border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   text-align: center;
 }
@@ -735,7 +735,7 @@
 .data-mig-flow {
   position: relative;
   height: 2px;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 12%, transparent);
 }
 
@@ -746,7 +746,7 @@
   width: 0.38rem;
   height: 0.38rem;
   margin-top: -0.19rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   opacity: 0;
 }
@@ -771,7 +771,7 @@
 .data-mig-lane em {
   overflow: hidden;
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.72rem;
   font-style: normal;
   transition: color 0.35s ease;
@@ -877,14 +877,14 @@
   min-width: 8rem;
   height: 0.3rem;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 12%, transparent);
 }
 
 .data-mig-meter i {
   display: block;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: linear-gradient(90deg, var(--accent), var(--signal));
   transform: scaleX(var(--copied));
   transform-origin: left center;
@@ -947,7 +947,7 @@
   width: 0.7rem;
   height: 0.7rem;
   border: 1.5px solid var(--accent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
   transition:
@@ -960,7 +960,7 @@
   display: block;
   margin-bottom: 0.55rem;
   color: var(--accent-readable);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.74rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -1073,7 +1073,7 @@
 .data-rowstore-feed code {
   overflow: hidden;
   color: var(--fg);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.74rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1125,7 +1125,7 @@
   padding: 0.7rem 0.2rem;
   background: var(--bg);
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   letter-spacing: 0.06em;
   writing-mode: vertical-rl;
@@ -1175,7 +1175,7 @@
   margin-top: 0.45rem;
   overflow: hidden;
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
   font-style: normal;
   text-align: center;
@@ -1209,7 +1209,7 @@
 .data-colstore-query code {
   overflow: hidden;
   color: var(--fg);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.72rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1316,9 +1316,9 @@
 .data-source-pill {
   padding: 0.1rem 0.4rem;
   border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--accent-readable);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-code);
   font-size: 0.6875rem;
 }
 
@@ -1358,7 +1358,7 @@
   width: 0.3rem;
   height: 0.3rem;
   margin-top: -0.15rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   opacity: 0;
   animation: data-signal-run var(--dur) linear infinite;
@@ -1677,7 +1677,7 @@
     align-items: stretch;
     gap: 0.6rem;
     margin: 1.75rem 0 0;
-    border-radius: 1.25rem;
+    border-radius: var(--shape-radius-lg);
     padding: 1rem;
   }
 

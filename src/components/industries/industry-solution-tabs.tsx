@@ -69,7 +69,7 @@ export function IndustrySolutionTabs({
               onClick={() => setActive(index)}
               onKeyDown={onKeyDown}
               className={cn(
-                "group relative flex items-center gap-3 overflow-hidden rounded-[var(--shape-radius-lg)] border px-4 py-3 text-left transition-[border-color,background-color] duration-300",
+                "group relative flex items-center gap-3 overflow-hidden rounded-lg border px-4 py-3 text-left transition-[border-color,background-color] duration-300",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]",
                 selected
                   ? "border-accent/50 bg-surface"
@@ -86,7 +86,7 @@ export function IndustrySolutionTabs({
               />
               <IconMark icon={item.icon} className="size-9" />
               <span className="min-w-0">
-                <span className="block font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted-foreground">
+                <span className="block meta-label text-muted-foreground">
                   {String(index + 1).padStart(2, "0")}
                   {item.link ? null : " · Approach"}
                 </span>

@@ -214,7 +214,7 @@ export function ContactForm() {
       noValidate
       aria-label="Contact form"
       aria-busy={isSubmitting}
-      className="relative flex flex-col gap-6 rounded-2xl border border-border bg-surface/80 p-6 shadow-[0_18px_50px_rgb(var(--shadow-color)/0.08)] backdrop-blur-sm sm:p-8"
+      className="relative flex flex-col gap-6 rounded-[1rem] border border-border bg-surface/80 p-6 shadow-[0_18px_50px_rgb(var(--shadow-color)/0.08)] backdrop-blur-sm sm:p-8"
     >
       {/* Honeypot: hidden from sighted users and assistive tech. Real visitors never fill it. */}
       <div className="hidden" aria-hidden="true">
@@ -274,7 +274,7 @@ export function ContactForm() {
           Phone <span className="text-muted-foreground">(optional)</span>
         </Label>
         <div
-          className={`flex min-h-12 w-full items-center rounded-2xl border bg-surface-elevated px-3 ${fieldDarkFill} transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 ${errors.phone ? "border-error" : "border-muted-foreground/85"}`}
+          className={`flex min-h-12 w-full items-center rounded-md border bg-surface-elevated px-3 ${fieldDarkFill} transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 ${errors.phone ? "border-error" : "border-muted-foreground/85"}`}
         >
           <div ref={countryMenuRef} className="relative shrink-0">
             <button

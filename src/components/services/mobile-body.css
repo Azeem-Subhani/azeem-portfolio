@@ -16,7 +16,7 @@
   gap: 1.25rem;
   margin: 2.5rem 0 -1rem;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: transparent;
 }
 
@@ -44,7 +44,7 @@
   gap: 0.45rem;
   min-height: 2.5rem;
   padding: 0.55rem 0.85rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 500;
@@ -95,7 +95,7 @@
   padding: 0 1.1rem;
   /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
   border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: transparent;
   color: var(--fg);
   font-size: 0.86rem;
@@ -184,7 +184,7 @@
   width: min(36rem, 70%);
   height: 18rem;
   transform: translate(-50%, -50%);
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--accent) 30%, transparent);
   filter: blur(72px);
   pointer-events: none;
@@ -239,7 +239,7 @@
 .mobile-browser-bar span {
   width: 0.48rem;
   height: 0.48rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: color-mix(in srgb, var(--fg) 22%, transparent);
 }
 
@@ -398,7 +398,7 @@
   width: 0.42rem;
   height: 0.42rem;
   flex-shrink: 0;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--accent);
   translate: 0 0.28em;
 }
@@ -537,7 +537,7 @@
   position: absolute;
   z-index: 3;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--surface);
   color: var(--accent-readable);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
@@ -555,7 +555,7 @@
 .mobile-hw-tab {
   min-height: 2.6rem;
   padding: 0 0.95rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   color: var(--muted);
   cursor: pointer;
   font-size: 0.92rem;
@@ -615,7 +615,7 @@
 
 .mobile-land li {
   padding: 0.55rem 1rem;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-pill);
   background: var(--surface);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--fg);
@@ -802,7 +802,7 @@
     align-items: stretch;
     gap: 0.6rem;
     margin: 1.75rem 0 0;
-    border-radius: 1.25rem;
+    border-radius: var(--shape-radius-lg);
     padding: 1rem;
   }
 

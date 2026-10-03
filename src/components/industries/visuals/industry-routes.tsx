@@ -229,7 +229,7 @@ export function IndustryRoutes() {
   return (
     <div
       ref={panelRef}
-      className="relative rounded-[var(--shape-radius-lg)] border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
+      className="relative rounded-lg border border-border bg-surface/70 p-4 shadow-[0_30px_80px_-40px_color-mix(in_srgb,var(--accent)_45%,transparent)] backdrop-blur-sm sm:p-5"
     >
       <p className="sr-only">
         Illustration: three delivery vehicles looping routes from a depot on a schematic map,
@@ -244,12 +244,12 @@ export function IndustryRoutes() {
             </span>
             Fleet
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
             Sample data
           </span>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-xl border border-border bg-background/70">
+        <div className="mt-4 overflow-hidden rounded-md border border-border bg-background/70">
           <svg viewBox={`0 0 ${MAP_W} ${MAP_H}`} className="block h-auto w-full">
             {/* Faint survey grid. */}
             <g className="stroke-foreground/[0.06]" strokeWidth={1}>
@@ -299,7 +299,7 @@ export function IndustryRoutes() {
             <text
               x={DEPOT[0] + 10}
               y={DEPOT[1] - 8}
-              className="fill-[var(--muted-foreground)] font-mono uppercase"
+              className="fill-[var(--muted-foreground)] font-label uppercase"
               fontSize={7}
               letterSpacing={1}
             >
@@ -338,7 +338,7 @@ export function IndustryRoutes() {
                       y={stop.label[1]}
                       textAnchor={stop.label[0] > stop.at[0] ? "start" : "middle"}
                       className={cn(
-                        "font-mono transition-[fill] duration-500",
+                        "font-label transition-[fill] duration-500",
                         done ? "fill-[var(--accent-readable)]" : "fill-[var(--muted-foreground)]",
                       )}
                       fontSize={8}
@@ -373,7 +373,7 @@ export function IndustryRoutes() {
                 <text
                   y={-10}
                   textAnchor="middle"
-                  className="fill-[var(--foreground)] font-mono"
+                  className="fill-[var(--foreground)] font-label"
                   fontSize={7}
                 >
                   {vehicle.tag}
@@ -388,7 +388,7 @@ export function IndustryRoutes() {
             const s = shown[i];
             const nextStop = s.passed < vehicle.stops.length ? `Stop ${vehicle.stops[s.passed]}` : "Depot";
             return (
-              <li key={vehicle.tag} className="rounded-xl border border-border bg-background/70 px-3 py-2">
+              <li key={vehicle.tag} className="rounded-md border border-border bg-background/70 px-3 py-2">
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center gap-2.5">
                     <span
@@ -398,13 +398,13 @@ export function IndustryRoutes() {
                       )}
                     />
                     <span className="text-sm leading-none">{vehicle.name}</span>
-                    <span className="truncate font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="truncate font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
                       Next <span className="text-foreground/70">{nextStop}</span>
                     </span>
                   </span>
                   <span className="flex shrink-0 items-baseline gap-1">
                     <span className="font-display text-lg leading-none tabular-nums">{s.eta}</span>
-                    <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="font-label text-3xs uppercase tracking-[0.12em] text-muted-foreground">
                       min
                     </span>
                   </span>
@@ -423,7 +423,7 @@ export function IndustryRoutes() {
 
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span>Depot to stop to depot</span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
+          <span className="font-label text-3xs uppercase tracking-[0.12em] text-[var(--accent-readable)]">
             {delivered}/{totalStops} delivered
           </span>
         </div>
