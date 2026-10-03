@@ -1,7 +1,7 @@
 .data-body {
   max-width: var(--container-7xl); /* site container; see globals.css */
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 1.5rem;
 }
 
 .data-chapter {
@@ -136,6 +136,21 @@
   color: var(--fg);
 }
 
+/* Scroll-spy: the chapter under the reading line (see toc-spy.ts). */
+.data-toc ol a[aria-current="location"] {
+  color: var(--accent-readable);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.45em;
+}
+
+/* Wraps the project link so it can carry data-inline-cta. */
+.data-toc-cta {
+  display: flex;
+  flex-shrink: 0;
+}
+
 .data-toc-link {
   display: inline-flex;
   flex-shrink: 0;
@@ -143,14 +158,17 @@
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0 1.1rem;
+  /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: transparent;
+  color: var(--fg);
   font-size: 0.86rem;
   font-weight: 600;
   text-decoration: none;
   transition:
     background 0.2s ease,
+    border-color 0.2s ease,
     transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -161,7 +179,8 @@
 }
 
 .data-toc-link:hover {
-  background: var(--accent-strong);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
 }
 
 .data-toc-link:hover svg {
@@ -1642,10 +1661,6 @@
   .data-chapter,
   .data-chapter [id] {
     scroll-margin-top: calc(var(--site-header-bottom, 5rem) + 1.25rem);
-  }
-
-  .data-body {
-    padding: 0 1.25rem;
   }
 
   .data-chapter {

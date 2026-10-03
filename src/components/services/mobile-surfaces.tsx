@@ -159,7 +159,7 @@ function Pitch({ dense }: { dense?: boolean }) {
         <span
           key={index}
           data-mobile-spot
-          className="absolute size-2 rounded-full bg-accent shadow-[0_0_10px_rgb(42_161_152/0.75)]"
+          className="absolute size-2 rounded-full bg-accent shadow-[0_0_10px_color-mix(in_srgb,var(--accent)_75%,transparent)]"
           style={{ left: `${spot.x}%`, top: `${spot.y}%`, marginLeft: -4, marginTop: -4 }}
         />
       ))}
@@ -230,7 +230,7 @@ function Bezel({
         style={{ borderRadius: screenRadius }}
       >
         {island ? (
-          <div className="absolute left-1/2 top-[6px] z-20 h-[1.1rem] w-[4.2rem] -translate-x-1/2 rounded-full bg-background shadow-[inset_0_1px_2px_rgb(0_43_54/0.85)]" />
+          <div className="absolute left-1/2 top-[6px] z-20 h-[1.1rem] w-[4.2rem] -translate-x-1/2 rounded-full bg-background shadow-[inset_0_1px_2px_rgb(var(--shadow-color)/0.6)]" />
         ) : null}
         {children}
       </div>
@@ -488,8 +488,8 @@ export function SquadPhone() {
 export function WatchFace() {
   return (
     <div className="relative">
-      <span className="absolute -right-[7px] top-10 z-10 h-7 w-[7px] rounded-r-sm bg-background shadow-[0_0_0_1px_rgb(42_161_152/0.28)]" />
-      <span className="absolute -right-[5px] top-[5.4rem] z-10 h-3.5 w-[5px] rounded-r-sm bg-background shadow-[0_0_0_1px_rgb(42_161_152/0.22)]" />
+      <span className="absolute -right-[7px] top-10 z-10 h-7 w-[7px] rounded-r-sm bg-background shadow-[0_0_0_1px_color-mix(in_srgb,var(--accent)_28%,transparent)]" />
+      <span className="absolute -right-[5px] top-[5.4rem] z-10 h-3.5 w-[5px] rounded-r-sm bg-background shadow-[0_0_0_1px_color-mix(in_srgb,var(--accent)_22%,transparent)]" />
       <Bezel radius="2.1rem" screenRadius="1.55rem" className="w-[12.25rem]" screenClassName="h-[14.6rem]">
         <div className="flex h-full flex-col px-3.5 py-3.5">
           <div className="flex items-baseline justify-between">

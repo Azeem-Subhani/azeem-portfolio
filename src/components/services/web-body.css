@@ -1,7 +1,7 @@
 .web-body {
   max-width: var(--container-7xl); /* site container; see globals.css */
   margin: 0 auto;
-  padding: 0 1.25rem 2.5rem;
+  padding: 0 1.5rem 2.5rem;
 }
 
 .web-chapter {
@@ -131,6 +131,21 @@
   color: var(--fg);
 }
 
+/* Scroll-spy: the chapter under the reading line (see toc-spy.ts). */
+.web-toc ol a[aria-current="location"] {
+  color: var(--accent-readable);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.45em;
+}
+
+/* Wraps the project link so it can carry data-inline-cta. */
+.web-toc-cta {
+  display: flex;
+  flex-shrink: 0;
+}
+
 .web-toc-link {
   display: inline-flex;
   flex-shrink: 0;
@@ -138,14 +153,17 @@
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0 1.1rem;
+  /* Secondary to the page's contact CTA, so an outline rather than a filled teal button. */
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: transparent;
+  color: var(--fg);
   font-size: 0.86rem;
   font-weight: 600;
   text-decoration: none;
   transition:
     background 0.2s ease,
+    border-color 0.2s ease,
     transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -156,7 +174,8 @@
 }
 
 .web-toc-link:hover {
-  background: var(--accent-strong);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
 }
 
 .web-toc-link:hover svg {
@@ -240,7 +259,7 @@
   background: var(--bg);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
-    0 24px 40px -24px rgb(7 54 66 / 0.4);
+    0 24px 40px -24px rgb(var(--shadow-color) / 0.4);
 }
 
 .web-browser-bar {
@@ -251,7 +270,9 @@
   border-bottom: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
 }
 
-.web-browser-bar span {
+.web-browser-bar span,
+.web-migrate-bar > span,
+.web-seo-bar > span {
   width: 0.48rem;
   height: 0.48rem;
   border-radius: 999px;
@@ -443,8 +464,8 @@
 }
 
 .web-stack-badge.is-busy {
-  background: color-mix(in srgb, #e3a74f 22%, var(--surface));
-  color: #e3a74f;
+  background: color-mix(in srgb, var(--amber) 22%, var(--surface));
+  color: var(--amber-readable);
 }
 
 .web-stack-badge.is-busy::before {
@@ -793,11 +814,11 @@
 }
 
 .web-edge li.is-purge span {
-  background: #e3a74f;
+  background: var(--amber);
 }
 
 .web-edge li.is-purge em {
-  color: #e3a74f;
+  color: var(--amber-readable);
 }
 
 .web-build-grid {
@@ -868,7 +889,7 @@
 .web-migrate-pane.is-headless {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent),
-    0 24px 40px -28px rgb(7 54 66 / 0.4);
+    0 24px 40px -28px rgb(var(--shadow-color) / 0.4);
 }
 
 .web-migrate-bar,
@@ -1366,8 +1387,8 @@
   margin-top: 0.45em;
   padding: 0.15em 0.5em;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--signal, #e5484d) 16%, transparent);
-  color: color-mix(in srgb, var(--signal, #e5484d) 80%, var(--fg));
+  background: color-mix(in srgb, var(--signal) 16%, transparent);
+  color: color-mix(in srgb, var(--signal) 80%, var(--fg));
   font-size: 0.64em;
   font-weight: 600;
 }
@@ -1443,11 +1464,11 @@
 }
 
 .web-proto-legend .is-b i {
-  background: #9b7bea;
+  background: var(--violet);
 }
 
 .web-proto-legend .is-c i {
-  background: #e3a74f;
+  background: var(--amber);
 }
 
 .web-proto-legend em {
@@ -1593,7 +1614,7 @@
   background: var(--surface);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
-    0 28px 50px -28px rgb(7 54 66 / 0.42);
+    0 28px 50px -28px rgb(var(--shadow-color) / 0.42);
 }
 
 .web-seo-grid {
@@ -1783,7 +1804,7 @@
   }
 
   .web-body {
-    padding: 0 1.25rem 2rem;
+    padding-bottom: 2rem;
   }
 
   .web-chapter {
@@ -1917,13 +1938,6 @@
     color: var(--accent-readable);
   }
 
-}
-
-@media (min-width: 640px) {
-  .web-body {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

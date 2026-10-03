@@ -24,6 +24,7 @@ import {
 } from "@/components/services/cloud-surfaces";
 import { useCloudBodyMotion } from "@/components/services/cloud-motion";
 import { ServiceTocGlass } from "@/components/services/service-toc-glass";
+import { useActiveChapter } from "@/components/services/toc-spy";
 import { cn } from "@/lib/utils";
 import type { ServicePageContent, ServiceSection } from "@/types/content";
 
@@ -40,6 +41,8 @@ const CHAPTERS = [
   { id: "cloud-burst", index: "04", kicker: "Burst", label: "Serverless" },
   { id: "cloud-hosts", index: "05", kicker: "Hosts", label: "Smaller hosts" },
 ] as const;
+
+const CHAPTER_IDS = CHAPTERS.map((chapter) => chapter.id);
 
 function ofKind<K extends ServiceSection["kind"]>(
   sections: ServiceSection[],
@@ -297,6 +300,7 @@ export function CloudServiceBody({ service }: { service: ServicePageContent }) {
   const [features] = ofKind(service.sections, "features");
   const [coverage] = ofKind(service.sections, "coverage");
   const rootRef = useCloudBodyMotion<HTMLDivElement>();
+  const activeChapter = useActiveChapter(CHAPTER_IDS);
 
   return (
     <div ref={rootRef} className="cloud-body">
@@ -308,19 +312,25 @@ export function CloudServiceBody({ service }: { service: ServicePageContent }) {
         <ol>
           {CHAPTERS.map((chapter) => (
             <li key={chapter.id}>
-              <a href={`#${chapter.id}`}>
+              <a
+                href={`#${chapter.id}`}
+                aria-current={activeChapter === chapter.id ? "location" : undefined}
+              >
                 <span aria-hidden="true">{chapter.index}</span> {chapter.label}
               </a>
             </li>
           ))}
         </ol>
-        <Link
-          href="/projects/memorial-planning"
-          className="cloud-toc-link"
-          aria-label="See the stack: memorial portal"
-        >
-          Memorial portal <ArrowRight aria-hidden="true" />
-        </Link>
+        {/* A project link, not a contact CTA; the mobile contact bar still steps aside for it. */}
+        <div className="cloud-toc-cta" data-inline-cta>
+          <Link
+            href="/projects/memorial-planning"
+            className="cloud-toc-link"
+            aria-label="See the stack: memorial portal"
+          >
+            Memorial portal <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
       </nav>
       <div className="cloud-body-scroll overflow-x-clip">
         {capabilities ? <OperateChapter section={capabilities} /> : null}
