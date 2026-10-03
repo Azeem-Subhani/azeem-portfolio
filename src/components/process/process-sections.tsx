@@ -24,11 +24,14 @@ const sectionClassName = "mt-28 scroll-mt-28 lg:mt-36";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
 
-/** Section heading without an eyebrow: the title and intro carry the section on their own. */
-function Head({ title, intro }: { title: ReactNode; intro?: string }) {
+/** Section heading with the numbered eyebrow the other page templates use. */
+function Head({ kicker, title, intro }: { kicker: string; title: ReactNode; intro?: string }) {
   return (
     <div data-why="up" data-why-distance="20" className="max-w-2xl">
-      <h2 className="text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
+      <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--accent-readable)]">
+        {kicker}
+      </p>
+      <h2 className="mt-4 text-balance font-display text-[clamp(2.5rem,4.5vw,3.75rem)] font-normal leading-[0.98]">
         {title}
       </h2>
       {intro ? <p className="mt-5 text-lg leading-8 text-muted-foreground">{intro}</p> : null}
@@ -38,7 +41,8 @@ function Head({ title, intro }: { title: ReactNode; intro?: string }) {
 
 export function ProcessHero() {
   return (
-    <header className="max-w-4xl">
+    // Centered so the hero reads as one composition rather than a left column beside empty space.
+    <header className="mx-auto max-w-4xl text-center">
       <h1
         aria-label="a process you can see into"
         className="font-display text-[clamp(3.25rem,8vw,6.5rem)] font-normal leading-[0.9]"
@@ -55,11 +59,11 @@ export function ProcessHero() {
           </span>
         </span>
       </h1>
-      <p data-why="hero" className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
+      <p data-why="hero" className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
         Scope agreed before the first commit, a working build every two weeks, and nothing in
         front of your users until you approve it. Here is each step.
       </p>
-      <div data-why="hero" data-inline-cta className="mt-10 w-fit">
+      <div data-why="hero" data-inline-cta className="mx-auto mt-10 w-fit">
         <MagneticButton>
           <Button asChild size="lg">
             <a href="#before-the-build">
@@ -80,6 +84,7 @@ export function ProcessPreProject() {
         {/* The heading and timeline stay pinned while the four steps scroll past. */}
         <div className="lg:sticky lg:top-32 lg:self-start">
           <Head
+            kicker="01 · Before the build"
             title="Alignment before the first commit"
             intro="Scope, timeline, and expectations are settled before any code is written, so the build starts from one shared plan."
           />
@@ -94,7 +99,7 @@ export function ProcessPreProject() {
         </div>
         <ol className="divide-y divide-border border-y border-border">
           {preProjectSteps.map((step, index) => (
-            <li key={step.title} data-why="up" className="grid gap-3 py-8 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-6">
+            <li key={step.title} data-why="up" className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-4 py-8 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-x-6">
               <span aria-hidden="true" className="font-display text-4xl leading-none text-accent">
                 {index + 1}
               </span>
@@ -224,6 +229,7 @@ export function ProcessSprints() {
   return (
     <section className={sectionClassName}>
       <Head
+        kicker="02 · Sprints"
         title="Two weeks, one working build"
         intro="Every sprint runs from a Monday to the Friday after next and ends with features you can test in UAT. This is a typical one."
       />
@@ -263,6 +269,7 @@ export function ProcessPipeline() {
   return (
     <section className={sectionClassName}>
       <Head
+        kicker="03 · Environments"
         title="Four environments, one gate"
         intro="Every change is tested more than once on its way to your users, and the last step waits for your approval."
       />
@@ -320,6 +327,7 @@ export function ProcessChanges() {
   return (
     <section className={sectionClassName}>
       <Head
+        kicker="04 · Scope changes"
         title="When the scope changes"
         intro="New ideas are welcome mid-build. Each one is sized and agreed before it touches the sprint."
       />
@@ -329,7 +337,7 @@ export function ProcessChanges() {
             <span aria-hidden="true" className="font-display text-3xl leading-none text-accent">
               {index + 1}
             </span>
-            <h3 className="mt-3 text-lg font-semibold leading-snug text-foreground">{step.title}</h3>
+            <h3 className="mt-3 font-display text-2xl font-normal leading-tight">{step.title}</h3>
             <p className="mt-1 leading-7 text-muted-foreground">{step.copy}</p>
           </li>
         ))}
@@ -362,7 +370,7 @@ export function ProcessChanges() {
 
 export function ProcessCta() {
   return (
-    <section className="mt-28 flex flex-col gap-8 lg:mt-36 lg:flex-row lg:items-end lg:justify-between">
+    <section className="mt-28 flex flex-col gap-8 lg:mt-36">
       <div data-why="up" className="max-w-2xl">
         <h2 className="text-balance font-display text-[clamp(2.5rem,4vw,3.75rem)] font-normal leading-[0.98]">
           Tell me what you want to build.

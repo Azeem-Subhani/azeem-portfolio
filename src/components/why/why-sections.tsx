@@ -201,6 +201,19 @@ export function WhyHero() {
         <p className="why-hero-lede mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
           <HeroWords text="Product teams hire me when they need the interface, the API, the data, and the cloud built by someone who has shipped all four together, and who stays accountable for how they hold up after launch." />
         </p>
+        {/* Same primary and secondary pair as the home hero; joins the shared entrance CSS. */}
+        <div data-service-actions data-inline-cta className="mt-10 flex flex-wrap items-center gap-3">
+          <MagneticButton>
+            <Button asChild size="lg">
+              <Link href="/contact">Start a conversation</Link>
+            </Button>
+          </MagneticButton>
+          <MagneticButton>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/projects">View portfolio</Link>
+            </Button>
+          </MagneticButton>
+        </div>
         <ScrollCue />
       </div>
       <div className="mx-auto w-full max-w-[32rem] lg:col-span-5 lg:max-w-none">
@@ -212,20 +225,28 @@ export function WhyHero() {
 
 export function WhyDifferentiators() {
   return (
-    <section className="mt-28 lg:mt-36">
+    <section className="mt-20 lg:mt-28">
       <SectionHead
         kicker="01 · What is different"
         title="Not an agency, not a handoff"
         intro="One person owns the build end to end, so decisions do not get lost between a designer, a front-end team, and whoever runs the servers."
       />
-      <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Two columns from phone width so six cards do not stack into one long column. */}
+      <ul className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {differentiators.map((item) => (
-          <li key={item.label} data-why="up" className={cardClassName}>
+          <li key={item.label} data-why="up" className={cn(cardClassName, "p-4 sm:p-6")}>
             <CardGlow />
-            <Figure value={item.value} lowerIsBetter={item.lowerIsBetter}
-              countFrom={item.countFrom}
-              className="text-[2.4rem]" />
-            <p className="mt-3 text-lg font-semibold leading-snug text-foreground">{item.label}</p>
+            {/* The large numeral style is for figures only; word values read as a label. */}
+            {/\d/.test(item.value) ? (
+              <Figure value={item.value} lowerIsBetter={item.lowerIsBetter}
+                countFrom={item.countFrom}
+                className="text-[1.6rem] sm:text-[2.4rem]" />
+            ) : (
+              <span className="inline-flex rounded-full border border-accent/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-readable)]">
+                {item.value}
+              </span>
+            )}
+            <p className="mt-3 text-base font-semibold leading-snug text-foreground sm:text-lg">{item.label}</p>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.copy}</p>
           </li>
         ))}
@@ -347,9 +368,7 @@ export function WhyResults() {
 
 export function WhyCta() {
   return (
-    <section
-      className="mt-28 flex flex-col gap-8 lg:mt-36 lg:flex-row lg:items-end lg:justify-between"
-    >
+    <section className="mt-28 flex flex-col gap-8 lg:mt-36">
       <div data-why="up" className="max-w-2xl">
         <h2 className="text-balance font-display text-[clamp(2.5rem,4vw,3.75rem)] font-normal leading-[0.98]">
           Skip the pitch deck. Let&apos;s look at your product.

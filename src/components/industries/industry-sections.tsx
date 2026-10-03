@@ -4,7 +4,6 @@ import { ArrowRight, Check, Compass, ShieldCheck } from "lucide-react";
 
 import { IconMark, toneColors } from "@/components/industries/industry-icons";
 import { IndustrySolutionTabs } from "@/components/industries/industry-solution-tabs";
-import { IndustryStackLoop } from "@/components/industries/industry-stack-loop";
 import { MotionPauseButton } from "@/components/motion/motion-pause-button";
 import { SolutionLink } from "@/components/industries/solution-link";
 import { MagneticButton } from "@/components/motion/magnetic-button";
@@ -164,8 +163,13 @@ export function IndustryHero({
       >
         {industry.lede}
       </p>
-      <div data-im="hero-fade" className={cn("mt-10 flex flex-wrap gap-3", centered && "justify-center")}>
-        <Button asChild size="lg" className="group/solutions">
+      <div
+        data-im="hero-fade"
+        data-inline-cta
+        className={cn("mt-10 flex flex-wrap gap-3", centered && "justify-center")}
+      >
+        {/* data-brand-cta keeps the primary button on the brand teal inside the tone scope. */}
+        <Button asChild size="lg" data-brand-cta className="group/solutions">
           <a href="#solutions">
             {industry.evidence === "approach" ? "See the approach" : "See the solutions"}
             <ArrowRight
@@ -467,12 +471,10 @@ export function IndustryStack({ industry }: SectionProps) {
     );
   }
 
-  const allTools = industry.stack.flatMap((group) => group.items);
   return (
     <section data-im-section className="mt-28 lg:mt-36">
       <SectionHead kicker="03 · Stack" title="The tools behind the work" intro={industry.stackIntro} />
-      <IndustryStackLoop items={allTools} label={`Tools used in ${industry.label} builds`} />
-      <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {industry.stack.map((group) => (
           <li key={group.title} data-im-card>
             <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "h-full")}>
@@ -512,11 +514,17 @@ export function IndustryPractices({ industry }: SectionProps) {
 
   const scan = (
     // One sweep over the grid as it arrives, like a check running across the controls.
+    // The clip layer matches the card radius so the sweep never paints past the grid,
+    // while the cards themselves stay unclipped for their hover lift and focus rings.
     <span
-      data-im-scan
       aria-hidden="true"
-      className="industry-scan pointer-events-none absolute inset-x-0 top-0 z-10 h-28 -translate-y-full opacity-0"
-    />
+      className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[var(--shape-radius-lg)]"
+    >
+      <span
+        data-im-scan
+        className="industry-scan absolute inset-x-0 top-0 h-28 -translate-y-full opacity-0"
+      />
+    </span>
   );
 
   if (industry.layout.practices === "checklist") {
@@ -541,7 +549,7 @@ export function IndustryPractices({ industry }: SectionProps) {
                       <Check className="size-4" strokeWidth={2.5} />
                     </span>
                     <div>
-                      <h3 className="text-lg font-medium leading-snug text-foreground">{practice.title}</h3>
+                      <h3 className="font-display text-2xl font-normal leading-tight">{practice.title}</h3>
                       <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{practice.copy}</p>
                       <p className="mt-2.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[var(--accent-readable)]">
                         {practice.supports}
@@ -569,7 +577,9 @@ export function IndustryPractices({ industry }: SectionProps) {
               <SpotlightCard spotlightColor={spotlight} className={cn(cardClassName, "h-full")}>
                 <CardGlow />
                 <IconMark icon={practice.icon} />
-                <h3 className="mt-6 text-lg font-medium leading-snug text-foreground">{practice.title}</h3>
+                <h3 className="mt-6 font-display text-2xl font-normal leading-tight sm:text-[1.75rem]">
+                  {practice.title}
+                </h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{practice.copy}</p>
                 <p
                   data-im-after
@@ -594,14 +604,12 @@ export function IndustryPractices({ industry }: SectionProps) {
 export function IndustryCta({ industry }: SectionProps) {
   return (
     <section className="relative mt-28 lg:mt-36">
+      {/* Dark mode only: on the cream background the glow read as a smudge behind the button. */}
       <div
         aria-hidden="true"
-        className="industry-hero-glow industry-hero-glow--alt pointer-events-none absolute -bottom-24 right-0 size-[26rem] rounded-full"
+        className="industry-hero-glow industry-hero-glow--alt pointer-events-none absolute -bottom-24 left-0 hidden size-[26rem] rounded-full dark:block"
       />
-      <div
-        data-im-head
-        className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
-      >
+      <div data-im-head className="relative flex flex-col gap-8">
         <div className="max-w-2xl">
           <h2 className="text-balance font-display text-[clamp(2.5rem,4vw,3.75rem)] font-normal leading-[0.98]">
             <Words text={industry.ctaTitle} />
@@ -618,7 +626,7 @@ export function IndustryCta({ industry }: SectionProps) {
             className="relative inline-flex"
           >
             <MagneticButton>
-              <Button asChild size="lg">
+              <Button asChild size="lg" data-brand-cta>
                 <Link href="/contact">Start a conversation</Link>
               </Button>
             </MagneticButton>

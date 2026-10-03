@@ -39,20 +39,23 @@ export function IndustryPage({
   visual: ReactNode;
 }) {
   return (
-    // data-industry-tone retints the accent tokens for this page (see globals.css).
-    <article data-industry-tone={industry.tone} className="relative overflow-x-clip">
-      <IndustryBackdrop industry={industry} />
-      <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-32 lg:pt-40">
-        <IndustryMotion>
-          <IndustryHero industry={industry} visual={visual} />
-          <IndustryProof industry={industry} />
-          <IndustryChallenges industry={industry} />
-          <IndustrySolutions industry={industry} />
-          <IndustryStack industry={industry} />
-          <IndustryPractices industry={industry} />
-          <IndustryCta industry={industry} />
-        </IndustryMotion>
-      </div>
-    </article>
+    // The wrapper captures the brand accent before data-industry-tone retints the accent
+    // tokens for this page (see globals.css), so primary buttons can keep the brand teal.
+    <div className="industry-brand-scope">
+      <article data-industry-tone={industry.tone} className="relative overflow-x-clip">
+        <IndustryBackdrop industry={industry} />
+        <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-32 lg:pt-40">
+          <IndustryMotion>
+            <IndustryHero industry={industry} visual={visual} />
+            <IndustryProof industry={industry} />
+            <IndustryChallenges industry={industry} />
+            <IndustrySolutions industry={industry} />
+            <IndustryStack industry={industry} />
+            <IndustryPractices industry={industry} />
+            <IndustryCta industry={industry} />
+          </IndustryMotion>
+        </div>
+      </article>
+    </div>
   );
 }
