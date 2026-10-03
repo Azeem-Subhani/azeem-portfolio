@@ -92,15 +92,23 @@ test.describe("navigation", () => {
   });
 
   test("header condenses into a pill after scrolling", async ({ page }) => {
+    // The first-visit intro locks page scroll for about 1.3s. Mark it as seen; this test is
+    // about the header.
+    await page.addInitScript(() => {
+      sessionStorage.setItem("azeem:intro-seen", "true");
+    });
     await page.goto("/");
     const header = page.getByRole("banner");
 
     await expect(header).toHaveAttribute("data-scrolled", "false");
 
-    await page.evaluate(() => window.scrollTo(0, 400));
+    // Lenis owns page scroll and overrides a programmatic scrollTo issued just after load,
+    // so scroll with the wheel the way a visitor does.
+    await page.mouse.move(640, 360);
+    await page.mouse.wheel(0, 400);
     await expect(header).toHaveAttribute("data-scrolled", "true");
 
-    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.mouse.wheel(0, -1000);
     await expect(header).toHaveAttribute("data-scrolled", "false");
   });
 
