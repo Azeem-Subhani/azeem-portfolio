@@ -167,10 +167,12 @@ export function DeviceStage({
       </div>
     ) : null;
 
+  // The desktop hero (lg to xl) is too narrow for arrows beside the frame and phone.
+  const heroTabArrows = layout === "hero" && hasPhones;
   const tabs = showControls ? (
     <>
       <div className="mt-6 flex items-center justify-center gap-2">
-        {prevButton("shrink-0 sm:hidden")}
+        {prevButton(cn("shrink-0 sm:hidden", heroTabArrows && "lg:inline-flex xl:hidden"))}
         <div
           ref={tabFadeRef}
           style={tabFadeStyle}
@@ -206,7 +208,7 @@ export function DeviceStage({
             );
           })}
         </div>
-        {nextButton("shrink-0 sm:hidden")}
+        {nextButton(cn("shrink-0 sm:hidden", heroTabArrows && "lg:inline-flex xl:hidden"))}
       </div>
     </>
   ) : null;
@@ -310,9 +312,11 @@ export function DeviceStage({
                   </div>
                 </div>
               </div>
-              {/* Anchored to the 780px-wide frame, 20px outside each edge. */}
+              {/* Left arrow sits 20px outside the 780px frame; right arrow 20px outside the phone,
+                  which overhangs the frame by about 105px on that side. That needs 1013px, so
+                  below xl the arrows move beside the tab pill instead. */}
               {renderArrows(
-                "inset-auto left-1/2 top-[12px] h-[486px] w-[908px] -translate-x-1/2 sm:px-0",
+                "inset-auto left-[calc(50%-454px)] top-[12px] h-[486px] w-[1013px] sm:hidden sm:px-0 xl:flex",
               )}
             </div>
             {tabs}
