@@ -116,8 +116,8 @@ export function ServiceChapters() {
             : { clipPath: "none" }),
         });
 
-        // The heading leads, line by line, then the body follows once it has
-        // landed — the same reading order the reference site uses.
+        // The heading leads, line by line, and the body follows right behind
+        // it, the same reading order the reference site uses.
         let titleTimeline: gsap.core.Timeline | null = null;
         let titleStarted = false;
 
@@ -147,17 +147,19 @@ export function ServiceChapters() {
           },
         });
 
+        // Copy shares the heading's trigger and follows its first line closely,
+        // so a heading never sits over blank paragraphs mid-viewport.
         const copyTimeline = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } }).to(
           copy,
-          { opacity: 1, x: 0, y: 0, duration: 0.62, stagger: 0.12 },
-          0.45,
+          { opacity: 1, x: 0, y: 0, duration: 0.62, stagger: 0.05 },
+          0.2,
         );
 
         if (chips.length) {
           copyTimeline.to(
             chips,
             { opacity: 1, y: 0, scale: 1, duration: 0.45, stagger: 0.07 },
-            1.0,
+            0.5,
           );
         }
 
@@ -254,12 +256,12 @@ export function ServiceChapters() {
           data-visual-first={chapter.visualFirst ? "true" : "false"}
           aria-labelledby={`${chapter.id}-title`}
           // Tighter than the other home bands: each chapter carries a tall visual of its own.
-          className={`scroll-mt-28 px-4 py-14 sm:px-6 sm:py-20${
+          className={`scroll-mt-28 py-14 sm:py-20${
             chapter.id === "mobile" ? " overflow-visible" : ""
           }`}
         >
           <div
-            className={`mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-20${
+            className={`mx-auto grid max-w-7xl items-center gap-10 px-6 lg:grid-cols-2 lg:gap-20${
               chapter.id === "mobile" ? " overflow-visible" : ""
             }`}
           >

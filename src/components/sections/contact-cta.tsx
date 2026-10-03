@@ -86,7 +86,7 @@ export function ContactCta() {
   return (
     <section
       aria-labelledby="cta-title"
-      className="home-band-cta relative isolate overflow-hidden px-4 py-24 sm:px-6 sm:py-32"
+      className="home-band-cta relative isolate overflow-hidden px-6 py-24 sm:py-32"
     >
       <div
         aria-hidden="true"
@@ -118,7 +118,7 @@ export function ContactCta() {
           // -mb cancels the descender-guard padding on the last line so the
           // block below keeps its original gap (the negative margin collapses
           // with the paragraph's mt-7).
-          className="-mb-[0.16em] font-display text-[clamp(2.5rem,9vw,6.5rem)] font-normal leading-[0.98] tracking-tight"
+          className="-mb-[0.16em] font-display text-[clamp(3.25rem,9vw,6.5rem)] font-normal leading-[0.98] tracking-tight"
           variants={variants.headline}
         >
           {headlineLines.map((line, i) => {

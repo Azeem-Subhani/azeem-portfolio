@@ -237,7 +237,7 @@ export function Hero() {
     <section
       ref={sectionRef}
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-svh items-center overflow-x-clip px-4 pb-16 pt-28 sm:px-6 sm:pb-24 sm:pt-32"
+      className="relative isolate flex min-h-svh items-center overflow-x-clip pb-16 pt-28 sm:pb-24 sm:pt-32"
     >
       <div
         data-hero-graph
@@ -245,7 +245,8 @@ export function Hero() {
         className="graph-paper graph-field pointer-events-none absolute inset-0 -bottom-28 hidden lg:block"
       />
 
-      <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      {/* max-w-7xl px-6 is the shared page container, so content lines up with the header. */}
+      <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-6 lg:grid-cols-2 lg:gap-16">
         <div data-hero-title>
           <h1
             id="hero-title"

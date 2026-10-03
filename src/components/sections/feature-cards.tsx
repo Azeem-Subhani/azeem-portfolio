@@ -339,8 +339,12 @@ export function FeatureCards() {
         // fill runs out to the edge.
         lineTl
           .to(pulse, { opacity: 0, scale: 0, duration: 0.3, ease: "power2.in" }, t - PULSE_REST + 0.1)
-          .to(fill, { [fillScale]: 1, duration: 0.5, ease: "power2.out" }, t - PULSE_REST)
-          .to(intro, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t - PULSE_REST);
+          .to(fill, { [fillScale]: 1, duration: 0.5, ease: "power2.out" }, t - PULSE_REST);
+
+        // The intro reads first on every layout. On phones it sits above the
+        // stages, so it gets its own trigger instead of waiting for the line.
+        const introTl = gsap.timeline({ paused: true });
+        introTl.to(intro, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
 
         const rowTl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
         rowTl
@@ -362,6 +366,7 @@ export function FeatureCards() {
 
         const triggers = (
           [
+            ...intro.map((node) => [node, introTl] as const),
             [lineGroup, lineTl],
             [rowGroup, rowTl],
           ] as const
@@ -401,13 +406,13 @@ export function FeatureCards() {
     <section
       ref={sectionRef}
       aria-labelledby="process-title"
-      className="px-4 py-20 sm:px-6 sm:py-28"
+      className="py-20 sm:py-28"
     >
       <h2 id="process-title" className="sr-only">
         Plan, build, ship
       </h2>
 
-      <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-4 lg:gap-x-8">
+      <div className="mx-auto max-w-7xl px-6 lg:grid lg:grid-cols-4 lg:gap-x-8">
         {/* Label column. On desktop it sits left of the three stages. */}
         <div data-stage-intro className="mb-12 lg:mb-0 lg:pt-4">
           <p className="max-w-xs text-base leading-7 text-muted-foreground">
