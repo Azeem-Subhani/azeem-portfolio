@@ -189,8 +189,8 @@ export const projects: Project[] = [
     visibility: "anonymized",
   },
   {
-    slug: "meridian",
-    title: "Meridian",
+    slug: "ai-booking-agent",
+    title: "AI Booking Agent",
     summary:
       "A booking concierge that compares options in conversation, holds a reservation, and charges only after an explicit confirm.",
     context:
@@ -224,7 +224,7 @@ export const projects: Project[] = [
     ],
     categories: ["Full-Stack", "Payments", "Real-Time", "Cloud"],
     screens: screens(
-      "meridian",
+      "ai-booking-agent",
       "#F6F5F1",
       "Meridian concierge comparing dinner options for six, with the request details updating live.",
       "Meridian chat on iPhone, with swipeable restaurant options.",

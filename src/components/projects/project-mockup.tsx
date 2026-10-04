@@ -142,7 +142,7 @@ const CATALOG_COMPOSITIONS: Record<string, CatalogComposition> = {
     phoneBottom: "32px",
     phoneScale: "0.58",
   },
-  meridian: {
+  "ai-booking-agent": {
     browserScale: 0.78,
     browserX: "50%",
     browserY: "48%",
@@ -168,7 +168,7 @@ const WEB_SCREEN_BG: Record<string, string> = {
   "real-time-chat": "#14110E",
   "task-manager": "#FBF5F1",
   "smart-living": "#F7F9FC",
-  meridian: "#F6F5F1",
+  "ai-booking-agent": "#F6F5F1",
 };
 
 /** Holds a lazy live capture and plays the build-up when its chunk arrives. */
@@ -397,7 +397,7 @@ export function ProjectMockup({
                       : project.slug === "memorial-planning"
                         ? "cream"
                         : project.slug === "task-manager" ||
-                          project.slug === "meridian"
+                          project.slug === "ai-booking-agent"
                           ? "paper"
                           : project.slug === "woody-shop" ||
                             project.slug === "smart-living" ||
@@ -453,7 +453,7 @@ export function ProjectMockup({
                                 ? "bg-[#0F141B]"
                                 : project.slug === "task-manager"
                                   ? "bg-[#35222F]"
-                                  : project.slug === "meridian"
+                                  : project.slug === "ai-booking-agent"
                                     ? "bg-[#10281F]"
                                     : undefined
                 }
@@ -473,7 +473,7 @@ export function ProjectMockup({
                             ? "bg-white"
                             : project.slug === "task-manager"
                               ? "bg-[#FBF5F1]"
-                              : project.slug === "meridian"
+                              : project.slug === "ai-booking-agent"
                                 ? "bg-[#F6F5F1]"
                                 : undefined
                 }
@@ -482,7 +482,7 @@ export function ProjectMockup({
                   project.slug === "woody-shop" ||
                   project.slug === "smart-living" ||
                   project.slug === "task-manager" ||
-                  project.slug === "meridian"
+                  project.slug === "ai-booking-agent"
                     ? "light"
                     : "dark"
                 }
