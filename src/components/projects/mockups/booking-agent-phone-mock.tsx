@@ -19,7 +19,7 @@ export function BookingAgentPhoneMock() {
   return (
     <div
       ref={hostRef}
-      data-live-phone-mockup="meridian"
+      data-live-phone-mockup="ai-booking-agent"
       className="ba-phone-mock-host relative h-full w-full overflow-hidden bg-[#F6F5F1]"
       aria-hidden="true"
     >

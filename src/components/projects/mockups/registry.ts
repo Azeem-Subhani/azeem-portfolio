@@ -44,7 +44,7 @@ const webLoaders: Record<string, Loader> = {
     import("@/components/projects/mockups/smart-living-web-mock").then(
       (module) => module.SmartLivingWebMock,
     ),
-  meridian: () =>
+  "ai-booking-agent": () =>
     import("@/components/projects/mockups/booking-agent-web-mock").then(
       (module) => module.BookingAgentWebMock,
     ),
@@ -83,7 +83,7 @@ const phoneLoaders: Record<string, Loader> = {
     import("@/components/projects/mockups/smart-living-phone-mock").then(
       (module) => module.SmartLivingPhoneMock,
     ),
-  meridian: () =>
+  "ai-booking-agent": () =>
     import("@/components/projects/mockups/booking-agent-phone-mock").then(
       (module) => module.BookingAgentPhoneMock,
     ),

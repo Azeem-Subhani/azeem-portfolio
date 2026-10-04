@@ -15,7 +15,7 @@ export function BookingAgentWebMock() {
   return (
     <div
       ref={hostRef}
-      data-live-web-mockup="meridian"
+      data-live-web-mockup="ai-booking-agent"
       className="relative aspect-[16/9] w-full overflow-hidden bg-[#F6F5F1]"
       aria-hidden="true"
     >

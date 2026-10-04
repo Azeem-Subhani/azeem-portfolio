@@ -4,10 +4,10 @@ import { BookingAgentCaseStudy } from "@/components/projects/case-studies/bookin
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
-export const metadata = projectMetadata("meridian");
+export const metadata = projectMetadata("ai-booking-agent");
 
 export default function BookingAgentPage() {
-  const project = getProjectBySlug("meridian");
+  const project = getProjectBySlug("ai-booking-agent");
   if (!project) notFound();
 
   return (
