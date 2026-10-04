@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 
 import { ContactPageContent } from "@/components/contact/contact-page-content";
+import { countries } from "@/content/countries";
+
+const sortedCountries = [...countries].sort((a, b) => a.name.localeCompare(b.name));
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -18,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  return <ContactPageContent />;
+  return <ContactPageContent countries={sortedCountries} />;
 }

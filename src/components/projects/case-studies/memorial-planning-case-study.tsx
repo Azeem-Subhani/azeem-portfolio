@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { MemorialPlanningPhoneCapture } from "@/components/capture/memorial-planning/phone-capture";
 import { MemorialPlanningPhoneConfirmationCapture } from "@/components/capture/memorial-planning/phone-confirmation-capture";
 import { MemorialPlanningPhoneMethodPickerCapture } from "@/components/capture/memorial-planning/phone-method-picker-capture";
@@ -16,7 +18,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -53,9 +54,10 @@ const phoneFrameProps = {
 
 type MemorialPlanningCaseStudyProps = {
   project: Project;
+  closer?: ReactNode;
 };
 
-export function MemorialPlanningCaseStudy({ project }: MemorialPlanningCaseStudyProps) {
+export function MemorialPlanningCaseStudy({ project, closer }: MemorialPlanningCaseStudyProps) {
   return (
     <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
@@ -195,7 +197,7 @@ export function MemorialPlanningCaseStudy({ project }: MemorialPlanningCaseStudy
 
       <CaseStudyStack items={project.stack} />
       <CaseStudyOutcomes project={project} />
-      <ProjectCloser slug={project.slug} />
+      {closer}
     </article>
   );
 }

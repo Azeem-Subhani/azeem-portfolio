@@ -43,7 +43,6 @@
 .cloud-item-word,
 .cloud-copy-word {
   display: inline-block;
-  will-change: transform, opacity;
 }
 
 .cloud-item-word {
@@ -351,12 +350,15 @@
   left: 50%;
   top: 52%;
   z-index: 0;
-  width: min(36rem, 72%);
-  height: 18rem;
+  width: min(48rem, 90%);
+  height: 24rem;
   transform: translate(-50%, -50%);
   border-radius: var(--shape-radius-pill);
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-  filter: blur(72px);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 28%, transparent),
+    transparent 72%
+  );
   pointer-events: none;
 }
 

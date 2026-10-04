@@ -5,6 +5,7 @@ import { ArrowUpRight, Clock3, Mail, MapPin } from "lucide-react";
 import { gsap } from "gsap";
 
 import { ContactForm } from "@/components/contact/contact-form";
+import type { Country } from "@/content/countries";
 import { GithubIcon, LinkedinIcon } from "@/components/icons";
 import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { profile } from "@/content/profile";
@@ -21,7 +22,7 @@ const socials = [
   { icon: LinkedinIcon, label: "LinkedIn", href: profile.linkedinUrl },
 ];
 
-export function ContactPageContent() {
+export function ContactPageContent({ countries }: { countries: Country[] }) {
   const pageRef = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
@@ -124,7 +125,7 @@ export function ContactPageContent() {
                   key={line}
                   className={`block overflow-hidden pb-[0.12em] -mb-[0.12em] ${index === titleLines.length - 1 ? "text-accent" : ""}`}
                 >
-                  <span data-contact-title-line className="block will-change-transform">
+                  <span data-contact-title-line className="block">
                     {line}
                   </span>
                 </span>
@@ -154,7 +155,7 @@ export function ContactPageContent() {
               </div>
             </div>
             <div data-contact-form>
-              <ContactForm />
+              <ContactForm countries={countries} />
             </div>
             <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground sm:hidden">
               <Clock3 aria-hidden="true" className="size-3.5 text-accent" />

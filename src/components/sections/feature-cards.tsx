@@ -464,7 +464,7 @@ export function FeatureCards() {
                 >
                   <span
                     data-stage-word
-                    className={cn("block will-change-transform", i === 2 && "text-accent")}
+                    className={cn("block", i === 2 && "text-accent")}
                   >
                     {stage.id}.
                   </span>
@@ -641,7 +641,7 @@ export function FeatureCards() {
               <p className="mt-4 min-h-[1.9em] max-w-[16ch] font-display text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.95] tracking-tight text-foreground">
                 {current.headline[0]}{" "}
                 <span className="-mb-[0.16em] inline-block overflow-hidden pb-[0.16em] align-bottom">
-                  <span data-panel-word className="inline-block text-accent will-change-transform">
+                  <span data-panel-word className="inline-block text-accent">
                     {current.headline[1]}
                   </span>
                 </span>

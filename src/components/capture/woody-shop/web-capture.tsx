@@ -49,7 +49,7 @@ export function WoodyShopWebCapture() {
                 height={1504}
                 sizes="(min-width: 1024px) 45vw, 100vw"
                 className="h-full w-full object-cover"
-                unoptimized={false}
+                priority
               />
             </div>
             <div className="thumbnails">

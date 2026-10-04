@@ -26,7 +26,32 @@ export function attachSmoothScroll() {
   });
 
   const updateScrollTriggers = () => ScrollTrigger.update();
-  const tick = (time: number) => lenis.raf(time * 1000);
+  // Anchor jumps are the only time Lenis animates. A standing GSAP ticker
+  // would keep a frame loop alive on every marketing page, including while idle.
+  let rafId = 0;
+  let driveToken = 0;
+  let driveTimer = 0;
+  const stopDrive = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+    window.clearTimeout(driveTimer);
+    driveTimer = 0;
+  };
+  const loop = (time: number) => {
+    lenis.raf(time);
+    rafId = requestAnimationFrame(loop);
+  };
+  const startDrive = () => {
+    const token = ++driveToken;
+    if (!rafId) rafId = requestAnimationFrame(loop);
+    window.clearTimeout(driveTimer);
+    driveTimer = window.setTimeout(() => {
+      if (token === driveToken) stopDrive();
+    }, 1600);
+    return () => {
+      if (token === driveToken) stopDrive();
+    };
+  };
   const refresh = () => {
     lenis.resize();
     ScrollTrigger.refresh();
@@ -47,11 +72,16 @@ export function attachSmoothScroll() {
     const target = id ? document.getElementById(id) : null;
     if (!target) return;
 
+    const endDrive = startDrive();
     lenis.scrollTo(target, {
       offset: -96,
       duration: immediate ? undefined : 0.95,
       immediate,
       force: true,
+      onComplete: () => {
+        endDrive();
+        ScrollTrigger.update();
+      },
     });
     if (moveFocus) focusTarget(target);
   };
@@ -101,8 +131,7 @@ export function attachSmoothScroll() {
   }, 60);
 
   lenis.on("scroll", updateScrollTriggers);
-  gsap.ticker.add(tick);
-  gsap.ticker.lagSmoothing(0);
+  window.addEventListener("scroll", updateScrollTriggers, { passive: true });
   document.addEventListener("click", handleAnchorClick, true);
   window.addEventListener("popstate", handleHistory);
 
@@ -114,9 +143,9 @@ export function attachSmoothScroll() {
     window.removeEventListener("load", refresh);
     window.removeEventListener("popstate", handleHistory);
     document.removeEventListener("click", handleAnchorClick, true);
+    window.removeEventListener("scroll", updateScrollTriggers);
     lenis.off("scroll", updateScrollTriggers);
-    gsap.ticker.remove(tick);
-    gsap.ticker.lagSmoothing(500, 33);
+    stopDrive();
     lenis.destroy();
   };
 }

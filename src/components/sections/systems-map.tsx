@@ -106,8 +106,19 @@ export function SystemsMap() {
       id = undefined;
     };
 
+    let onScreen = true;
+    const root = rootRef.current;
+    const observer =
+      root && typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver((entries) => {
+            onScreen = entries.some((entry) => entry.isIntersecting);
+            stop();
+            if (onScreen) start();
+          })
+        : null;
+
     const start = () => {
-      if (prefersReducedMotion() || document.hidden) return;
+      if (prefersReducedMotion() || document.hidden || !onScreen) return;
       stop();
       id = window.setInterval(() => {
         setActiveIndex((current) => (current + 1) % nodes.length);
@@ -119,10 +130,12 @@ export function SystemsMap() {
       if (!document.hidden) start();
     };
 
+    if (root && observer) observer.observe(root);
     start();
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       stop();
+      observer?.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [paused]);

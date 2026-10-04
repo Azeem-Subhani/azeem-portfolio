@@ -14,6 +14,8 @@
 
 "use client";
 
+import type { ReactNode } from "react";
+
 import { GamingGlobalPhoneCapture } from "@/components/capture/gaming-global/phone-capture";
 import { GamingGlobalPhoneChatCapture } from "@/components/capture/gaming-global/phone-chat-capture";
 import { GamingGlobalPhoneConverterCapture } from "@/components/capture/gaming-global/phone-converter-capture";
@@ -28,7 +30,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -47,9 +48,10 @@ const phoneShell = {
 
 type GamingGlobalCaseStudyProps = {
   project: Project;
+  closer?: ReactNode;
 };
 
-export function GamingGlobalCaseStudy({ project }: GamingGlobalCaseStudyProps) {
+export function GamingGlobalCaseStudy({ project, closer }: GamingGlobalCaseStudyProps) {
   const primaryWeb = [
     {
       id: "stats",
@@ -149,7 +151,7 @@ export function GamingGlobalCaseStudy({ project }: GamingGlobalCaseStudyProps) {
         intro={`${project.role} React on the client, Express and Socket.IO on the server, MongoDB for player records and chat history.`}
       />
       <CaseStudyOutcomes project={project} />
-      <ProjectCloser slug={project.slug} />
+      {closer}
     </article>
   );
 }

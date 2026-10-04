@@ -1,5 +1,6 @@
 import { MobileVisual } from "@/components/sections/mobile-visual";
 import { MobileServiceBody } from "@/components/services/mobile-body";
+import { serviceSiblingLinks } from "@/content/services";
 import { ServiceIntro } from "@/components/services/service-intro";
 import { ServiceOutro } from "@/components/services/service-outro";
 import type { ServicePageContent } from "@/types/content";
@@ -10,7 +11,11 @@ export function MobileServiceView({ service }: { service: ServicePageContent }) 
   return (
     <>
       <div className={heroFrame}>
-        <ServiceIntro service={service} visual={<MobileVisual />} />
+        <ServiceIntro
+          service={service}
+          siblings={serviceSiblingLinks(service.slug)}
+          visual={<MobileVisual />}
+        />
       </div>
       <MobileServiceBody service={service} />
       <ServiceOutro service={service} />

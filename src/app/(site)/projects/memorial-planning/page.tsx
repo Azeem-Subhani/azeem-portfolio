@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { MemorialPlanningCaseStudy } from "@/components/projects/case-studies/memorial-planning-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -12,7 +13,10 @@ export default function MemorialPlanningPage() {
 
   return (
     <ProjectStudy>
-      <MemorialPlanningCaseStudy project={project} />
+      <MemorialPlanningCaseStudy
+        project={project}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

@@ -161,7 +161,7 @@
 }
 
 .data-hero-visual.is-webgl-ready .data-hero-pulse {
-  filter: drop-shadow(0 0 7px currentColor) drop-shadow(0 0 2px currentColor);
+  filter: none;
 }
 
 .data-hero-floor-stop-core {

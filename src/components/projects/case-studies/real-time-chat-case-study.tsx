@@ -16,7 +16,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -67,9 +66,10 @@ function PhoneFrame({ children }: { children: ReactNode }) {
 
 type RealTimeChatCaseStudyProps = {
   project: Project;
+  closer?: ReactNode;
 };
 
-export function RealTimeChatCaseStudy({ project }: RealTimeChatCaseStudyProps) {
+export function RealTimeChatCaseStudy({ project, closer }: RealTimeChatCaseStudyProps) {
   const heroWeb = [
     {
       id: "design-crit",
@@ -168,7 +168,7 @@ export function RealTimeChatCaseStudy({ project }: RealTimeChatCaseStudyProps) {
 
         <CaseStudyStack items={project.stack} />
         <CaseStudyOutcomes project={project} />
-        <ProjectCloser slug={project.slug} />
+        {closer}
       </article>
     );
 }

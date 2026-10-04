@@ -1,3 +1,4 @@
+import { serviceSiblingLinks } from "@/content/services";
 import { ServiceIntro } from "@/components/services/service-intro";
 import { ServiceOutro } from "@/components/services/service-outro";
 import { WebServiceBody } from "@/components/services/web-body";
@@ -10,7 +11,11 @@ export function WebServiceView({ service }: { service: ServicePageContent }) {
   return (
     <>
       <div className={heroFrame}>
-        <ServiceIntro service={service} visual={<WebGantryStackVisual />} />
+        <ServiceIntro
+          service={service}
+          siblings={serviceSiblingLinks(service.slug)}
+          visual={<WebGantryStackVisual />}
+        />
       </div>
       <WebServiceBody service={service} />
       <ServiceOutro service={service} />

@@ -59,7 +59,6 @@
 .data-item-word,
 .data-copy-word {
   display: inline-block;
-  will-change: transform, opacity;
 }
 
 .data-item-word {

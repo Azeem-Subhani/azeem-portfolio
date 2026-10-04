@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { TaskManagerCaseStudy } from "@/components/projects/case-studies/task-manager-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -12,7 +13,10 @@ export default function TaskManagerPage() {
 
   return (
     <ProjectStudy>
-      <TaskManagerCaseStudy project={project} />
+      <TaskManagerCaseStudy
+        project={project}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

@@ -32,7 +32,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -66,9 +65,10 @@ const phoneFrame = {
 
 type BookingAgentCaseStudyProps = {
   project: Project;
+  closer?: ReactNode;
 };
 
-export function BookingAgentCaseStudy({ project }: BookingAgentCaseStudyProps) {
+export function BookingAgentCaseStudy({ project, closer }: BookingAgentCaseStudyProps) {
   return (
     <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
@@ -183,7 +183,7 @@ export function BookingAgentCaseStudy({ project }: BookingAgentCaseStudyProps) {
 
       <CaseStudyStack items={project.stack} intro={project.role} />
       <CaseStudyOutcomes project={project} />
-      <ProjectCloser slug={project.slug} />
+      {closer}
     </article>
   );
 }

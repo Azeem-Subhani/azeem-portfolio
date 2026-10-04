@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { RealTimeChatCaseStudy } from "@/components/projects/case-studies/real-time-chat-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -12,7 +13,10 @@ export default function RealTimeChatPage() {
 
   return (
     <ProjectStudy>
-      <RealTimeChatCaseStudy project={project} />
+      <RealTimeChatCaseStudy
+        project={project}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { BookingMcpWebCapture } from "@/components/capture/booking-mcp/web-capture";
 import { BookingMcpWebGuardrailsCapture } from "@/components/capture/booking-mcp/web-guardrails-capture";
@@ -20,7 +20,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import type { Project } from "@/types/content";
@@ -34,6 +33,7 @@ type BookingMcpCaseStudyProps = {
   project: Project;
   /** Public read-only demo key, injected at build time. Absent until the env var is set. */
   demoKey?: string;
+  closer?: ReactNode;
 };
 
 /**
@@ -42,11 +42,31 @@ type BookingMcpCaseStudyProps = {
  */
 function DemoVideo() {
   const ref = useRef<HTMLVideoElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        setInView(true);
+        observer.disconnect();
+      },
+      { rootMargin: "240px 0px" },
+    );
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const video = ref.current;
-    if (!video) return;
+    if (!video || !inView) return;
     // The hook reports false on its first render, so ask the media query directly; otherwise
     // the first effect would start playback and drop the poster before `reduced` catches up.
     if (reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -61,25 +81,27 @@ function DemoVideo() {
     play();
     document.addEventListener("visibilitychange", play);
     return () => document.removeEventListener("visibilitychange", play);
-  }, [reduced]);
+  }, [reduced, inView]);
 
   return (
+    <div ref={frameRef}>
     <video
       ref={ref}
       className="aspect-video w-full rounded-md border border-border bg-surface"
-      src="/videos/booking-mcp-demo.mp4"
+      src={inView ? "/videos/booking-mcp-demo.mp4" : undefined}
       poster="/videos/booking-mcp-demo-poster.jpg"
       muted
       loop
       playsInline
-      preload="metadata"
+      preload={inView ? "metadata" : "none"}
       controls={reduced}
       aria-label="Claude booking a private yoga session through the booking MCP server: it reads the policies, searches availability, holds a slot, and confirms after the customer agrees."
     />
+    </div>
   );
 }
 
-export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyProps) {
+export function BookingMcpCaseStudy({ project, demoKey, closer }: BookingMcpCaseStudyProps) {
   const command = `claude mcp add --transport http booking ${MCP_URL} --header "Authorization: Bearer ${demoKey ?? "<demo key>"}"`;
 
   return (
@@ -160,7 +182,7 @@ export function BookingMcpCaseStudy({ project, demoKey }: BookingMcpCaseStudyPro
 
       <CaseStudyStack items={project.stack} intro={project.role} />
       <CaseStudyOutcomes project={project} />
-      <ProjectCloser slug={project.slug} />
+      {closer}
     </article>
   );
 }

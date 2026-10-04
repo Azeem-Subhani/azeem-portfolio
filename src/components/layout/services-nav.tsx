@@ -253,6 +253,7 @@ function NavMenu<Tone extends string>({ label, items, icons, currentPrefix }: Na
                     itemsRef.current[index] = node;
                   }}
                   href={item.href}
+                  prefetch={false}
                   aria-current={selected ? "page" : undefined}
                   className={cn(
                     "services-menu-link",

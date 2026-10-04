@@ -42,6 +42,7 @@ function NeighborCard({
     <Link
       href={`/projects/${project.slug}`}
       rel={direction}
+      prefetch={false}
       className={cn(
         "group flex flex-col rounded-md border border-border p-5 transition-colors hover:border-foreground/30",
         isNext ? "items-end text-right" : "items-start",

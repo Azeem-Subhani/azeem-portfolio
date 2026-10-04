@@ -23,3 +23,9 @@ export function getService(slug: string): ServicePageContent | undefined {
 export function servicePath(slug: ServiceSlug) {
   return `/services/${slug}`;
 }
+
+export function serviceSiblingLinks(slug: string) {
+  return services
+    .filter((item) => item.slug !== slug)
+    .map((item) => ({ slug: item.slug, label: item.label }));
+}

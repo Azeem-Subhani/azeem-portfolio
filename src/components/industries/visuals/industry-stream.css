@@ -8,8 +8,7 @@
 .industry-stream-blob {
   position: absolute;
   border-radius: var(--shape-radius-pill);
-  filter: blur(22px);
-  will-change: transform;
+  filter: blur(12px);
 }
 
 .industry-stream-blob-a {

@@ -1,19 +1,46 @@
 "use client";
 
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type ComponentType } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 
-import { CloudTraceWaterfallVisual } from "@/components/sections/cloud-trace-waterfall-visual";
-import { DataVisual } from "@/components/sections/data-visual";
-import { MobileVisual } from "@/components/sections/mobile-visual";
-import { WebGantryStackVisual } from "@/components/sections/web-gantry-stack-visual";
+import { WhenNear } from "@/components/motion/when-near";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { revealStart } from "@/lib/reveal-visibility";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
+
+const CloudTraceWaterfallVisual = dynamic(
+  () =>
+    import("@/components/sections/cloud-trace-waterfall-visual").then((mod) => ({
+      default: mod.CloudTraceWaterfallVisual,
+    })),
+  { loading: () => null },
+);
+const DataVisual = dynamic(
+  () =>
+    import("@/components/sections/data-visual").then((mod) => ({
+      default: mod.DataVisual,
+    })),
+  { loading: () => null },
+);
+const MobileVisual = dynamic(
+  () =>
+    import("@/components/sections/mobile-visual").then((mod) => ({
+      default: mod.MobileVisual,
+    })),
+  { loading: () => null },
+);
+const WebGantryStackVisual = dynamic(
+  () =>
+    import("@/components/sections/web-gantry-stack-visual").then((mod) => ({
+      default: mod.WebGantryStackVisual,
+    })),
+  { loading: () => null },
+);
 
 type Chapter = {
   id: string;
@@ -23,7 +50,7 @@ type Chapter = {
   copy: string;
   copySecondary?: string;
   chips?: string[];
-  visual: ReactNode;
+  visual: ComponentType;
   visualFirst: boolean;
 };
 
@@ -37,7 +64,7 @@ const chapters: Chapter[] = [
     copySecondary:
       "Every request is traced hop by hop, so when checkout slows down, I can see which service caused it.",
     chips: ["Route-level auth", "SAM deploy pipeline", "Write path metrics"],
-    visual: <CloudTraceWaterfallVisual />,
+    visual: CloudTraceWaterfallVisual,
     visualFirst: false,
   },
   {
@@ -47,7 +74,7 @@ const chapters: Chapter[] = [
     title: "Web design & development",
     copy: "I build product UI in Next.js and React. The Track Booking Platform's white-label booking sites run five race tracks from one codebase. Each venue gets its own brand, domain, and pages, while calendars and checkout stay shared.",
     chips: ["Product UI", "White-label surfaces", "Shared checkout"],
-    visual: <WebGantryStackVisual />,
+    visual: WebGantryStackVisual,
     visualFirst: true,
   },
   {
@@ -56,7 +83,7 @@ const chapters: Chapter[] = [
     linkLabel: "How I ship mobile",
     title: "Cross-platform mobile apps",
     copy: "I ship mobile apps with Ionic, Angular, and React Native. The Sports Team App runs web and mobile from one codebase, so coaches and players see the same live schedule.",
-    visual: <MobileVisual />,
+    visual: MobileVisual,
     visualFirst: false,
   },
   {
@@ -67,7 +94,7 @@ const chapters: Chapter[] = [
     copy: "Postgres holds the relational records. DynamoDB and Firestore take over when a product needs partitioned writes or live sync. Queries run against those same stores, so AI answers come from live data, not a copy.",
     copySecondary:
       "Stripe and Trust Commerce write to the same store that owns the record. I set that up at the schema level, so a payment and its record can't drift apart.",
-    visual: <DataVisual />,
+    visual: DataVisual,
     visualFirst: true,
   },
 ];
@@ -94,6 +121,7 @@ export function ServiceChapters() {
 
     const context = gsap.context(() => {
       sections.forEach((section) => {
+        const setupSection = () => {
         const title = section.querySelector<HTMLElement>("[data-chapter-title]");
         const copy = section.querySelectorAll<HTMLElement>("[data-chapter-copy]");
         const chips = section.querySelectorAll<HTMLElement>("[data-chapter-chip]");
@@ -236,6 +264,25 @@ export function ServiceChapters() {
           () => copyTimeline.kill(),
           () => visualTimeline.kill(),
         );
+        };
+
+        const rect = section.getBoundingClientRect();
+        const alreadyNear = rect.top < window.innerHeight + 600 && rect.bottom > -200;
+        if (alreadyNear) {
+          setupSection();
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (!entries.some((entry) => entry.isIntersecting)) return;
+            observer.disconnect();
+            setupSection();
+          },
+          { rootMargin: "600px 0px" },
+        );
+        observer.observe(section);
+        triggers.push(() => observer.disconnect());
       });
     }, root);
 
@@ -248,7 +295,9 @@ export function ServiceChapters() {
 
   return (
     <div ref={rootRef} className="overflow-x-clip">
-      {chapters.map((chapter) => (
+      {chapters.map((chapter) => {
+        const Visual = chapter.visual;
+        return (
         <section
           key={chapter.id}
           id={chapter.id}
@@ -273,7 +322,7 @@ export function ServiceChapters() {
                 id={`${chapter.id}-title`}
                 className="overflow-hidden pb-[0.08em] -mb-[0.08em] font-display text-[clamp(2.5rem,5.5vw,4.25rem)] font-normal leading-[0.98] tracking-tight"
               >
-                <span data-chapter-title className="block will-change-transform">
+                <span data-chapter-title className="block">
                   {chapter.title}
                 </span>
               </h2>
@@ -328,11 +377,14 @@ export function ServiceChapters() {
               }
               aria-hidden="true"
             >
-              {chapter.visual}
+              <WhenNear minHeight="22rem">
+                <Visual />
+              </WhenNear>
             </div>
           </div>
         </section>
-      ))}
+        );
+      })}
     </div>
   );
 }

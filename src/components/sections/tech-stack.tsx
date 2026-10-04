@@ -4,11 +4,21 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { StackLayers } from "@/components/sections/stack-layers";
+import dynamic from "next/dynamic";
+
+import { WhenNear } from "@/components/motion/when-near";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { revealStart } from "@/lib/reveal-visibility";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const StackLayers = dynamic(
+  () =>
+    import("@/components/sections/stack-layers").then((mod) => ({
+      default: mod.StackLayers,
+    })),
+  { loading: () => null },
+);
 
 export function TechStack() {
   const reduced = usePrefersReducedMotion();
@@ -109,12 +119,12 @@ export function TechStack() {
             className="-mb-[0.16em] font-display text-[clamp(2.5rem,6.4vw,5rem)] leading-[0.98] tracking-tight"
           >
             <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
-              <span data-stack-line className="block will-change-transform">
+              <span data-stack-line className="block">
                 every layer of the{" "}
               </span>
             </span>
             <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
-              <span data-stack-line className="block text-accent will-change-transform">
+              <span data-stack-line className="block text-accent">
                 technology stack
               </span>
             </span>
@@ -143,7 +153,9 @@ export function TechStack() {
         </div>
 
         <div data-stack-loop>
-          <StackLayers reduced={reduced} />
+          <WhenNear minHeight="18rem" margin="500px">
+            <StackLayers reduced={reduced} />
+          </WhenNear>
         </div>
       </div>
     </section>

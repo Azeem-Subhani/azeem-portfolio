@@ -1,5 +1,6 @@
 import { DataHeroVisual } from "@/components/sections/data-hero-visual";
 import { DataServiceBody } from "@/components/services/data-body";
+import { serviceSiblingLinks } from "@/content/services";
 import { ServiceIntro } from "@/components/services/service-intro";
 import { ServiceOutro } from "@/components/services/service-outro";
 import type { ServicePageContent } from "@/types/content";
@@ -10,7 +11,11 @@ export function DataServiceView({ service }: { service: ServicePageContent }) {
   return (
     <>
       <div className={heroFrame}>
-        <ServiceIntro service={service} visual={<DataHeroVisual />} />
+        <ServiceIntro
+          service={service}
+          siblings={serviceSiblingLinks(service.slug)}
+          visual={<DataHeroVisual />}
+        />
       </div>
       <DataServiceBody service={service} />
       <ServiceOutro service={service} />
