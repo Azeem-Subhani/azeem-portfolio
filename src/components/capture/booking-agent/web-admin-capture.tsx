@@ -7,7 +7,7 @@ export function BookingAgentWebAdminCapture() {
     <div className={`ba-capture-root ${bookingAgentFonts}`}>
       <section className="capture frame web" aria-label="Operations console with live conversations and human takeover">
       <div className="app">
-        <aside className="side ad-side">
+        <aside className="side ops-side">
           <div className="brand">
             <div className="mark">
               <Icon name="sparkle" className="i" />
@@ -96,9 +96,9 @@ export function BookingAgentWebAdminCapture() {
             </div>
           </div>
         </aside>
-        <div className="ad-main">
-          <div className="ad-col">
-            <div className="ad-top">
+        <div className="ops-main">
+          <div className="ops-col">
+            <div className="ops-top">
               <div data-h="1">
                 {"Conversations"}
               </div>
@@ -596,7 +596,7 @@ export function BookingAgentWebAdminCapture() {
               </table>
             </div>
           </div>
-          <aside className="ad-det">
+          <aside className="ops-det">
             <div className="det-h">
               <div className="row1">
                 <div className="av">
