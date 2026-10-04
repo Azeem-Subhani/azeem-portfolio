@@ -16,19 +16,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { countries } from "@/content/countries";
 import { profile } from "@/content/profile";
+import type { Country } from "@/content/countries";
 import { contactFormSchema, type ContactFormValues } from "@/lib/schemas";
 
 type SubmitState = "idle" | "success" | "error";
 
-const sortedCountries = [...countries].sort((a, b) => a.name.localeCompare(b.name));
 
 // Dark mode: fields sit close to the card surface and lean on the border and focus ring,
 // instead of the brighter teal-tinted elevated fill. Light mode keeps the default fill.
 const fieldDarkFill = "dark:bg-background/50";
 
-export function ContactForm() {
+export function ContactForm({ countries }: { countries: Country[] }) {
+  const sortedCountries = [...countries].sort((a, b) => a.name.localeCompare(b.name));
   const router = useRouter();
   const formId = useId();
   const [submitState, setSubmitState] = useState<SubmitState>("idle");

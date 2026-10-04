@@ -236,6 +236,8 @@ export function VenueBrowserVisual({
   const [internalActive, setInternalActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const pauseResumeRef = useRef<number | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(false);
   const active = activeIndexProp ?? internalActive;
   const venue = venues[active] ?? venues[0];
   const trackMeta = venueTracks[venue.id]?.meta;
@@ -261,6 +263,19 @@ export function VenueBrowserVisual({
     [],
   );
 
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setOnScreen(true);
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      setOnScreen(entries.some((entry) => entry.isIntersecting));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const motionProps = embedded
     ? {
         initial: "hidden" as const,
@@ -275,17 +290,18 @@ export function VenueBrowserVisual({
   const cycleHeld = paused || cyclePaused;
 
   useEffect(() => {
-    if (reduced || cycleHeld) return;
+    if (reduced || cycleHeld || !onScreen) return;
     if (embedded && !play) return;
 
     const id = window.setInterval(() => {
       setActive((active + 1) % venues.length);
     }, venueCycleMs);
     return () => window.clearInterval(id);
-  }, [reduced, cycleHeld, embedded, play, active, setActive]);
+  }, [reduced, cycleHeld, embedded, play, active, setActive, onScreen]);
 
   return (
     <div
+      ref={rootRef}
       className={`relative mx-auto w-full ${
         embedded ? "pb-2 pt-0.5" : "max-w-[26rem]"
       }`}

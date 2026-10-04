@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { WoodyShopCaseStudy } from "@/components/projects/case-studies/woody-shop-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -12,7 +13,10 @@ export default function WoodyShopPage() {
 
   return (
     <ProjectStudy>
-      <WoodyShopCaseStudy project={project} />
+      <WoodyShopCaseStudy
+        project={project}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

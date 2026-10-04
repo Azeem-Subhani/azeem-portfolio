@@ -224,7 +224,26 @@ export function DataHeroVisual() {
       visual.addEventListener("pointermove", onPointerMove);
       visual.addEventListener("pointerleave", onPointerLeave);
 
+      const svg = visual.querySelector("svg");
+      const loops = [float, floatGlass, spin];
+      const setLoops = (running: boolean) => {
+        loops.forEach((tween) => (running ? tween.resume() : tween.pause()));
+        if (!svg) return;
+        if (running) svg.unpauseAnimations();
+        else svg.pauseAnimations();
+      };
+      const frame = visual.getBoundingClientRect();
+      setLoops(frame.bottom > 0 && frame.top < window.innerHeight);
+      const observer =
+        typeof IntersectionObserver === "undefined"
+          ? null
+          : new IntersectionObserver((entries) => {
+              setLoops(entries.some((entry) => entry.isIntersecting));
+            });
+      observer?.observe(visual);
+
       cleanup = () => {
+        observer?.disconnect();
         reveal.kill();
         float.kill();
         floatGlass.kill();

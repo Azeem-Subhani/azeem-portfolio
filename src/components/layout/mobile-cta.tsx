@@ -53,7 +53,9 @@ export function MobileCta() {
       )}
     >
       <Button asChild size="lg" className="w-full shadow-xl shadow-black/15">
-        <Link href="/contact">Start a conversation</Link>
+        <Link href="/contact" prefetch={false}>
+          Start a conversation
+        </Link>
       </Button>
     </aside>
   );

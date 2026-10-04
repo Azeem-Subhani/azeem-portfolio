@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { BookingAgentCaseStudy } from "@/components/projects/case-studies/booking-agent-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -12,7 +13,10 @@ export default function BookingAgentPage() {
 
   return (
     <ProjectStudy>
-      <BookingAgentCaseStudy project={project} />
+      <BookingAgentCaseStudy
+        project={project}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

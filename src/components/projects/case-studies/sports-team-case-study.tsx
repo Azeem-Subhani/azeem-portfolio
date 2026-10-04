@@ -18,7 +18,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -44,6 +43,7 @@ const SPORTS_TEAM_SCREEN = "bg-[#F4F6F2]";
 
 type SportsTeamCaseStudyProps = {
   project: Project;
+  closer?: ReactNode;
 };
 
 function SportsTeamWebFrame({ children }: { children: ReactNode }) {
@@ -62,7 +62,7 @@ function SportsTeamPhoneFrame({ children }: { children: ReactNode }) {
   );
 }
 
-export function SportsTeamCaseStudy({ project }: SportsTeamCaseStudyProps) {
+export function SportsTeamCaseStudy({ project, closer }: SportsTeamCaseStudyProps) {
   const heroWeb = [
     {
       id: "coach-today",
@@ -187,7 +187,7 @@ export function SportsTeamCaseStudy({ project }: SportsTeamCaseStudyProps) {
 
       <CaseStudyStack items={project.stack} />
       <CaseStudyOutcomes project={project} />
-      <ProjectCloser slug={project.slug} />
+      {closer}
     </article>
   );
 }

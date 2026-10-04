@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { BookingMcpCaseStudy } from "@/components/projects/case-studies/booking-mcp-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -16,7 +17,11 @@ export default function BookingMcpPage() {
 
   return (
     <ProjectStudy>
-      <BookingMcpCaseStudy project={project} demoKey={demoKey} />
+      <BookingMcpCaseStudy
+        project={project}
+        demoKey={demoKey}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

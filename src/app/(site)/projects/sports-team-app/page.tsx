@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { SportsTeamCaseStudy } from "@/components/projects/case-studies/sports-team-case-study";
+import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectStudy, projectMetadata } from "@/components/projects/project-study";
 import { getProjectBySlug } from "@/content/projects";
 
@@ -12,7 +13,10 @@ export default function SportsTeamPage() {
 
   return (
     <ProjectStudy>
-      <SportsTeamCaseStudy project={project} />
+      <SportsTeamCaseStudy
+        project={project}
+        closer={<ProjectCloser slug={project.slug} />}
+      />
     </ProjectStudy>
   );
 }

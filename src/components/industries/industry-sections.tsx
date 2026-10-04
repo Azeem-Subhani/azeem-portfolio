@@ -28,7 +28,7 @@ function Words({ text }: { text: string }) {
   return text.split(" ").map((word, index) => (
     <Fragment key={`${word}-${index}`}>
       <span className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-top">
-        <span data-im-word className="inline-block will-change-transform">
+        <span data-im-word className="inline-block">
           {word}
         </span>
       </span>{" "}
@@ -112,12 +112,12 @@ function HeroHeadline({ industry, large }: { industry: IndustryPageContent; larg
       )}
     >
       <span className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
-        <span data-im="hero-line" className="block will-change-transform">
+        <span data-im="hero-line" className="block">
           {industry.title}
         </span>
       </span>
       <span className="block overflow-hidden pb-[0.22em] -mb-[0.12em]">
-        <span data-im="hero-line" className="relative inline-block text-accent will-change-transform">
+        <span data-im="hero-line" className="relative inline-block text-accent">
           {industry.titleAccent}
           <svg
             data-im="underline"

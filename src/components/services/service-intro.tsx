@@ -9,7 +9,6 @@ import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 import { useAccentLine } from "@/components/services/hero-accent";
 import { Button } from "@/components/ui/button";
-import { servicePath, services } from "@/content/services";
 import { afterRouteScroll } from "@/lib/reveal-visibility";
 import { cn } from "@/lib/utils";
 import type { ServicePageContent } from "@/types/content";
@@ -31,6 +30,7 @@ function parseStat(value: string) {
 
 type ServiceIntroProps = {
   service: ServicePageContent;
+  siblings: { slug: string; label: string }[];
   visual: ReactNode;
 };
 
@@ -55,11 +55,10 @@ function Words({
   ));
 }
 
-export function ServiceIntro({ service, visual }: ServiceIntroProps) {
+export function ServiceIntro({ service, siblings, visual }: ServiceIntroProps) {
   const introRef = useRef<HTMLElement>(null);
   const accentRef = useRef<HTMLSpanElement>(null);
   useAccentLine(accentRef);
-  const siblings = services.filter((item) => item.slug !== service.slug);
 
   // The entrance itself is CSS (globals.css, "Service hero entrance") so it starts on
   // first paint instead of waiting for hydration. JS only drives the stat counters.
@@ -204,7 +203,7 @@ export function ServiceIntro({ service, visual }: ServiceIntroProps) {
           <ul>
             {siblings.map((item) => (
               <li key={item.slug}>
-                <Link href={servicePath(item.slug)}>{item.label}</Link>
+                <Link href={`/services/${item.slug}`}>{item.label}</Link>
               </li>
             ))}
           </ul>

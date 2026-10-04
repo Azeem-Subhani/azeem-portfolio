@@ -4,7 +4,6 @@ import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { parseCount } from "@/components/why/why-motion";
 import { afterRouteScroll, revealStart } from "@/lib/reveal-visibility";
 
@@ -43,9 +42,27 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
     const q = (selector: string, scope: ParentNode = root) =>
       Array.from(scope.querySelectorAll<HTMLElement>(selector));
     const rafs: number[] = [];
-    let removeIntroListener = () => {};
+    const stops: Array<() => void> = [];
 
     const ctx = gsap.context(() => {
+      const whenNear = (el: HTMLElement, setup: () => void) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 480 && rect.bottom > -120) {
+          setup();
+          return;
+        }
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (!entries.some((entry) => entry.isIntersecting)) return;
+            observer.disconnect();
+            setup();
+          },
+          { rootMargin: "480px 0px" },
+        );
+        observer.observe(el);
+        stops.push(() => observer.disconnect());
+      };
+
       /** Plays once when enough of `trigger` is on screen, including deep links that land past it. */
       const onceVisible = (trigger: HTMLElement, play: () => void) => {
         let played = false;
@@ -94,13 +111,7 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
         )
         .to(heroVisual, { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1.2, clearProps: "transform" }, 0.45);
 
-      if (document.documentElement.dataset.introState === "fresh") {
-        const play = () => hero.play();
-        window.addEventListener(INTRO_COMPLETE_EVENT, play, { once: true });
-        removeIntroListener = () => window.removeEventListener(INTRO_COMPLETE_EVENT, play);
-      } else {
-        hero.play();
-      }
+      hero.play();
 
       // ---- Count-up figures -----------------------------------------------------------
       const counters = new Map<HTMLElement, (progress: number) => string>();
@@ -135,7 +146,7 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
       };
 
       // ---- Proof band: rules draw, figures rise and count -----------------------------
-      q("[data-im-proof]").forEach((band) => {
+      q("[data-im-proof]").forEach((band) => whenNear(band, () => {
         const rules = q("[data-im-rule]", band);
         const stats = q("[data-im-stat]", band);
         gsap.set(rules, { scaleX: 0, transformOrigin: "left center" });
@@ -148,11 +159,11 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
           tl.play();
           countUp(band, 0.25);
         });
-      });
+      }));
 
       // ---- Section heads: kicker, words, intro ----------------------------------------
       const heads = new Map<Element, gsap.core.Timeline>();
-      q("[data-im-head]").forEach((head) => {
+      q("[data-im-head]").forEach((head) => whenNear(head, () => {
         const kicker = q("[data-im-kicker]", head);
         const words = q("[data-im-word]", head);
         const intro = q("[data-im-intro]", head);
@@ -168,12 +179,12 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
         const section = head.closest("[data-im-section]");
         if (section && !heads.has(section)) heads.set(section, tl);
         onceVisible(head, () => tl.play());
-      });
+      }));
 
       // ---- Cards: clip open, then their icon, checks, and tags ------------------------
       let lastEnter = 0;
       let groupIndex = 0;
-      q("[data-im-card]").forEach((card) => {
+      q("[data-im-card]").forEach((card) => whenNear(card, () => {
         const icons = q("[data-im-icon]", card);
         const checks = q("[data-im-check]", card);
         const tags = q("[data-im-tag]", card);
@@ -209,10 +220,10 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
             headTl && headTl.isActive() ? Math.max(0, CARD_AFTER_HEAD - headTl.time()) : 0;
           tl.delay(waitForHead + groupIndex * 0.1).play();
         });
-      });
+      }));
 
       // ---- Solutions rail: progress follows the scroll --------------------------------
-      q("[data-im-rail]").forEach((rail) => {
+      q("[data-im-rail]").forEach((rail) => whenNear(rail, () => {
         const fill = q("[data-im-rail-fill]", rail);
         const list = rail.parentElement ?? rail;
         gsap.fromTo(
@@ -224,10 +235,10 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
             scrollTrigger: { trigger: list, start: "top 70%", end: "bottom 55%", scrub: 0.6 },
           },
         );
-      });
+      }));
 
       // ---- Security grid: one scan sweep ----------------------------------------------
-      q("[data-im-scan-zone]").forEach((zone) => {
+      q("[data-im-scan-zone]").forEach((zone) => whenNear(zone, () => {
         const bar = q("[data-im-scan]", zone);
         const tl = gsap
           .timeline({ paused: true })
@@ -236,7 +247,7 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
           .to(bar, { y: () => zone.offsetHeight, duration: 1.7, ease: "power1.inOut" }, 0.55)
           .to(bar, { opacity: 0, duration: 0.35 }, ">-0.3");
         onceVisible(zone, () => tl.play());
-      });
+      }));
     }, root);
 
     // Fonts change line heights, which moves every trigger.
@@ -244,8 +255,8 @@ export function IndustryMotion({ children }: { children: ReactNode }) {
     void document.fonts?.ready.then(refresh);
 
     return () => {
+      stops.forEach((stop) => stop());
       rafs.forEach(cancelAnimationFrame);
-      removeIntroListener();
       ctx.revert();
       // revert() undoes tweens but not text written by onUpdate, so put the real figures back.
       root.querySelectorAll<HTMLElement>("[data-why-count]").forEach((el) => {

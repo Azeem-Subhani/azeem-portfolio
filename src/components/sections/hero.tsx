@@ -141,6 +141,7 @@ export function Hero() {
     }
 
     const context = gsap.context(() => {
+
       if (playEntrance) {
         // Drop the CSS hide before GSAP records transforms, or yPercent stacks
         // on top of the pending translate and the lines stay clipped.

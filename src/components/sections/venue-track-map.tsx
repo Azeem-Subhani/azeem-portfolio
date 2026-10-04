@@ -617,13 +617,37 @@ function useRacers(
 
     const origin = performance.now();
     let frame = 0;
+    let onScreen = true;
+    const svg = lowCars.current[0]?.ownerSVGElement ?? highCars.current[0]?.ownerSVGElement;
     const tick = (now: number) => {
+      frame = 0;
+      if (!onScreen || document.hidden) return;
       const seconds = (now - origin) / 1000;
       racers.forEach((racer, i) => place(i, racer.offset + seconds / racer.lapSeconds));
       frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    const start = () => {
+      if (frame || !onScreen || document.hidden) return;
+      frame = requestAnimationFrame(tick);
+    };
+    const observer =
+      svg && typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver((entries) => {
+            onScreen = entries.some((entry) => entry.isIntersecting);
+            if (onScreen) start();
+          })
+        : null;
+    if (svg && observer) observer.observe(svg);
+    const onVisibility = () => {
+      if (!document.hidden) start();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    start();
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      observer?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [geometry, reduced, lowCars, highCars]);
 }
 

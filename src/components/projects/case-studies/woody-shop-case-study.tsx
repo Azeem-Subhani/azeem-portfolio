@@ -16,7 +16,6 @@ import {
 } from "@/components/projects/case-studies/case-study-sections";
 import { DeviceStage } from "@/components/projects/device-stage";
 import { CaptureFrame } from "@/components/projects/mockups/capture-frame";
-import { ProjectCloser } from "@/components/projects/project-closer";
 import { ProjectDetailIntro } from "@/components/projects/project-detail-intro";
 import type { Project } from "@/types/content";
 
@@ -35,6 +34,7 @@ import "@/components/projects/mockups/woody-shop-phone-mock.css";
 
 type WoodyShopCaseStudyProps = {
   project: Project;
+  closer?: ReactNode;
 };
 
 const PHONE_SHELL = "bg-[#1A1A1A]";
@@ -141,7 +141,7 @@ const heroPhones = [
 const heroPhone = heroPhones.slice(0, 1);
 const mobileRow = heroPhones.slice(1);
 
-export function WoodyShopCaseStudy({ project }: WoodyShopCaseStudyProps) {
+export function WoodyShopCaseStudy({ project, closer }: WoodyShopCaseStudyProps) {
   return (
     <article className="mx-auto max-w-7xl px-6 pb-8 pt-32">
       <ProjectDetailIntro project={project} />
@@ -168,7 +168,7 @@ export function WoodyShopCaseStudy({ project }: WoodyShopCaseStudyProps) {
 
       <CaseStudyStack items={project.stack} />
       <CaseStudyOutcomes project={project} />
-      <ProjectCloser slug={project.slug} />
+      {closer}
     </article>
   );
 }

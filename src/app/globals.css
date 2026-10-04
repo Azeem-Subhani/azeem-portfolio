@@ -2294,7 +2294,6 @@ html.dark .svgl-invert-dark,
     color-mix(in srgb, var(--accent) 6%, transparent) 60%,
     transparent
   );
-  filter: blur(24px);
   animation: industry-glow-drift 16s ease-in-out infinite alternate;
 }
 

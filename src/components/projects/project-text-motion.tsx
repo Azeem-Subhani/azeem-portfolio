@@ -3,13 +3,14 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 
 import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { revealStart } from "@/lib/reveal-visibility";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
+
+let splitText: (typeof import("gsap/SplitText"))["SplitText"] | null = null;
 
 const ease = "power4.out";
 
@@ -68,7 +69,12 @@ function splitLines(
 
   gsap.set(el, { opacity: 0 });
 
-  const split = SplitText.create(el, {
+  const Split = splitText;
+  if (!Split) {
+    return { play() {}, kill() {} };
+  }
+
+  const split = Split.create(el, {
     type: "lines",
     mask: "lines",
     linesClass: options.linesClass,
@@ -251,22 +257,41 @@ export function ProjectTextMotion({ children }: { children: ReactNode }) {
     const kills: Array<() => void> = [];
     let context: gsap.Context | null = null;
     const blocks = gatherBlocks(root);
-    const pending = blocks.flatMap((block) => [...block.titles, ...block.copy]);
-    gsap.set(pending, { opacity: 0 });
 
     const setup = () => {
-      if (!alive || !rootRef.current) return;
+      if (!alive || !rootRef.current || !splitText) return;
 
       context = gsap.context(() => {
         blocks.forEach((block) => {
-          bindBlock(block.trigger, block.titles, block.copy, kills);
+          const arm = () => bindBlock(block.trigger, block.titles, block.copy, kills);
+          const rect = block.trigger.getBoundingClientRect();
+          if (rect.top < window.innerHeight + 500 && rect.bottom > -100) {
+            arm();
+            return;
+          }
+          const observer = new IntersectionObserver(
+            (entries) => {
+              if (!entries.some((entry) => entry.isIntersecting)) return;
+              observer.disconnect();
+              arm();
+            },
+            { rootMargin: "500px 0px" },
+          );
+          observer.observe(block.trigger);
+          kills.push(() => observer.disconnect());
         });
       }, root);
 
       ScrollTrigger.refresh();
     };
 
-    void (document.fonts?.ready ?? Promise.resolve()).then(setup);
+    void Promise.all([
+      document.fonts?.ready ?? Promise.resolve(),
+      import("gsap/SplitText").then(({ SplitText }) => {
+        splitText = SplitText;
+        gsap.registerPlugin(SplitText);
+      }),
+    ]).then(setup);
 
     const refresh = () => ScrollTrigger.refresh();
     window.addEventListener("load", refresh);
@@ -278,7 +303,6 @@ export function ProjectTextMotion({ children }: { children: ReactNode }) {
       window.removeEventListener(INTRO_COMPLETE_EVENT, refresh);
       context?.revert();
       kills.forEach((kill) => kill());
-      gsap.set(pending, { clearProps: "opacity" });
     };
   }, [reduced]);
 

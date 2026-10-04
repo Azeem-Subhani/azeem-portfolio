@@ -96,7 +96,7 @@ export function ProjectsIntro() {
           {titleLines.map((line) => (
             <span key={line} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
               {/* Trailing space keeps the heading's text readable for search and copy. */}
-              <span data-projects-line className="block will-change-transform">
+              <span data-projects-line className="block">
                 {line}{" "}
               </span>
             </span>

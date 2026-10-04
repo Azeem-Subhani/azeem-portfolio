@@ -104,6 +104,7 @@ function CatalogStage({
           <p className="catalog-stage-summary">{project.summary}</p>
           <Link
             href={`/projects/${project.slug}`}
+            prefetch={false}
             className="catalog-case-link"
           >
             View case study
@@ -162,6 +163,7 @@ function CatalogListItem({
         href={`/projects/${project.slug}`}
         target="_blank"
         rel="noopener noreferrer"
+        prefetch={false}
         aria-current={active ? "true" : undefined}
         className={cn("catalog-project-link", active && "is-active")}
       >
