@@ -222,7 +222,7 @@ export const projects: Project[] = [
       "Twilio",
       "AWS",
     ],
-    categories: ["Full-Stack", "Payments", "Real-Time", "Cloud"],
+    categories: ["AI & RAG", "Full-Stack", "Payments", "Real-Time", "Cloud"],
     screens: screens(
       "ai-booking-agent",
       "#F6F5F1",

@@ -53,7 +53,11 @@ describe("project category filtering", () => {
       project.categories.includes("AI & RAG"),
     );
 
-    expect(aiProjects.map((project) => project.slug)).toEqual(["booking-mcp", "sports-team-app"]);
+    expect(aiProjects.map((project) => project.slug)).toEqual([
+      "booking-mcp",
+      "sports-team-app",
+      "ai-booking-agent",
+    ]);
   });
 
   it("gives every project at least one category and a unique slug", () => {
