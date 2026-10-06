@@ -29,7 +29,7 @@ export const posts: BlogPost[] = [
       "How a motorsports booking platform serves five white-label venues from one shared reservation and Stripe payments engine, and what that design costs.",
     publishedAt: "2026-08-12",
     tags: ["Architecture", "Payments", "Multi-tenant"],
-    draft: true,
+    draft: false,
     relatedProjects: ["track-booking"],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -46,7 +46,7 @@ export const posts: BlogPost[] = [
       "Why booking flows fail when access tokens expire mid-checkout, and how typed API clients, token refresh, and route guards removed a class of those bugs.",
     publishedAt: "2026-09-10",
     tags: ["TypeScript", "Auth", "Next.js"],
-    draft: true,
+    draft: false,
     relatedProjects: ["track-booking"],
     relatedServices: ["web-development"],
     cover: {
@@ -63,7 +63,7 @@ export const posts: BlogPost[] = [
       "A checklist for shipping Next.js marketing and product pages that crawlers can parse: server-rendered HTML, metadata, canonicals, sitemaps, and structured data.",
     publishedAt: "2026-08-06",
     tags: ["Next.js", "SEO", "Performance"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development"],
     cover: {
@@ -80,7 +80,7 @@ export const posts: BlogPost[] = [
       "Why capped exponential backoff still causes retry storms, how retries multiply across layers, and how to fix it with full jitter, budgets, and one retry layer.",
     publishedAt: "2026-10-03",
     tags: ["APIs", "Distributed systems", "Reliability", "AWS"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "cloud"],
     cover: {
@@ -97,7 +97,7 @@ export const posts: BlogPost[] = [
       "Three ways an idempotency key still lets a charge run twice, and the claim, call, record design in Postgres that closes each race.",
     publishedAt: "2026-08-17",
     tags: ["APIs", "Payments", "Postgres", "Distributed systems"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -114,7 +114,7 @@ export const posts: BlogPost[] = [
       "Return a webhook 200 before processing, but only after a durable insert. How to avoid lost events and double applies with Stripe-style retries.",
     publishedAt: "2026-09-02",
     tags: ["APIs", "Payments", "Reliability", "Distributed systems"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "cloud"],
     cover: {
@@ -131,7 +131,7 @@ export const posts: BlogPost[] = [
       "Pool wait, not query time, is often why APIs slow down under load. Measure wait and hold time, cap waiters, and size the pool for the database.",
     publishedAt: "2026-09-11",
     tags: ["Performance", "APIs", "Postgres", "Databases"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -148,7 +148,7 @@ export const posts: BlogPost[] = [
       "Serverless instances times pool size can exceed Postgres max_connections. Size pools per platform, add a pooler, and know what transaction mode breaks.",
     publishedAt: "2026-08-22",
     tags: ["Cloud", "AWS", "Postgres", "Databases"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["cloud", "data-management"],
     cover: {
@@ -165,7 +165,7 @@ export const posts: BlogPost[] = [
       "A transaction held across a remote call ties up a connection and its locks. Find it, split the transaction, and recover safely with idempotency keys.",
     publishedAt: "2026-10-02",
     tags: ["Postgres", "Databases", "Reliability", "APIs"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -182,7 +182,7 @@ export const posts: BlogPost[] = [
       "Trace a surprise AWS bill from the daily total to service, usage type, and resource, and learn which charges never carry a resource ID.",
     publishedAt: "2026-10-04",
     tags: ["Cloud", "AWS", "Cost"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["cloud"],
     cover: {
@@ -199,7 +199,7 @@ export const posts: BlogPost[] = [
       "Trace NAT gateway and cross-AZ charges back to the network path, then choose gateway endpoints, zone routing, or interface endpoints.",
     publishedAt: "2026-08-29",
     tags: ["Cloud", "AWS", "Cost"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["cloud"],
     cover: {
@@ -216,7 +216,7 @@ export const posts: BlogPost[] = [
       "Tell a container limit kill, a node memory kill, and a runtime heap failure apart before you raise a Kubernetes memory limit.",
     publishedAt: "2026-09-12",
     tags: ["Kubernetes", "Reliability", "Cloud"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["cloud"],
     cover: {
@@ -233,7 +233,7 @@ export const posts: BlogPost[] = [
       "Find N+1 queries in Postgres when EXPLAIN says every query is fast and the request is slow. Sort pg_stat_statements by calls, then join or batch.",
     publishedAt: "2026-08-16",
     tags: ["Postgres", "Databases", "Performance", "APIs"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -250,7 +250,7 @@ export const posts: BlogPost[] = [
       "Why deep OFFSET pages get slow and why rows skip or repeat under writes, plus keyset pagination, cursors, indexes, and cheap totals in Postgres.",
     publishedAt: "2026-09-22",
     tags: ["Postgres", "Databases", "Performance", "APIs"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -267,7 +267,7 @@ export const posts: BlogPost[] = [
       "Why a waiting ALTER TABLE stalls every query on a Postgres table, and how lock_timeout, jittered retries, and CONCURRENTLY keep migrations safe.",
     publishedAt: "2026-09-27",
     tags: ["Postgres", "Databases", "Reliability"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["data-management", "cloud", "web-development"],
     cover: {
@@ -284,7 +284,7 @@ export const posts: BlogPost[] = [
       "The mean looks healthy while one in a hundred requests is slow enough to trigger retries. Read the histogram, find the tail's shape, and fix it.",
     publishedAt: "2026-10-01",
     tags: ["Performance", "Reliability", "Observability", "Distributed systems"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "cloud"],
     cover: {
@@ -301,7 +301,7 @@ export const posts: BlogPost[] = [
       "OpenTelemetry cardinality overflow keeps totals right but undercounts breakdowns, so error alerts can go quiet. Learn to detect, prevent, and bound it.",
     publishedAt: "2026-09-13",
     tags: ["Observability", "Reliability", "Distributed systems"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["cloud", "data-management"],
     cover: {
@@ -318,7 +318,7 @@ export const posts: BlogPost[] = [
       "The token price did not change but your LLM bill did. Trace it by feature, call pattern, and token type, with retries and loops.",
     publishedAt: "2026-08-20",
     tags: ["LLMs", "AI", "Cost", "Observability"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["cloud", "data-management"],
     cover: {
@@ -335,7 +335,7 @@ export const posts: BlogPost[] = [
       "Your RAG answer is wrong because the right passage never reached the model. Label queries, measure recall, and fix chunking and filters.",
     publishedAt: "2026-09-16",
     tags: ["AI", "LLMs", "Data engineering", "Databases"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["data-management", "web-development"],
     cover: {
@@ -352,7 +352,7 @@ export const posts: BlogPost[] = [
       "Yesterday's total changed because late events arrived. Choose a restate, reconcile, or ignore policy, then set watermarks and lookbacks.",
     publishedAt: "2026-08-15",
     tags: ["Data engineering", "Distributed systems", "Reliability"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["data-management", "cloud"],
     cover: {
@@ -369,7 +369,7 @@ export const posts: BlogPost[] = [
       "At-least-once delivery means duplicates. Dedupe with a stable key in the same transaction, ack after commit, and guard external side effects.",
     publishedAt: "2026-09-14",
     tags: ["Distributed systems", "Reliability", "Postgres", "APIs"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "cloud", "data-management"],
     cover: {
@@ -386,7 +386,7 @@ export const posts: BlogPost[] = [
       "The user saved and saw old data. Prove replica lag with a WAL timeline, classify reads, and route read-your-writes without overloading the primary.",
     publishedAt: "2026-08-11",
     tags: ["Postgres", "Databases", "Reliability", "AWS"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management", "cloud"],
     cover: {
@@ -403,7 +403,7 @@ export const posts: BlogPost[] = [
       "Logged in is not allowed. Find every object id in a request, scope queries by tenant, test with two users, and stop trusting UUIDs as access control.",
     publishedAt: "2026-08-14",
     tags: ["Security", "APIs", "Postgres", "Web"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development", "data-management"],
     cover: {
@@ -420,7 +420,7 @@ export const posts: BlogPost[] = [
       "Lab scores look fine but taps feel late. Split INP into input delay, processing, and presentation delay, reproduce it, and verify the fix in field data.",
     publishedAt: "2026-09-04",
     tags: ["Performance", "Web", "Observability"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development"],
     cover: {
@@ -437,7 +437,7 @@ export const posts: BlogPost[] = [
       "Logged-in users see another account's data, or stay stale after revalidation. Map the symptom to the Next.js 16 cache layer and invalidate the right one.",
     publishedAt: "2026-09-01",
     tags: ["Next.js", "Web", "Security", "Performance"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["web-development"],
     cover: {
@@ -454,7 +454,7 @@ export const posts: BlogPost[] = [
       "Name the startup clock first: TTID or TTFD. Measure cold starts with Macrobenchmark, then decide whether profiles or deferred work will actually help.",
     publishedAt: "2026-09-17",
     tags: ["Mobile", "Android", "Performance"],
-    draft: true,
+    draft: false,
     relatedProjects: [],
     relatedServices: ["mobile-development"],
     cover: {
