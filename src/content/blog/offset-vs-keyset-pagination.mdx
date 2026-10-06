@@ -1,0 +1,219 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+Two reports arrive in the same week. One says page 50 of the activity feed takes seconds to load while page 1 is instant. The other says a user saw the same invoice twice while paging through a list, and a different user swears a record "disappeared" between pages. They look like a performance ticket and a data bug. They are one design decision: offset pagination is slow on deep pages and skips or repeats rows when the table changes between requests. Adding an index will help the first symptom a little and the second not at all.
+
+This post explains why `OFFSET` cost grows with the page number, shows exactly how concurrent inserts and deletes move rows across page boundaries, replaces it with keyset pagination on a stable order, and is explicit about what keyset cannot do and when offset is still the right tool.
+
+## Why offset pagination gets slow on deep pages
+
+A typical ORM page query looks like this:
+
+```sql
+-- Page 50 with 20 rows per page
+SELECT id, created_at, title
+FROM events
+WHERE tenant_id = $1
+ORDER BY created_at DESC
+LIMIT 20 OFFSET 980;
+```
+
+The database cannot jump to row 981. PostgreSQL's documentation is direct about it: the rows skipped by an `OFFSET` clause still have to be computed inside the server, so a large `OFFSET` might be inefficient ([PostgreSQL: LIMIT and OFFSET](https://www.postgresql.org/docs/current/queries-limit.html)). Even with a perfect index on `(tenant_id, created_at)`, the executor walks 1,000 index entries (and usually their heap rows) to return 20. Page 500 walks 10,000. The cost grows linearly with the offset, and the work spent on discarded rows is pure waste. Markus Winand makes the same point in his write-up on the seek method: the database still has to fetch the skipped rows and bring them into order before throwing them away ([Use The Index, Luke: no offset](https://use-the-index-luke.com/no-offset)).
+
+<Figure caption="Offset reads and discards every skipped entry; keyset seeks past them, so cost stops depending on page number.">
+  <KeysetSeekVsOffsetScan />
+</Figure>
+
+This is also why `EXPLAIN ANALYZE` on page 1 looks great in code review. The plan is the same for page 1 and page 500; only the number of rows read changes. Test the deep page.
+
+## Why offset pagination skips rows and repeats them
+
+Offset pagination defines a page as "the rows at positions 981 to 1000 in the current ordering." Position is recomputed on every request. If rows are inserted or deleted before that position between two requests, every later row shifts.
+
+Take a newest-first feed, 20 rows per page.
+
+### An insert causes a duplicate
+
+1. The user loads page 1 and sees rows ranked 1 to 20. Row R20 is the last one on the page.
+2. A new row is inserted. It is newest, so it takes position 1. Everything else shifts down by one; R20 is now at position 21.
+3. The user loads page 2 (`OFFSET 20`). Position 21 is R20. The user sees R20 again at the top of page 2.
+
+### A delete causes a skip
+
+1. The user loads page 1, rows 1 to 20. Row R21 is the first row of page 2.
+2. A row on page 1 is deleted. Everything below it shifts up by one; R21 moves to position 20.
+3. The user loads page 2 (`OFFSET 20`). Position 21 is now R22. R21 was never shown on either page.
+
+<Figure caption="Inserts and deletes before the boundary shift positions, so a row is shown twice or never shown.">
+  <OffsetShiftsRows />
+</Figure>
+
+The skip is the worse bug, because nothing on screen indicates it. In a feed with steady writes, both happen constantly, and users report it as "the list skipped an item" or "I saw this twice." Winand describes the duplicate case as a property of the method itself, not an implementation bug ([Use The Index, Luke: no offset](https://use-the-index-luke.com/no-offset)).
+
+### The nondeterministic order bug
+
+There is a third source of skipped and repeated rows that needs no concurrent writes at all. If the `ORDER BY` is not unique, for example `ORDER BY created_at` where many rows share a timestamp, the order of tied rows is unspecified. PostgreSQL's documentation warns that different `LIMIT`/`OFFSET` values will give inconsistent results unless you enforce a predictable ordering, and that the planner can choose different plans (and so different row orders) for different `LIMIT` and `OFFSET` values ([PostgreSQL: LIMIT and OFFSET](https://www.postgresql.org/docs/current/queries-limit.html)). Always add a unique tie-breaker, usually the primary key, whatever pagination method you use.
+
+## Keyset pagination on a stable order
+
+Keyset pagination (also called the seek method or cursor pagination) defines a page as "the next 20 rows after the last row I showed you." The client sends back the sort key of the last row it saw, and the query seeks directly to that point in the index.
+
+```sql
+-- First page
+SELECT id, created_at, title
+FROM events
+WHERE tenant_id = $1
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+
+-- Next page: $2 and $3 are created_at and id of the last row on the previous page
+SELECT id, created_at, title
+FROM events
+WHERE tenant_id = $1
+  AND (created_at, id) < ($2, $3)
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+
+-- Supporting index: equality column first, then the sort keys in sort order
+CREATE INDEX events_tenant_created_id
+  ON events (tenant_id, created_at DESC, id DESC);
+```
+
+The row comparison `(created_at, id) < ($2, $3)` does the tie-breaking for you. PostgreSQL compares row elements left to right and stops at the first unequal pair, which determines the result ([PostgreSQL: row constructor comparison](https://www.postgresql.org/docs/current/functions-comparisons.html)). So it means "older timestamp, or same timestamp and smaller id," which matches the `ORDER BY` exactly.
+
+With the index above, PostgreSQL can descend the B-tree to the cursor position and read 20 entries. Page 500 costs about the same as page 2, because nothing before the cursor is read.
+
+### Why the duplicate and skip go away
+
+The cursor names a row, not a position. If a new row is inserted at the top, it sorts before the cursor and is simply not part of "rows after this one." If a row on an earlier page is deleted, the next page still starts strictly after the last row the user saw. Neither change can shift a row across the boundary.
+
+Be precise about what this promises. Keyset pages are stable relative to the cursor; they are not a snapshot of the table. Rows inserted after the cursor position (for example, a backdated record) will appear when the user reaches that point. And if a row's sort key is updated, the row can move: a feed sorted by `updated_at` will move an edited row to the top, past the user's cursor, and they will not see it on later pages. If you need a frozen list, you need a snapshot (a materialized result set or a fixed upper bound such as `created_at` at or before the time of the first request), not just a different pagination method.
+
+### Encode the cursor
+
+Send the cursor to the client as an opaque token, not as raw columns in the URL. Base64-encode a small JSON object containing the sort values and the sort direction, and validate it on the way back in. Treat it as untrusted input: parse the values into the correct types and bind them as parameters. Never interpolate them into SQL. If the cursor carries any information the user should not be able to tamper with, sign it.
+
+```ts
+// Illustrative cursor encoding. The cursor is client-controlled input.
+// createdAt is the exact text Postgres returned for created_at::text,
+// kept as a string so no microseconds are lost (see the precision note below).
+type Cursor = { createdAt: string; id: number };
+
+const PG_TIMESTAMPTZ_TEXT = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d{1,6})?[+-]\d{2}(:\d{2})?$/;
+
+export function encodeCursor(c: Cursor): string {
+  return Buffer.from(JSON.stringify(c)).toString("base64url");
+}
+
+export function decodeCursor(token: string): Cursor {
+  const raw = JSON.parse(Buffer.from(token, "base64url").toString("utf8"));
+  if (typeof raw?.createdAt !== "string" || !PG_TIMESTAMPTZ_TEXT.test(raw.createdAt)
+      || !Number.isSafeInteger(raw?.id)) {
+    throw new Error("invalid cursor");
+  }
+  return { createdAt: raw.createdAt, id: raw.id };
+}
+
+// Query side: select created_at::text AS cursor_ts for the last row,
+// and bind the decoded value as $2::timestamptz in the next-page query.
+```
+
+Fetch `LIMIT 21` and return 20 to tell the client whether a next page exists without a separate count.
+
+## Keyset edge cases that break quietly
+
+### Nulls in the sort key
+
+Row comparison with a null element yields null, not true or false ([PostgreSQL: row constructor comparison](https://www.postgresql.org/docs/current/functions-comparisons.html)). A `WHERE` clause that evaluates to null filters the row out. If `created_at` can be null, every null row silently disappears from every page after the first. Either make the sort columns `NOT NULL`, or sort on `COALESCE(...)` with a matching expression index, or page through the nulls as a separate segment.
+
+### Timestamp precision across the cursor
+
+PostgreSQL stores `timestamp` and `timestamptz` with a resolution of one microsecond ([PostgreSQL: date/time types](https://www.postgresql.org/docs/current/datatype-datetime.html)). A JavaScript `Date` holds an integral number of milliseconds since the epoch ([MDN: Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)), and node-postgres parses `timestamptz` columns into `Date` objects by default ([node-postgres: data types](https://node-postgres.com/features/types)). If the cursor round-trips through a `Date`, a row at `12:00:00.123456` produces a cursor of `12:00:00.123`, and the next page's comparison skips every row between the two values. That is the exact skip bug keyset was supposed to remove. Carry the cursor timestamp as text from the database to the client and back (`created_at::text`), or store timestamps at millisecond precision if every client works in milliseconds.
+
+### Mixed sort directions
+
+The tuple shorthand only works when every column sorts in the same direction. For `ORDER BY priority ASC, created_at DESC, id DESC`, write the expanded form:
+
+```sql
+-- Illustrative: mixed directions need the expanded predicate
+WHERE tenant_id = $1
+  AND (
+        priority > $2
+     OR (priority = $2 AND created_at < $3)
+     OR (priority = $2 AND created_at = $3 AND id < $4)
+  )
+ORDER BY priority ASC, created_at DESC, id DESC
+LIMIT 20;
+```
+
+Check the plan. An `OR` predicate does not always become the same tight index range that the tuple form produces, so build the index with matching sort directions and verify with `EXPLAIN` on realistic data.
+
+### The index must match filter and order
+
+The index needs the equality filters first, then the sort columns in sort order, ending with the tie-breaker. An index on `(created_at, id)` alone does not serve `WHERE tenant_id = $1` efficiently. Each distinct sort order the product offers needs its own index, which is where keyset starts to cost write throughput.
+
+### Backward paging
+
+"Previous page" is the same query with the comparison and the `ORDER BY` reversed, starting from the first row of the current page, then reversing the 20 rows in the application before rendering.
+
+## Covering indexes and exact totals
+
+### A covering index for the hot order
+
+If the list shows a few narrow columns, include them in the index so PostgreSQL can answer from the index alone:
+
+```sql
+CREATE INDEX events_tenant_created_id_cov
+  ON events (tenant_id, created_at DESC, id DESC)
+  INCLUDE (title);
+```
+
+PostgreSQL's documentation sets two conditions for this to pay off. The query must reference only indexed columns, and the table must change slowly enough that a significant fraction of heap pages are marked all-visible in the visibility map; otherwise the heap is visited anyway ([PostgreSQL: index-only scans and covering indexes](https://www.postgresql.org/docs/current/indexes-index-only-scans.html)). Included columns also make the index larger and every write to the table more expensive. A busy, frequently updated feed table may not benefit.
+
+### Stop counting on every page
+
+"Showing 1 to 20 of 1,284,113" costs a `COUNT(*)` on every request. In PostgreSQL that count has to check row visibility for every matching row because of MVCC, which is why it is slow on large tables ([PostgreSQL wiki: count estimate](https://wiki.postgresql.org/wiki/Count_estimate)). Options, in order of preference:
+
+- **Drop the total.** "Next" and "previous" with a has-more flag covers most feeds and infinite scroll.
+- **Use an estimate.** For a whole table, `pg_class.reltuples` is maintained by `VACUUM`, `ANALYZE`, and some DDL, and is accurate enough for "about 1.2 million." For a filtered query, the wiki shows reading the planner's row estimate from `EXPLAIN (FORMAT JSON)`. Its warning applies: never pass unsanitized SQL into that helper, because it executes the text you give it. Planner estimates for selective filters can be far off, so label the number as approximate.
+- **Maintain a counter.** If the UI truly needs an exact per-tenant number, keep a counter table updated in the same transaction as inserts and deletes. That adds write contention on the counter row and must be designed for it.
+- **Cap the count.** Count at most the first few hundred matching rows with a `LIMIT` in a subquery and show "500+" past that.
+
+## Trade-offs and when offset is still fine
+
+- **Keyset** is fast and stable for next and previous. It is awkward when the user wants to jump to page 40, because there is no cursor for page 40 without reading pages 1 to 39. Winand argues page-number navigation is a weak interface anyway ([Use The Index, Luke: no offset](https://use-the-index-luke.com/no-offset)); your product owner may disagree, and that is a product decision.
+- **Changing the sort** invalidates existing cursors. Include the sort key in the cursor and reject a cursor that does not match the current sort, restarting from page 1.
+- **A covering index** speeds the hot order and costs disk and write throughput on every insert and update. Add one per order you actually serve, not one per column the UI could theoretically sort by.
+- **Exact totals** are familiar and expensive on large tables. Estimates are cheap and visibly approximate.
+- **Offset is still acceptable** for small, slowly changing lists: an admin table of a few hundred users, a settings page, a report export that runs once against a quiescent snapshot. If the list is short enough that the deepest page is cheap and writes during a browsing session are rare, the simplicity of page numbers wins. Keep the unique tie-breaker in the `ORDER BY` regardless.
+
+A hybrid also works: keyset for the main feed, offset for a bounded "jump to page" control that only goes a few pages deep.
+
+## How to verify the migration
+
+1. Run `EXPLAIN (ANALYZE, BUFFERS)` on a deep keyset page and a deep offset page. The keyset plan should read about one page of index entries; the offset plan reads everything before the page.
+2. Latency for deep pages should be flat across page numbers in your APM.
+3. Write a test that loads page 1, inserts a row that sorts first, deletes a row from page 1, then loads page 2, and asserts the union of pages equals the expected rows with no duplicates.
+4. Test with null sort values and with many rows sharing a timestamp.
+
+If the feed also loads related rows per item, check it for the pattern in [N+1 queries in Postgres](/blog/n-plus-one-queries-postgres). If you add the new index to a busy production table, follow [Postgres migrations and the lock queue](/blog/postgres-migration-lock-queue) and build it concurrently. Deep pages that tie up connections also show up as [pool waits under load](/blog/api-slow-under-load-connection-pool).
+
+## Checklist
+
+- Add a unique tie-breaker to every paginated `ORDER BY`.
+- Replace `OFFSET` on feeds and large lists with a row comparison against an opaque, validated cursor.
+- Build an index with equality filters first, then the sort columns, then the tie-breaker.
+- Make sort columns `NOT NULL` or handle nulls explicitly.
+- Use the expanded predicate for mixed sort directions and check the plan.
+- Remove `COUNT(*)` from the per-page path; use has-more, an estimate, or a maintained counter.
+- Keep offset for small, stable admin lists.
+
+## Sources
+
+- [PostgreSQL 18: LIMIT and OFFSET](https://www.postgresql.org/docs/current/queries-limit.html): skipped rows are still computed; unique ordering requirement; plan changes with `LIMIT` and `OFFSET`.
+- [PostgreSQL 18: row and array comparisons](https://www.postgresql.org/docs/current/functions-comparisons.html): left-to-right row comparison and null results.
+- [PostgreSQL 18: index-only scans and covering indexes](https://www.postgresql.org/docs/current/indexes-index-only-scans.html): `INCLUDE`, visibility map requirement, index size and write cost.
+- [PostgreSQL wiki: count estimate](https://wiki.postgresql.org/wiki/Count_estimate): why `COUNT(*)` is slow, `reltuples`, EXPLAIN-based estimates and the injection warning.
+- [PostgreSQL 18: date/time types](https://www.postgresql.org/docs/current/datatype-datetime.html): microsecond resolution of `timestamp` and `timestamptz`.
+- [MDN: Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date): JavaScript dates as integral milliseconds since the epoch.
+- [node-postgres: data types](https://node-postgres.com/features/types): `timestamptz` parsed into JavaScript `Date`.
+- [Markus Winand, Use The Index, Luke: no offset](https://use-the-index-luke.com/no-offset): cost of skipped rows, duplicates on insert, page-number trade-off.

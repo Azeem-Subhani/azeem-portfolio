@@ -1,0 +1,277 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+The checkout endpoint starts timing out under load. So do the search endpoint, the profile page, and the health check, none of which call the payment provider. Database CPU is low, the slow query log is empty, and every query in the trace finishes in a few milliseconds. The cause is a transaction left open during an HTTP call: a handler begins a transaction, calls another service, and commits after the response comes back. For the whole network round trip, that request keeps a database connection checked out and keeps its locks.
+
+The tempting responses are to raise the pool size, set an aggressive idle timeout, or blame the payment provider's latency. Each treats a symptom. The fix is a code boundary: do the remote call outside any transaction, and wrap only the database work in short transactions. Doing that safely needs an idempotency key and a plan for the cases where the remote call succeeded but your commit did not.
+
+## What the trace looks like
+
+In a distributed trace, the problem has a distinctive shape. The database transaction span is the parent, and the outbound HTTP span sits inside it:
+
+```text
+POST /orders/:id/pay                                 [=========================== 1.9 s]
+  db.transaction                                     [========================== 1.88 s]
+    SELECT ... FROM orders ... FOR UPDATE            [= 3 ms]
+    HTTP POST payments-provider /charges                 [===================== 1.85 s]
+    UPDATE orders SET status = 'paid' ...                                         [= 2 ms]
+    COMMIT                                                                         [1 ms]
+```
+
+The two queries take 5 ms. The connection is held for nearly 1.9 seconds. The code that produces this is ordinary and easy to write:
+
+```ts
+// Illustrative anti-pattern: a transaction held across a remote call.
+import { pool } from "./db";
+
+export async function payOrder(orderId: string) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const { rows } = await client.query(
+      "SELECT id, amount_cents, status FROM orders WHERE id = $1 FOR UPDATE",
+      [orderId],
+    );
+    if (rows[0]?.status !== "pending") throw new Error("not payable");
+
+    // The connection, the row lock, and the open transaction all wait here.
+    const res = await fetch("https://payments.example.com/charges", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ order: orderId, amount: rows[0].amount_cents }),
+    });
+    const charge = await res.json();
+
+    await client.query(
+      "UPDATE orders SET status = 'paid', charge_id = $2 WHERE id = $1",
+      [orderId, charge.id],
+    );
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+```
+
+<Figure caption="The two queries take 5 ms, but holding the transaction across the call keeps the connection and lock for the whole 1.85 s; splitting returns the connection during the call.">
+  <LongTxnHeldVsSplit />
+</Figure>
+
+ORMs hide the same shape behind decorators and callbacks such as a `@Transactional` method or a `transaction(async (tx) => ...)` block. Anything awaited inside that block runs while the transaction is open.
+
+## What an open transaction holds during the HTTP call
+
+Three resources stay committed to the request while it waits on the network.
+
+### A pooled connection
+
+The connection cannot serve anyone else until the transaction ends and the client is released. A pool with N connections and a hold time of H seconds can serve at most N divided by H requests per second; this is the same arithmetic AWS documents for Lambda concurrency, requests per second times duration ([AWS Lambda docs](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html)). Raising H from milliseconds to seconds lowers that ceiling by orders of magnitude.
+
+### Row and table locks
+
+Postgres holds row-level locks until the transaction ends. A `SELECT ... FOR UPDATE` blocks other transactions that try to update, delete, or lock the same rows until the current transaction ends, though plain reads are not blocked ([PostgreSQL explicit locking](https://www.postgresql.org/docs/current/explicit-locking.html)). Rows the transaction has already updated are locked the same way. A second request for the same order, a retry from an impatient client, or a background job touching that row now waits for the remote call too.
+
+### The vacuum horizon
+
+An open transaction can hold back cleanup. The Postgres documentation for `idle_in_transaction_session_timeout` puts it directly: "an open transaction prevents vacuuming away recently-dead tuples" that only it might still see, so long-idle transactions can contribute to table bloat ([PostgreSQL client connection defaults](https://www.postgresql.org/docs/current/runtime-config-client.html)). One slow call does not matter. Thousands per minute, on a hot table, can.
+
+What it does not necessarily hold is a single frozen snapshot. Under the default Read Committed isolation level, Postgres takes a new snapshot for each statement; under Repeatable Read, one snapshot is taken at the first statement and reused for the rest of the transaction ([PostgreSQL transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html)). If your code relies on the transaction to give a consistent view across the remote call, check the isolation level, because at Read Committed it does not.
+
+## Why endpoints that never call the service time out
+
+The pool is shared. While the payment provider is slow, every checkout request parks a connection for the duration of the call. Once all connections are parked, every other request that needs the database waits in the pool's queue: search, profile, admin pages, and the health check. If the orchestrator restarts instances whose health check fails, it kills instances that were merely waiting, and the problem looks like an infrastructure failure.
+
+A public incident write-up describes this pattern in detail: a pool of 20 connections, a new feature holding a connection across an external call of a few hundred milliseconds, every endpoint queuing behind it including health checks, and database CPU around 15 percent the whole time ([Krishnam Murarka on dev.to](https://dev.to/krishnamm/our-database-was-at-15-cpu-while-the-api-was-timing-out-13ef)). Those specific timings belong to that system. The useful part is the diagnosis: pool wait dominated, query time did not. The [connection pool post](/blog/api-slow-under-load-connection-pool) covers measuring that split in general.
+
+## How to find a transaction open during an HTTP call
+
+1. **Look for idle in transaction sessions.** Postgres reports `idle in transaction` for a backend that is inside a transaction but not executing a query ([PostgreSQL monitoring docs](https://www.postgresql.org/docs/current/monitoring-stats.html)). The `query` column shows the last statement the session ran, which usually points at the handler.
+
+```sql
+-- Illustrative: sessions sitting inside a transaction, longest first.
+SELECT pid,
+       application_name,
+       now() - xact_start     AS xact_age,
+       now() - state_change   AS idle_for,
+       left(query, 120)       AS last_query
+FROM pg_stat_activity
+WHERE state IN ('idle in transaction', 'idle in transaction (aborted)')
+ORDER BY xact_start
+LIMIT 20;
+```
+
+2. **Search traces for HTTP client spans whose ancestor is a database transaction span.** Most tracing backends can query on span relationships, or you can scan a sample of slow traces by eye. The shape above is unmistakable once you look for it.
+3. **Compare connection hold time with query time per route.** A route whose hold time is far above the sum of its query times is holding the connection during other work. Pools such as HikariCP can log a warning when a connection stays out of the pool longer than `leakDetectionThreshold` (disabled by default, minimum 2 seconds when enabled) ([HikariCP README](https://github.com/brettwooldridge/HikariCP)), which surfaces long holds even when the connection is eventually returned.
+4. **Grep the transaction boundaries.** Search for outbound clients (`fetch`, HTTP SDKs, message publishers, object storage uploads) called inside transaction blocks. Message publishing counts: a broker call inside a transaction is a remote call.
+
+## Split the transaction around the remote call
+
+The safe structure has three steps, plus a recovery path:
+
+1. **Short transaction one:** validate, record the intent (status `charging`), and store an idempotency key. Commit.
+2. **Remote call, no transaction open:** call the provider with the idempotency key and a client-side timeout.
+3. **Short transaction two:** record the outcome, guarded by the expected current status. Commit.
+4. **Reconciler:** periodically find rows stuck in `charging` and finish them, retrying with the same key only when the last attempt got no response.
+
+```ts
+// Illustrative: remote call outside any transaction, guarded by an idempotency key.
+import { randomUUID } from "node:crypto";
+import { pool } from "./db";
+
+export async function payOrder(orderId: string) {
+  // 1. Record intent in a short transaction (single statement, autocommit).
+  const intent = await pool.query(
+    `UPDATE orders
+        SET status = 'charging',
+            payment_key = COALESCE(payment_key, $2),
+            charging_since = now()
+      WHERE id = $1 AND status = 'pending'
+      RETURNING amount_cents, payment_key`,
+    [orderId, randomUUID()],
+  );
+  if (intent.rowCount === 0) return { state: "already-in-progress-or-done" };
+  const { amount_cents, payment_key } = intent.rows[0];
+
+  // 2. Remote call with no connection held.
+  const outcome = await chargeWithKey(orderId, amount_cents, payment_key);
+
+  // 3. Record the result, only if nobody else finished it first.
+  if (outcome.kind === "succeeded") {
+    await pool.query(
+      `UPDATE orders SET status = 'paid', charge_id = $2
+        WHERE id = $1 AND status = 'charging'`,
+      [orderId, outcome.chargeId],
+    );
+  } else if (outcome.kind === "declined") {
+    await pool.query(
+      `UPDATE orders SET status = 'payment_failed'
+        WHERE id = $1 AND status = 'charging'`,
+      [orderId],
+    );
+  }
+  // "no-response": leave it in 'charging'; the reconciler retries with the same key.
+  // "server-error": leave it in 'charging'; the reconciler must look up the real
+  // outcome (by order reference or provider webhook), because a keyed retry
+  // may just replay the saved error.
+  return { state: outcome.kind };
+}
+
+async function chargeWithKey(orderId: string, amount: number, key: string) {
+  let res: Response;
+  try {
+    res = await fetch("https://payments.example.com/charges", {
+      method: "POST",
+      headers: { "content-type": "application/json", "Idempotency-Key": key },
+      body: JSON.stringify({ order: orderId, amount }),
+      signal: AbortSignal.timeout(5_000),
+    });
+  } catch {
+    // Network error or timeout: the provider may or may not have seen the request.
+    return { kind: "no-response" as const };
+  }
+  if (res.ok) return { kind: "succeeded" as const, chargeId: (await res.json()).id };
+  if (res.status === 402) return { kind: "declined" as const };
+  return { kind: "server-error" as const, status: res.status };
+}
+```
+
+<Figure caption="Each status change is a short transaction; a row stuck in charging is finished by the reconciler rather than by an open transaction.">
+  <LongTxnOrderStates />
+</Figure>
+
+Each database step is now a single statement measured in milliseconds. The row is not locked during the call; instead, the `status = 'charging'` guard stops a second request from starting a parallel charge, and the `WHERE status = 'charging'` guard on the final update stops a late response from overwriting a reconciler's result.
+
+### Why the idempotency key is required
+
+Splitting the transaction creates a window that did not exist before. If the process crashes after the provider charged the card but before step three commits, your database still says `charging`. Retrying without a key could charge twice. With a key, the provider recognizes the retry. Stripe, for example, saves the status code and body of the first request for a given key and returns the same result for later requests with that key, including errors; keys may be removed once they are at least 24 hours old, after which a reused key starts a new request ([Stripe idempotent requests](https://docs.stripe.com/api/idempotent_requests)). Your reconciler must run well inside that window.
+
+That replay behavior splits the "unknown outcome" case in two. When you got no response at all (a network error or your own timeout), retrying with the same key is correct: the provider either returns the saved result or runs the request for the first time. When you received a server error, a retry with the same key can simply replay that error until the key is pruned, so the row never leaves `charging`. For that case, the reconciler has to learn the real outcome another way, such as looking up the charge by your order reference or waiting for the provider's webhook, and only then decide whether a new attempt is needed. A new attempt after a definitive failure needs a fresh key; clear `payment_key` when you mark an order `payment_failed`, or a later retry will replay the old decline. The [idempotency key post](/blog/idempotency-key-race-conditions) covers the races on the server side of this contract.
+
+### The reconciler must not repeat the mistake
+
+The obvious reconciler selects stuck rows `FOR UPDATE`, calls the provider, and updates them, all inside one transaction. That is the original bug again. Claim rows with a short statement that bumps a lease, commit, then call:
+
+```sql
+-- Illustrative: claim stuck rows by bumping their lease, then commit.
+UPDATE orders
+   SET charging_since = now()
+ WHERE id IN (
+   SELECT id FROM orders
+    WHERE status = 'charging'
+      AND charging_since < now() - interval '2 minutes'
+    ORDER BY charging_since
+    LIMIT 50
+    FOR UPDATE SKIP LOCKED
+ )
+RETURNING id, amount_cents, payment_key;
+```
+
+Then, for each returned row, check the provider for an existing charge on that order; if there is none and the last attempt got no response, run `chargeWithKey` with the stored key, and apply step three.
+
+### The outbox alternative
+
+When the remote side effect is a message rather than a synchronous call whose answer you need, the transactional outbox pattern fits better. You insert the message into an outbox table in the same transaction as the business change, and a separate relay publishes it. Messages are sent if and only if the transaction commits, but the relay can publish duplicates if it crashes after publishing and before marking the row done, so consumers must be idempotent ([microservices.io, transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html)). The [idempotent consumers post](/blog/at-least-once-delivery-idempotent-consumers) covers that side.
+
+## Timeouts are a backstop, not the design
+
+Database timeouts limit the damage from a handler you have not fixed yet. They do not make the handler correct.
+
+- `idle_in_transaction_session_timeout` terminates a session that has been idle inside an open transaction for longer than the setting. It is disabled (0) by default ([PostgreSQL client connection defaults](https://www.postgresql.org/docs/current/runtime-config-client.html)).
+- `transaction_timeout`, added in PostgreSQL 17, terminates the session when any transaction runs longer than the setting, including single-statement transactions. It is also disabled by default ([PostgreSQL 17 client connection defaults](https://www.postgresql.org/docs/17/runtime-config-client.html)).
+- `statement_timeout` aborts a single statement that runs too long. It does not help here, because the connection is idle, not running a statement.
+
+Postgres advises against setting statement and transaction timeouts in `postgresql.conf` because they affect all sessions. Scope them to the application role:
+
+```sql
+-- Illustrative: per-role backstops for the API's database user.
+ALTER ROLE app_api SET idle_in_transaction_session_timeout = '15s';
+ALTER ROLE app_api SET transaction_timeout = '30s';  -- PostgreSQL 17 or later
+```
+
+Role defaults apply to each new session for that role, including sessions a pooler opens when it connects as that role (not if the pooler forces a different user), so they do not depend on client `SET` statements that transaction-mode pooling discards.
+
+Understand what firing these timeouts does. The session is terminated and the transaction rolls back. The application finds out only on its next statement after the remote call returns (the `UPDATE` in the anti-pattern above). If that remote call succeeded, you now have a charge at the provider and a rolled-back order, which is exactly the case the idempotency key and reconciler exist for. The pool also has to notice a dead connection and replace it.
+
+## Trade-offs of each approach
+
+- **Holding the transaction** gives you locks for the whole operation (and a stable snapshot at Repeatable Read or above) and exhausts the pool as soon as the remote side slows down. It is acceptable only when the remote call is fast, rare, and on a pool nobody else depends on, which is seldom true for long.
+- **Splitting the transaction** releases the connection and the locks. You give up atomicity: the local commit and the remote effect can disagree, so you need intermediate states, an idempotency key, and a reconciler. Users may see an order in a processing state.
+- **The outbox** gives you atomic intent and asynchronous delivery. It adds a relay to run and monitor, and it suits fire-and-forget effects, not calls whose response the user is waiting for.
+- **Idle-in-transaction timeouts** release the connection and roll back work the user believes is in progress. Without the other fixes they convert pool exhaustion into errors and orphaned remote effects.
+
+## Alerts and verification
+
+Alert on transaction duration and on pool wait as two separate series. Transaction duration (from `xact_start` in `pg_stat_activity`, or from the transaction span in your traces) tells you a handler is holding transactions open. Pool wait tells you whether that hold time has started to starve other requests. One without the other misleads: long transactions on an idle pool are a warning, and high pool wait with short transactions is a sizing or traffic problem. OpenTelemetry's database semantic conventions define `db.client.connection.wait_time` and `db.client.connection.use_time` for this split, marked as Development stability as of October 2026 ([OpenTelemetry database metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/)).
+
+After the change, verify under load that:
+
+- Traces show the HTTP span as a sibling of short transaction spans, not a child of one.
+- Sessions in `idle in transaction` drop to near zero at peak.
+- Pool wait stays near zero when the remote provider is slow, which you can test by injecting latency into the provider stub.
+- Unrelated endpoints and health checks keep their normal latency while the remote dependency is degraded.
+- The reconciler finds and finishes rows stuck in `charging` when you kill the process between steps two and three.
+
+### Checklist
+
+1. Run the `idle in transaction` query at peak and note which handlers appear.
+2. Search for outbound calls inside transaction blocks, including ORM decorators and message publishers.
+3. Split each one: short transaction, remote call with an idempotency key and a timeout, short transaction.
+4. Add a reconciler for intermediate states, with lease-based claiming and no transaction held across calls.
+5. Set per-role `idle_in_transaction_session_timeout` (and `transaction_timeout` on PostgreSQL 17 or later) as a backstop.
+6. Alert separately on transaction duration and pool wait.
+
+## Sources
+
+- [PostgreSQL, explicit locking](https://www.postgresql.org/docs/current/explicit-locking.html): row and table locks held until transaction end; FOR UPDATE blocks writers and lockers, not readers.
+- [PostgreSQL, client connection defaults](https://www.postgresql.org/docs/current/runtime-config-client.html): idle_in_transaction_session_timeout behavior, vacuum note, statement_timeout, guidance not to set timeouts globally.
+- [PostgreSQL 17, client connection defaults](https://www.postgresql.org/docs/17/runtime-config-client.html): transaction_timeout (not present in the PostgreSQL 16 docs).
+- [PostgreSQL, transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html): per-statement snapshots at Read Committed, per-transaction at Repeatable Read.
+- [PostgreSQL, cumulative statistics system](https://www.postgresql.org/docs/current/monitoring-stats.html): pg_stat_activity states and columns.
+- [Stripe, idempotent requests](https://docs.stripe.com/api/idempotent_requests): saved results per key and the 24-hour pruning window.
+- [microservices.io, transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html): outbox guarantees and duplicate publishing.
+- [HikariCP README](https://github.com/brettwooldridge/HikariCP): leakDetectionThreshold default and minimum.
+- [OpenTelemetry, database client metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/): connection wait and use time metrics.
+- [AWS Lambda, understanding concurrency](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html): concurrency equals request rate times duration.
+- [Krishnam Murarka, "Our Database Was at 15% CPU While the API Was Timing Out"](https://dev.to/krishnamm/our-database-was-at-15-cpu-while-the-api-was-timing-out-13ef): public incident write-up of a connection held across an external call.

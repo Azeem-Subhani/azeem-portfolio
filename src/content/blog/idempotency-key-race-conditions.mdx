@@ -1,0 +1,303 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+The API accepts an `Idempotency-Key` header. There is a table of keys with a unique column. And the customer was still charged twice for one checkout. When that happens, the idempotency key race condition is usually not exotic: the key was recorded after the charge, two concurrent first requests both passed a "does this key exist?" check, or the same key arrived with a different body and the server did the new work anyway. A duplicate charge with an idempotency key in place means the key exists but the protocol around it is incomplete.
+
+The wrong conclusion is "the client must have sent two different keys." Check that, because it happens. But if the logs show the same key on both requests, the bug is on the server, and a unique constraint alone will not fix it.
+
+## Why an idempotency key alone does not stop duplicate charges
+
+An idempotency key is a promise: for the same key, the server performs the side effect at most once and returns the same result every time. [Stripe's description of its own API](https://docs.stripe.com/api/idempotent_requests) is a good statement of that promise. It saves "the resulting status code and body of the first request made for any given idempotency key, regardless of whether it succeeds or fails," and subsequent requests with that key "return the same result, including `500` errors."
+
+That promise has three parts, and storing the key covers only one:
+
+1. **Exclusion.** Only one request per key may run the side effect, even when two arrive in the same millisecond.
+2. **Memory.** The outcome is stored, so a replay returns the original response instead of running again.
+3. **Identity.** A key belongs to one specific request. Reusing it with different parameters is an error, not a new operation.
+
+The [Amazon Builders' Library article on idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/) adds the constraint that ties them together: recording the token and performing the mutations it protects must happen as one atomic, all-or-nothing operation. Most duplicate-charge bugs break that rule in one of three ways.
+
+## Three broken sequences
+
+### Recorded after the side effect
+
+<Figure caption="The charge succeeds, the process dies before the key is written, and the retry finds no record, so it charges again.">
+  <IdempotencyRecordTooLate />
+</Figure>
+
+The key is written only after the charge succeeds. Any failure between the charge and the insert (a crash, a deploy, a database error, a client timeout that cancels the handler) leaves no record, and the retry charges again. This is the most common version because it looks correct in every test that does not kill the process mid-request.
+
+### Check, then insert
+
+<Figure caption="Both requests pass the check and both charge the card. The unique constraint only fires afterward, so it protects the table but not the charge.">
+  <IdempotencyCheckThenInsert />
+</Figure>
+
+The unique constraint fires, but only after both requests already did the work. The constraint protects the table, not the charge. This race shows up when a mobile client retries on a short timeout, when a user double-taps, or when a load balancer retries a request it thinks failed.
+
+The [retry storm post](/blog/retry-storm-backoff-jitter) covers why several layers may be retrying the same POST at once.
+
+### Same key, different body
+
+```text
+Request A (key K, amount 50.00)   -> charge 50.00, store response
+Request B (key K, amount 75.00)   -> server sees K, returns stored 50.00 response
+                                     or, worse, charges 75.00 because it only
+                                     deduplicates on key + amount
+```
+
+A client bug reuses a key across two carts, or a key is derived from something that is not unique per intent (a user id, a session id). Returning the stored response silently tells the client its 75.00 order succeeded when it did not. Running the new request breaks the promise. AWS's guidance is that when a retry arrives with the same token but different parameters, "it is safest to assume that the customer intended a different outcome" and return a validation error. Stripe does the same: its idempotency layer "compares incoming parameters to those of the original request and errors if they're not the same."
+
+## The states an idempotency key needs
+
+A key is not a boolean. It needs at least these states:
+
+- **in_progress**: a request has claimed the key and may be performing the side effect. Holds a lease expiry so a crashed request does not block the key forever.
+- **completed**: the side effect finished with a definitive outcome, and the response (status code and body) is stored. Definitive includes business failures such as a card decline. Replays return this response.
+- **failed_retryable**: the request failed before any side effect could have happened (for example, the provider rejected it for rate limiting, or the outbound call never left the process). The next request with this key may claim it and try again.
+
+Validation errors that happen before the operation starts should not create a key at all. Stripe documents the same choice: if parameters fail validation or the request conflicts with one that is executing concurrently, "we don't save the idempotent result because no API endpoint initiates the execution," and the client can retry.
+
+## Claim, call, record: the transaction shape
+
+The design that closes all three races is: claim the key atomically before doing anything, perform the side effect, then record the outcome. How you implement the middle step depends on whether the side effect is local or remote.
+
+### Schema
+
+```sql
+-- Illustrative schema (PostgreSQL). Keys are scoped per account.
+CREATE TABLE idempotency_keys (
+  account_id     bigint      NOT NULL,
+  idem_key       text        NOT NULL CHECK (length(idem_key) <= 255),
+  operation      text        NOT NULL,   -- e.g. 'POST /v1/payments'
+  request_hash   bytea       NOT NULL,   -- sha256 of the canonical request
+  status         text        NOT NULL
+                 CHECK (status IN ('in_progress', 'completed', 'failed_retryable')),
+  lease_until    timestamptz,            -- set while in_progress
+  response_code  int,
+  response_body  jsonb,
+  created_at     timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, idem_key)
+);
+
+CREATE INDEX idempotency_keys_created_at ON idempotency_keys (created_at);
+```
+
+Scoping the primary key by `account_id` matters for security as well as correctness. A global key space lets one tenant's key collide with another's, and a naive replay would return another tenant's stored response. That is an object-level authorization bug of the kind described in [broken object level authorization](/blog/broken-object-level-authorization).
+
+### When the side effect is local
+
+If the "side effect" is rows in your own database (an order, a ledger entry), put the key claim and the business write in one transaction. This is the AWS all-or-nothing requirement in its simplest form.
+
+```sql
+-- Illustrative. Runs at the default READ COMMITTED isolation level.
+BEGIN;
+
+INSERT INTO idempotency_keys
+  (account_id, idem_key, operation, request_hash, status)
+VALUES ($1, $2, 'POST /v1/orders', $3, 'in_progress')
+ON CONFLICT (account_id, idem_key) DO NOTHING
+RETURNING idem_key;
+
+-- If RETURNING produced a row, this request owns the key:
+INSERT INTO orders (account_id, cart_id, total_cents) VALUES ($1, $4, $5)
+RETURNING id;
+
+-- $6 is the order id returned above, passed back in by the application.
+UPDATE idempotency_keys
+   SET status = 'completed', response_code = 201,
+       response_body = jsonb_build_object('order_id', $6::bigint)
+ WHERE account_id = $1 AND idem_key = $2;
+
+COMMIT;
+```
+
+Concurrency is handled by the unique index. The [PostgreSQL documentation on unique checks](https://www.postgresql.org/docs/current/index-unique-checks.html) states that if a conflicting row "has been inserted by an as-yet-uncommitted transaction, the would-be inserter must wait to see if that transaction commits." So request B blocks on A's claim. When A commits, B's `ON CONFLICT DO NOTHING` skips the row, and because the [INSERT documentation](https://www.postgresql.org/docs/current/sql-insert.html) says "only rows that were successfully inserted or updated will be returned," B gets an empty `RETURNING`. B then reads the completed row and replays A's response. If A rolls back, B's insert proceeds and B does the work. Either way, exactly one order exists.
+
+### When the side effect is a third-party call
+
+A charge at a payment provider cannot be inside your database transaction. You cannot roll it back, and holding a transaction open across a network call creates the problems in [long transactions around external calls](/blog/long-transactions-external-calls). Split the work into short local transactions around the remote call, which is the "atomic phases" design in [Brandur Leach's write-up on idempotency keys in Postgres](https://brandur.org/idempotency-keys).
+
+```ts
+// Illustrative handler (node-postgres + stripe-node). Error handling trimmed.
+import { createHash } from "node:crypto";
+import type { Pool } from "pg";
+import type Stripe from "stripe";
+
+type Reply = { code: number; body: unknown };
+
+// Sort object keys at every depth; keep array order as sent.
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value !== null && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    return Object.fromEntries(
+      Object.keys(obj).sort().map((k) => [k, canonical(obj[k])]),
+    );
+  }
+  return value;
+}
+
+function canonicalHash(op: string, body: unknown): Buffer {
+  const text = JSON.stringify(canonical(body));
+  return createHash("sha256").update(`${op}\n${text}`).digest();
+}
+
+export async function createPayment(
+  db: Pool,
+  stripe: Stripe,
+  accountId: number,
+  idemKey: string,
+  body: { amount: number; currency: string; customer: string },
+): Promise<Reply> {
+  const op = "POST /v1/payments";
+  const hash = canonicalHash(op, body);
+
+  // Phase 1: claim the key. Autocommits immediately; no lock held afterwards.
+  const claimed = await db.query(
+    `INSERT INTO idempotency_keys
+       (account_id, idem_key, operation, request_hash, status, lease_until)
+     VALUES ($1, $2, $3, $4, 'in_progress', now() + interval '60 seconds')
+     ON CONFLICT (account_id, idem_key) DO NOTHING
+     RETURNING idem_key`,
+    [accountId, idemKey, op, hash],
+  );
+
+  if (claimed.rowCount === 0) {
+    const { rows } = await db.query(
+      `SELECT operation, request_hash, status, response_code, response_body
+         FROM idempotency_keys WHERE account_id = $1 AND idem_key = $2`,
+      [accountId, idemKey],
+    );
+    const row = rows[0];
+    if (row.operation !== op || !hash.equals(row.request_hash)) {
+      return { code: 422, body: { error: "idempotency_key_reused_with_different_request" } };
+    }
+    if (row.status === "completed") {
+      return { code: row.response_code, body: row.response_body }; // replay
+    }
+    // in_progress with a live lease, or a lease/takeover race we lost.
+    const takeover = await db.query(
+      `UPDATE idempotency_keys
+          SET status = 'in_progress', lease_until = now() + interval '60 seconds'
+        WHERE account_id = $1 AND idem_key = $2
+          AND (status = 'failed_retryable'
+               OR (status = 'in_progress' AND lease_until < now()))
+        RETURNING idem_key`,
+      [accountId, idemKey],
+    );
+    if (takeover.rowCount === 0) {
+      return { code: 409, body: { error: "request_in_progress" } };
+    }
+  }
+
+  // Phase 2: the side effect. Pass a downstream key derived from ours, so a
+  // retry after a crash is deduplicated by the provider too.
+  let reply: Reply;
+  try {
+    const pi = await stripe.paymentIntents.create(
+      { amount: body.amount, currency: body.currency, customer: body.customer,
+        confirm: true },
+      { idempotencyKey: `pay:${accountId}:${idemKey}` },
+    );
+    reply = { code: 201, body: { payment_id: pi.id, status: pi.status } };
+  } catch (err) {
+    const e = err as { type?: string; statusCode?: number; message?: string };
+    if (e.type === "StripeCardError") {
+      reply = { code: 402, body: { error: e.message } }; // definitive outcome
+    } else if (e.statusCode === 429) {
+      await db.query(
+        `UPDATE idempotency_keys SET status = 'failed_retryable', lease_until = NULL
+          WHERE account_id = $1 AND idem_key = $2`,
+        [accountId, idemKey],
+      );
+      return { code: 503, body: { error: "try_again" } };
+    } else {
+      // Ambiguous (timeout, connection reset): the charge may exist.
+      // Leave the row in_progress; the lease expiry allows a safe retry
+      // that reuses the same downstream key.
+      throw err;
+    }
+  }
+
+  // Phase 3: record the outcome. In a real system, write your own payment
+  // row in this same transaction.
+  await db.query(
+    `UPDATE idempotency_keys
+        SET status = 'completed', lease_until = NULL,
+            response_code = $3, response_body = $4
+      WHERE account_id = $1 AND idem_key = $2`,
+    [accountId, idemKey, reply.code, JSON.stringify(reply.body)],
+  );
+  return reply;
+}
+```
+
+The downstream key is what makes the ambiguous case safe. If the process dies after the provider charged the card but before phase 3 committed, the row stays `in_progress`. After the lease expires, the client's retry takes over the key and calls the provider again with the same downstream key, and the provider returns the original charge instead of creating a new one. Without a downstream key, there is no safe answer to "did the first attempt charge?" short of querying the provider.
+
+`canonicalHash` hashes every field the client sent. Decide deliberately which fields are part of the request's identity: a client-side timestamp or tracing field that changes on every retry should be excluded, or every honest retry will look like a mismatch.
+
+## What the race loser should receive
+
+The request that loses the race needs a defined answer. There are three reasonable ones:
+
+- **The stored response, once the winner finishes.** In the local single-transaction shape, Postgres gives you this for free: the loser waits on the winner's uncommitted index entry, then replays the committed response. The IETF HTTPAPI working group's [Idempotency-Key header draft, revision 07](https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt) says a repeated request "SHOULD respond with the result of the previously completed operation, success or an error."
+- **409 Conflict while the original is still running.** The same draft recommends a resource conflict error for a concurrent request with the same key, and recommends 422 for a key reused with a different payload and 400 when a required key is missing. Treat these as reasonable conventions, not a standard: as of October 2026, revision 07 of the draft is listed as expired on the [IETF datatracker](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) and has not become an RFC.
+- **A short wait, then one of the above.** A handler can poll the row for a few hundred milliseconds before returning 409, which hides the race from clients that retry fast. Keep the wait well under the client's own timeout.
+
+Whichever you choose, a 409 must tell the client to retry the same request with the same key later. Clients that treat 409 as "generate a new key and try again" reintroduce the duplicate.
+
+<Figure caption="Claiming the key before any side effect means only one request charges the card. The loser is told to retry later with the same key.">
+  <IdempotencyClaimFirst />
+</Figure>
+
+## Retention and key scope
+
+A key protects you only while it exists. Stripe's documentation says keys can be removed "after they're at least 24 hours old" and that a new request is generated "if a key is reused after the original is pruned." The Builders' Library describes the EC2 approach as the lifetime of the resource plus "an interval after which it is reasonable to assume that any late arriving requests would either have arrived or would no longer be valid." Brandur's design suggests a reaper threshold of about 72 hours.
+
+The rule underneath all three: **retention must exceed the longest window in which anything can retry the request.** That includes:
+
+- the client's automatic retry policy,
+- background jobs or queues that replay failed requests (a dead-letter queue drained next week counts),
+- humans pressing "try again" on a saved draft,
+- your own downstream key retention at the provider. If you retry a provider call later than the provider keeps its keys, the provider will treat it as new.
+
+Short retention saves rows and makes late retries apply twice. Long retention costs storage and index size, which the `created_at` index and a periodic batched delete keep manageable.
+
+### What a key cannot deduplicate
+
+- **A new key per retry.** The client must generate the key once per user intent and persist it before the first send. A key generated inside the retry loop is useless.
+- **Two keys for one intent.** A double-click that creates two client-side intents gets two keys and two charges. Back the key with a business-level unique constraint where one exists, such as one successful payment per `order_id`.
+- **A key reused for a different operation.** Store `operation` with the key and reject mismatches, so a key first used on a refund cannot replay a charge response.
+
+The same pattern, keyed on the provider's event id instead of a client key, is what makes webhook receivers safe. See [acknowledging webhooks durably](/blog/webhook-handler-durable-ack).
+
+## Failure modes of the fix
+
+- **Holding the claim across the slow call.** If you do the single-transaction shape with a remote call inside, every concurrent retry blocks on the unique index for the full duration of the call, holding a database connection while it waits. Under load that turns into pool exhaustion or `lock_timeout` errors. Use the three-phase shape for anything remote.
+- **Leases that are too short or too long.** A lease shorter than the provider's worst-case latency lets a retry take over while the first call is still running. The downstream key keeps that safe, but you pay for two provider calls. A lease that is too long blocks legitimate retries after a crash. Set it above the provider call's timeout.
+- **Stuck in_progress rows.** If clients never retry, ambiguous rows stay `in_progress` forever. A background completer (Brandur's design includes one) can find expired leases and resolve them by querying or re-calling the provider with the downstream key.
+- **Hash false mismatches.** Byte-level hashing rejects requests that are semantically equal but serialized differently (key order, whitespace, `1.0` versus `1`). Canonicalize before hashing, and decide which fields are part of the request's identity.
+- **Storing sensitive data.** Stored response bodies and request hashes live as long as the key. Keep card data, tokens, and personal data out of stored bodies, and do not use personal data as the key itself, which Stripe's docs also advise against.
+
+To verify the fix, fire two identical requests concurrently with the same key (a small script with `Promise.all` is enough) against a provider sandbox, and kill the handler between phase 2 and phase 3 in a second test. In both cases you should see one charge at the provider, one `completed` row, and identical responses on every replay.
+
+## Checklist
+
+- Claim the key with `INSERT ... ON CONFLICT DO NOTHING` before any side effect. Never check-then-insert.
+- For local side effects, claim and write in one transaction. For remote ones, use claim, call, record, with a lease.
+- Pass a downstream idempotency key derived from yours to every provider that supports one.
+- Store the response, including definitive failures, and replay the stored status and body.
+- Store the operation and a canonical request hash. Return 422 on mismatch.
+- Return 409 (or wait briefly) for in-progress keys, and document that clients must retry with the same key.
+- Scope keys per tenant. Retain them longer than every retry path, including manual ones.
+- Test concurrency and a crash between the remote call and the record step.
+
+## Sources
+
+- [Stripe API reference, Idempotent requests](https://docs.stripe.com/api/idempotent_requests)
+- [Amazon Builders' Library, Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/)
+- [IETF, The Idempotency-Key HTTP Header Field, draft revision 07](https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt)
+- [IETF datatracker, status of draft-ietf-httpapi-idempotency-key-header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)
+- [PostgreSQL documentation, INSERT and ON CONFLICT](https://www.postgresql.org/docs/current/sql-insert.html)
+- [PostgreSQL documentation, Index uniqueness checks](https://www.postgresql.org/docs/current/index-unique-checks.html)
+- [Brandur Leach, Implementing Stripe-like Idempotency Keys in Postgres](https://brandur.org/idempotency-keys)

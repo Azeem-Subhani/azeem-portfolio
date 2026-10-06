@@ -124,7 +124,7 @@ export function Header() {
                 const current = isCurrentPath(pathname, item.href);
 
                 return (
-                  <li key={item.href}>
+                  <li key={item.href} className={"wideOnly" in item ? "hidden lg:block" : undefined}>
                     <Link
                       href={item.href}
                       aria-current={current ? "page" : undefined}

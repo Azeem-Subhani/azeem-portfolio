@@ -1,0 +1,262 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+A dependency hiccups for a few seconds. Then it stays down for twenty minutes, even though the original fault is gone. The error rate stays flat and high, request rate to the dependency sits well above normal traffic, and successes never climb back. That is a retry storm: clients that each look well behaved, with exponential backoff and a sensible attempt limit, are collectively keeping the dependency overloaded. Adding jitter helps, but the bigger lever is usually counting how many times one user action can hit the failing service once every layer has had its turn to retry.
+
+The tempting conclusion during the incident is "the dependency can't handle our traffic, scale it up." Sometimes that is true. More often, the dependency could handle your real traffic fine. It cannot handle your real traffic multiplied by the retry policy of every layer between the user and the database.
+
+## What a retry storm looks like
+
+The pattern has a recognizable shape on a dashboard:
+
+- **Requests to the dependency rise when errors start,** instead of staying flat or falling. If the user-facing request rate is unchanged and the dependency's request rate doubled, the extra traffic is retries.
+- **Errors persist after the trigger is fixed.** The deploy was rolled back, the failover finished, the noisy neighbor left, and the error rate did not move. The [AWS Builders' Library article on timeouts and retries](https://d1.awsstatic.com/builderslibrary/pdfs/timeouts-retries-and-backoff-with-jitter.pdf) describes exactly this: when failures are caused by overload, retries "can even delay recovery by keeping the load high long after the original issue is resolved."
+- **Latency rises before errors do.** The dependency slows down, callers time out, and each timeout becomes another request that the dependency still has to do work for, because the original request is often still running on the server.
+- **Thread pools, connection pools, and queues on the callers fill up.** Callers waiting on backoff sleeps hold connections and request slots. If your API has a connection pool in front of the database, the symptom can look like [pool wait under load](/blog/api-slow-under-load-connection-pool) rather than a downstream failure.
+
+The [AWS Well-Architected reliability pillar](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_mitigate_interaction_failure_limit_retries.html) names the mechanism directly as an anti-pattern: "Retrying at multiple layers of your application stack in a manner which compounds retry attempts further consuming resources in a retry storm."
+
+## Why retries multiply across layers
+
+Take one user action: a browser calls an API gateway, the gateway calls a service, the service calls a database through an SDK. Suppose each of three layers uses the common default of 3 total attempts (one try plus two retries), which is also the default `max_attempts` for standard mode in the [AWS SDK retry behavior reference](https://docs.aws.amazon.com/sdkref/latest/guide/feature-retry-behavior.html).
+
+When the database fails every query, the arithmetic is simple:
+
+- The SDK makes 3 attempts per call from the service.
+- The service is retried 3 times by the gateway, so 3 times 3 is 9 database attempts.
+- The gateway is retried 3 times by the client, so 9 times 3 is 27 database attempts for one user click.
+
+<Figure caption="Each layer retries 3 times, and the multiplications stack: one click becomes 27 attempts against a database that is already failing.">
+  <RetryLayerAmplification />
+</Figure>
+
+Nothing here is misconfigured in isolation. Every layer has a cap, every layer backs off. The total is still 27 times the load at precisely the moment the database has the least capacity. The Builders' Library article gives the five-layer version of the same arithmetic: three tries at each of five layers increases load on the database "243x, making it unlikely to ever recover." Its recommendation, for low-cost operations, is to "retry at a single point in the stack."
+
+Two details make this worse in practice:
+
+1. **Timeouts are not aligned.** If the gateway times out at 5 seconds and the service's SDK is still on its second backoff, the gateway gives up and retries while the service's original call chain is still running. Work is now happening for a request nobody is waiting for.
+2. **Retry budgets are local.** The AWS SDK's retry quota is useful, but the reference page states that the token budget "is typically scoped to a single SDK client instance" and "is not shared across processes or hosts." A fleet of 200 service instances has 200 separate budgets, and none of them sees the gateway's retries.
+
+## Why exponential backoff without jitter still clusters
+
+Exponential backoff spaces out one client's attempts. It does nothing to spread different clients apart. If a thousand requests fail in the same 100 ms window because the dependency stalled, and every client waits exactly 100 ms, then 200 ms, then 400 ms, the dependency sees three synchronized spikes instead of a smooth trickle. The Builders' Library calls this a problem of correlation: "If all the failed calls back off to the same time, they cause contention or overload again when they are retried."
+
+Capped backoff adds a second form of clustering. Once every client reaches the cap, they all retry "constantly at the capped rate," in the article's words, which is why the article pairs the cap with a limit on the number of retries.
+
+Jitter breaks the correlation by randomizing each sleep. The AWS Architecture Blog post [Exponential Backoff and Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/) compares several variants and defines "full jitter" as:
+
+```text
+sleep = random(0, min(cap, base * 2 ** attempt))
+```
+
+In that post's simulation, non-jittered exponential backoff performed worst on both total work and completion time, and full jitter produced the least total client work.
+
+<Figure caption="Without jitter, every client retries at the same moments and the dependency sees synchronized spikes. Full jitter spreads the same retries out.">
+  <JitterSpreadsRetries />
+</Figure>
+
+The AWS SDKs use the same full-jitter shape: the retry reference gives the formula as `random(0, 1) × min(cap, base_delay × 2^retry)`.
+
+Jitter has a cost. A single request's latency becomes less predictable, because one unlucky caller can draw a sleep near the top of the window while another draws one near zero. For a user-facing call with a tight deadline, that variance is a reason to keep retries few and the cap low, not a reason to drop jitter.
+
+## How to diagnose a retry storm
+
+Work through these in order during or after the incident:
+
+1. **Compare inbound and outbound rates.** Plot user-facing requests per second at the edge next to requests per second arriving at the struggling dependency. If the ratio grows when errors start, retries are adding load.
+2. **List every layer that retries.** Walk the call path for one user action: browser or mobile client, CDN or gateway, load balancer, service HTTP client, service code (loops in business logic), SDK, database driver, and any queue consumer that redelivers on failure. Write down attempts and timeout at each.
+3. **Multiply.** The product of attempts per layer is your worst-case amplification. If it is above single digits, you have found the storm even before checking jitter.
+4. **Check timeouts against each other.** Each outer timeout should exceed the inner timeout times the inner attempts, plus backoff. If not, outer retries fire while inner work is still running.
+5. **Read the retry logs for correlation.** If attempt timestamps across hosts line up at fixed offsets from the first failure, backoff has no jitter or uses a deterministic schedule.
+6. **Check what was retried.** Group retried requests by status code. Retries on 400, 401, 403, 404, or 422 are wasted work, and retries on a non-idempotent POST may have created duplicates you now have to find.
+
+To verify the fix later, run the same failure in a test environment (fault injection or a dependency that returns 503 on demand) and confirm the dependency's request rate stays near the inbound rate rather than multiplying.
+
+## Retry at one layer with backoff and jitter
+
+The fix has five parts: classify errors, retry at one layer, cap attempts and total time, use full jitter, and honor the server's `Retry-After` hint. The sketch below shows a policy for one outbound call. It assumes Node 20 or later (for `AbortSignal.any` and `AbortSignal.timeout`).
+
+```ts
+// Illustrative retry helper: one budget per user action.
+type RetryPolicy = {
+  maxAttempts: number;   // total attempts, including the first
+  baseMs: number;        // backoff ceiling for the first retry
+  capMs: number;         // largest single sleep
+  perAttemptMs: number;  // timeout for each individual attempt
+  deadlineMs: number;    // total budget for the whole operation
+};
+
+// 429 and the gateway-style 5xx codes are the usual transient signals.
+// 500 is left out on purpose: it often means a bug, not overload.
+const RETRYABLE_STATUS = new Set([429, 502, 503, 504]);
+
+export class RetryableError extends Error {
+  constructor(message: string, readonly retryAfterMs?: number) {
+    super(message);
+  }
+}
+
+// Retry-After is either delay-seconds or an HTTP-date (RFC 9110).
+export function parseRetryAfter(value: string | null): number | undefined {
+  if (!value) return undefined;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+  const at = Date.parse(value);
+  return Number.isNaN(at) ? undefined : Math.max(0, at - Date.now());
+}
+
+function fullJitter(retry: number, p: RetryPolicy): number {
+  // random(0, min(cap, base * 2^retry))
+  return Math.random() * Math.min(p.capMs, p.baseMs * 2 ** retry);
+}
+
+function sleep(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        reject(signal.reason);
+      },
+      { once: true },
+    );
+  });
+}
+
+function isRetryable(err: unknown, overall: AbortSignal): boolean {
+  if (overall.aborted) return false;                 // whole budget spent
+  if (err instanceof RetryableError) return true;    // classified response
+  if (err instanceof Error && err.name === "TimeoutError") return true; // one attempt timed out
+  return err instanceof TypeError;                   // fetch network failure
+}
+
+export async function withRetry<T>(
+  op: (signal: AbortSignal) => Promise<T>,
+  p: RetryPolicy,
+): Promise<T> {
+  const started = Date.now();
+  const overall = AbortSignal.timeout(p.deadlineMs);
+
+  for (let attempt = 1; ; attempt++) {
+    const signal = AbortSignal.any([overall, AbortSignal.timeout(p.perAttemptMs)]);
+    try {
+      return await op(signal);
+    } catch (err) {
+      if (attempt >= p.maxAttempts || !isRetryable(err, overall)) throw err;
+
+      const hinted = err instanceof RetryableError ? err.retryAfterMs ?? 0 : 0;
+      const delay = Math.max(fullJitter(attempt - 1, p), hinted);
+      const remaining = p.deadlineMs - (Date.now() - started);
+
+      // Do not start a sleep that ends after the deadline: fail now instead.
+      if (delay >= remaining) throw err;
+      await sleep(delay, overall);
+    }
+  }
+}
+
+// A read that is safe to repeat. 4xx responses fail immediately.
+export async function getStock(sku: string, signal: AbortSignal) {
+  const res = await fetch(
+    `https://inventory.internal.example/items/${encodeURIComponent(sku)}`,
+    { signal },
+  );
+  if (RETRYABLE_STATUS.has(res.status)) {
+    throw new RetryableError(
+      `inventory ${res.status}`,
+      parseRetryAfter(res.headers.get("retry-after")),
+    );
+  }
+  if (!res.ok) throw new Error(`inventory ${res.status}`);
+  return res.json();
+}
+
+// Usage: three attempts, never more than 2 seconds in total.
+// const stock = await withRetry((s) => getStock("sku-123", s), {
+//   maxAttempts: 3, baseMs: 100, capMs: 1000, perAttemptMs: 600, deadlineMs: 2000,
+// });
+```
+
+Three choices in that code matter more than the specific numbers:
+
+- **The deadline wins over the attempt count.** Attempts bound the load you add; the deadline bounds how long the user waits and keeps this layer from retrying after the caller above has already given up.
+- **The server's hint sets a floor, not a ceiling.** If the dependency says `Retry-After: 2`, sleeping less than that only produces another 503.
+- **The helper refuses to sleep past its deadline.** A retry that cannot finish in time is pure load.
+
+### Turn off retries in the inner layers
+
+Choosing one layer only works if the others stop. Pick the layer with the most context about the operation (usually the service that owns the user action), and set the layers beneath it to a single attempt. For AWS SDK for JavaScript v3 clients that are called from inside such a helper, that is one setting:
+
+```ts
+// Illustrative: the outer helper owns retries, so the SDK makes one attempt.
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+
+const ddb = new DynamoDBClient({ maxAttempts: 1 });
+```
+
+The AWS reference documents the same control as `max_attempts` in the shared config file and `AWS_MAX_ATTEMPTS` in the environment, where a value of `1` disables retries. The gateway should not retry calls to the service, and the browser client should not retry a request the service already retried. If the browser must retry (for example, a flaky mobile network), the service's own retries need to be the ones you remove.
+
+The reverse choice is also reasonable: keep the SDK's built-in retries, which already include full jitter and a retry quota, and make your own code retry nothing. What fails is keeping both.
+
+<Callout title="AWS SDK retry defaults changed in 2026">
+
+As of October 2026, the [AWS SDK retry reference](https://docs.aws.amazon.com/sdkref/latest/guide/feature-retry-behavior.html) describes updated retry behavior (new base delays, a 20 second backoff cap, and new retry quota costs) that requires opting in with `AWS_NEW_RETRIES_2026=true` until it becomes the default. Without it, SDKs use the pre-2026 behavior. Check which one your services run before reasoning about exact delays.
+
+</Callout>
+
+## Shedding load when the dependency is sick
+
+Even with a single retrying layer and full jitter, retries still add load when errors are widespread. Two tools cut that load off.
+
+### A retry budget (token bucket)
+
+A retry budget lets retries through while most calls succeed and stops them when failures dominate. The Builders' Library describes this as limiting "retries locally using a token bucket," and the AWS SDK's standard mode builds it in: each retry spends tokens, successful requests return some, and when the bucket is empty the SDK "returns the error without retrying." The effect is that a brief blip is retried normally, while a sustained outage quickly degrades to one attempt per call, which is the load your dependency was sized for.
+
+If you write your own, keep it per process and simple: a counter that each retry decrements and each first-try success increments by a fraction, with a ceiling. The important property is that retries are paid for by successes, so a 100 percent failure rate produces close to zero retries.
+
+### Circuit breakers, with AWS's caution
+
+A circuit breaker stops calls to a dependency entirely once an error threshold is crossed, then lets a probe through after a cool-down. It fails fast, frees caller resources, and gives the dependency room to recover. It also fails callers who would have succeeded on the next attempt, because the breaker decides for the whole process based on aggregate errors.
+
+The Builders' Library is notably cautious here: circuit breakers "introduce modal behavior into systems that can be difficult to test, and can introduce significant addition time to recovery," and AWS reports preferring the token bucket approach. That does not rule breakers out. It means a breaker needs tested open, half-open, and closed behavior, and that a retry budget is often the lower-risk first step.
+
+### Tell the caller when to come back
+
+The callee has a part to play too. When a service is shedding load, a fast 503 or 429 with a `Retry-After` header is far better than letting the request hang until the caller's timeout fires. [RFC 9110](https://httpwg.org/specs/rfc9110.html) defines `Retry-After` as how long the user agent "ought to wait before making a follow-up request," and describes 503 as the server being temporarily unable to handle the request "due to a temporary overload or scheduled maintenance." [RFC 6585](https://www.rfc-editor.org/rfc/rfc6585.html) allows `Retry-After` on 429 as well. A timeout tells the caller nothing, and the most common reaction to nothing is another try.
+
+## Calls that must not be retried
+
+Retrying is only safe for operations that produce the same result when repeated. RFC 9110 states that a client "SHOULD NOT automatically retry a request with a non-idempotent method" unless it knows the request is actually idempotent or the user explicitly asked. The Builders' Library makes the practical point: "A timeout or failure doesn't necessarily mean that side effects haven't happened."
+
+That rules out automatic retries for:
+
+- **A POST that creates a charge, an order, a booking, or a message** without an idempotency key the server enforces. A timeout on a payment call is the classic case: the charge may have succeeded and only the response was lost. The fix is server-side deduplication, covered in [why an idempotency key alone does not stop duplicate charges](/blog/idempotency-key-race-conditions).
+- **Errors that will not change on retry.** The Well-Architected guidance lists "retrying all errors, including those with a clear cause that indicates lack of permission, configuration error" as an anti-pattern. A 400, 401, 403, 404, or 422 should return immediately. (The Builders' Library notes that eventual consistency can blur this, so a 404 right after a create may be the exception you handle deliberately.)
+- **Calls inside a database transaction.** Retrying a remote call while holding row locks extends the lock for every backoff sleep. See [long transactions around external calls](/blog/long-transactions-external-calls).
+- **Message consumers that the broker will redeliver anyway.** If the queue redelivers failed messages, an in-process retry loop on top of it is another multiplying layer. Let one of them own retries, and make the consumer idempotent as described in [at-least-once delivery and idempotent consumers](/blog/at-least-once-delivery-idempotent-consumers).
+
+### Trade-offs to state out loud
+
+- **Fewer retries ride out fewer blips.** Dropping from three attempts to one at the inner layers will surface some transient errors that used to be invisible. The outer layer's single policy should absorb them; if it cannot, your deadline is too tight or the dependency's real error rate needs attention.
+- **Jitter trades predictability for spread.** Expect wider latency on retried requests and narrower load spikes on the dependency.
+- **Retrying at the top wastes work below.** The Builders' Library notes that retrying at the highest layer "may waste work from previous calls." For expensive multi-step operations, retrying lower (and only there) may be cheaper, as long as it is still one layer.
+- **Retry budgets and breakers fail fast on purpose.** During an outage, users see errors sooner. That is the point: fast errors free resources and let the dependency recover, but product teams should know it is intended.
+
+## What to change this week
+
+- Draw the call path for your two busiest user actions and write the attempt count and timeout at every hop. Multiply.
+- Pick one retrying layer per path. Set the rest to a single attempt, including SDK clients and gateway retry settings.
+- Give that layer a total deadline, a small attempt cap, full jitter, and `Retry-After` support.
+- Restrict retries to timeouts, connection failures, 429, and 502 to 504. Never auto-retry non-idempotent writes without a server-enforced idempotency key.
+- Add a retry budget, or confirm the SDK's built-in quota is active.
+- Return 503 or 429 with `Retry-After` when your own services shed load.
+- Add a dashboard panel comparing inbound requests to outbound requests per dependency, and alert on the ratio. Then inject a dependency failure in staging and confirm the ratio stays close to one.
+
+## Sources
+
+- [AWS Well-Architected, REL05-BP03 Control and limit retry calls](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_mitigate_interaction_failure_limit_retries.html)
+- [Amazon Builders' Library, Timeouts, retries, and backoff with jitter (PDF)](https://d1.awsstatic.com/builderslibrary/pdfs/timeouts-retries-and-backoff-with-jitter.pdf)
+- [AWS Architecture Blog, Exponential Backoff and Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/)
+- [AWS SDKs and Tools Reference Guide, Retry behavior](https://docs.aws.amazon.com/sdkref/latest/guide/feature-retry-behavior.html)
+- [RFC 9110, HTTP Semantics](https://httpwg.org/specs/rfc9110.html)
+- [RFC 6585, Additional HTTP Status Codes](https://www.rfc-editor.org/rfc/rfc6585.html)

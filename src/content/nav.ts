@@ -1,7 +1,14 @@
+import { showBlogNav } from "@/content/blog";
+
+// In production, Blog joins the nav only once a post is published, so the link never lands on an
+// empty index. Dev builds always show it for reviewing drafts (see showBlogNav).
+// wideOnly: the desktop tray has no room for it below lg (Contact runs off-screen at 768px);
+// the footer and mobile panel still list it.
 export const primaryNav = [
   { href: "/projects", label: "Portfolio" },
   { href: "/why-me", label: "Why me" },
   { href: "/process", label: "Process" },
+  ...(showBlogNav ? [{ href: "/blog", label: "Blog", wideOnly: true } as const] : []),
   { href: "/contact", label: "Contact" },
 ] as const;
 

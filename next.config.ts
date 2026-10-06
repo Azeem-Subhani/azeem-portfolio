@@ -1,5 +1,6 @@
 import path from "node:path";
 
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
@@ -39,6 +40,8 @@ const nextConfig: NextConfig = {
   agentRules: false,
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   poweredByHeader: false,
+  // 90 is for blog covers: flat art with thin text shows artifacts at the default 75.
+  images: { qualities: [75, 90] },
   turbopack: {
     root: path.resolve(__dirname),
   },
@@ -63,4 +66,20 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Blog post bodies (src/content/blog/*.mdx) are imported as components; no
+// .mdx routes, so pageExtensions stays at the default. Plugins are named by
+// string so Turbopack can serialize them. Shiki highlights code at build time
+// and emits both themes as CSS variables (see src/components/blog/blog.css),
+// so no highlighter ships to the browser.
+const withMDX = createMDX({
+  options: {
+    rehypePlugins: [
+      [
+        "@shikijs/rehype",
+        { themes: { light: "github-light", dark: "github-dark-dimmed" }, defaultColor: false },
+      ],
+    ],
+  },
+});
+
+export default withMDX(nextConfig);

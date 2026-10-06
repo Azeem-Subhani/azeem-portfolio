@@ -1,0 +1,190 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+Compute spend is flat. Instance counts and sizes have not changed. Yet the EC2 line on the bill grew, and when you dig in, the growth is in usage types with names like `NatGateway-Bytes` and `DataTransfer-Regional-Bytes`. The tempting conclusion is "NAT gateways are expensive, add VPC endpoints everywhere." That fix sometimes works, sometimes moves the cost to a new line, and sometimes makes the bill larger. NAT gateway cost and data transfer cost are separate charges with separate causes, and the right fix depends on which path your bytes actually take.
+
+This post diagnoses the charge from the usage type back to a network path, then covers the fixes in the order they usually pay off, including the case where adding endpoints increases spend.
+
+## The charges that stack on one byte
+
+The [Amazon VPC pricing page](https://aws.amazon.com/vpc/pricing/) describes the shape. For a standard (zonal) NAT gateway:
+
+- **An hourly charge** for each hour the gateway is provisioned.
+- **A data processing charge per GB** for every byte the gateway processes, regardless of the traffic's source or destination.
+- **Standard EC2 data transfer charges on top.** Processing does not replace transfer; they add.
+- **Cross-AZ transfer** between the NAT gateway and an instance in a different Availability Zone incurs data transfer charges. Same-AZ traffic over private IPs does not.
+
+Data transfer between Availability Zones has its own billing rule. The CUR documentation on [data transfer charges](https://docs.aws.amazon.com/cur/latest/userguide/cur-data-transfers-charges.html) says inter-AZ transfer appears as `Region-DataTransfer-Regional-Bytes`, that you are charged for both inbound and outbound traffic for a resource within a Region, and that each metered resource gets two line items per transfer. A byte that crosses zones is metered on both sides.
+
+So one GET from a pod in zone A, through a NAT gateway in zone B, to S3 can produce: cross-AZ transfer to reach the NAT, NAT processing on the way out and the response on the way back, and cross-AZ transfer again for the response. None of it changes the instance count.
+
+<Figure caption="The NAT path stacks cross-AZ transfer and NAT processing on one request, while the gateway endpoint path adds no hourly or processing charge.">
+  <NatStackedCharges />
+</Figure>
+
+Prices differ by Region and change over time. Use the [VPC pricing page](https://aws.amazon.com/vpc/pricing/) and [PrivateLink pricing page](https://aws.amazon.com/privatelink/pricing/) for your Region's current rates when you do the math later in this post.
+
+## Where NAT gateway cost and data transfer hide on the bill
+
+The charges rarely show up where people look. AWS describes the Cost Explorer category [EC2-Other](https://aws.amazon.com/blogs/aws-cloud-financial-management/optimize-and-save-on-the-other-services/) as covering EBS volumes and snapshots, Elastic IPs, data transfer, NAT gateways, and more. A NAT spike looks like "EC2 went up" until you group by usage type.
+
+The usage types to look for:
+
+- **NAT processing:** `NatGateway-Bytes`, which AWS's [CUR data transfer walkthrough](https://aws.amazon.com/blogs/networking-and-content-delivery/understand-aws-data-transfer-details-in-depth-from-cost-and-usage-report-using-athena-query-and-quicksight/) (May 2022) describes as bytes processed by NAT gateways in the source Region. In Cost Explorer, the usage type group is "EC2: NAT Gateway - Data Processed."
+- **NAT hours:** the [usage type group](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-filtering.html) "EC2: NAT Gateway - Running Hours."
+- **Cross-AZ transfer:** `DataTransfer-Regional-Bytes` with a Region prefix, or the group "EC2: Data Transfer - Inter AZ."
+- **Interface endpoint charges:** the same walkthrough notes that NAT Gateway, Transit Gateway, and PrivateLink record data processing charges under their own service names, not under generic data transfer.
+
+If you are starting from a bare total, the companion post on [investigating an unexpected AWS bill](/blog/unexpected-aws-bill-investigation) walks the hierarchy from day to service to usage type.
+
+## Diagnose the path before you redraw the network
+
+The bill tells you which meter moved. It does not tell you which workload or destination moved it. Do not add endpoints or NAT gateways until you know the destinations.
+
+1. **Confirm the usage type split.** In Cost Explorer, filter to EC2-Other, group by usage type, daily granularity. Note whether the increase is in NAT processing, inter-AZ transfer, or both, and on which day it started. NAT processing lines can be filtered by resource ID in the CUR (the AWS walkthrough uses `line_item_resource_id like '%nat%'`), which tells you which gateway.
+2. **Find the gateway and the time window.** In CloudWatch, the [NAT gateway metrics](https://docs.aws.amazon.com/vpc/latest/userguide/metrics-dimensions-nat-gateway.html) `BytesOutToDestination` and `BytesInFromDestination` (sum) show outbound and response volume. AWS publishes them at 1-minute intervals and retains them for 15 months, per the [NAT monitoring page](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway-cloudwatch.html). A large `BytesInFromDestination` relative to outbound bytes means downloads dominate: pulling images, reading objects, syncing data.
+3. **Turn on flow logs with the right fields.** The default format only has version 2 fields. Use a [custom format](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html) that includes `pkt-srcaddr`, `pkt-dstaddr` (the original addresses behind the NAT), `pkt-dst-aws-service` (which names AWS ranges such as `S3` or `DYNAMODB`), `flow-direction`, `traffic-path`, and `az-id`. Version 11 fields add `interface-type` and `next-hop-az-id`, which make the NAT hop and zone crossing explicit.
+4. **Rank destinations by bytes.** Query the logs for traffic on the NAT gateway's interfaces, grouped by original source and destination.
+5. **Map sources to workloads.** Pod IPs, task IPs, or instance IPs map to a service. That is who you talk to.
+6. **Check the zone of each source against the zone of its NAT.** A source in one AZ whose route table points at a NAT in another AZ pays cross-AZ transfer on every byte.
+
+### A flow log query that names the destinations
+
+```sql
+-- Illustrative. Athena over VPC Flow Logs delivered to S3 with a custom
+-- format. Column names follow your table definition; hyphens in field names
+-- usually become underscores.
+SELECT
+  pkt_srcaddr,
+  pkt_dstaddr,
+  pkt_dst_aws_service,
+  az_id,
+  SUM(bytes) / 1e9 AS gb
+FROM vpc_flow_logs
+WHERE interface_id IN ('eni-0nat0example0a', 'eni-0nat0example0b')  -- NAT gateway ENIs
+  AND action = 'ACCEPT'
+  AND from_unixtime("start") >= TIMESTAMP '2026-09-15 00:00:00'
+  AND from_unixtime("start") <  TIMESTAMP '2026-09-16 00:00:00'
+GROUP BY 1, 2, 3, 4
+ORDER BY gb DESC
+LIMIT 25;
+```
+
+If the top rows have `pkt_dst_aws_service = 'S3'` or `'DYNAMODB'`, you have found the cheapest possible fix. If they are container registries, package mirrors, or third-party APIs, the fix is different.
+
+<Figure caption="The top destinations in the flow logs decide which fix to try first.">
+  <NatWhichFix />
+</Figure>
+
+### Dead ends to expect
+
+- **The NAT's own interface has no instance ID.** The flow log documentation says `instance-id` is `-` for requester-managed interfaces such as a NAT gateway's. Use `pkt-srcaddr` to find the real client.
+- **Regional NAT gateways have no interface ID in flow logs.** For a [regional NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html), `interface-id` and `subnet-id` are `-`. Filter on the `resource-id` field (the gateway ID) or `interface-type` instead. A query written for zonal NATs silently returns nothing.
+- **Flow logs lag.** AWS says delivery typically takes about 5 minutes to CloudWatch Logs and about 10 minutes to S3, best effort. Do not conclude a fix failed from the first few minutes.
+- **Pod IPs differ from node IPs.** On EKS, `pkt-srcaddr` holds the pod IP while `srcaddr` may hold the node's interface address. Use the packet-level field.
+
+## Fix one: gateway endpoints for S3 and DynamoDB
+
+If the bytes go to S3 or DynamoDB in the same Region, add [gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html). AWS says there is no additional charge for gateway endpoints, and the VPC pricing page states there are no data processing or hourly charges for them. The pricing page uses exactly this case as its example of avoiding the NAT processing charge.
+
+```hcl
+# Illustrative Terraform. Associate the endpoint with every private route
+# table, or subnets on unassociated tables keep using the NAT path.
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${var.region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = aws_route_table.private[*].id
+
+  tags = {
+    Name = "s3-gateway"
+  }
+}
+
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${var.region}.dynamodb"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = aws_route_table.private[*].id
+}
+```
+
+Things that make this fix quietly not work, from the gateway endpoint documentation:
+
+- **Only associated route tables use it.** Instances in subnets whose route table is not associated keep using the public endpoint, which from a private subnet means the NAT.
+- **Same Region only.** Prefix lists are Region-specific, so traffic to a bucket in another Region still takes the default route.
+- **A more specific route wins.** If a route table has an explicit route for the service's IP ranges, it takes precedence over the endpoint route.
+- **IPv6 and dual-stack names.** If the endpoint is IPv4 and clients call the dual-stack S3 hostname, the docs say AAAA traffic is not routed through the gateway endpoint.
+- **Security groups and network ACLs** must allow traffic to the service's prefix list or address ranges.
+- **No access from on premises or peered networks.** The S3 documentation's [endpoint comparison](https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html) lists gateway endpoints as not reachable from on premises or from another Region; interface endpoints are.
+
+Endpoint policies and bucket policies with `aws:sourceVpce` can restrict which buckets are reachable. A deny-unless-endpoint bucket policy can also lock out console and cross-account access, so test it on a non-critical bucket first.
+
+**Verify:** the NAT's `BytesInFromDestination` drops, flow log rows with `pkt_dst_aws_service = 'S3'` disappear from the NAT interfaces, and `traffic-path` for those flows shows the gateway endpoint path. The `NatGateway-Bytes` usage type falls on the next full billing day.
+
+## Fix two: keep traffic and its NAT in the same zone
+
+When the destination is the internet or a service without a gateway endpoint, NAT processing is unavoidable, but the cross-AZ part is a design choice.
+
+- **One zonal NAT per AZ, each private subnet routed to its own zone's NAT.** You pay more NAT hours and avoid cross-AZ transfer on all egress. You also survive the loss of one zone's NAT.
+- **A single NAT for the VPC.** Fewer hours. Every byte from the other zones crosses an AZ boundary, and when that zone fails, every private subnet loses egress.
+- **A regional NAT gateway.** AWS describes it as expanding across Availability Zones where you have workloads. The pricing page says it is billed per active AZ hour. The docs also note it can take up to 60 minutes to expand into a new zone, and until then that zone's traffic is processed across zones. Regional NAT does not support private NAT use cases.
+
+The single-NAT setup is reasonable for a dev VPC where availability does not matter and traffic is small. It stops being cheaper once cross-AZ bytes outgrow the saved hours, and it was never more available. Run the comparison with your own byte counts and current rates.
+
+## Fix three: interface endpoints, only after the math
+
+Interface endpoints (PrivateLink) take traffic for services like ECR, STS, Secrets Manager, or CloudWatch off the NAT path. They have a different price shape. Per the [PrivateLink pricing page](https://aws.amazon.com/privatelink/pricing/):
+
+- **An hourly charge per endpoint per Availability Zone** it is provisioned in.
+- **A tiered per-GB data processing charge** for traffic through the endpoint.
+
+So the monthly cost of interface endpoints is roughly: number of endpoints, times number of AZs, times hours in the month, times the hourly rate, plus processed GB times the processing rate. Compare that with the NAT processing those specific bytes currently incur. The [AWS architecture post on data transfer costs](https://aws.amazon.com/blogs/architecture/overview-of-data-transfer-costs-for-common-architectures/) (June 2021) draws the same contrast: gateway endpoints for S3 and DynamoDB avoid charges, interface endpoints incur hourly and data charges.
+
+### When adding endpoints makes the bill larger
+
+A VPC with low-volume calls to a dozen AWS APIs, spread across three zones, can easily pay more in endpoint hours than it ever paid in NAT processing for those calls. The hourly charge accrues whether or not any bytes flow, and it multiplies by zone. Add an interface endpoint when the flow logs show that service carries meaningful bytes, for example container image pulls from ECR during frequent scaling, not because a checklist says "use PrivateLink." Security or compliance reasons to keep traffic private are valid; just record them as the reason instead of cost.
+
+If S3 needs to be reachable from on premises, the S3 docs describe running a gateway endpoint and an interface endpoint together: in-VPC traffic stays on the unbilled gateway endpoint and only on-premises clients use the interface endpoint.
+
+## Fix four: send fewer bytes
+
+The cheapest byte is the one you do not send. Common sources found by the flow log query:
+
+- **Image pulls on every scale-out** because images are large or nodes are short-lived. Smaller images and node-level caching cut both NAT and registry traffic.
+- **Chatty cross-zone service calls**, where a client in zone A load-balances evenly to replicas in all zones. Topology-aware routing in the service mesh or load balancer keeps most calls in-zone; if you have accepted cross-zone traffic for availability, do it on purpose.
+- **Retry loops against an external API** that fail and retry, multiplying egress. See [retry storms and backoff](/blog/retry-storm-backoff-jitter) for bounding them.
+- **Debug logging or metrics shipped to an external vendor** over the NAT.
+
+### Trade-offs to state explicitly
+
+- **NAT per AZ versus single NAT:** more hours versus cross-AZ bytes and a single point of failure.
+- **Gateway endpoints:** no charge and few downsides for same-Region S3 and DynamoDB. They do not help cross-Region, on-premises, or other services. Bucket policies tied to an endpoint can lock out legitimate access.
+- **Interface endpoints:** reduce NAT bytes and add per-AZ hourly cost. Worth it for high-volume services or private-connectivity requirements; a net loss for many low-volume ones.
+- **Regional NAT:** simpler routing and automatic zone coverage, billed per active AZ, with a window of cross-zone processing while it expands.
+- **Flow logs** cost money to collect and store. Turn on the custom format during the investigation, sample if needed, and decide afterward whether to keep it.
+
+## What to do Monday
+
+- Group EC2-Other by usage type and separate NAT processing, NAT hours, and inter-AZ transfer.
+- Pull NAT `BytesOutToDestination` and `BytesInFromDestination` to find the gateway and the hour the change began.
+- Enable flow logs with `pkt-srcaddr`, `pkt-dstaddr`, `pkt-dst-aws-service`, `traffic-path`, and `az-id`, then rank destinations by bytes.
+- Add S3 and DynamoDB gateway endpoints to every private route table if those services appear in the top rows.
+- Check that each private subnet routes to a NAT in its own zone, or document why it does not.
+- Price any interface endpoint as endpoints times AZs times hours plus per-GB, against the NAT bytes it would remove, using current regional rates.
+- Verify on the specific usage types over full days after the change.
+
+## Sources
+
+- [Amazon VPC pricing](https://aws.amazon.com/vpc/pricing/)
+- [AWS PrivateLink pricing](https://aws.amazon.com/privatelink/pricing/)
+- [AWS Architecture Blog, Overview of data transfer costs for common architectures (2021)](https://aws.amazon.com/blogs/architecture/overview-of-data-transfer-costs-for-common-architectures/)
+- [AWS, Understanding data transfer charges in the CUR](https://docs.aws.amazon.com/cur/latest/userguide/cur-data-transfers-charges.html)
+- [AWS Networking blog, Understand AWS data transfer details in depth from the CUR (2022)](https://aws.amazon.com/blogs/networking-and-content-delivery/understand-aws-data-transfer-details-in-depth-from-cost-and-usage-report-using-athena-query-and-quicksight/)
+- [AWS, Cost Explorer filter and group options, including usage type groups](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-filtering.html)
+- [AWS Cloud Financial Management blog, Optimize and save on the "other" services](https://aws.amazon.com/blogs/aws-cloud-financial-management/optimize-and-save-on-the-other-services/)
+- [AWS, Gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html)
+- [AWS, AWS PrivateLink for Amazon S3 (gateway versus interface endpoints)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html)
+- [AWS, NAT gateway metrics and dimensions](https://docs.aws.amazon.com/vpc/latest/userguide/metrics-dimensions-nat-gateway.html)
+- [AWS, Monitor NAT gateways with CloudWatch](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway-cloudwatch.html)
+- [AWS, Flow log records](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html)
+- [AWS, Regional NAT gateways](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html)
