@@ -1,0 +1,188 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+Your RAG system retrieves irrelevant chunks, and the answer reads fluently and cites a source anyway. The passages are near the question in embedding space. They are not the passage that holds the fact. A careful engineer's first move is to edit the prompt or try a stronger model, and both moves tune the wrong stage. If the right passage never reached the model, no instruction can make the model use it.
+
+The fix is to measure retrieval on its own. You label a small set of real queries with the passage that answers each one, check whether that passage appears in the top results and at what rank, and only then touch generation. This post lays out that procedure, the failure classes it exposes, the fixes that follow from each, and the case people skip: the answer is not in your corpus and the system should say so.
+
+## Why a green generator eval hides retrieval failures
+
+A typical generator eval feeds a fixed context and a question to the model and grades the answer. That checks whether the model can read. It says nothing about whether your retriever supplies the right context in production. If you grade end-to-end answers with a model judge, the failure is quieter still: the judge sees a plausible answer with a citation and passes it.
+
+Retrieval and generation fail in different ways, and the evidence for each lives in a different place.
+
+- **Retrieval failure.** The needed passage is absent from the retrieved set, or ranked so low it was cut. The model answers from neighbors. You can see it by reading the retrieved text.
+- **Generation failure.** The needed passage was present, and the model ignored it, misread it, or was distracted by other chunks. You can see it by checking that the passage was in the prompt.
+- **Corpus failure.** The fact is not in any document you indexed. No retriever can fix this, and the right behavior is to abstain.
+
+If you do not separate these, every wrong answer looks like a model problem, and you spend a week on prompts. Treat the question "was the right passage in the prompt?" as the first branch of every investigation.
+
+## Build a small labeled query set
+
+You do not need a benchmark. You need a few dozen real queries with known answers, which is enough to see which failure class dominates.
+
+1. **Collect queries from real use**: search logs, support tickets, or questions users flagged as wrong. Invented queries tend to be easier than real ones because they reuse the document's own wording.
+2. **Label the answering passage.** For each query, a person finds the passage (or passages) in the corpus that contain the fact, and records stable passage IDs. Prefer document-plus-section IDs over chunk IDs, since chunk boundaries will change when you re-chunk.
+3. **Include queries with no answer.** Add a set where the correct label is "not in the corpus." These test abstention, and they are the cases a demo never shows.
+4. **Include structured-fact queries**, such as "what is the refund window for plan X" or "who owns service Y." These often have a precise answer in a table or a database that a semantic search is poor at finding.
+5. **Freeze the set and version it.** Changing labels to make a metric look better defeats the point.
+
+Keep the set private if it comes from client or user data. Strip names and identifiers before it goes into a repository, and keep client sets separated from each other.
+
+## Measure retrieval before generation
+
+Run each labeled query through the retriever alone, with no model. Record where the labeled passage lands.
+
+- **Recall at k.** For a query, did any labeled passage appear in the top k results? Average over queries. This answers "is the fact reaching the model at all?"
+- **Rank of the first relevant result**, and its reciprocal averaged over queries (mean reciprocal rank). This answers "how deep is it buried?"
+- **Context recall,** as tools like Ragas define it, compares the retrieved contexts against a reference. Ragas documents several variants, one using reference contexts and one using reference context IDs, and notes that the metric always needs a reference to compare against. That is the same labeled set you just built.
+
+Pick k to match what you actually send to the model. If you pass five chunks, recall at 50 is not the number that matters.
+
+```python
+# Illustrative retrieval eval. `retrieve(query, k)` returns ranked passage IDs.
+from dataclasses import dataclass
+
+@dataclass
+class Case:
+    query: str
+    relevant: set[str]        # passage IDs; empty set means "not in corpus"
+
+def evaluate(cases, retrieve, k_send=5, k_wide=50):
+    hits_send = hits_wide = answerable = 0
+    rr_total = 0.0
+    misses = []                # keep these; reading them is the real work
+    for c in cases:
+        if not c.relevant:
+            continue           # abstention cases are scored separately
+        answerable += 1
+        ranked = retrieve(c.query, k_wide)
+        first = next((i for i, pid in enumerate(ranked, 1) if pid in c.relevant), None)
+        if first is not None:
+            rr_total += 1.0 / first
+            hits_wide += 1
+            if first <= k_send:
+                hits_send += 1
+        if first is None or first > k_send:
+            misses.append((c.query, first, ranked[:k_send]))
+    return {
+        "recall_at_send": hits_send / answerable,
+        "recall_at_wide": hits_wide / answerable,
+        "mrr": rr_total / answerable,
+        "misses": misses,
+    }
+```
+
+The gap between recall at the send size and recall at a wider size is diagnostic. If recall is high at 50 and low at 5, the fact is in the index and your ranking is poor, which points at reranking or hybrid search. If recall is low even at 50, the retriever never finds it, which points at chunking, filters, vocabulary, or a missing document.
+
+### Read the misses
+
+Metrics tell you how often. Reading tells you why. For each miss, print the query, the labeled passage, and the top results, and sort the cause into a class. Thirty misses read carefully will usually show one or two dominant classes.
+
+## Why RAG retrieves irrelevant chunks, and the fix for each cause
+
+### Chunk boundaries cut the fact from its context
+
+A chunk that says "revenue grew by 3%" does not say which company or period. Anthropic's contextual retrieval write-up uses that exact example: individual chunks often lack the context needed for retrieval to work. Splitting every N tokens ignores the document's structure, so a table row ends up apart from its header, or a definition apart from the section it qualifies.
+
+Fixes: chunk along headings, paragraphs, and table boundaries; keep a title and section path with each chunk; or prepend a short generated description of where the chunk sits in its document before indexing, which is the approach that write-up evaluates. Larger chunks keep more context and dilute the embedding with unrelated text, so there is a sweet spot you find on your labeled set, not in a rule of thumb.
+
+### A synonym or exact token the embedder misses
+
+Dense embeddings capture meaning and are weaker on exact strings such as error codes, SKUs, function names, and acronyms. Keyword search has the opposite profile. The Anthropic write-up recommends combining embeddings with BM25 for this reason. The BEIR benchmark paper found BM25 to be a robust baseline across many datasets, with dense retrievers underperforming in zero-shot settings, which is a reason not to assume the vector path always wins.
+
+The fix is hybrid search: run a lexical query and a vector query, then fuse the ranked lists. Reciprocal rank fusion, as documented by Elasticsearch, scores each result as the sum of one over a constant plus its rank in each list, with a default constant of 60. Because it uses ranks and not scores, you do not have to normalize BM25 scores against vector similarities.
+
+```sql
+-- Illustrative hybrid retrieval in Postgres with RRF.
+-- Assumes chunks(id, doc_id, body, tsv tsvector, embedding vector(1536), tenant_id).
+-- Postgres full text search normalizes word forms (rats matches rat) and ranks results.
+-- :qvec is the query embedding, :qtext is the query string, :tenant the caller's tenant.
+WITH lexical AS (
+  SELECT id, row_number() OVER (ORDER BY ts_rank_cd(tsv, q) DESC) AS rnk
+  FROM chunks, websearch_to_tsquery('english', :qtext) AS q
+  WHERE tenant_id = :tenant AND tsv @@ q
+  ORDER BY ts_rank_cd(tsv, q) DESC
+  LIMIT 50
+),
+semantic AS (
+  SELECT id, row_number() OVER (ORDER BY embedding <=> :qvec) AS rnk
+  FROM chunks
+  WHERE tenant_id = :tenant
+  ORDER BY embedding <=> :qvec
+  LIMIT 50
+)
+SELECT id,
+       coalesce(1.0 / (60 + l.rnk), 0) + coalesce(1.0 / (60 + s.rnk), 0) AS rrf
+FROM lexical l FULL OUTER JOIN semantic s USING (id)
+ORDER BY rrf DESC
+LIMIT 20;
+```
+
+Note the tenant filter inside both subqueries. A filter applied after retrieval can leave you with an empty or thin result set, and a missing filter can leak another tenant's content into a prompt.
+
+### Missing or wrong metadata filters
+
+A question about "the 2025 policy" retrieves the 2023 policy because it is textually similar. A question from a user in one region retrieves another region's terms. Semantic similarity does not know that the version, product, or jurisdiction must match.
+
+Fixes: attach metadata (version, product, region, effective date, document type) at ingestion, and filter on it at query time, with values extracted from the query or from the user's session. The trade-off is that strict filters reduce noise and also drop queries whose metadata cannot be determined. Decide what happens then: fall back to an unfiltered search and say so, or ask a clarifying question.
+
+### The structured fact belongs in a query, not a vector search
+
+"What is the limit on plan X?" has a single correct value stored in a table. Retrieving prose about plans and hoping the model picks the right number invites a near-miss. When the fact is structured, look it up with SQL or a keyword match, and give the model the result. That path is more accurate and is a second system to build and keep in sync, so reserve it for facts where a wrong answer is expensive.
+
+### Too many chunks in the prompt
+
+More chunks raise the chance the fact is present. They also raise cost and latency, and the chance the model attends to a wrong chunk. Liu and colleagues found in "Lost in the Middle" that model performance is often highest when relevant information is at the beginning or end of a long context and degrades when it sits in the middle. In Anthropic's contextual retrieval tests, passing the top 20 chunks outperformed 5 or 10, so there is no universal number; the right count depends on your corpus and model, which is why you measure.
+
+A common pattern is to retrieve a wide candidate set, rerank it with a model that scores query-passage relevance, and send only the best handful. Reranking adds a network hop and latency, and it can only help if the right passage is in the candidate set, so check recall at the wide size first. Each extra chunk is also billed as input on every call, which feeds directly into [LLM cost accounting](/blog/llm-api-cost-token-accounting).
+
+<Figure caption="Compare recall at the wide size with recall at the send size to tell a ranking problem from a retriever problem.">
+  <RagWideToSendFunnel />
+</Figure>
+
+## When the answer is not in the corpus
+
+This case fails silently. The retriever always returns something: the nearest neighbors of the query, however far away. The model, handed plausible-looking passages, answers from them. The result is a confident, cited, wrong answer.
+
+Treat abstention as a feature you design and test.
+
+- **Prompt the model to refuse** when the provided passages do not contain the answer, and give an example of the exact refusal wording.
+- **Gate on retrieval quality.** If the top reranker score or fused score falls below a threshold, skip generation and say you could not find a source. Pick the threshold from your labeled set, using the no-answer queries to see how scores differ from answerable ones. Scores from different retrievers are not comparable, so recalibrate after any change.
+- **Require the answer to quote its support.** If the model must cite a span from a retrieved passage and the span does not exist in the context, treat the answer as unsupported.
+- **Route to a person** or a fallback such as a link to the nearest document, when abstention triggers.
+
+Score the abstention set separately: of the queries with no answer, how many did the system decline, and of the answerable ones, how many did it wrongly decline? Raising the threshold trades wrong answers for refusals, and refusals are less impressive in a demo and cheaper in production than a wrong answer a customer acts on. If the abstain rate is high for a topic, the cause is usually a corpus gap, and the fix is content: add or update the document.
+
+## A diagnosis order
+
+1. Pick a wrong answer and print exactly what was in the prompt. Was the right passage there?
+2. If yes, you have a generation problem. Check chunk order, the number of chunks, and the instruction wording.
+3. If no, check whether the fact exists in the corpus at all. If not, it is a corpus gap, so fix the content and the abstention path.
+4. If it exists, find its rank in a wide retrieval. Low rank points at ranking; absent points at chunking, vocabulary, or filters.
+5. Apply the matching fix, rerun the whole labeled set, and compare recall at the send size and the abstention score. Keep a change only if the metrics move without hurting another slice.
+6. Fix the corpus before swapping the model. Stale, duplicated, or contradictory documents produce wrong answers that no model upgrade removes.
+
+<Figure caption="Each answer to a question narrows the cause to one failure class, and each class has its own fix.">
+  <RagTriageTree />
+</Figure>
+
+### How to verify the fix worked
+
+Qualitatively: the misses list shrinks and the remaining misses fall into one class instead of many. The first relevant passage moves up in rank, and the prompt contains fewer chunks that are irrelevant to the question. The no-answer queries produce refusals. Watch for regressions in the other direction: a filter that fixed ten queries and broke queries with missing metadata shows up as new misses in a different slice. Keep the labeled set as a regression test that runs in CI on every change to chunking, embedding model, filters, or prompt assembly.
+
+## Trade-offs to state out loud
+
+- **More chunks versus precision.** Higher recall, higher cost and latency, and more distractors.
+- **Strict filters versus coverage.** Less noise, and queries without usable metadata lose results.
+- **Reranking versus latency.** Better ordering, one more hop and one more thing to monitor, especially at the slow end of your latency distribution (see [tail latency](/blog/p99-tail-latency)).
+- **Abstention versus helpfulness.** Fewer wrong answers, more refusals.
+- **A structured lookup versus one retrieval path.** More accurate for facts, and another system to maintain.
+
+## Sources
+
+- [Anthropic: Contextual Retrieval](https://www.anthropic.com/news/contextual-retrieval) (chunk context loss, embeddings plus BM25, reranking, top-20 versus top-5 and top-10 in the authors' own tests)
+- [Ragas: Context Recall](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/) (definition, reference contexts or IDs required)
+- [Elasticsearch: Reciprocal rank fusion](https://www.elastic.co/guide/en/elasticsearch/reference/current/rrf.html) (formula, default rank constant, no score normalization needed)
+- [PostgreSQL: Full Text Search introduction](https://www.postgresql.org/docs/current/textsearch-intro.html) (word-form normalization and ranking versus pattern matching)
+- [Liu et al., Lost in the Middle (arXiv:2307.03172)](https://arxiv.org/abs/2307.03172) (position effects in long contexts)
+- [Thakur et al., BEIR (arXiv:2104.08663)](https://arxiv.org/abs/2104.08663) (BM25 as a robust zero-shot baseline, dense retrievers' generalization gap)

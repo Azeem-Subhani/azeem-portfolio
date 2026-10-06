@@ -16,6 +16,7 @@ vi.mock("@/components/layout/mobile-nav", () => ({
 }));
 
 import { Header } from "@/components/layout/header";
+import { showBlogNav } from "@/content/blog";
 import { industries, industryPath } from "@/content/industries";
 
 function setScrollY(value: number) {
@@ -54,12 +55,14 @@ describe("Header", () => {
 
     const nav = screen.getByRole("navigation", { name: "Primary navigation" });
     const topItems = nav.querySelectorAll(":scope > ul > li");
-    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Industries|Portfolio|Why me|Process|Contact/)?.[0])).toEqual([
+    expect(Array.from(topItems, (item) => item.textContent?.match(/Services|Industries|Portfolio|Why me|Process|Blog|Contact/)?.[0])).toEqual([
       "Services",
       "Industries",
       "Portfolio",
       "Why me",
       "Process",
+      // The blog link appears once a post is published, and always outside production.
+      ...(showBlogNav ? ["Blog"] : []),
     ]);
     expect(within(nav).queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
     expect(within(nav).queryByRole("link", { name: "Projects" })).not.toBeInTheDocument();

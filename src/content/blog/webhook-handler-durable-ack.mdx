@@ -1,0 +1,242 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+A customer paid, Stripe shows the event as delivered with a 200, and the order was never fulfilled. Or the opposite: the order was fulfilled twice, and the delivery log shows timeouts followed by a successful retry. Both bugs come from the same question: should a webhook return 200 before processing? The provider's docs say yes, return quickly. They also say duplicates will arrive. The answer that satisfies both is narrower than "return 200 first": store the event durably, then return 200, then do the work.
+
+The tempting reading of "respond quickly" is to send the 200 at the top of the handler and process in a fire-and-forget promise or background thread. That passes every happy-path test and silently drops events whenever the process dies at the wrong moment.
+
+## What Stripe's webhook contract says
+
+[Stripe's webhook documentation](https://docs.stripe.com/webhooks) is a useful concrete contract because it states every rule that matters, in different sections of the same page:
+
+- **Return fast.** Your endpoint must "quickly return a successful status code (`2xx`) before any complex logic that could cause a timeout," and the docs give an example: return a `200` "before updating a customer's invoice as paid in your accounting system."
+- **Success ends delivery.** Stripe retries failed deliveries "for up to three days with an exponential back off in live mode," and three times over a few hours in a sandbox. A 2xx is the signal to stop. Redirects count as failures too.
+- **Duplicates are normal.** "Webhook endpoints might occasionally receive the same event more than once." The fix Stripe gives is to log the event ids you have processed and skip ones already logged.
+- **Two events can describe one change.** "In some cases, two separate Event objects are generated and sent." To catch these, Stripe says to use the id of the object in `data.object` along with `event.type`.
+- **Order is not guaranteed.** Stripe "doesn't guarantee the delivery of events in the order that they're generated," and because `created` is recorded in seconds, it says not to use `created` to determine order or whether you have already processed an event.
+- **Process asynchronously.** Stripe recommends handling events "with an asynchronous queue," because a spike in deliveries (its example is the start of the month when subscriptions renew) can overwhelm synchronous handlers.
+
+Most write-ups quote the first rule and stop. Read together, the rules draw a line: the response must not wait for business logic, but it must wait for the event to be safe.
+
+## The two failure windows
+
+There are two places to put the 200, and each has its own bug.
+
+<Figure caption="The 200 can come too early and lose the event, or too late and cause a duplicate. Storing first, then acknowledging, avoids both.">
+  <WebhookAckWindows />
+</Figure>
+
+In window 1, the provider did its job. It got a 2xx and stopped retrying. Nothing will ever redeliver that event unless someone notices and resends it by hand. With [GitHub webhooks](https://docs.github.com/en/webhooks/using-webhooks/best-practices-for-using-webhooks) this is the default for any failure: GitHub expects a 2XX "within 10 seconds," and its best-practices page tells you to redeliver missed webhooks yourself once your server is back up. Either way, an event acknowledged and then dropped is invisible to the provider's retry machinery.
+
+In window 2, the handler is doing the right work in the wrong place. It is slow because the work is slow, the provider gives up waiting, and the retry repeats work that partly or fully succeeded. If the handler also lacks deduplication, the side effect happens twice.
+
+The design that closes both windows moves exactly one thing inside the response: a durable insert.
+
+## Return 200 before processing, but after storing
+
+The handler does four things and nothing else:
+
+1. Verify the signature against the raw request body.
+2. Insert the event into an inbox table, keyed by the provider's event id, ignoring duplicates.
+3. Commit.
+4. Return 200 (for a new event or a duplicate) or 5xx (if the insert failed, so the provider retries).
+
+```sql
+-- Illustrative inbox table (PostgreSQL).
+CREATE TABLE webhook_inbox (
+  provider      text        NOT NULL,          -- 'stripe'
+  event_id      text        NOT NULL,          -- evt_...
+  event_type    text        NOT NULL,
+  object_id     text,                          -- data.object.id
+  payload       jsonb       NOT NULL,
+  received_at   timestamptz NOT NULL DEFAULT now(),
+  processed_at  timestamptz,
+  attempts      int         NOT NULL DEFAULT 0,
+  last_error    text,
+  PRIMARY KEY (provider, event_id)
+);
+
+CREATE INDEX webhook_inbox_pending
+  ON webhook_inbox (received_at) WHERE processed_at IS NULL;
+```
+
+```ts
+// Illustrative Express handler using stripe-node and node-postgres.
+import express from "express";
+import Stripe from "stripe";
+import { Pool } from "pg";
+
+const stripe = new Stripe(process.env.STRIPE_API_KEY!);
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const db = new Pool();
+const app = express();
+
+// Raw body on this route only: Stripe signs the exact bytes it sent.
+app.post(
+  "/webhooks/stripe",
+  express.raw({ type: "application/json", limit: "1mb" }),
+  async (req, res) => {
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        req.header("stripe-signature") ?? "",
+        endpointSecret,
+      );
+    } catch {
+      // Forged, altered, or too old. Do not store it.
+      return res.status(400).send("invalid signature");
+    }
+
+    const obj = event.data.object as { id?: string };
+    try {
+      await db.query(
+        `INSERT INTO webhook_inbox (provider, event_id, event_type, object_id, payload)
+         VALUES ('stripe', $1, $2, $3, $4)
+         ON CONFLICT (provider, event_id) DO NOTHING`,
+        [event.id, event.type, obj.id ?? null, JSON.stringify(event)],
+      );
+    } catch (err) {
+      // Not durable, so do not acknowledge. The provider will retry.
+      console.error("webhook inbox insert failed", { eventId: event.id, err });
+      return res.status(500).send("retry");
+    }
+
+    // Durable (new or duplicate). Safe to acknowledge.
+    return res.status(200).send("ok");
+  },
+);
+
+// Register express.json() for other routes after this one, or scope it,
+// so it never parses the webhook body first.
+```
+
+This handler targets Stripe snapshot events (the classic `Stripe.Event` payloads), as documented in September 2026. Thin events use the SDK's event-notification parsing instead of `constructEvent`, but the store-then-acknowledge shape is the same.
+
+A few details in that handler matter:
+
+- **Verify before storing.** Signature verification costs a little CPU and keeps forged traffic out of the table. Stripe notes that the raw body is required and that "any manipulation to the raw body of the request causes the verification to fail," which is why the route uses `express.raw` instead of a JSON parser.
+- **Deduplicate on the event id, never on the signature.** Stripe generates a new signature and timestamp for every delivery attempt, so the same event arrives with different signatures. Stripe's libraries also reject timestamps outside a default tolerance of 5 minutes, which limits replay of a captured request.
+- **A duplicate still gets a 200.** If you return an error for an event you already stored, the provider keeps retrying something you have.
+- **No business logic, no outbound calls.** One indexed insert keeps the handler fast and predictable.
+
+This is still at-least-once delivery. The inbox guarantees you will not lose an event you acknowledged, and that the same event id is stored once. It does not guarantee the business effect happens once. That depends on the consumer.
+
+<Figure caption="The handler only verifies, stores, and acknowledges. The worker applies the event later and commits the processed marker with the business write.">
+  <WebhookInboxFlow />
+</Figure>
+
+## Processing from the inbox
+
+A worker claims pending rows, applies each event, and marks it processed. The processed marker must commit in the same transaction as the business write. If it does not, a crash between the two re-applies the event on the next run.
+
+```ts
+// Illustrative worker loop. One transaction per event.
+async function processBatch(): Promise<number> {
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN");
+    const { rows } = await client.query(
+      `SELECT event_id, event_type, object_id, payload
+         FROM webhook_inbox
+        WHERE provider = 'stripe' AND processed_at IS NULL AND attempts < 10
+        ORDER BY received_at
+        LIMIT 1
+        FOR UPDATE SKIP LOCKED`,
+    );
+    if (rows.length === 0) {
+      await client.query("COMMIT");
+      return 0;
+    }
+    const row = rows[0];
+
+    try {
+      if (row.event_type === "invoice.paid") {
+        // Idempotent state transition: a second apply changes nothing.
+        await client.query(
+          `UPDATE invoices
+              SET status = 'paid', paid_at = now()
+            WHERE stripe_invoice_id = $1 AND status <> 'paid'`,
+          [row.object_id],
+        );
+      }
+      // ... other event types
+
+      await client.query(
+        `UPDATE webhook_inbox SET processed_at = now()
+          WHERE provider = 'stripe' AND event_id = $1`,
+        [row.event_id],
+      );
+      await client.query("COMMIT");
+    } catch (err) {
+      await client.query("ROLLBACK");
+      await db.query(
+        `UPDATE webhook_inbox SET attempts = attempts + 1, last_error = $2
+          WHERE provider = 'stripe' AND event_id = $1`,
+        [row.event_id, String(err)],
+      );
+    }
+    return 1;
+  } finally {
+    client.release();
+  }
+}
+```
+
+`FOR UPDATE SKIP LOCKED` lets several workers run without picking the same row, and the row lock is held only for the duration of one event's transaction.
+
+Do not call slow third-party APIs while holding that transaction open. If processing an event means calling a fulfillment service or sending an email, either make that call idempotent with a key derived from the event id (see [idempotency keys and duplicate charges](/blog/idempotency-key-race-conditions)), or write an outbox row in the same transaction and let a separate sender deliver it. The reasons are covered in [long transactions around external calls](/blog/long-transactions-external-calls). Effects outside your database remain at-least-once no matter how carefully the inbox is built; the goal is to make repeating them harmless.
+
+The `attempts` cap turns a poison event into a visible row with a `last_error`, instead of a worker retrying it forever. Alert on rows that hit the cap and on the age of the oldest unprocessed row.
+
+## Duplicates, ordering, and two events for one change
+
+The inbox's primary key handles the simplest duplicate: the same event id delivered twice. Two harder cases remain.
+
+### Two event objects for one change
+
+Stripe says it may generate two separate Event objects for the same occurrence. Those have different event ids, so the inbox stores both. The defense belongs in the business logic: key the effect on the object, not the event. Stripe's suggestion is `data.object` id plus `event.type`. In practice that often means a unique constraint on the thing you create, such as one fulfillment per checkout session id or one ledger entry per invoice id, so the second event becomes a no-op.
+
+### Events out of order
+
+Because order is not guaranteed, a worker can see `invoice.paid` before `invoice.created`, or an older `customer.subscription.updated` after a newer one. Two approaches work:
+
+- **Guarded state transitions.** Write updates that only move forward (`status <> 'paid'`, or a version or timestamp column from the object you compare against). A late, older event then changes nothing.
+- **Treat the event as a notification and refetch.** Stripe notes you can "use the API to retrieve any missing objects," and its snapshot handler guidance says you can retrieve the API resource for the latest object definition. Fetching the current object by `object_id` in the worker sidesteps ordering entirely, at the cost of an API call per event and exposure to API rate limits.
+
+Do not reorder by the event's `created` field. Stripe's own docs warn against it, because distinct events can share a timestamp.
+
+### How long to keep dedup rows
+
+Automatic retries run for up to three days in live mode, but Stripe also allows manual resends: from the Dashboard "for up to 15 days after the event creation," and from the CLI "for up to 30 days." The dedup record has to outlive the longest of those, or a manual resend during an incident cleanup will be applied again. A reasonable shape is to keep the `(provider, event_id)` row and processed timestamp for longer than 30 days and prune the `payload` column sooner, since payloads can contain customer data you do not need to keep.
+
+## Trade-offs and when to add a queue
+
+- **Acknowledging after full processing** is simple and causes timeouts and duplicates under load. It is acceptable only for trivial, fast, idempotent handlers, and even then the next slow dependency breaks it.
+- **Acknowledging before a durable write** is fast and loses events on any crash. There is no configuration that makes it safe.
+- **The inbox table** uses the database you already operate, gives you an audit trail, and makes replay easy. It adds write load to the primary and needs pruning. During a large delivery spike, inserts compete with the rest of your workload for the same database.
+- **A managed queue** (SQS, Service Bus, or a provider integration such as Stripe's [Amazon EventBridge and Azure Event Grid destinations](https://docs.stripe.com/webhooks)) moves the buffer off your database and gives you retries and dead-letter queues. It adds a component, and most queues deliver at least once, so the consumer still needs the dedup and idempotent effects described above. See [at-least-once delivery and idempotent consumers](/blog/at-least-once-delivery-idempotent-consumers). If the handler enqueues instead of inserting, the rule is unchanged: return 200 only after the enqueue call has succeeded.
+- **Signature verification** costs a little CPU per request and is not optional. Stripe recommends combining it with an allowlist of its published IP addresses.
+
+## How to diagnose a lost or doubled webhook
+
+1. **Find the event in the provider's delivery log.** Stripe's Workbench shows each delivery's status code and the time of pending retries. A 200 with no matching business effect points to window 1. A timeout followed by a 200 points to window 2.
+2. **Search your logs and inbox for the event id.** If the provider shows 200 and your inbox has no row, the acknowledgment happened before durability.
+3. **Count deliveries per event id.** More than one is expected. More than one business effect per event id (or per object id and type) is the bug.
+4. **Check handler latency.** If the p99 handler latency approaches the provider's timeout, you are one slow dependency away from duplicates.
+5. **Verify the fix** by killing the process immediately after the 200 in a test (no event should be lost, because the row is committed), and by replaying the same event twice with the Stripe CLI (one inbox row, one business effect).
+
+## Checklist
+
+- Verify the signature on the raw body; return 400 on failure and store nothing.
+- Insert into an inbox with a unique key on provider and event id. Return 200 for new and duplicate events, 5xx if the insert fails.
+- Keep the handler free of business logic and outbound calls.
+- Process from the inbox in a worker; commit the processed marker with the business write.
+- Make effects idempotent per object and type, and guard state transitions against out-of-order events.
+- Retain dedup rows longer than the provider's manual resend window. Prune payloads earlier.
+- Alert on unprocessed age and on events that hit the attempt cap.
+
+## Sources
+
+- [Stripe Docs, Receive Stripe events in your webhook endpoint](https://docs.stripe.com/webhooks)
+- [GitHub Docs, Best practices for using webhooks](https://docs.github.com/en/webhooks/using-webhooks/best-practices-for-using-webhooks)
+- [PostgreSQL documentation, INSERT and ON CONFLICT](https://www.postgresql.org/docs/current/sql-insert.html)

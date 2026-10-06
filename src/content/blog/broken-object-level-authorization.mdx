@@ -1,0 +1,234 @@
+{/* DRAFT for author review. Sources verified 2026-10-06. Code samples are illustrative. */}
+
+A customer reports that changing the number at the end of an invoice URL showed them someone else's invoice. You check the endpoint. It requires a valid session, the session was valid, and the handler loaded the invoice by the id in the path. Authentication worked. What never ran was a decision that this caller may load this particular object. That gap is an insecure direct object reference (IDOR), which the OWASP API Security Top 10 calls Broken Object Level Authorization (BOLA) and ranks first in its 2023 edition. Missing object authorization is rarely a missing library. It is a missing habit: for every id in the request, being able to point at the line that decides "allowed." This post gives you that review habit, the query patterns that make the check hard to forget, and a two-user test that catches regressions.
+
+## Authentication is not object authorization
+
+OWASP's description is short: the attacker changes the object id sent in the request. It explains the bug's frequency in APIs by noting that servers usually lean on client-supplied parameters such as object ids instead of tracking client state themselves ([OWASP API1:2023](https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization)).
+
+Three things make it slip through review:
+
+- **The ids are everywhere.** OWASP notes that object ids can be integers, UUIDs, or arbitrary strings, and that they show up in path or query parameters, headers, and request bodies. A JSON body with `projectId`, `attachmentIds`, and `assigneeId` carries three references, and each one needs its own decision.
+- **The obvious check is not enough.** OWASP is explicit that comparing the session's user id (for example, from the JWT) with the id parameter "isn't a sufficient solution." That comparison only works for a `/users/:id` route. For an invoice, a document, or a project, the question is whether this user has a relationship to that object that grants this action, which takes a lookup.
+- **Endpoint permission feels like enough.** A route guard that says "must be logged in" or even "must be an admin" answers whether the caller may use the function. OWASP separates that from object-level checks: function-level gaps are a different category (Broken Function Level Authorization). You need both.
+
+The rule OWASP states is the one to enforce: any endpoint that takes an object id and acts on that object needs an object-level authorization check. Its prevention guidance says to run that check in every function that uses client input to reach a database record.
+
+The impact is broad. OWASP's own example scenarios include reading other stores' revenue by changing a shop name in a URL, controlling another person's car through a mobile API that did not check vehicle ownership, and deleting other users' documents through a GraphQL mutation that took only an id.
+
+## A review script for every id in the request
+
+Run this on every endpoint, starting with the ones that touch money, personal data, or files. It works in code review and in an audit.
+
+1. **List every object reference the request carries.** Path, query string, headers, body, nested arrays, GraphQL arguments, and ids inside uploaded files such as CSV imports. Include references that only set a relationship, such as `projectId` on a create.
+2. **For each one, point at the allow decision.** Name the file and line where the code decides this actor may perform this action on this object. "The route requires auth" is not an answer. If you cannot point at a line, you have found a candidate bug.
+3. **Check that the decision uses the object's real owner, not a client-supplied one.** A query like `WHERE id = $1 AND org_id = $2` where `$2` comes from the request body is still trusting the client. The tenant or user must come from the server-side session.
+4. **Follow nested resources.** For `/orgs/:orgId/projects/:projectId/files/:fileId`, verify that the caller belongs to the org, that the project belongs to that org, and that the file belongs to that project. Checking only the first segment lets a caller pair their own org id with someone else's file id.
+5. **Follow writes that create relationships.** Creating a task with `projectId` from the body must confirm the caller may add to that project. Otherwise users can attach data to, or read data through, another tenant's objects.
+6. **Follow the id into background work.** An export, report, or bulk job usually takes ids at request time and runs later. Confirm the worker re-checks authorization for the actor who requested it, at run time, instead of trusting the payload.
+7. **Look for filter-after-fetch.** A broad query followed by an `if` or a `.filter` in application code is the same bug with extra steps. A single forgotten branch, a pagination path, or a count query that skips the filter leaks data.
+8. **Record the result.** For each endpoint, write down the reference, the decision point, and the test that proves it. That table becomes your regression checklist.
+
+<Figure caption="Each segment of a nested route needs its own check against the one before it.">
+  <BolaNestedChecks />
+</Figure>
+
+The places this most often goes wrong are the ones built second: CSV and PDF exports, admin-adjacent reporting endpoints, bulk actions that accept an array of ids, file download links, webhooks and jobs that rehydrate objects by id, and GraphQL resolvers for nested fields, where the parent was authorized and the child was assumed to be.
+
+## Scope the query, not the result
+
+The most reliable fix is to make the authorization part of the data access itself. The OWASP IDOR cheat sheet's recommended pattern is to scope the lookup to the current user, as in `current_user.projects.find(params[:id])`, rather than finding the object globally and checking afterward ([OWASP IDOR Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html)). The cheat sheet's Spring example uses the same idea, `findByIdAndOwnerId(id, currentUser().getId())`.
+
+<Figure caption="Both versions authenticate the caller. Only the second makes an allow decision about the object, inside the query itself.">
+  <BolaMissingDecision />
+</Figure>
+
+Here is the bug and the fix in a TypeScript service using `pg`.
+
+```ts
+// Illustrative. BEFORE: authenticated, but no object-level decision.
+app.get("/api/invoices/:id", requireSession, async (req, res) => {
+  const { rows } = await db.query("SELECT * FROM invoices WHERE id = $1", [req.params.id]);
+  if (!rows[0]) return res.status(404).end();
+  res.json(rows[0]); // Any logged-in user can read any invoice.
+});
+```
+
+```ts
+// Illustrative. AFTER: every invoice read goes through a scoped repository.
+// There is deliberately no unscoped getById exported from this module.
+type Actor = { userId: string; orgId: string; roles: string[] };
+
+export function invoicesFor(actor: Actor) {
+  return {
+    async get(id: string) {
+      const { rows } = await db.query(
+        `SELECT * FROM invoices WHERE id = $1 AND org_id = $2`,
+        [id, actor.orgId], // orgId comes from the server-side session, never the request
+      );
+      return rows[0] ?? null; // null for "missing" and "not yours" alike
+    },
+
+    // Bulk ids: authorize the whole set in the predicate, then require all of them.
+    async getMany(ids: string[]) {
+      const unique = [...new Set(ids)];
+      const { rows } = await db.query(
+        `SELECT * FROM invoices WHERE id = ANY($1::uuid[]) AND org_id = $2`,
+        [unique, actor.orgId],
+      );
+      if (rows.length !== unique.length) return null; // reject the set; useful for bulk actions and alerting
+      return rows;
+    },
+
+    async markPaid(id: string) {
+      if (!actor.roles.includes("billing_admin")) return null; // action-level rule
+      const { rows } = await db.query(
+        `UPDATE invoices SET status = 'paid' WHERE id = $1 AND org_id = $2 RETURNING id`,
+        [id, actor.orgId],
+      );
+      return rows[0] ?? null;
+    },
+  };
+}
+
+app.get("/api/invoices/:id", requireSession, async (req, res) => {
+  const invoice = await invoicesFor(req.actor).get(req.params.id);
+  if (!invoice) return res.status(404).end();
+  res.json(invoice);
+});
+```
+
+Details worth copying:
+
+- **The predicate does the work.** Rows the actor may not see never leave the database, so no later branch can leak them, and a count or pagination query built on the same scope is correct too.
+- **Bulk writes are all or nothing.** For reads, returning only the scoped subset leaks nothing, because missing and forbidden ids drop out the same way. For writes, a request that partly applies is surprising to the caller, and rejecting the whole request turns cross-tenant probing into errors you can count and alert on.
+- **Writes are scoped the same way.** `UPDATE ... WHERE id = $1 AND org_id = $2` cannot modify another tenant's row even if a role check is wrong.
+- **Missing and forbidden look the same.** Returning 404 for both avoids confirming that an id exists. Use 403 only where the caller can already see the object and lacks a specific action.
+- **Batch the checks.** Authorizing a list one object at a time in a loop produces the query pattern described in [N+1 queries in Postgres](/blog/n-plus-one-queries-postgres). Scope the list query instead.
+
+Tenant scoping is necessary and not always sufficient. Inside one organization, a document may be private to its author or to a team. Encode that in the same predicate (a join to memberships or shares) rather than in a later check.
+
+## Put the check where a new endpoint cannot skip it
+
+The scoped repository works only if nobody can go around it. OWASP's authorization guidance asks for permissions to be validated on every request, whatever initiated it, and for enforcement that is configured application-wide instead of added method by method ([OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)). It also says the application must always decide, explicitly or implicitly, to deny or permit. In practice:
+
+- **Make the safe path the only path.** Export scoped repositories, not raw table access. Flag direct queries against protected tables in review or with a lint rule.
+- **Deny by default at the route layer.** Require every route to declare its policy, and fail startup or a test when one does not. A new endpoint should be broken until someone writes its rule.
+- **Pass the actor, not the id, into jobs.** Background workers construct the same scoped repository from the requesting actor and re-run the check, because permissions can change between enqueue and execution.
+
+### Row-level security as a backstop
+
+PostgreSQL row-level security can enforce tenant scope in the database, so a raw query that forgets the predicate still returns nothing. Once enabled, if no policy exists the default is deny ([PostgreSQL row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)).
+
+```sql
+-- Illustrative tenant isolation for one table.
+ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE invoices FORCE ROW LEVEL SECURITY;  -- apply to the table owner too
+
+CREATE POLICY invoices_by_org ON invoices
+  USING (org_id = current_setting('app.org_id')::uuid)
+  WITH CHECK (org_id = current_setting('app.org_id')::uuid);
+
+-- Per transaction, from the application, using the session's org:
+-- SELECT set_config('app.org_id', $1, true);  -- true = local to this transaction
+```
+
+Know its limits before you rely on it. Superusers and roles with `BYPASSRLS` always bypass it, and table owners bypass it unless you set `FORCE ROW LEVEL SECURITY`. Referential integrity checks such as unique and foreign key constraints bypass policies, which the docs warn can create covert channels for leaking information. Setting the tenant with a transaction-local setting matters if you use a connection pool, so one request's tenant cannot linger on a reused connection. RLS handles tenant boundaries well and per-user sharing rules less naturally, so keep the application-level scope as well.
+
+## Test it with two users
+
+OWASP's prevention list ends with a rule for the pipeline: write tests for the authorization mechanism, and do not deploy changes that make them fail. The IDOR cheat sheet describes the method: create separate accounts, assign objects to each, then authenticate as one and try to reach the other's objects across read, update, delete, and export ([OWASP IDOR Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html)).
+
+```ts
+// Illustrative Vitest + supertest suite. seedTenant() and tokenFor() are your own test helpers.
+import { describe, it, expect, beforeAll } from "vitest";
+import request from "supertest";
+import { app } from "../src/app";
+import { seedTenant, tokenFor } from "./helpers";
+
+let owner: { token: string; invoiceId: string };
+let intruder: { token: string; invoiceId: string };
+
+beforeAll(async () => {
+  const a = await seedTenant("org-a"); // creates a user and one invoice in org A
+  const b = await seedTenant("org-b");
+  owner = { token: await tokenFor(a.user), invoiceId: a.invoiceId };
+  intruder = { token: await tokenFor(b.user), invoiceId: b.invoiceId };
+});
+
+type Call = { name: string; method: "get" | "patch" | "post" | "delete"; path: (id: string) => string; body?: (id: string) => object };
+
+const crossTenantCalls: Call[] = [
+  { name: "read", method: "get", path: (id) => `/api/invoices/${id}` },
+  { name: "update", method: "patch", path: (id) => `/api/invoices/${id}`, body: () => ({ memo: "x" }) },
+  { name: "mark paid", method: "post", path: (id) => `/api/invoices/${id}/mark-paid` },
+  { name: "delete", method: "delete", path: (id) => `/api/invoices/${id}` },
+  { name: "export", method: "post", path: () => "/api/exports/invoices", body: (id) => ({ ids: [id] }) },
+  { name: "mixed bulk export", method: "post", path: () => "/api/exports/invoices",
+    body: (id) => ({ ids: [intruder.invoiceId, id] }) },
+];
+
+describe("invoice object authorization", () => {
+  it.each(crossTenantCalls)("denies another tenant's invoice: $name", async (call) => {
+    const id = owner.invoiceId;
+    const res = await request(app)[call.method](call.path(id))
+      .set("Authorization", `Bearer ${intruder.token}`)
+      .send(call.body?.(id));
+    expect([403, 404]).toContain(res.status);
+  });
+
+  it("still allows the owner", async () => {
+    const res = await request(app)
+      .get(`/api/invoices/${owner.invoiceId}`)
+      .set("Authorization", `Bearer ${owner.token}`);
+    expect(res.status).toBe(200);
+  });
+});
+```
+
+Two cases deserve attention. The mixed bulk export (one id of their own, one of yours) catches handlers that authorize the first id and trust the rest. The owner test guards against the opposite regression, a scope so tight it blocks legitimate access. Once this runs for one resource, generate it from your route list so every new endpoint that takes an id gets the same two-user check by default.
+
+In manual testing, do the same thing by hand: two browsers, two accounts in two tenants, and replay requests from one session with ids from the other.
+
+## A UUID is not an authorization scheme
+
+Random identifiers help. OWASP's BOLA prevention list recommends random, unpredictable GUIDs for record ids, because sequential integers invite enumeration. The IDOR cheat sheet places that in context: it calls complex identifiers an additional defense-in-depth measure and reminds you that access control still matters with them.
+
+The reason is that ids are not secrets. They appear in URLs that get pasted into chats and tickets, in browser history, in referrer headers, in logs, in exported spreadsheets, in API responses that list related objects, and in notification emails. A former member of a team keeps every id they ever saw. If knowing the id is enough to load the object, the id has become a bearer token that you never designed, rotate, or revoke. Use unpredictable ids to cut down enumeration, and still check every one.
+
+The same reasoning applies to shareable links. If you want "anyone with the link" access, model it as an explicit, revocable share token with its own scope and expiry, separate from the object's primary key.
+
+## Trade-offs to weigh
+
+**Load then check** is easy to add to existing code: fetch by id, compare the owner, return 404. It loads data you will discard, can leak through timing or error differences between "missing" and "forbidden," and breaks the moment someone adds a code path that uses the object before the check. Use it as a stopgap while you move to scoped queries.
+
+**Scope in the query** is cleaner and keeps forbidden rows in the database. It is easy to forget on reporting and export paths, which tend to be written as one-off SQL. Bring those under the same repository or the same RLS policy.
+
+**A central helper or policy layer** gives consistent decisions and one place to audit. It also creates a single bypass: one raw query, one ORM call that skips the helper, one admin script reused in a request path. Pair it with a lint rule or review check for direct table access, and with the two-user tests.
+
+**Row-level security** catches forgotten predicates at the database, at the cost of per-transaction setup, bypass rules you must understand, and policies that are harder to express for fine-grained sharing.
+
+**Hiding ids** reduces enumeration and does nothing for a user who has a valid id they should no longer use.
+
+Getting this right matters beyond the incident itself. In the [Stack Overflow 2025 Developer Survey](https://survey.stackoverflow.co/2025/work), security or privacy concerns ranked first among the things that would make developers reject a tech tool. A cross-tenant data leak through a guessable id is the concrete version of that concern. If the leaked data was served from a cache keyed without the user, you have a second, related bug; see [Next.js caches serving wrong-user data](/blog/nextjs-cache-stale-data).
+
+## Checklist for missing object authorization
+
+- For every endpoint, list each object reference in path, query, headers, and body, and point at the allow decision for each.
+- Take the user and tenant from the server-side session, never from the request.
+- Scope reads, writes, counts, and pagination in the query predicate. Remove unscoped `getById` helpers for protected tables.
+- Authorize bulk ids as a set in the query, and reject bulk writes if any id is not visible.
+- Re-check authorization inside export, report, and background workers for the requesting actor.
+- Return 404 for objects the caller cannot see.
+- Deny by default: a route without a declared policy should fail tests.
+- Run two-user tests across read, update, delete, and export, including a mixed bulk request.
+- Use unpredictable ids to slow enumeration, and never as the control.
+- Consider row-level security as a backstop, with `FORCE ROW LEVEL SECURITY` and a clear view of what bypasses it.
+
+## Sources
+
+- [OWASP API Security Top 10 2023, API1:2023 Broken Object Level Authorization](https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization)
+- [OWASP Cheat Sheet Series, Insecure Direct Object Reference Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html)
+- [OWASP Cheat Sheet Series, Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)
+- [PostgreSQL, row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+- [Stack Overflow Developer Survey 2025, Work](https://survey.stackoverflow.co/2025/work)

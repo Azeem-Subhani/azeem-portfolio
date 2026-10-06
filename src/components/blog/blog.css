@@ -1,0 +1,13 @@
+/* Post body styles that utilities can't express. */
+
+/* Shiki emits --shiki-light / --shiki-dark per token (defaultColor: false).
+   Pick the pair that matches next-themes' class on <html>. */
+.blog-prose pre.shiki,
+.blog-prose pre.shiki span {
+  color: var(--shiki-dark);
+}
+
+.light .blog-prose pre.shiki,
+.light .blog-prose pre.shiki span {
+  color: var(--shiki-light);
+}

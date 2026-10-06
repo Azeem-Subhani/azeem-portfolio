@@ -1,0 +1,142 @@
+{/* DRAFT for author review. Stated facts come from the track-booking entry in src/content/projects.ts: typed API clients, token refresh, route guards, and request validation across the Django API removed a class of auth-expiry bugs from the booking flow. The rotating-refresh-token race is presented as a common cause, not a claim about the client's auth server. Code samples are illustrative. */}
+
+A customer picks a session, fills in their details, and taps pay. The request fails, because their access token expired somewhere around step three. Bugs like this are maddening: rare in testing, common in production, and always at the worst moment in the funnel.
+
+On the [Track Booking Platform](/projects/track-booking), typed API clients, token refresh, route guards, and request validation across the Django API removed a class of auth-expiry bugs from the booking flow. This post walks through why those bugs happen, and how I fit those four layers together.
+
+<Figure
+  wide
+  src="/images/blog/track-booking-schedule.webp"
+  width={1600}
+  height={897}
+  alt="Operator schedule view beside the customer booking flow on a phone, showing a session total and a Continue button."
+  caption="Where it hurts: an expired session in the customer flow (right) turns a sale into a support ticket. Mockup with sample data."
+/>
+
+## Why sessions expire mid-checkout
+
+Short-lived access tokens are the right call for security: if one leaks, it's only useful for minutes. The trade-off is that a customer who takes their time, comparing sessions, checking their calendar, or finding their card, will outlive their token in the middle of a flow.
+
+That alone isn't a bug. A well-behaved client sees the `401`, refreshes the session, and retries, and the customer never notices. The bugs come from *how* the refresh happens.
+
+## Where these bugs come from
+
+Auth-expiry bugs usually aren't one mistake. They appear when every screen calls the API in its own slightly different way:
+
+- one component checks for a `401` and redirects, another swallows it and shows an empty list
+- two requests hit an expired token at the same moment, and both try to refresh
+- a response shape changes on the server, and the client only finds out at runtime
+
+The second one is the nastiest, because it depends on timing. Here's how it plays out when refresh tokens rotate, meaning each refresh token can be used once and is replaced on use. That's a common, sensible setup:
+
+<Figure caption="Two 401s, two refreshes. The second refresh presents a token the first one already used, and the auth server treats that as suspicious.">
+  <RefreshRace />
+</Figure>
+
+From the customer's side, nothing happened. They tapped pay, and they're looking at a sign-in screen. From the logs' side, it looks like a security event: a refresh token being reused. That's exactly the kind of bug that never reproduces on a developer's laptop, where requests rarely overlap.
+
+## One client, typed end to end
+
+The fix starts with a single API client that every screen goes through. No component calls `fetch` directly. Each endpoint gets a typed function, so the request and response shapes are checked at compile time:
+
+```ts
+// Illustrative. One typed function per endpoint; components never build URLs.
+import { z } from "zod";
+
+const Session = z.object({
+  id: z.string(),
+  startsAt: z.string().datetime(),
+  seatsLeft: z.number().int().nonnegative(),
+  priceCents: z.number().int(),
+});
+
+export const api = {
+  sessions: {
+    // Validates the response at runtime, and gives callers a real type.
+    list: (venue: string, day: string) =>
+      request(`/venues/${venue}/sessions?day=${day}`, z.array(Session)),
+  },
+};
+
+export type Session = z.infer<typeof Session>;
+```
+
+When the Django API renames a field, the TypeScript build fails, or the schema check fails loudly in staging. Either beats a checkout page that quietly renders `undefined`.
+
+## One refresh path
+
+Inside that client, token refresh happens in exactly one place. When requests fail at the same moment, they all wait on the same refresh instead of each starting their own:
+
+<Figure caption="The fix: the first 401 starts a refresh, and every other 401 waits on it. One refresh, however many requests were in flight.">
+  <RefreshSingleFlight />
+</Figure>
+
+The core of it is a shared promise:
+
+```ts
+// Illustrative: one in-flight refresh shared by every caller.
+let refreshing: Promise<void> | null = null;
+
+async function request<T>(path: string, schema: z.ZodType<T>, init: RequestInit = {}): Promise<T> {
+  let res = await fetch(API_URL + path, { ...init, credentials: "include" });
+
+  if (res.status === 401) {
+    // The first caller starts the refresh; everyone else awaits the same one.
+    refreshing ??= refreshSession().finally(() => {
+      refreshing = null;
+    });
+    await refreshing;
+    res = await fetch(API_URL + path, { ...init, credentials: "include" });
+  }
+
+  if (!res.ok) throw new ApiError(res.status, await res.text());
+  return schema.parse(await res.json());
+}
+```
+
+Two details matter:
+
+1. **Retry once, not forever.** If the request still returns `401` after a refresh, the session really is gone. Send the customer to sign in, and keep what they'd entered so they don't start over.
+2. **When the refresh fails, fail every waiter at once.** All requests that were waiting should get the same error, so the UI shows one sign-in prompt instead of five.
+
+<Callout title="Keep the form state">
+  If a session truly can't be refreshed, the worst outcome is losing the customer's half-finished booking. Save the in-progress form before redirecting to sign in, and restore it after.
+</Callout>
+
+## Guards at the edges
+
+The client handles expiry *during* a flow. Two more layers keep bad state from getting that far in the first place:
+
+<Figure caption="Each layer catches a different failure, at a different time. Together they turn auth expiry from a bug class into a handled case.">
+  <AuthLayers />
+</Figure>
+
+- **Route guards** check the session before a protected page renders. Customers don't fill out a form they can't submit, and operators don't see a back-office screen flash before a redirect.
+- **Request validation** on the Django API rejects malformed input with a clear, structured error. The typed client can turn that into a message the customer understands, instead of a generic "something went wrong."
+
+```python
+# Illustrative Django REST Framework serializer: reject bad input with field-level errors.
+class CreateReservationSerializer(serializers.Serializer):
+    session_id = serializers.UUIDField()
+    drivers = serializers.IntegerField(min_value=1, max_value=4)
+    promo_code = serializers.CharField(required=False, allow_blank=True, max_length=32)
+
+    def validate_session_id(self, value):
+        if not Session.objects.for_venue(self.context["venue"]).filter(id=value).exists():
+            raise serializers.ValidationError("That session isn't available.")
+        return value
+```
+
+{/* Author: add a short, non-sensitive note on how tokens are stored (cookie vs memory) and why. Don't publish token lifetimes, endpoints, or anything security-sensitive. */}
+
+## What changed
+
+The result on the Track Booking Platform: typed API clients and token refresh removed a class of auth-expiry bugs from the booking flow. There's no clever trick here. The fix is that every call goes through one door, every refresh goes through one path, and the edges reject bad state early.
+
+{/* Author: if you have a real before/after (support tickets, error rates, checkout completion), add it here. Only use real numbers. */}
+
+## The takeaway
+
+If auth bugs keep popping up in different places, the cause is usually the call sites, not the auth server. Route every API call through one typed client, put every refresh on one shared path, and guard the edges. Most of the bug class goes away, and the bugs that remain at least fail in one place you can see.
+
+Dealing with something similar? [Let's talk](/contact).

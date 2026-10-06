@@ -1,0 +1,155 @@
+{/* DRAFT for author review. Stated facts come from the track-booking entry in src/content/projects.ts: five white-label venues, one shared reservation and payments engine, React/Next.js/TypeScript + Django, Stripe for reservations, stored cards, gift certificates, credits, and promo codes, plus the operator back office (reservations, CRM, fleet, event scheduling, payments, reporting). Everything framed as "how I approach it" is advice, not a claim about the client build. Code samples are illustrative. */}
+
+Motorsports venues sell an odd mix of things: track time, driving experiences, events, gift certificates. Each one wants a booking site that looks like its own brand, and none of them wants to pay for, or maintain, a separate reservation and payments system.
+
+On the [Track Booking Platform](/projects/track-booking) I built customer booking flows and the operator back office for five venues. Each venue runs its own branded booking site, and all five share one reservation and payments engine.
+
+This post covers why that shape works, what has to be shared and what can vary, and the costs you take on when five businesses depend on one codebase.
+
+## The shape of the system
+
+From the outside, there are five booking sites. Underneath, there is one product:
+
+<Figure caption="Five branded sites, one frontend codebase, one booking API. PostgreSQL holds the records and Stripe holds the money.">
+  <BookingArchitecture />
+</Figure>
+
+- **One frontend codebase** in React, Next.js, and TypeScript renders every venue's customer site.
+- **One Django API** owns reservations, CRM, fleet, and event scheduling for every venue.
+- **One database and one Stripe integration** sit behind it.
+
+The operator back office runs on the same engine. Staff work with reservations, CRM, fleet management, event scheduling, payments, and reporting in one console instead of five.
+
+## Why one engine
+
+The alternative is a stack per venue: copy the codebase, change the logo, deploy it again. It's the fastest way to launch venue number two. By venue five, it's the slowest way to do anything else.
+
+<Figure caption="The hard parts of a booking product (availability, checkout, reporting) only get written, tested, and fixed once.">
+  <StacksVsEngine />
+</Figure>
+
+With five copies, every bug fix ships five times, and so does every Stripe change and every new product type. The copies drift apart, because a fix that's urgent for one venue rarely gets backported to the other four on the same day. Within a year, "the booking system" is really five slightly different booking systems.
+
+With a shared engine, a new venue is configuration, not a fork.
+
+## What varies per venue
+
+The question that shapes the whole design is: what is actually different between venues? In a booking business it's usually less than it first looks. Here's how I split it:
+
+- **Brand**: name, colors, logo, imagery, and the copy on the customer site.
+- **Catalog**: the sessions, experiences, and events the venue sells, and their prices.
+- **Operations**: the venue's fleet, schedule, and staff, all visible in the back office.
+
+Everything else is the engine: how availability is calculated, how a checkout works, how a refund flows back, and how a report adds up. Those behave the same for every venue, because they're the parts that are expensive to get wrong.
+
+In code, the per-venue part should be a typed object rather than conditionals scattered through components. The shape below is illustrative, but the principle is the one that matters:
+
+```ts
+// Illustrative. Everything a venue can change lives here, typed.
+// If a request doesn't fit this shape, it isn't configuration (see "Special cases").
+type VenueConfig = {
+  slug: string;
+  brand: {
+    name: string;
+    logo: string;
+    colors: { primary: string; surface: string };
+  };
+  catalog: {
+    currency: "USD";
+    productTypes: Array<"track-time" | "experience" | "event" | "gift-certificate">;
+  };
+  checkout: {
+    allowPromoCodes: boolean;
+    allowGiftCertificates: boolean;
+  };
+};
+```
+
+{/* Author: add how a venue is resolved per request (domain, path, or header) and where VenueConfig actually lives (database row, CMS, or code). */}
+
+<Figure
+  wide
+  src="/images/blog/track-booking-fleet.webp"
+  width={1600}
+  height={897}
+  alt="Operator console fleet view listing vehicles across venues, beside the customer booking flow on a phone."
+  caption="Operations stay venue-aware inside one console: fleet, schedule, and bookings filter by venue or show the whole group. Mockup with sample data."
+/>
+
+## The payments surface
+
+Payments is where a shared engine pays off most. Stripe covers the platform's whole transaction surface:
+
+- reservations
+- stored cards for returning customers
+- gift certificates
+- account credits
+- promo codes
+
+Each one is easy to get slightly wrong. A gift certificate that can be redeemed twice is a real loss. So is a promo code that stacks when it shouldn't, or a credit that gets applied after the card has already been charged. These are exactly the bugs you don't want to fix five times.
+
+<Figure caption="Simplified: however many instruments a customer combines, checkout resolves them to one amount due before anything reaches Stripe.">
+  <CheckoutInstruments />
+</Figure>
+
+The rule I hold to: **every instrument resolves to one amount due on the server before a card is touched.** The browser can show a running total, but the API computes the real one. That way there's exactly one place where discounts, balances, and credits combine, and one place to test.
+
+<Callout title="Why the server decides the total">
+  A total computed in the browser is a suggestion. Promo rules, gift balances, and credits change between page load and payment, and a customer can edit anything the browser sends. Re-pricing on the server at checkout time is what keeps a five-venue engine honest.
+</Callout>
+
+## Keeping venues apart
+
+Sharing an engine means sharing tables. Every reservation, customer, vehicle, and payout row belongs to exactly one venue, and every query has to respect that. The failure mode is quiet: a report that adds up another venue's revenue, or a customer search that returns someone from across town.
+
+I don't leave that to each developer to remember. Scope by venue at the lowest layer you can, so the default query is already safe:
+
+```python
+# Illustrative Django pattern: querysets are venue-scoped unless you opt out.
+class VenueQuerySet(models.QuerySet):
+    def for_venue(self, venue):
+        return self.filter(venue=venue)
+
+
+class Reservation(models.Model):
+    venue = models.ForeignKey("venues.Venue", on_delete=models.PROTECT)
+    # ...
+
+    objects = VenueQuerySet.as_manager()
+
+
+# In views and API handlers, the venue comes from the request, never the payload.
+def list_reservations(request):
+    return Reservation.objects.for_venue(request.venue).order_by("starts_at")
+```
+
+Group-level reporting is the deliberate exception. It's still a real feature, because an operator does want "revenue across all five venues." But it should be explicit and permission-checked, never the default.
+
+{/* Author: confirm how tenant scoping actually works on the platform before publishing; replace the sample with the real pattern if it differs. */}
+
+## What it costs
+
+A shared engine isn't free. These are the trade-offs worth planning for from day one:
+
+- **Blast radius.** A bad deploy reaches every venue at once. Staged rollouts, error monitoring, and a fast rollback stop being optional.
+- **Tenant isolation.** Covered above. It has to be enforced by the design, and tested, because the bug is invisible until it's embarrassing.
+- **Shared release cadence.** Venue A can't stay on last month's checkout while venue B gets the new one, unless you build that switch on purpose.
+- **The pull toward special cases.** Covered next. It's the cost that quietly turns one engine back into five.
+
+## Special cases
+
+Sooner or later one venue asks for something nobody else wants. How you answer decides whether the engine survives. My default flow:
+
+<Figure caption="Configuration first, then a shared feature behind a flag. A branch in the shared code for a single venue is the last resort, not the first.">
+  <ConfigOrFork />
+</Figure>
+
+Most requests turn out to be configuration once you ask what the venue actually needs: different copy, a different cut-off time, a pricing rule. The rest usually help more than one venue, so they become a feature that's off by default. What's left gets a real conversation about whether it belongs in the engine at all.
+
+## When to choose this
+
+If you run several brands, locations, or franchisees on the same business model, a shared engine with per-brand configuration is usually the right default. The extra discipline it takes up front, a typed config, venue-scoped data, and a server-side total, costs far less than keeping parallel systems in sync later.
+
+It's the wrong choice when the businesses don't actually share a model. If one venue sells memberships and another sells one-off events, forcing them into one engine leads to the special-case problem on day one.
+
+Planning something similar? [Get in touch](/contact).
