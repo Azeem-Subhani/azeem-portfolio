@@ -69,6 +69,11 @@ export const metadata: Metadata = {
   },
 };
 
+// Blog routes hide their entrance content until hydration. If hydration has not happened
+// by this many ms (JS blocked, or very slow), the head timer releases the page as
+// "fallback": content stays readable and the entrance is skipped.
+const BLOG_MOTION_FALLBACK_MS = 2000;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -80,11 +85,10 @@ export default function RootLayout({
       className={`${instrumentSerif.variable} ${inter.variable}`}
     >
       <head>
-        {/* Only blog components clear the pending flag, so only blog routes may set it. */}
+        {/* Blog routes only. Hide entrance content until hydration, but release it after the timeout. */}
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              'var d=document.documentElement,p=location.pathname;if((p==="/blog"||p.indexOf("/blog/")===0)&&(!window.matchMedia||!window.matchMedia("(prefers-reduced-motion: reduce)").matches))d.dataset.blogMotion="pending";try{var s=sessionStorage.getItem("azeem:intro-seen");d.dataset.introState=s?"seen":"fresh";if(!s)d.dataset.heroReveal="pending"}catch{d.dataset.introState="fresh";d.dataset.heroReveal="pending"}',
+            __html: `var d=document.documentElement,p=location.pathname;if((p==="/blog"||p.indexOf("/blog/")===0)&&(!window.matchMedia||!window.matchMedia("(prefers-reduced-motion: reduce)").matches)){d.dataset.blogMotion="pending";setTimeout(function(){if(d.dataset.blogMotion==="pending")d.dataset.blogMotion="fallback"},${BLOG_MOTION_FALLBACK_MS})}try{var s=sessionStorage.getItem("azeem:intro-seen");d.dataset.introState=s?"seen":"fresh";if(!s)d.dataset.heroReveal="pending"}catch{d.dataset.introState="fresh";d.dataset.heroReveal="pending"}`,
           }}
         />
       </head>

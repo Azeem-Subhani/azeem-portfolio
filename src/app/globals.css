@@ -562,8 +562,9 @@ html[data-blog-motion="pending"] .blog-post [data-blog-reveal]:not(
     animation: service-up 0.62s cubic-bezier(0.16, 1, 0.3, 1) calc(1.1s + var(--i) * 0.08s) backwards;
   }
 
-  /* Hold the entrance while the first-visit site intro covers the page. */
-  html[data-intro-state="fresh"] :is(.service-hero, .cloud-hero-copy, .why-hero, .blog-hero, .blog-post) :is(
+  /* Hold the entrance while the first-visit site intro covers the page. A blog page the
+   * timer released (see layout.tsx) has no intro coming, so it is not held. */
+  html[data-intro-state="fresh"]:not([data-blog-motion="fallback"]) :is(.service-hero, .cloud-hero-copy, .why-hero, .blog-hero, .blog-post) :is(
       [data-service-kicker],
       .service-hero-word,
       [data-service-actions],

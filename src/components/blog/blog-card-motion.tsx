@@ -6,21 +6,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { INTRO_COMPLETE_EVENT } from "@/components/motion/site-intro";
 import { afterRouteScroll, revealStart } from "@/lib/reveal-visibility";
+import { activateBlogMotion, prepareBlogMotion, takeBlogMotionFallback } from "@/components/blog/blog-motion-flag";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const EASE = "power3.out";
-
-function activateBlogMotion() {
-  const root = document.documentElement;
-  if (root.dataset.blogMotion === "pending") root.dataset.blogMotion = "active";
-}
-
-function prepareBlogMotion() {
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    document.documentElement.dataset.blogMotion = "pending";
-  }
-}
 
 type Sets = {
   armed: Set<string>;
@@ -166,6 +156,8 @@ export function useBlogCardReveal(rootRef: RefObject<HTMLElement | null>, signat
     return afterRouteScroll(() => {
       const root = rootRef.current;
       if (!root) return;
+      // The timer already released this page. Leave `opened` unset so filters stay static too.
+      if (takeBlogMotionFallback()) return;
       opened.current = true;
       const cleanup = armCards(root, true, sets.current);
       activateBlogMotion();
