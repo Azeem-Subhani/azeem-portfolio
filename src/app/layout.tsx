@@ -80,10 +80,11 @@ export default function RootLayout({
       className={`${instrumentSerif.variable} ${inter.variable}`}
     >
       <head>
+        {/* Only blog components clear the pending flag, so only blog routes may set it. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{var s=sessionStorage.getItem("azeem:intro-seen");document.documentElement.dataset.introState=s?"seen":"fresh";if(!s)document.documentElement.dataset.heroReveal="pending"}catch{document.documentElement.dataset.introState="fresh";document.documentElement.dataset.heroReveal="pending"}',
+              'var d=document.documentElement,p=location.pathname;if((p==="/blog"||p.indexOf("/blog/")===0)&&(!window.matchMedia||!window.matchMedia("(prefers-reduced-motion: reduce)").matches))d.dataset.blogMotion="pending";try{var s=sessionStorage.getItem("azeem:intro-seen");d.dataset.introState=s?"seen":"fresh";if(!s)d.dataset.heroReveal="pending"}catch{d.dataset.introState="fresh";d.dataset.heroReveal="pending"}',
           }}
         />
       </head>
