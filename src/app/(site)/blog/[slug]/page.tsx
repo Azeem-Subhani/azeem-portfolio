@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AuthorCard } from "@/components/blog/author-card";
+import { BlogPostMotion } from "@/components/blog/blog-post-motion";
 import { PostCover } from "@/components/blog/post-cover";
 import { PostToc } from "@/components/blog/post-toc";
 import { RelatedPosts } from "@/components/blog/related-posts";
+import { RisingWords } from "@/components/blog/rising-words";
 import { blogPath, formatPostDate, getPost, posts } from "@/content/blog";
 import { profile } from "@/content/profile";
 import { getProjectBySlug } from "@/content/projects";
@@ -95,7 +97,8 @@ export default async function BlogPostPage({ params }: Props) {
   };
 
   return (
-    <article className="mx-auto max-w-6xl px-6 pb-24 pt-32 sm:pt-40">
+    <BlogPostMotion>
+    <article className="blog-post mx-auto max-w-6xl px-6 pb-24 pt-32 sm:pt-40">
       <script
         type="application/ld+json"
         // Escape "<" so post text can never close the script tag early.
@@ -104,20 +107,20 @@ export default async function BlogPostPage({ params }: Props) {
         }}
       />
 
-      <header className="mx-auto max-w-3xl">
-        <p className="label-eyebrow text-accent-readable">
+      <header className="blog-hero mx-auto max-w-3xl">
+        <p data-service-kicker className="label-eyebrow text-accent-readable">
           <Link href="/blog" className="hover:text-foreground">
             Blog
           </Link>
           {post.draft ? " · Draft" : null}
         </p>
-        <h1 className="mt-5 font-display text-[clamp(2.75rem,6vw,4.5rem)] font-normal leading-[1] tracking-[-0.03em]">
-          {post.title}
+        <h1 className="blog-hero-title mt-5 font-display text-[clamp(2.75rem,6vw,4.5rem)] font-normal leading-[1] tracking-[-0.03em]">
+          <RisingWords text={post.title} mask />
         </h1>
-        <p className="mt-6 max-w-[60ch] text-lg leading-[1.6] text-muted-foreground">
-          {post.description}
+        <p className="blog-hero-lede mt-6 max-w-[60ch] text-lg leading-[1.6] text-muted-foreground">
+          <RisingWords text={post.description} />
         </p>
-        <p className="mt-6 text-sm text-muted-foreground">
+        <p data-blog-meta className="mt-6 text-sm text-muted-foreground">
           {profile.name}
           {" · "}
           <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
@@ -131,7 +134,7 @@ export default async function BlogPostPage({ params }: Props) {
         </p>
       </header>
 
-      <div className="mx-auto mt-10 max-w-4xl">
+      <div data-blog-cover className="mx-auto mt-10 max-w-4xl">
         <PostCover post={post} priority />
       </div>
 
@@ -143,11 +146,11 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           {related.length > 0 ? (
-            <aside aria-label="Related work" className="mt-20 border-t border-border pt-10">
-              <h2 className="text-sm font-medium">Related work</h2>
+            <aside data-blog-reveal aria-label="Related work" className="mt-20 border-t border-border pt-10">
+              <h2 data-blog-reveal-title className="text-sm font-medium">Related work</h2>
               <ul className="mt-5 grid gap-3 sm:grid-cols-2">
                 {related.map((item) => (
-                  <li key={item.href}>
+                  <li key={item.href} data-blog-reveal-item>
                     <Link
                       href={item.href}
                       className="flex flex-col rounded-md border border-border p-5 transition-colors hover:border-foreground/30"
@@ -161,7 +164,9 @@ export default async function BlogPostPage({ params }: Props) {
             </aside>
           ) : null}
 
-          <AuthorCard />
+          <div data-blog-reveal>
+            <AuthorCard />
+          </div>
         </div>
 
         {headings.length > 1 ? (
@@ -177,5 +182,6 @@ export default async function BlogPostPage({ params }: Props) {
         <RelatedPosts post={post} />
       </div>
     </article>
+    </BlogPostMotion>
   );
 }

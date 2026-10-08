@@ -15,13 +15,13 @@ export function RelatedPosts({ post, limit = 3 }: { post: BlogPost; limit?: numb
   if (related.length === 0) return null;
 
   return (
-    <section aria-labelledby="related-posts" className="mt-20">
-      <h2 id="related-posts" className="font-display text-3xl font-normal tracking-tight">
+    <section data-blog-reveal aria-labelledby="related-posts" className="mt-20">
+      <h2 id="related-posts" data-blog-reveal-title className="font-display text-3xl font-normal tracking-tight">
         Keep reading
       </h2>
       <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((other) => (
-          <li key={other.slug}>
+          <li key={other.slug} data-blog-reveal-item>
             <Link href={blogPath(other.slug)} className="group block">
               <PostCover post={other} size="sm" />
               <p className="mt-3 text-xs text-muted-foreground">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BlogBrowser } from "@/components/blog/blog-browser";
+import { RisingWords } from "@/components/blog/rising-words";
 import { hasPublishedPosts, listedPosts } from "@/content/blog";
 import { readingMinutes, readPostSource } from "@/lib/blog-source";
 import { profile } from "@/content/profile";
@@ -33,17 +34,23 @@ export default function BlogIndexPage() {
   const listed = listedPosts().map((post) => ({ ...post, minutes: readingMinutes(readPostSource(post.slug)) }));
 
   return (
-    <section className="mx-auto max-w-7xl px-6 pb-24 pt-32 sm:pt-40">
-      <p className="label-eyebrow text-accent-readable">Blog</p>
-      <h1 className="mt-5 font-display text-[clamp(3rem,6vw,5rem)] font-normal leading-[0.95] tracking-[-0.03em]">
-        Engineering notes
-      </h1>
-      <p className="mt-6 max-w-[60ch] text-base leading-[1.7] text-muted-foreground">
-        {description}
-      </p>
+    <section className="blog-hero mx-auto max-w-7xl px-6 pb-24 pt-32 sm:pt-40">
+      <header>
+        <p data-service-kicker className="label-eyebrow text-accent-readable">
+          Blog
+        </p>
+        <h1 className="blog-hero-title mt-5 font-display text-[clamp(3rem,6vw,5rem)] font-normal leading-[0.95] tracking-[-0.03em]">
+          <RisingWords text="Engineering notes" mask />
+        </h1>
+        <p className="blog-hero-lede mt-6 max-w-[60ch] text-base leading-[1.7] text-muted-foreground">
+          <RisingWords text={description} />
+        </p>
+      </header>
 
       {listed.length === 0 ? (
-        <p className="mt-14 text-muted-foreground">The first posts are on their way.</p>
+        <p data-blog-empty className="mt-14 text-muted-foreground">
+          The first posts are on their way.
+        </p>
       ) : (
         <BlogBrowser posts={listed} />
       )}

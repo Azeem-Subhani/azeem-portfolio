@@ -2,8 +2,9 @@
 
 import { ArrowRight, CalendarDays, Clock, Search, Tag, X } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
+import { useBlogCardReveal } from "@/components/blog/blog-card-motion";
 import { PostCover } from "@/components/blog/post-cover";
 import { blogPath, formatPostDate, type BlogPost } from "@/content/blog";
 import { cn } from "@/lib/utils";
@@ -47,10 +48,12 @@ export function BlogBrowser({ posts }: { posts: BrowserPost[] }) {
 
   const filtered = posts.filter((post) => (!topic || post.tags.includes(topic)) && matches(post, query.trim()));
   const filtering = Boolean(topic || query.trim());
+  const resultsRef = useRef<HTMLDivElement>(null);
+  useBlogCardReveal(resultsRef, filtered.map((post) => post.slug).join("|"));
 
   return (
     <div className="mt-12 grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-12">
-      <aside className="lg:sticky lg:top-28 lg:self-start" aria-label="Filter posts">
+      <aside data-blog-aside className="lg:sticky lg:top-28 lg:self-start" aria-label="Filter posts">
         <label htmlFor="blog-search" className="text-sm font-medium text-foreground">
           Search
         </label>
@@ -91,8 +94,8 @@ export function BlogBrowser({ posts }: { posts: BrowserPost[] }) {
         </div>
       </aside>
 
-      <div>
-        <div className="flex min-h-8 items-center justify-between gap-4">
+      <div ref={resultsRef}>
+        <div data-blog-toolbar className="flex min-h-8 items-center justify-between gap-4">
           {/* Announced to screen readers as the filters change. */}
           <p className="text-sm text-muted-foreground" aria-live="polite">
             {filtering
@@ -115,13 +118,13 @@ export function BlogBrowser({ posts }: { posts: BrowserPost[] }) {
         </div>
 
         {filtered.length === 0 ? (
-          <p className="mt-6 rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">
+          <p data-blog-empty className="mt-6 rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">
             No posts match. Try another word or topic.
           </p>
         ) : (
           <ol className="mt-4 grid gap-6 md:grid-cols-2">
             {filtered.map((post) => (
-              <li key={post.slug}>
+              <li key={post.slug} data-blog-card data-slug={post.slug}>
                 <PostCard post={post} activeTopic={topic} />
               </li>
             ))}
@@ -155,7 +158,7 @@ function PostCard({ post, activeTopic }: { post: BrowserPost; activeTopic: strin
     // One link per card: the whole card is the target, and "Read more" is its visual cue.
     <Link
       href={blogPath(post.slug)}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-foreground/[0.02] transition-colors hover:border-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-foreground/[0.02] transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <PostCover post={post} size="md" />
       <div className="flex flex-1 flex-col p-6">
