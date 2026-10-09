@@ -1,11 +1,12 @@
 import {
   Archivo,
-  Hanken_Grotesk,
   Instrument_Sans,
   Instrument_Serif,
   Inter,
   JetBrains_Mono,
+  Onest,
   Playfair_Display,
+  Young_Serif,
 } from "next/font/google";
 
 /**
@@ -45,9 +46,18 @@ const instrumentSans = Instrument_Sans({
   preload: false,
 });
 
-const hankenGrotesk = Hanken_Grotesk({
+// Young Serif has a single 400 weight; don't ask the browser to fake bold.
+const youngSerif = Young_Serif({
   subsets: ["latin"],
-  variable: "--font-capture-hanken-grotesk",
+  weight: "400",
+  variable: "--font-capture-young-serif",
+  display: "swap",
+  preload: false,
+});
+
+const onest = Onest({
+  subsets: ["latin"],
+  variable: "--font-capture-onest",
   display: "swap",
   preload: false,
 });
@@ -83,7 +93,7 @@ export const gamingGlobalFonts = `${archivo.variable} ${jetbrainsMono.variable}`
 export const sportsTeamFonts = archivo.variable;
 export const realTimeChatFonts = `${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`;
 export const smartLivingFonts = inter.variable;
-export const taskManagerFonts = `${hankenGrotesk.variable} ${instrumentSerif.variable}`;
+export const taskManagerFonts = `${youngSerif.variable} ${onest.variable}`;
 export const trackBookingFonts = `${inter.variable} ${jetbrainsMono.variable}`;
 export const woodyShopFonts = `${inter.variable} ${playfairDisplay.variable}`;
 export const bookingAgentFonts = `${inter.variable} ${instrumentSerif.variable}`;

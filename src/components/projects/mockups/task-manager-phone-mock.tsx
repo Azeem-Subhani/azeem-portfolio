@@ -12,7 +12,7 @@ const DESIGN_H = Math.round(
   DESIGN_W * (IPHONE_15_PRO.screenHeight / IPHONE_15_PRO.screenWidth),
 );
 
-/** Live Posy Today list — the case study's phone capture, scaled to fill the iPhone 15 Pro frame. */
+/** Live Posy Today list, the case study's phone capture scaled to fill the iPhone 15 Pro frame. */
 export function TaskManagerPhoneMock() {
   const { hostRef, scale } = useCaptureScale(DESIGN_W, DESIGN_H, "width");
 
@@ -20,7 +20,7 @@ export function TaskManagerPhoneMock() {
     <div
       ref={hostRef}
       data-live-phone-mockup="task-manager"
-      className="tm-phone-mock-host relative h-full w-full overflow-hidden bg-[#FBF5F1]"
+      className="tm-phone-mock-host relative h-full w-full overflow-hidden bg-[#FBF7EE]"
       aria-hidden="true"
     >
       <div

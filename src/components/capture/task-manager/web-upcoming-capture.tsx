@@ -1,170 +1,202 @@
 import { taskManagerFonts } from "@/components/capture/capture-fonts";
+import {
+  HandCheck,
+  HandLine,
+  Icon,
+  ListTag,
+  MarchCalendar,
+  PosyBloom,
+  VerifiedMark,
+  type ListName,
+} from "@/components/capture/task-manager/task-manager-parts";
 
-/** 1600×900 Posy Upcoming week view for Mira. */
+/** 1600×900 Posy upcoming week: 10 to 16 March, seven tasks scheduled. */
 
-function CheckMark() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 8.4l3.2 3.2L13 4.8" />
-    </svg>
-  );
-}
+type Task = { title: string; list: ListName };
+type Day = { num: number; name: string; sub?: string; tasks: Task[] };
+
+// Seven rows, one per day. The Thursday and Friday tasks match the Later list on Today.
+const WEEK: Day[] = [
+  { num: 10, name: "Wednesday", sub: "Tomorrow", tasks: [{ title: "Prep book club notes", list: "book" }] },
+  { num: 11, name: "Thursday", tasks: [{ title: "Book dentist appointment", list: "personal" }] },
+  {
+    num: 12,
+    name: "Friday",
+    tasks: [
+      { title: "Draft the March newsletter", list: "work" },
+      { title: "Meal prep for the week", list: "home" },
+    ],
+  },
+  { num: 13, name: "Saturday", tasks: [{ title: "Plant basil on the balcony", list: "home" }] },
+  { num: 14, name: "Sunday", tasks: [] },
+  { num: 15, name: "Monday", tasks: [{ title: "Renew the SendGrid API key", list: "work" }] },
+  { num: 16, name: "Tuesday", tasks: [{ title: "Sign the lease renewal", list: "personal" }] },
+];
+
+// Tasks planned per day for the next seven days, Wednesday 10 to Tuesday 16 March. The counts
+// match the day rows in the ledger, so the chart and the list agree.
+const NEXT_BARS: { label: string; planned: number }[] = [
+  { label: "Wed", planned: 1 },
+  { label: "Thu", planned: 1 },
+  { label: "Fri", planned: 2 },
+  { label: "Sat", planned: 1 },
+  { label: "Sun", planned: 0 },
+  { label: "Mon", planned: 1 },
+  { label: "Tue", planned: 1 },
+];
+
+// Track length per task, in design pixels.
+const BAR_UNIT = 22;
 
 export function TaskManagerWebUpcomingCapture() {
   return (
     <div className={`tm-capture-root ${taskManagerFonts}`}>
-      <section className="capture capture--web capture--upcoming" aria-label="Posy upcoming tasks">
-        <aside className="sidebar">
-          <div className="brand">
-            <div className="brand-mark" aria-hidden="true">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="2.6" />
-                <path d="M12 9.4c0-2.6.7-4.6 2-4.6s2 2 2 4.6" />
-                <path d="M12 14.6c0 2.6-.7 4.6-2 4.6s-2-2-2-4.6" />
-                <path d="M9.4 12c-2.6 0-4.6-.7-4.6-2s2-2 4.6-2" />
-                <path d="M14.6 12c2.6 0 4.6.7 4.6 2s-2 2-4.6 2" />
-              </svg>
-            </div>
+      <section className="capture tm-screen tm-screen--upcoming" aria-label="Posy upcoming tasks">
+        <aside className="tm-side">
+          <div className="tm-brand">
+            <span className="tm-brand-mark" aria-hidden="true">
+              <PosyBloom size={36} />
+            </span>
             <div>
-              <div className="brand-name">Posy</div>
-              <div className="brand-sub">task studio</div>
+              <div className="tm-brand-name">Posy</div>
+              <div className="tm-brand-sub">Task studio</div>
             </div>
           </div>
 
-          <div className="nav-label">Workspace</div>
-          <nav className="nav" aria-label="Workspace">
-            <button type="button" className="nav-item">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2.5v2M12 19.5v2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M2.5 12h2M19.5 12h2M5.2 18.8l1.4-1.4M17.4 6.6l1.4-1.4" />
-              </svg>
+          <div className="tm-side-label">Workspace</div>
+          <nav className="tm-nav" aria-label="Workspace">
+            <button type="button" className="tm-nav-item">
+              <Icon name="today" size={17} />
               Today
-              <span className="count">6</span>
+              <span className="tm-nav-count">6</span>
             </button>
-            <button type="button" className="nav-item active">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="5" width="18" height="16" rx="3.2" />
-                <path d="M3.4 10h17.2M8.5 3v4M15.5 3v4" />
-              </svg>
+            <button type="button" className="tm-nav-item tm-is-active">
+              <Icon name="upcoming" size={17} />
               Upcoming
-              <span className="count">7</span>
+              <span className="tm-nav-count">7</span>
             </button>
           </nav>
 
-          <div className="user-card">
-            <div className="avatar">MK</div>
+          <div className="tm-user">
+            <span className="tm-avatar">MK</span>
             <div>
-              <div className="user-name">Mira Kapoor</div>
-              <div className="user-verified">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 6.5 9.4 17.1 4 11.7" />
-                </svg>
+              <div className="tm-user-name">Mira Kapoor</div>
+              <div className="tm-user-verified">
+                <span className="tm-verified-dot">
+                  <VerifiedMark size={9} />
+                </span>
                 Email verified
               </div>
             </div>
           </div>
         </aside>
 
-        <main className="main">
-          <div className="topbar">
+        <main className="tm-main">
+          <header className="tm-topbar">
             <div>
-              <div data-h="1" className="greet">Upcoming <em>week</em></div>
-              <p className="subline">10 March through 16 March · <b>7 tasks</b> scheduled</p>
+              <div data-h="1" className="tm-greet">
+                Upcoming{" "}
+                <span className="tm-hl">
+                  week
+                  <HandLine variant="under" className="tm-hl-line" />
+                </span>
+              </div>
+              <p className="tm-subline">10 to 16 March, seven tasks scheduled.</p>
             </div>
-            <button type="button" className="btn-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              New task
-            </button>
-          </div>
+            <div className="tm-actions">
+              <button type="button" className="tm-btn-ink">
+                <Icon name="plus" size={15} />
+                New task
+              </button>
+            </div>
+          </header>
 
-          <div className="week-grid">
-            <div className="week-col">
-              <div className="week-day">Wed 10</div>
-              <div className="task compact accent-lilac">
-                <span className="check"><CheckMark /></span>
-                <div className="task-main">
-                  <div className="task-title">Prep book club notes</div>
-                  <div className="task-meta"><span className="tag tag-lilac">Book club</span></div>
+          <div className="tm-week">
+            {WEEK.map((day) => (
+              <div key={day.num} className="tm-day">
+                <div className="tm-day-head">
+                  <span className="tm-day-num">{day.num}</span>
+                  <div>
+                    <div className="tm-day-name">{day.name}</div>
+                    {day.sub ? <div className="tm-day-sub">{day.sub}</div> : null}
+                  </div>
+                </div>
+                <div className="tm-day-slips">
+                  {day.tasks.length > 0 ? (
+                    day.tasks.map((task, index) => (
+                      <div
+                        key={task.title}
+                        className={`tm-day-slip ${index % 2 === 0 ? "tm-tilt-a" : "tm-tilt-b"}`}
+                      >
+                        <div className="tm-day-slip-top">
+                          <span className="tm-check">
+                            <HandCheck size={14} />
+                          </span>
+                          <span className="tm-day-slip-title">{task.title}</span>
+                        </div>
+                        <ListTag list={task.list} />
+                      </div>
+                    ))
+                  ) : (
+                    <p className="tm-day-empty">Nothing planned</p>
+                  )}
                 </div>
               </div>
-            </div>
-            <div className="week-col">
-              <div className="week-day">Thu 11</div>
-              <div className="task compact accent-lilac">
-                <span className="check"><CheckMark /></span>
-                <div className="task-main">
-                  <div className="task-title">Book dentist appointment</div>
-                </div>
-              </div>
-            </div>
-            <div className="week-col">
-              <div className="week-day today-col">Tue 9</div>
-              <div className="task compact accent-rose">
-                <span className="check"><CheckMark /></span>
-                <div className="task-main">
-                  <div className="task-title">Draft March newsletter</div>
-                  <div className="task-meta"><span className="tag tag-rose">Work</span></div>
-                </div>
-              </div>
-            </div>
-            <div className="week-col">
-              <div className="week-day">Fri 12</div>
-              <div className="task compact accent-sage">
-                <span className="check"><CheckMark /></span>
-                <div className="task-main">
-                  <div className="task-title">Meal prep for the week</div>
-                  <div className="task-meta"><span className="tag tag-sage">Home</span></div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </main>
 
-        <aside className="rail">
-          <div className="card">
-            <div className="card-head">
-              <div className="card-title">March</div>
+        <aside className="tm-rail">
+          <section className="tm-card">
+            <header className="tm-card-head">
+              <div className="tm-card-title">March</div>
+              <div className="tm-cal-nav">
+                <button type="button" aria-label="Previous month">
+                  <Icon name="prev" size={13} />
+                </button>
+                <button type="button" aria-label="Next month">
+                  <Icon name="next" size={13} />
+                </button>
+              </div>
+            </header>
+            <MarchCalendar today={9} weekFrom={10} weekTo={16} eventDays={[10, 11, 12, 13, 15, 16]} />
+          </section>
+
+          <section className="tm-card">
+            <header className="tm-card-head">
+              <div className="tm-card-title">Next 7 days</div>
+            </header>
+            <div className="tm-bars" aria-hidden="true">
+              {NEXT_BARS.map((bar, index) => (
+                <div key={`${bar.label}-${index}`} className="tm-bar-row">
+                  <span className="tm-bar-lb">{bar.label}</span>
+                  <span className="tm-bar-value">{bar.planned}</span>
+                  <span className="tm-bar-track">
+                    {bar.planned ? (
+                      <i className="tm-bar-planned" style={{ width: bar.planned * BAR_UNIT }} />
+                    ) : (
+                      <i className="tm-bar-zero" />
+                    )}
+                  </span>
+                </div>
+              ))}
             </div>
-            <div className="cal-grid">
-              <div className="cal-wd">M</div><div className="cal-wd">T</div><div className="cal-wd">W</div>
-              <div className="cal-wd">T</div><div className="cal-wd">F</div><div className="cal-wd">S</div>
-              <div className="cal-wd">S</div>
-              <div className="cal-d mute">1</div>
-              <div className="cal-d">2</div>
-              <div className="cal-d">3</div>
-              <div className="cal-d">4</div>
-              <div className="cal-d"><i />5</div>
-              <div className="cal-d">6</div>
-              <div className="cal-d">7</div>
-              <div className="cal-d">8</div>
-              <div className="cal-d today"><i />9</div>
-              <div className="cal-d">10</div>
-              <div className="cal-d">11</div>
-              <div className="cal-d"><i />12</div>
-              <div className="cal-d">13</div>
-              <div className="cal-d">14</div>
-              <div className="cal-d">15</div>
-              <div className="cal-d">16</div>
-              <div className="cal-d">17</div>
-              <div className="cal-d">18</div>
-              <div className="cal-d"><i />19</div>
-              <div className="cal-d">20</div>
-              <div className="cal-d">21</div>
-              <div className="cal-d">22</div>
-              <div className="cal-d">23</div>
-              <div className="cal-d">24</div>
-              <div className="cal-d">25</div>
-              <div className="cal-d"><i />26</div>
-              <div className="cal-d">27</div>
-              <div className="cal-d">28</div>
-              <div className="cal-d">29</div>
-              <div className="cal-d">30</div>
-              <div className="cal-d">31</div>
-              <div className="cal-d" /><div className="cal-d" /><div className="cal-d" /><div className="cal-d" />
+            <p className="tm-bars-caption">Planned by day</p>
+          </section>
+
+          <section className="tm-card">
+            <div className="tm-acct">
+              <span className="tm-avatar tm-avatar--sm">MK</span>
+              <div>
+                <div className="tm-acct-mail">mira@posy.app</div>
+                <div className="tm-acct-note">Session active, renews in 6 days</div>
+                <span className="tm-pill-ok">
+                  <VerifiedMark size={9} />
+                  Verified
+                </span>
+              </div>
             </div>
-          </div>
+          </section>
         </aside>
       </section>
     </div>

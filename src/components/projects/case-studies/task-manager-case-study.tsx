@@ -7,7 +7,7 @@
  *   Phone: Today list — TaskManagerPhoneCapture
  * Secondary DeviceStage (layout row, phones only; the hero phone is not repeated):
  *   Phone: Task detail — TaskManagerPhoneDetailCapture
- * All captures: CaptureFrame paper #FBF5F1; browser tone paper; phone shell #35222F, screen #FBF5F1, statusTone light.
+ * All captures: CaptureFrame paper #FBF7EE; browser tone paper; phone shell #1F2033, screen #FBF7EE, statusTone light.
  */
 
 "use client";
@@ -35,9 +35,9 @@ import type { Project } from "@/types/content";
 import "@/components/capture/task-manager/task-manager-capture.css";
 import "@/components/projects/mockups/task-manager-phone-mock.css";
 
-const PAPER = "#FBF5F1";
-const PHONE_SHELL = "bg-[#35222F]";
-const PHONE_SCREEN = "bg-[#FBF5F1]";
+const PAPER = "#FBF7EE";
+const PHONE_SHELL = "bg-[#1F2033]";
+const PHONE_SCREEN = "bg-[#FBF7EE]";
 
 const phoneFrame = {
   shellClassName: PHONE_SHELL,
@@ -128,7 +128,7 @@ export function TaskManagerCaseStudy({ project, closer }: TaskManagerCaseStudyPr
       {/* The hero phone shows Today; the detail screen is the one left to show. */}
       <CaseStudySection
         title="Task detail on the phone"
-        intro="Mira's task detail shares the rose and plum chrome from the studio web app."
+        intro="Mira's task detail uses the same paper, cobalt, and tomato system as the studio app."
       >
         <DeviceStage
           layout="row"

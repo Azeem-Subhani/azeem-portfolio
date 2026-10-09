@@ -1,28 +1,29 @@
 import { taskManagerFonts } from "@/components/capture/capture-fonts";
+import {
+  HandCheck,
+  HandLine,
+  Icon,
+  ListTag,
+  PosyBloom,
+  ProgressStamp,
+  TimeChip,
+  VerifiedMark,
+  type ListName,
+} from "@/components/capture/task-manager/task-manager-parts";
 
-/** 900×1600 Posy mobile — Mira's Today list and task detail. */
+/**
+ * 900 wide canvas. The inner screen is laid out at 393 logical pixels (iPhone 15 Pro) and
+ * scaled up; task-manager-phone-mock.css stretches it to the device height.
+ */
 
-function CheckMark() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 8.4l3.2 3.2L13 4.8" />
-    </svg>
-  );
-}
-
-function PosyMark({ size = 32 }: { size?: number }) {
-  return (
-    <div className="p-brand-mark" style={{ width: size, height: size, borderRadius: size * 0.34 }}>
-      <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="2.6" />
-        <path d="M12 9.4c0-2.6.7-4.6 2-4.6s2 2 2 4.6" />
-        <path d="M12 14.6c0 2.6-.7 4.6-2 4.6s-2-2-2-4.6" />
-        <path d="M9.4 12c-2.6 0-4.6-.7-4.6-2s2-2 4.6-2" />
-        <path d="M14.6 12c2.6 0 4.6.7 4.6 2s-2 2-4.6 2" />
-      </svg>
-    </div>
-  );
-}
+// Four of the six Today tasks fit above the tab bar. Same titles as the web list, shortened
+// so each one fits on a single line.
+const PHONE_TODAY: { title: string; list: ListName; time: string; done?: boolean; hot?: boolean }[] = [
+  { title: "Review PR #482", list: "work", time: "9:30 AM", done: true },
+  { title: "Rotate signing keys in staging", list: "work", time: "11:15 AM", hot: true },
+  { title: "Order birthday flowers for Mom", list: "personal", time: "1:00 PM" },
+  { title: "Grocery run: oat milk, peaches", list: "home", time: "5:30 PM" },
+];
 
 function PhoneTabBar({ active }: { active: "today" | "upcoming" | "lists" | "profile" }) {
   const tabs = [
@@ -33,13 +34,9 @@ function PhoneTabBar({ active }: { active: "today" | "upcoming" | "lists" | "pro
   ];
 
   return (
-    <nav className="p-tabbar" aria-label="Main">
+    <nav className="tm-tabbar" aria-label="Main">
       {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          type="button"
-          className={tab.id === active ? "on" : undefined}
-        >
+        <button key={tab.id} type="button" className={tab.id === active ? "tm-is-on" : undefined}>
           {tab.label}
         </button>
       ))}
@@ -50,89 +47,75 @@ function PhoneTabBar({ active }: { active: "today" | "upcoming" | "lists" | "pro
 export function TaskManagerPhoneCapture() {
   return (
     <div className={`tm-capture-root ${taskManagerFonts}`}>
-      <section className="capture capture--phone" aria-label="Posy Today on phone">
-        <div className="p-inner">
-        <header className="p-head">
-          <div className="p-head-row">
-            <PosyMark />
-            <div className="p-head-copy">
-              <div className="p-eyebrow">Posy</div>
-              <div data-h="1" className="p-title">
-                Good morning, <em>Mira</em>
-              </div>
+      <section
+        className="capture capture--phone tm-screen tm-screen--phone"
+        aria-label="Posy Today on phone"
+      >
+        <div className="tm-phone-inner">
+          <header className="tm-phone-top">
+            <div className="tm-phone-brand">
+              <PosyBloom size={28} />
+              <span className="tm-phone-name">Posy</span>
             </div>
-            <div className="avatar p-avatar">MK</div>
-          </div>
-          <p className="p-sub">Tuesday, 9 March · 6 tasks left today</p>
-        </header>
+            <span className="tm-avatar tm-avatar--sm">MK</span>
+          </header>
 
-        <div className="p-body">
-          <div className="p-progress">
-            <div className="p-progress-top">
-              <span className="p-progress-label">Today&apos;s progress</span>
-              <span className="p-progress-num">
-                <em>5</em> of 12
-              </span>
+          <div className="tm-phone-hero">
+            <div className="tm-numeral tm-numeral--sm" aria-hidden="true">
+              <span className="tm-numeral-under">9</span>
+              <span className="tm-numeral-over">9</span>
             </div>
-            <div className="p-segments">
-              <i className="on" /><i className="on" /><i className="on" /><i className="on" /><i className="on" />
-              <i /><i /><i /><i /><i /><i /><i />
+            <div className="tm-phone-date">
+              <div data-h="1" className="tm-phone-day">
+                Tuesday
+              </div>
+              <div className="tm-phone-month">March</div>
             </div>
+            <ProgressStamp done={2} total={6} size="sm" />
           </div>
 
-          <div className="p-section-head">
-            <div data-h="2">Today</div>
-            <span className="pill-count">6</span>
+          <div data-h="1" className="tm-phone-greet">
+            Good morning, <span className="tm-hl">Mira<HandLine variant="under" className="tm-hl-line" /></span>
+          </div>
+          <p className="tm-phone-sub">4 tasks left today, 1 due before noon.</p>
+
+          <div className="tm-phone-section">
+            <div data-h="2" className="tm-section-title">
+              Today
+            </div>
+            <span className="tm-count">6</span>
           </div>
 
-          <div className="p-task-list">
-            <div className="p-task done accent-rose">
-              <span className="check"><CheckMark /></span>
-              <div className="p-task-main">
-                <div className="p-task-title">Review PR #482 — JWT refresh middleware</div>
-                <div className="p-task-meta">
-                  <span className="tag tag-rose">Work</span>
-                  <span className="meta-txt">9:30 AM</span>
+          <div className="tm-phone-list">
+            {PHONE_TODAY.map((task, index) => (
+              <div
+                key={task.title}
+                className={[
+                  "tm-p-slip",
+                  index % 2 === 0 ? "tm-tilt-a" : "tm-tilt-b",
+                  task.done ? "tm-is-done" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <span className="tm-check">
+                  <HandCheck size={13} />
+                </span>
+                <div className="tm-p-slip-body">
+                  <span className="tm-title">
+                    {task.title}
+                    {task.done ? <HandLine variant="strike" className="tm-strike" /> : null}
+                  </span>
+                  <div className="tm-p-meta">
+                    <ListTag list={task.list} />
+                    <TimeChip hot={task.hot}>{task.time}</TimeChip>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="p-task accent-rose">
-              <span className="check"><CheckMark /></span>
-              <div className="p-task-main">
-                <div className="p-task-title">Rotate signing keys in staging</div>
-                <div className="p-task-meta">
-                  <span className="tag tag-rose">Work</span>
-                  <span className="meta-txt hot">11:15 AM</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-task accent-lilac">
-              <span className="check"><CheckMark /></span>
-              <div className="p-task-main">
-                <div className="p-task-title">Order birthday flowers for Mom</div>
-                <div className="p-task-meta">
-                  <span className="tag tag-lilac">Personal</span>
-                  <span className="meta-txt">1:00 PM</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-task accent-sage">
-              <span className="check"><CheckMark /></span>
-              <div className="p-task-main">
-                <div className="p-task-title">Grocery run — oat milk, peaches</div>
-                <div className="p-task-meta">
-                  <span className="tag tag-sage">Home</span>
-                  <span className="meta-txt">5:30 PM</span>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
 
-        <PhoneTabBar active="today" />
+          <PhoneTabBar active="today" />
         </div>
       </section>
     </div>
@@ -142,66 +125,72 @@ export function TaskManagerPhoneCapture() {
 export function TaskManagerPhoneDetailCapture() {
   return (
     <div className={`tm-capture-root ${taskManagerFonts}`}>
-      <section className="capture capture--phone" aria-label="Posy task detail on phone">
-        <div className="p-inner">
-        <header className="p-head p-head--detail">
-          <button type="button" className="p-back" aria-label="Back to Today">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m14.5 5.5-6.5 6.5 6.5 6.5" />
-            </svg>
-          </button>
-          <div className="p-head-copy">
-            <div className="p-eyebrow">Work · Today</div>
-            <div data-h="1" className="p-title p-title--task">Rotate signing keys in staging</div>
-          </div>
-        </header>
+      <section
+        className="capture capture--phone tm-screen tm-screen--phone"
+        aria-label="Posy task detail on phone"
+      >
+        <div className="tm-phone-inner">
+          <header className="tm-phone-top tm-phone-top--detail">
+            <button type="button" className="tm-p-back" aria-label="Back to Today">
+              <Icon name="back" size={18} />
+            </button>
+            <span className="tm-p-eyebrow">Work, today</span>
+          </header>
 
-        <div className="p-body">
-          <div className="p-detail-chips">
-            <span className="time-chip hot">11:15 AM</span>
-            <span className="tag tag-rose">Work</span>
-            <span className="verified-pill">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6.5 9.4 17.1 4 11.7" />
-              </svg>
+          <div data-h="1" className="tm-p-heading">
+            Rotate signing keys in staging
+          </div>
+
+          <div className="tm-p-chips">
+            <TimeChip hot>11:15 AM</TimeChip>
+            <ListTag list="work" />
+            <span className="tm-pill-ok">
+              <VerifiedMark size={9} />
               Session active
             </span>
           </div>
 
-          <div className="p-card-block">
-            <div className="p-card-label">Notes</div>
-            <p className="p-card-body">
-              Roll JWT signing keys in staging before the client ships refresh handling. Log out stale sessions after the swap.
+          <section className="tm-p-card">
+            <div className="tm-p-label">Notes</div>
+            <p className="tm-p-copy">
+              Roll JWT signing keys in staging before the client ships refresh handling. Log out
+              stale sessions after the swap.
             </p>
-          </div>
+          </section>
 
-          <div className="p-card-block">
-            <div className="p-card-label">Subtasks</div>
-            <ul className="p-subtasks">
-              <li className="done">
-                <span className="check"><CheckMark /></span>
-                Export current public keys
+          <section className="tm-p-card">
+            <div className="tm-p-label">Subtasks</div>
+            <ul className="tm-p-subtasks">
+              <li className="tm-is-done">
+                <span className="tm-check">
+                  <HandCheck size={13} />
+                </span>
+                <span className="tm-title">
+                  Export current public keys
+                  <HandLine variant="strike" className="tm-strike" />
+                </span>
               </li>
               <li>
-                <span className="check"><CheckMark /></span>
-                Update Express auth middleware
+                <span className="tm-check">
+                  <HandCheck size={13} />
+                </span>
+                <span className="tm-title">Update Express auth middleware</span>
               </li>
               <li>
-                <span className="check"><CheckMark /></span>
-                Invalidate old refresh tokens
+                <span className="tm-check">
+                  <HandCheck size={13} />
+                </span>
+                <span className="tm-title">Invalidate old refresh tokens</span>
               </li>
             </ul>
-          </div>
+          </section>
 
-          <button type="button" className="p-focus-btn">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 4.5v15l13-7.5z" />
-            </svg>
+          <button type="button" className="tm-p-focus">
+            <Icon name="play" size={12} />
             Start focus session
           </button>
-        </div>
 
-        <PhoneTabBar active="today" />
+          <PhoneTabBar active="today" />
         </div>
       </section>
     </div>
