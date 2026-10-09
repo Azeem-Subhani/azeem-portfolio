@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Nested git worktrees under .claude/worktrees carry their own .next build output.
+    ".claude/worktrees/**",
   ]),
 ]);
 
