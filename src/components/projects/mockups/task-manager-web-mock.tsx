@@ -8,7 +8,7 @@ import "@/components/capture/task-manager/task-manager-capture.css";
 const DESIGN_W = 1600;
 const DESIGN_H = 900;
 
-/** Live Posy task studio — scaled from 1600×900 for BrowserFrame. */
+/** Live Posy task studio, scaled from 1600×900 for BrowserFrame. */
 export function TaskManagerWebMock() {
   const { hostRef, scale } = useCaptureScale(DESIGN_W, DESIGN_H);
 
@@ -16,7 +16,7 @@ export function TaskManagerWebMock() {
     <div
       ref={hostRef}
       data-live-web-mockup="task-manager"
-      className="relative aspect-[16/9] w-full overflow-hidden bg-[#FBF5F1]"
+      className="relative aspect-[16/9] w-full overflow-hidden bg-[#FBF7EE]"
       aria-hidden="true"
     >
       <div

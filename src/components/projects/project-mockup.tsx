@@ -166,7 +166,7 @@ const WEB_SCREEN_BG: Record<string, string> = {
   "gaming-global": "#12110F",
   "woody-shop": "#FFFFFF",
   "real-time-chat": "#14110E",
-  "task-manager": "#FBF5F1",
+  "task-manager": "#FBF7EE",
   "smart-living": "#F7F9FC",
   "ai-booking-agent": "#F6F5F1",
 };
@@ -452,7 +452,7 @@ export function ProjectMockup({
                               : project.slug === "smart-living"
                                 ? "bg-[#0F141B]"
                                 : project.slug === "task-manager"
-                                  ? "bg-[#35222F]"
+                                  ? "bg-[#1F2033]"
                                   : project.slug === "ai-booking-agent"
                                     ? "bg-[#10281F]"
                                     : undefined
@@ -472,7 +472,7 @@ export function ProjectMockup({
                             project.slug === "smart-living"
                             ? "bg-white"
                             : project.slug === "task-manager"
-                              ? "bg-[#FBF5F1]"
+                              ? "bg-[#FBF7EE]"
                               : project.slug === "ai-booking-agent"
                                 ? "bg-[#F6F5F1]"
                                 : undefined

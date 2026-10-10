@@ -354,7 +354,7 @@ export const projects: Project[] = [
     categories: ["Full-Stack"],
     screens: screens(
       "task-manager",
-      "#FBF5F1",
+      "#FBF7EE",
       "Posy task studio Today list for Mira Kapoor.",
       "Posy Today list on iPhone.",
       true,

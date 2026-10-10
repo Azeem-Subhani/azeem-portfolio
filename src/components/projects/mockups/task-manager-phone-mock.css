@@ -1,4 +1,8 @@
-/* Stretch the 9:16 Posy phone capture into the iPhone 15 Pro frame. */
+/*
+ * Stretch the 9:16 Posy phone capture into the iPhone 15 Pro frame. The inner screen keeps
+ * its 393 logical-pixel layout (see .tm-phone-inner in task-manager-capture.css); only the
+ * canvas height follows the device, and the tab bar sits on the bottom edge.
+ */
 .tm-phone-mock-host .tm-capture-root {
   align-items: flex-start;
   justify-content: flex-start;
@@ -9,22 +13,4 @@
 .tm-phone-mock-host .capture--phone {
   width: 100%;
   height: 100%;
-}
-
-/* Inner canvas is 393px wide at scale(900/393). Height fills the 900×~1950 mock. */
-.tm-phone-mock-host .p-inner {
-  width: 393px;
-  height: calc(100% * 393 / 900);
-}
-
-/* Safe area from iPhone 15 Pro (59pt top, 34pt home indicator)
-   mapped to the 393px inner canvas. */
-.tm-phone-mock-host .p-head,
-.tm-phone-mock-host .p-head--detail {
-  padding-top: 59px;
-}
-
-.tm-phone-mock-host .p-tabbar {
-  height: auto;
-  padding-bottom: 34px;
 }
